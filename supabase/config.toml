@@ -31,7 +31,24 @@ pop3_port = 54326
 # Storage settings
 file_size_limit = "50MiB"
 
-[functions]
-# Edge Functions settings
-import_inventory = { verify_jwt = false }
-create_sale = { verify_jwt = true }
+# Per-function settings (slugs match supabase/functions/* folder names)
+[functions.import-inventory]
+verify_jwt = false
+
+[functions.create-sale]
+verify_jwt = true
+
+[functions.create-card-checkout]
+verify_jwt = true
+
+[functions.payment-ipn]
+verify_jwt = false
+
+[functions.payment-return-success]
+verify_jwt = false
+
+[functions.payment-return-cancel]
+verify_jwt = false
+
+[functions.payment-return-fail]
+verify_jwt = false

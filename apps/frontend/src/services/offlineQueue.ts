@@ -1,5 +1,5 @@
 import { db, type OfflineSale } from './db'
-import { supabase } from './supabase'
+import { invokeEdgeFunction } from './edgeFunctions'
 
 export async function addToQueue(saleData: Omit<OfflineSale, 'id' | 'created_at' | 'synced'>) {
     try {
@@ -46,11 +46,11 @@ export async function processQueue() {
                 payment_meta: sale.payment_meta
             }
 
-            const { error } = await supabase.functions.invoke('create-sale', {
-                body
-            })
-
-            if (error) throw error
+            await invokeEdgeFunction<{ success: boolean }>(
+                'create-sale',
+                body,
+                'Offline sale sync failed',
+            )
 
             // Mark as synced or delete
             await db.offlineSales.update(sale.id!, { synced: true })
