@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './hooks/useAuth'
 import { StoreProvider } from './hooks/useStore'
@@ -16,6 +17,7 @@ function App() {
   return (
     <AuthProvider>
       <StoreProvider>
+        <Analytics />
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<Login />} />

@@ -842,6 +842,23 @@ export function POS() {
                     Card
                   </button>
                 </div>
+                {paymentMethod === 'card' && (
+                  <div className="mt-3 pt-3 border-t border-gray-200">
+                    <a
+                      href="https://www.sslcommerz.com/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="SSLCommerz"
+                      className="inline-block"
+                    >
+                      <img
+                        src="https://securepay.sslcommerz.com/public/image/SSLCommerz-Pay-With-logo-All-Size-04.png"
+                        alt="SSLCommerz"
+                        className="w-[300px] max-w-full h-auto"
+                      />
+                    </a>
+                  </div>
+                )}
               </div>
               <div className="flex justify-between py-2 border-b border-gray-200">
                 <span className="text-sm text-gray-700">Subtotal:</span>

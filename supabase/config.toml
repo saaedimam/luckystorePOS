@@ -36,10 +36,10 @@ file_size_limit = "50MiB"
 verify_jwt = false
 
 [functions.create-sale]
-verify_jwt = true
+verify_jwt = false
 
 [functions.create-card-checkout]
-verify_jwt = true
+verify_jwt = false
 
 [functions.payment-ipn]
 verify_jwt = false

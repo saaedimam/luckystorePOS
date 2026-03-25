@@ -1,4 +1,4 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
 
 const corsHeaders = {
@@ -37,7 +37,7 @@ function sslCommerzSessionApiUrl(isLive: boolean): string {
     : 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php'
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -61,6 +61,10 @@ serve(async (req) => {
     if (!items || items.length === 0) throw new Error('No items in checkout')
     if (!success_url || !fail_url || !cancel_url) throw new Error('Missing checkout callback URLs')
     if (!Number.isFinite(total_amount) || total_amount <= 0) throw new Error('Invalid total amount')
+    // https://developer.sslcommerz.com/doc/v4/ — BDT amount must be 10.00–500000.00
+    if (total_amount < 10) {
+      throw new Error('Card payment requires at least 10.00 BDT (SSLCommerz minimum)')
+    }
 
     const { data: storeData, error: storeError } = await supabase
       .from('stores')
@@ -84,6 +88,11 @@ serve(async (req) => {
     const ipnDefaultUrl = `${supabaseUrl}/functions/v1/payment-ipn`
     const ipnUrl = Deno.env.get('SSLCOMMERZ_IPN_URL') || ipnDefaultUrl
 
+    const productName = `POS Sale (${storeData.name})`.slice(0, 255)
+    // value_* max 255 chars; cart details live in client pending checkout — keep value_a short
+    const valueA = store_id.slice(0, 255)
+    const valueC = user.id.length > 255 ? user.id.slice(0, 255) : user.id
+
     const payload = new URLSearchParams({
       store_id: SSL_STORE_ID,
       store_passwd: SSL_STORE_PASSWORD,
@@ -94,37 +103,59 @@ serve(async (req) => {
       fail_url: withTranId(fail_url, tranId),
       cancel_url: withTranId(cancel_url, tranId),
       ipn_url: withTranId(ipnUrl, tranId),
-      product_name: `POS Sale (${storeData.name})`,
+      product_name: productName,
       product_category: 'Retail',
       product_profile: 'general',
       cus_name: 'POS Customer',
       cus_email: 'pos@local.customer',
       cus_add1: 'N/A',
+      cus_add2: 'N/A',
       cus_city: 'Dhaka',
+      cus_state: 'Dhaka',
       cus_postcode: '1000',
       cus_country: 'Bangladesh',
-      cus_phone: '0000000000',
+      cus_phone: '01700000000',
+      cus_fax: '01700000000',
       shipping_method: 'NO',
-      value_a: JSON.stringify({
-        store_id,
-        discount,
-        items,
-      }),
+      ship_name: 'POS Customer',
+      ship_add1: 'N/A',
+      ship_add2: 'N/A',
+      ship_city: 'Dhaka',
+      ship_state: 'Dhaka',
+      ship_postcode: '1000',
+      ship_country: 'Bangladesh',
+      value_a: valueA,
       value_b: 'lucky-pos',
-      value_c: user.id,
+      value_c: valueC,
     })
 
     const gatewayResponse = await fetch(SSL_GATEWAY_URL, {
       method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
       body: payload,
     })
 
-    const data = await gatewayResponse.json()
-    const redirectUrl = data?.GatewayPageURL as string | undefined
+    const rawText = await gatewayResponse.text()
+    let data: Record<string, unknown> = {}
+    try {
+      data = rawText ? JSON.parse(rawText) as Record<string, unknown> : {}
+    } catch {
+      console.error('SSLCommerz non-JSON response:', rawText.slice(0, 500))
+      throw new Error('SSLCommerz returned an invalid response')
+    }
+
+    const redirectUrl = typeof data.GatewayPageURL === 'string' && data.GatewayPageURL.length > 0
+      ? data.GatewayPageURL
+      : undefined
 
     if (!redirectUrl) {
+      const status = typeof data.status === 'string' ? data.status : ''
+      const reason = typeof data.failedreason === 'string' ? data.failedreason : ''
       console.error('SSLCommerz checkout initialization failed:', data)
-      throw new Error('Failed to initialize card checkout')
+      const detail = [status, reason].filter(Boolean).join(' — ')
+      throw new Error(
+        detail ? `SSLCommerz: ${detail}` : 'Failed to initialize card checkout',
+      )
     }
 
     return new Response(

@@ -107,9 +107,11 @@ serve(async (req) => {
     }
 
     // Verify stock availability
-    const stockMap = new Map(stockData.map(s => [s.item_id, s.qty]))
+    const stockMap = new Map<string, number>(
+      (stockData ?? []).map((s: { item_id: string; qty: number }) => [s.item_id, s.qty]),
+    )
     for (const item of items) {
-      const availableQty = stockMap.get(item.item_id) || 0
+      const availableQty = stockMap.get(item.item_id) ?? 0
       if (availableQty < item.quantity) {
         const itemName = itemsData.find(i => i.id === item.item_id)?.name || 'Unknown item'
         throw new Error(`Insufficient stock for ${itemName}. Available: ${availableQty}, Required: ${item.quantity}`)
