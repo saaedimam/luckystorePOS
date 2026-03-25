@@ -1,65 +1,133 @@
-# Environment variables - NEVER commit these!
+# -----------------------------------------------------------------------------
+# Lucky Store - Repository-wide gitignore
+# -----------------------------------------------------------------------------
+
+# Environment (explicit common names + wildcard; do not use *.env — too broad)
 .env
 .env.local
-.env.production
 .env.*.local
-*.env
+.env.development
+.env.production
+.env.test
+.env.*
+!.env.example
+!.env*.example
+apps/*/.env
+apps/*/.env.local
 
-# Credentials
+# Secrets and keys
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.csr
 *credentials*
 *secrets*
 
-# Dependencies
+# Lockfiles: committed for reproducible installs (npm ci). Do not ignore.
+
+# Dependency directories and package manager metadata
 node_modules/
+apps/*/node_modules/
 .pnp
 .pnp.js
+.npm/
+.pnpm-store/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
 
-# Build outputs
+# Build outputs and caches (explicit app path + global)
+apps/frontend/dist/
 dist/
 build/
+out/
+.cache/
+.parcel-cache/
+.turbo/
+.next/
+.nuxt/
+.svelte-kit/
+coverage/
+.nyc_output/
 *.tsbuildinfo
 
-# Logs
-logs
+# Runtime and debug logs
+logs/
 *.log
+*.pid
+*.seed
+*.pid.lock
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Editor
-.vscode/
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*.backup
+*.backup.gz
+*.orig
+
+# Editor and IDE artifacts (only un-ignore extensions.json — team-safe)
+.vscode/*
+!.vscode/extensions.json
 .idea/
+*.iml
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 *.swp
 *.swo
 *~
 
-# OS
+# OS metadata
 .DS_Store
+**/.DS_Store
 Thumbs.db
 
-# Local cleanup/archive artifacts
+# Local cleanup / archives
 archive/
 /supabasebakcup/
-/Food _ Shwapno Online Grocery Shopping in Dhaka, Chattogram, Cumilla & Sylhet_files/
 
-# Local test/import artifacts (keep repo lean)
+# Local test/import artifacts (keep repository lean)
 /test-*.csv
 /test-*.sh
 /data/samples/
-*.backup
-*.backup.gz
 
-# Supabase
+# Database dumps and local exports
+# Never ignore *.sql globally — Supabase migrations and scripts/db are tracked.
+*.dump
+*.sql.gz
+*.sql.zip
+*.bak.sql
+*.sql.bak
+/dumps/
+/backups/
+
+# Docker / local overrides (secrets and machine-specific compose)
+docker-compose.override.yml
+*.override.yml
+.env.docker
+
+# Supabase and local DB tooling
 .supabase/
+supabase/.temp/
 
-# Vercel local project linkage
+# Hosting platform local state
 .vercel/
 
-# AI/IDE local metadata (not for repo)
+# AI/IDE local metadata
 .cursor/
 .agents/
 .claude/
 .continue/
 .trae/
-
-
+skills-lock.json

@@ -1,41 +1,42 @@
 /**
  * Script to create the item-images storage bucket in Supabase
- * Run with: node scripts/create-storage-bucket.js
+ * Run with: node scripts/ops/create-storage-bucket.js
  */
 
 import { createClient } from '@supabase/supabase-js';
-import { readFileSync } from 'fs';
+import { config } from 'dotenv';
+import { existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Load environment variables
-const envPath = join(__dirname, '..', '.env.local');
-let supabaseUrl, supabaseServiceKey;
-
-try {
-  const envContent = readFileSync(envPath, 'utf-8');
-  const lines = envContent.split('\n');
-  
-  for (const line of lines) {
-    if (line.startsWith('VITE_SUPABASE_URL=')) {
-      supabaseUrl = line.split('=')[1].trim();
-    }
+const repoRoot = join(__dirname, '..', '..');
+for (const name of ['.env', '.env.local']) {
+  const p = join(repoRoot, name);
+  if (existsSync(p)) {
+    config({ path: p });
   }
-} catch (err) {
-  console.error('Could not read .env.local, using hardcoded values');
-  supabaseUrl = 'https://hvmyxyccfnkrbxqbhlnm.supabase.co';
+}
+const frontendEnv = join(repoRoot, 'apps', 'frontend', '.env.local');
+if (existsSync(frontendEnv)) {
+  config({ path: frontendEnv });
 }
 
-// Use service role key for admin operations
-supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseUrl =
+  process.env.VITE_SUPABASE_URL || 'https://hvmyxyccfnkrbxqbhlnm.supabase.co';
+if (!process.env.VITE_SUPABASE_URL) {
+  console.warn('VITE_SUPABASE_URL not set; using fallback project URL');
+}
+
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseServiceKey) {
   console.error('❌ Missing Supabase credentials');
-  console.error('   Make sure VITE_SUPABASE_URL exists in .env.local');
-  console.error('   And export SUPABASE_SERVICE_ROLE_KEY in your shell before running this script.');
+  console.error(
+    '   Set VITE_SUPABASE_URL in repo root or apps/frontend/.env.local; set SUPABASE_SERVICE_ROLE_KEY in repo root .env / .env.local or your shell.'
+  );
   process.exit(1);
 }
 

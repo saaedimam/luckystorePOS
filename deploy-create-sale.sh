@@ -1,1 +1,0 @@
-scripts/deploy/deploy-create-sale.sh

@@ -2,9 +2,12 @@
 # Import Shwapno products using the edge function
 # This imports products, then we'll add competitor prices separately
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+CSV_DIR="$REPO_ROOT/data/competitors/shwapno"
+
 ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNja3NjaGlleHp2eXN2ZHJhY3ZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0MDA3NjMsImV4cCI6MjA3ODk3Njc2M30.1htIKuXVNs9mtRSktS2cBk2QvAriXpYgipIYuVuI3T8"
 FUNCTION_URL="https://cckschiexzvysvdracvc.supabase.co/functions/v1/import-inventory"
-CSV_DIR="Docs/Competitors Price"
 
 echo "🚀 Importing Shwapno Products via Edge Function"
 echo ""
@@ -15,10 +18,12 @@ files=(
   "shwapno-beverage.csv"
   "shwapno-breakfast.csv"
   "shwapno-candy&chocolate.csv"
+  "shwapno-cookingneeds.csv"
   "shwapno-dairy.csv"
   "shwapno-eggs.csv"
   "shwapno-icecream.csv"
   "shwapno-products (1).csv"
+  "shwapno-sauces&pickles.csv"
   "shwapno-snacks.csv"
 )
 

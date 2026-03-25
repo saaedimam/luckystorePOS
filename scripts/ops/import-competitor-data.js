@@ -5,7 +5,7 @@
  * 1. Imports all products from Shwapno CSV files
  * 2. Stores competitor prices in competitor_prices table
  * 
- * Usage: node scripts/import-competitor-data.js
+ * Usage: node scripts/ops/import-competitor-data.js
  */
 
 import { createClient } from '@supabase/supabase-js';
@@ -17,12 +17,18 @@ import { config } from 'dotenv';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Load environment variables from .env file
-const envPath = join(__dirname, '..', '.env');
-if (existsSync(envPath)) {
-  config({ path: envPath });
-} else {
-  console.warn('⚠️  .env file not found. Please create it with SUPABASE_SERVICE_ROLE_KEY');
+// Load environment variables from repo root (.env then .env.local)
+const repoRoot = join(__dirname, '..', '..');
+for (const name of ['.env', '.env.local']) {
+  const envPath = join(repoRoot, name);
+  if (existsSync(envPath)) {
+    config({ path: envPath });
+  }
+}
+if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  console.warn(
+    '⚠️  SUPABASE_SERVICE_ROLE_KEY not set. Add it to .env or .env.local at the repo root.'
+  );
 }
 
 // Supabase configuration
@@ -32,7 +38,7 @@ const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (!SUPABASE_SERVICE_KEY) {
   console.error('❌ Error: SUPABASE_SERVICE_ROLE_KEY not found!');
   console.error('');
-  console.error('Please create a .env file in the project root with:');
+  console.error('Please create .env or .env.local at the repo root with:');
   console.error('SUPABASE_SERVICE_ROLE_KEY=your-full-service-role-key-here');
   console.error('');
   console.error('Get the key from: https://app.supabase.com/project/hvmyxyccfnkrbxqbhlnm/settings/api');
@@ -43,7 +49,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 const COMPETITOR_NAME = 'Shwapno';
 
 // CSV files directory
-const CSV_DIR = join(__dirname, '..', 'Docs', 'Competitors Price');
+const CSV_DIR = join(__dirname, '..', '..', 'data', 'competitors', 'shwapno');
 
 /**
  * Parse CSV file (handles quoted fields with commas)

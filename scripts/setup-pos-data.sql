@@ -1,1 +1,0 @@
-db/setup-pos-data.sql

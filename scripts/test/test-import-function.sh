@@ -19,8 +19,8 @@ FUNCTION_URL="${SUPABASE_URL}/functions/v1/import-inventory"
 if [ -z "$1" ]; then
     echo -e "${RED}❌ Error: No CSV file provided${NC}"
     echo ""
-    echo "Usage: ./test-import-function.sh <path-to-csv-file>"
-    echo "Example: ./test-import-function.sh test.csv"
+    echo "Usage: ./scripts/test/test-import-function.sh <path-to-csv-file>"
+    echo "Example: ./scripts/test/test-import-function.sh test.csv"
     echo ""
     exit 1
 fi

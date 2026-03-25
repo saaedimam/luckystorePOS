@@ -5,15 +5,7 @@ React + TypeScript + Vite application for the Lucky Store POS system.
 ## Project Structure
 
 ```
-frontend/
-├── docs/                    # Documentation files
-│   ├── ARCHITECTURE.md
-│   ├── AUTH-SETUP.md
-│   ├── DEBUG-*.md
-│   └── ...
-├── scripts/                 # SQL scripts and utilities
-│   ├── CREATE-PROFILE-*.sql
-│   └── FIX-RLS-POLICY.sql
+apps/frontend/
 ├── src/
 │   ├── components/         # React components
 │   │   ├── pos/           # POS-specific components
@@ -54,8 +46,8 @@ npm run preview
 
 ## Documentation
 
-- See `docs/` folder for setup guides, architecture documentation, and troubleshooting guides
-- SQL scripts for database setup are in `scripts/` folder
+- Monorepo docs live at the repo root: [`docs/`](../../docs/) (setup, import, POS, deployment).
+- Shared SQL snippets and ops scripts: [`scripts/`](../../scripts/) (especially `scripts/db/`).
 
 ## Tech Stack
 

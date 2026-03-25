@@ -1,1 +1,0 @@
-apps/scraper/scrape-shwapno.js

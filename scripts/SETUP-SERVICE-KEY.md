@@ -1,1 +1,0 @@
-docs/SETUP-SERVICE-KEY.md

@@ -6,5 +6,4 @@ Canonical app locations:
 - `apps/scraper/` - Scraper scripts
 - `apps/import-tools/` - Legacy and import-related tools
 
-Legacy compatibility symlinks may still exist at repo root (for example `frontend/`).
-Use `apps/*` paths for all new work.
+Use `apps/*` paths for all app code (see root `README.md` for full layout).

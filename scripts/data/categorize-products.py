@@ -5,7 +5,11 @@ Script to categorize products in the Shwapno CSV file logically
 
 import csv
 import re
+from pathlib import Path
 from typing import Dict, List
+
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+_DEFAULT_CSV = _REPO_ROOT / "data" / "competitors" / "shwapno" / "shwapno-products (1).csv"
 
 def categorize_product(name: str) -> str:
     """
@@ -167,8 +171,5 @@ def process_csv(input_file: str, output_file: str):
         print(f"  {cat}: {count}")
 
 if __name__ == "__main__":
-    input_file = "/Users/mac.alvi/Desktop/Projects/Lucky Store/Docs/Competitors Price/shwapno-products (1).csv"
-    output_file = "/Users/mac.alvi/Desktop/Projects/Lucky Store/Docs/Competitors Price/shwapno-products (1).csv"
-    
-    process_csv(input_file, output_file)
+    process_csv(str(_DEFAULT_CSV), str(_DEFAULT_CSV))
 

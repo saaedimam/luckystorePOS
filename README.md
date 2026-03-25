@@ -6,7 +6,12 @@ Lucky Store monorepo containing the POS frontend, scraper, and Supabase edge fun
 
 - `apps/frontend` - React + Vite POS frontend (Vercel target)
 - `apps/scraper` - scraping utilities
+- `apps/import-tools/legacy` - legacy single-file HTML import tool
+- `data/competitors/shwapno` - competitor CSV inputs for import scripts
+- `data/inventory` - sample inventory exports (reference)
+- `scripts/{deploy,test,ops,db,data}` - automation and one-off SQL
 - `supabase/functions` - Supabase Edge Functions
+- `docs/` - project documentation index ([docs/README.md](./docs/README.md))
 
 ## Local setup
 

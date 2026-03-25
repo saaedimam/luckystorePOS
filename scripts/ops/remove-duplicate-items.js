@@ -19,17 +19,22 @@ import { config } from 'dotenv';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Load environment variables
-const envPath = join(__dirname, '..', '.env');
-if (existsSync(envPath)) {
-  config({ path: envPath });
+// Load environment variables from repo root (.env then .env.local)
+const repoRoot = join(__dirname, '..', '..');
+for (const name of ['.env', '.env.local']) {
+  const envPath = join(repoRoot, name);
+  if (existsSync(envPath)) {
+    config({ path: envPath });
+  }
 }
 
 const SUPABASE_URL = 'https://hvmyxyccfnkrbxqbhlnm.supabase.co';
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!SUPABASE_SERVICE_KEY) {
-  console.error('❌ Error: SUPABASE_SERVICE_ROLE_KEY not found in .env file');
+  console.error(
+    '❌ Error: SUPABASE_SERVICE_ROLE_KEY not found in repo root .env or .env.local'
+  );
   process.exit(1);
 }
 

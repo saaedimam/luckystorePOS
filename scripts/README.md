@@ -7,7 +7,6 @@ Canonical script groups:
 - `scripts/ops/` - operational data scripts
 - `scripts/db/` - SQL setup/migration snippets
 - `scripts/data/` - data preparation helpers
-- `scripts/docs/` - script-related notes
+- `docs/runbooks/` - script/import runbooks (moved from `scripts/docs/`)
 
-Legacy script paths in `scripts/` are preserved as symlinks for compatibility.
-Prefer canonical subfolder paths for new docs and commands.
+Use the paths above directly (for example `node scripts/ops/import-competitor-data.js`).
