@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
-import { supabase } from '../services/supabase'
+import { isSupabaseConfigured, supabase, supabaseConfigErrorMessage } from '../services/supabase'
 import type {
   AuthUser as User,
   AuthSession as Session,
@@ -237,6 +237,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []) // Empty deps - only run once on mount
 
   const signIn = async (email: string, password: string) => {
+    if (!isSupabaseConfigured) {
+      return { error: new Error(supabaseConfigErrorMessage) }
+    }
+
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,

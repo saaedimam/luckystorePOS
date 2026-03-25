@@ -2,6 +2,9 @@ import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey)
+export const supabaseConfigErrorMessage =
+  'Missing Vercel environment variables: VITE_SUPABASE_URL and/or VITE_SUPABASE_ANON_KEY. Add them in Vercel Project Settings -> Environment Variables, then redeploy.'
 
 // Log environment variable status (only in dev)
 if (import.meta.env.DEV) {
@@ -12,12 +15,12 @@ if (import.meta.env.DEV) {
   })
 }
 
-if (!supabaseUrl || !supabaseAnonKey) {
+if (!isSupabaseConfigured) {
   console.error('❌ Missing Supabase environment variables:', {
     url: supabaseUrl ? 'present' : 'missing',
     key: supabaseAnonKey ? 'present' : 'missing'
   })
-  console.error('💡 Make sure you have a .env.local file with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY')
+  console.error(`💡 ${supabaseConfigErrorMessage}`)
 }
 
 // Create Supabase client with auth persistence
