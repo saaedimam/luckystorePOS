@@ -113,18 +113,14 @@ export function Items() {
     setPendingRealtimeRefresh(true)
   })
 
-  // Reset paging whenever filters/store scope changes
+  // Reset to page 1 when filters or store scope change (do not depend on `page` or any navigation resets to 1).
   useEffect(() => {
-    if (page === 1) return
-    const timer = window.setTimeout(() => setPage(1), 0)
-    return () => window.clearTimeout(timer)
-  }, [searchTerm, selectedCategory, activeFilter, currentStore?.id, page])
+    setPage(1)
+  }, [searchTerm, selectedCategory, activeFilter, currentStore?.id])
 
   useEffect(() => {
-    if (page === 1) return
-    const timer = window.setTimeout(() => setPage(1), 0)
-    return () => window.clearTimeout(timer)
-  }, [pageSize, page])
+    setPage(1)
+  }, [pageSize])
 
   useEffect(() => {
     localStorage.setItem('items-page-size', String(pageSize))
