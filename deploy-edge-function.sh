@@ -1,0 +1,1 @@
+scripts/deploy/deploy-edge-function.sh

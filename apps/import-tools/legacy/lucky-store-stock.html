@@ -1,0 +1,1869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky Store - Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 28px;
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-edit {
+            background: #4caf50;
+            color: white;
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .btn-edit:hover {
+            background: #45a049;
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: white;
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .btn-delete:hover {
+            background: #da190b;
+        }
+
+        .stock-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .stock-table th {
+            background: #f5f5f5;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .stock-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .stock-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .item-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .no-image {
+            width: 50px;
+            height: 50px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            color: #333;
+            font-size: 22px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #999;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn-save {
+            flex: 1;
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: #e0e0e0;
+            color: #555;
+        }
+
+        .btn-cancel:hover {
+            background: #d0d0d0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .nav-tab:hover {
+            color: #667eea;
+        }
+
+        /* Page Sections */
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* Billing Page Layout */
+        .billing-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            height: calc(100vh - 200px);
+            min-height: 600px;
+        }
+
+        .billing-section {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .billing-section h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 18px;
+        }
+
+        /* Section 1: Item Selection */
+        .item-selection-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .item-selection-inputs input {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .item-selection-inputs input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .suggestions-list {
+            position: absolute;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .suggestions-list.active {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .suggestion-item:hover,
+        .suggestion-item.selected {
+            background: #f0f0f0;
+        }
+
+        .search-name-wrapper {
+            position: relative;
+        }
+
+        .grid-container {
+            flex: 1;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            padding: 10px 0;
+        }
+
+        .category-card,
+        .item-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 120px;
+        }
+
+        .category-card:hover,
+        .item-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border-color: #667eea;
+        }
+
+        .item-card img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .item-card .item-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .item-card .item-name.large {
+            font-size: 18px;
+        }
+
+        .item-card .item-price {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .back-button {
+            margin-bottom: 15px;
+            padding: 8px 16px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .back-button:hover {
+            background: #d0d0d0;
+        }
+
+        /* Section 2: Bill */
+        .bill-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        .bill-table th {
+            background: #f5f5f5;
+            padding: 10px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .bill-table td {
+            padding: 10px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        .bill-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .editable-input {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .editable-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* Section 3: Payment */
+        .payment-summary {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .payment-row:last-child {
+            border-bottom: none;
+        }
+
+        .payment-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .payment-value {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .payment-value.total {
+            font-size: 18px;
+            color: #667eea;
+        }
+
+        .number-pad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .num-btn {
+            padding: 15px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .num-btn:hover {
+            background: #f0f0f0;
+            border-color: #667eea;
+        }
+
+        .num-btn.backspace {
+            grid-column: span 2;
+            background: #f44336;
+            color: white;
+            border-color: #f44336;
+        }
+
+        .num-btn.backspace:hover {
+            background: #da190b;
+        }
+
+        .btn-checkout {
+            width: 100%;
+            padding: 15px;
+            background: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-checkout:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        /* Print Styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .receipt-print, .receipt-print * {
+                visibility: visible;
+            }
+            .receipt-print {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+        }
+
+        .receipt-print {
+            display: none;
+            padding: 20px;
+            font-family: monospace;
+        }
+
+        .receipt-print.active {
+            display: block;
+        }
+
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px dashed #000;
+            padding-bottom: 15px;
+        }
+
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px dotted #ccc;
+        }
+
+        .receipt-total {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #000;
+        }
+
+        @media (max-width: 1200px) {
+            .billing-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: 100%;
+            }
+
+            .stock-table {
+                font-size: 12px;
+            }
+
+            .stock-table th,
+            .stock-table td {
+                padding: 10px;
+            }
+
+            .billing-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchPage('stock')">Stock Management</button>
+            <button class="nav-tab" onclick="switchPage('billing')">Billing</button>
+        </div>
+
+        <!-- Stock Management Page -->
+        <div id="stockPage" class="page-section active">
+            <div class="header">
+                <h1>🏪 Lucky Store - Stock Management</h1>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search items by name...">
+                    <span class="search-icon">🔍</span>
+                </div>
+                <button class="btn btn-primary" onclick="openModal()">+ Add New Item</button>
+                <button class="btn btn-primary" onclick="openExcelImportModal()" style="background: #4caf50;">📥 Import from Excel</button>
+            </div>
+
+            <table class="stock-table" id="stockTable">
+                <thead>
+                    <tr>
+                        <th scope="col">Image</th>
+                        <th scope="col">Barcode</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Cost</th>
+                        <th scope="col">Price (BDT)</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="stockTableBody">
+                </tbody>
+            </table>
+
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 7h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zM10 4h4v3h-4V4zm10 15H4V9h16v10z"/>
+                </svg>
+                <h3>No items found</h3>
+                <p>Add your first item to get started</p>
+            </div>
+        </div>
+
+        <!-- Billing Page -->
+        <div id="billingPage" class="page-section">
+            <div class="billing-container">
+                <!-- Section 1: Item Selection -->
+                <div class="billing-section">
+                    <h3>Item Selection</h3>
+                    <div class="item-selection-inputs">
+                        <input type="text" id="barcodeInput" placeholder="Scan/Enter Barcode" onkeypress="handleBarcodeEnter(event)">
+                        <div class="search-name-wrapper">
+                            <input type="text" id="searchNameInput" placeholder="Search by Name" oninput="handleNameSearchDebounced(event)" onkeydown="handleSuggestionNavigation(event)">
+                            <div id="suggestionsList" class="suggestions-list"></div>
+                        </div>
+                    </div>
+                    <button id="backToCategories" class="back-button" onclick="showCategories()" style="display: none;">← Back to Categories</button>
+                    <div id="gridContainer" class="grid-container"></div>
+                </div>
+
+                <!-- Section 2: Bill -->
+                <div class="billing-section">
+                    <h3>Bill</h3>
+                    <table class="bill-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Qty</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="billTableBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- Section 3: Payment -->
+                <div class="billing-section">
+                    <h3>Payment</h3>
+                    <div class="payment-summary">
+                        <div class="payment-row">
+                            <span class="payment-label">Subtotal:</span>
+                            <span class="payment-value" id="subtotal">৳0.00</span>
+                        </div>
+                        <div class="payment-row">
+                            <span class="payment-label">Bill Discount:</span>
+                            <input type="number" id="billDiscount" class="editable-input" value="0" step="0.01" oninput="updatePaymentSummary()" style="width: 100px; text-align: right;">
+                        </div>
+                        <div class="payment-row">
+                            <span class="payment-label">Total:</span>
+                            <span class="payment-value total" id="finalTotal">৳0.00</span>
+                        </div>
+                        <div class="payment-row">
+                            <span class="payment-label">Cash Payment:</span>
+                            <input type="number" id="cashPayment" class="editable-input" value="0" step="0.01" oninput="updatePaymentSummary()" style="width: 100px; text-align: right;">
+                        </div>
+                        <div class="payment-row">
+                            <span class="payment-label">Balance:</span>
+                            <span class="payment-value" id="balance">৳0.00</span>
+                        </div>
+                    </div>
+                    <div class="number-pad">
+                        <button class="num-btn" onclick="numPadInput('1')">1</button>
+                        <button class="num-btn" onclick="numPadInput('2')">2</button>
+                        <button class="num-btn" onclick="numPadInput('3')">3</button>
+                        <button class="num-btn" onclick="numPadInput('4')">4</button>
+                        <button class="num-btn" onclick="numPadInput('5')">5</button>
+                        <button class="num-btn" onclick="numPadInput('6')">6</button>
+                        <button class="num-btn" onclick="numPadInput('7')">7</button>
+                        <button class="num-btn" onclick="numPadInput('8')">8</button>
+                        <button class="num-btn" onclick="numPadInput('9')">9</button>
+                        <button class="num-btn" onclick="numPadInput('.')">.</button>
+                        <button class="num-btn" onclick="numPadInput('0')">0</button>
+                        <button class="num-btn backspace" onclick="numPadBackspace()">⌫</button>
+                    </div>
+                    <button class="btn-checkout" onclick="checkout()">Checkout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Item Modal -->
+    <div class="modal" id="itemModal">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Item</h2>
+                <button class="close-btn" onclick="closeModal()" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm">
+                    <input type="hidden" id="itemId">
+                    
+                    <div class="form-group">
+                        <label for="barcode">Barcode *</label>
+                        <input type="text" id="barcode" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name">Item Name *</label>
+                        <input type="text" id="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Category *</label>
+                        <input type="text" id="category" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cost">Cost *</label>
+                        <input type="number" id="cost" step="0.01" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="price">Price (BDT) *</label>
+                        <input type="number" id="price" step="0.01" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="image">Item Image (Optional)</label>
+                        <input type="file" id="image" accept="image/*">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-save">Save Item</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Excel Import Modal -->
+    <div class="modal" id="excelImportModal">
+        <div class="modal-content" style="max-width: 700px;" role="dialog" aria-modal="true" aria-labelledby="excelImportTitle">
+            <div class="modal-header">
+                <h2 id="excelImportTitle">Import from Excel/CSV</h2>
+                <button class="close-btn" onclick="closeExcelImportModal()" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="excelFile">Select Excel or CSV File (.xlsx, .xls, .csv)</label>
+                    <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" onchange="handleExcelFile(event)">
+                </div>
+                <div style="margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 8px;">
+                    <strong>Expected File Format:</strong>
+                    <ul style="margin: 10px 0 0 20px; line-height: 1.8;">
+                        <li>Column A: Barcode</li>
+                        <li>Column B: Name</li>
+                        <li>Column C: Category</li>
+                        <li>Column D: Cost</li>
+                        <li>Column E: Price</li>
+                        <li>Column F: Image URL (Optional)</li>
+                    </ul>
+                    <p style="margin-top: 10px; font-size: 12px; color: #666;">First row should contain headers. Data starts from row 2.</p>
+                </div>
+                <div id="excelPreview" style="max-height: 300px; overflow-y: auto; margin: 20px 0; display: none;">
+                    <h4 style="margin-bottom: 10px;">Preview (First 10 rows):</h4>
+                    <table class="stock-table" style="font-size: 12px;">
+                        <thead id="excelPreviewHead"></thead>
+                        <tbody id="excelPreviewBody"></tbody>
+                    </table>
+                </div>
+                <div id="excelImportStatus" style="margin: 15px 0; padding: 10px; border-radius: 8px; display: none;"></div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-cancel" onclick="closeExcelImportModal()">Cancel</button>
+                    <button type="button" class="btn btn-save" id="importExcelBtn" onclick="importExcelData()" disabled>Import Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Print -->
+    <div id="receiptPrint" class="receipt-print">
+        <div class="receipt-header">
+            <h2>LUCKY STORE</h2>
+            <p>Receipt #<span id="receiptNumber"></span></p>
+            <p id="receiptDate"></p>
+        </div>
+        <div id="receiptItems"></div>
+        <div class="receipt-total">
+            <div class="receipt-item">
+                <span>Subtotal:</span>
+                <span id="receiptSubtotal"></span>
+            </div>
+            <div class="receipt-item">
+                <span>Discount:</span>
+                <span id="receiptDiscount"></span>
+            </div>
+            <div class="receipt-item" style="font-weight: bold; font-size: 16px;">
+                <span>Total:</span>
+                <span id="receiptTotal"></span>
+            </div>
+            <div class="receipt-item">
+                <span>Cash Paid:</span>
+                <span id="receiptCash"></span>
+            </div>
+            <div class="receipt-item">
+                <span>Change:</span>
+                <span id="receiptChange"></span>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px dashed #000;">
+            <p>Thank you for your purchase!</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+    <script>
+        let db;
+        let editingItemId = null;
+        
+        // Billing variables
+        let currentBill = [];
+        let currentCategory = null;
+        let suggestions = [];
+        let selectedSuggestionIndex = -1;
+        let excelData = null;
+
+        // Initialize IndexedDB
+        function initDB() {
+            const request = indexedDB.open('LuckyStoreDB', 2);
+
+            request.onerror = () => {
+                console.error('Database failed to open');
+            };
+
+            request.onsuccess = () => {
+                db = request.result;
+                loadItems();
+                if (document.getElementById('billingPage').classList.contains('active')) {
+                    loadCategories();
+                }
+            };
+
+            request.onupgradeneeded = (e) => {
+                db = e.target.result;
+                if (!db.objectStoreNames.contains('items')) {
+                    const objectStore = db.createObjectStore('items', { keyPath: 'id', autoIncrement: true });
+                    objectStore.createIndex('name', 'name', { unique: false });
+                    // Note: barcode index is not unique to allow duplicates, but we check manually
+                    objectStore.createIndex('barcode', 'barcode', { unique: false });
+                }
+                if (!db.objectStoreNames.contains('sales')) {
+                    const salesStore = db.createObjectStore('sales', { keyPath: 'id', autoIncrement: true });
+                    salesStore.createIndex('date', 'date', { unique: false });
+                    salesStore.createIndex('receiptNumber', 'receiptNumber', { unique: false });
+                }
+            };
+        }
+
+        // Load all items
+        function loadItems(searchTerm = '') {
+            const transaction = db.transaction(['items'], 'readonly');
+            const objectStore = transaction.objectStore('items');
+            const request = objectStore.getAll();
+
+            request.onsuccess = () => {
+                let items = request.result;
+                
+                if (searchTerm) {
+                    items = items.filter(item => 
+                        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+                    );
+                }
+
+                displayItems(items);
+            };
+        }
+
+        // Display items in table
+        function displayItems(items) {
+            const tbody = document.getElementById('stockTableBody');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (items.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            tbody.innerHTML = items.map(item => {
+                const escapedName = escapeHtml(item.name);
+                const escapedCategory = escapeHtml(item.category || '');
+                const escapedBarcode = escapeHtml(item.barcode || '');
+                const imageSrc = item.image ? (item.image instanceof Blob ? URL.createObjectURL(item.image) : item.image) : '';
+                return `
+                <tr>
+                    <td>
+                        ${imageSrc 
+                            ? `<img src="${imageSrc}" alt="${escapedName}" class="item-image">` 
+                            : '<div class="no-image">No Image</div>'}
+                    </td>
+                    <td>${escapedBarcode}</td>
+                    <td>${escapedName}</td>
+                    <td>${escapedCategory}</td>
+                    <td>৳${(item.cost || 0).toFixed(2)}</td>
+                    <td>৳${(item.price || 0).toFixed(2)}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn btn-edit" onclick="editItem(${item.id})" aria-label="Edit item: ${escapedName}">Edit</button>
+                            <button class="btn btn-delete" onclick="deleteItem(${item.id})" aria-label="Delete item: ${escapedName}">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            }).join('');
+        }
+
+        // Open modal
+        function openModal() {
+            editingItemId = null;
+            document.getElementById('modalTitle').textContent = 'Add New Item';
+            document.getElementById('itemForm').reset();
+            document.getElementById('itemId').value = '';
+            document.getElementById('itemModal').classList.add('active');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('itemModal').classList.remove('active');
+            document.getElementById('itemForm').reset();
+            editingItemId = null;
+        }
+
+        // HTML escape helper for XSS protection
+        function escapeHtml(s = '') {
+            return String(s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        }
+
+        // Save item
+        document.getElementById('itemForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const imageFile = document.getElementById('image').files[0];
+            let imageData = null;
+
+            if (imageFile) {
+                // Store as Blob instead of Base64 DataURL
+                imageData = imageFile.slice(0, imageFile.size, imageFile.type);
+            }
+
+            const item = {
+                barcode: document.getElementById('barcode').value.trim(),
+                name: document.getElementById('name').value.trim(),
+                category: document.getElementById('category').value.trim(),
+                cost: parseFloat(document.getElementById('cost').value),
+                price: parseFloat(document.getElementById('price').value),
+                image: imageData
+            };
+
+            const transaction = db.transaction(['items'], 'readwrite');
+            const objectStore = transaction.objectStore('items');
+
+            // Check for barcode uniqueness (only when adding new item)
+            if (!editingItemId) {
+                const index = objectStore.index('barcode');
+                const barcodeCheck = index.get(item.barcode);
+                
+                barcodeCheck.onsuccess = () => {
+                    if (barcodeCheck.result) {
+                        alert('Barcode already exists. Please use edit to update the existing item.');
+                        return;
+                    }
+                    // Barcode is unique, proceed with add
+                    objectStore.add(item);
+                };
+                
+                barcodeCheck.onerror = () => {
+                    // Index might not exist or error, proceed anyway
+                    objectStore.add(item);
+                };
+            } else {
+                // Editing existing item
+                item.id = editingItemId;
+                // Keep existing image if no new image uploaded
+                if (!imageData) {
+                    const getRequest = objectStore.get(editingItemId);
+                    getRequest.onsuccess = () => {
+                        item.image = getRequest.result.image;
+                        objectStore.put(item);
+                    };
+                } else {
+                    objectStore.put(item);
+                }
+            }
+
+            transaction.oncomplete = () => {
+                closeModal();
+                loadItems();
+            };
+        });
+
+        // Edit item
+        function editItem(id) {
+            const transaction = db.transaction(['items'], 'readonly');
+            const objectStore = transaction.objectStore('items');
+            const request = objectStore.get(id);
+
+            request.onsuccess = () => {
+                const item = request.result;
+                editingItemId = id;
+                
+                document.getElementById('modalTitle').textContent = 'Edit Item';
+                document.getElementById('itemId').value = id;
+                document.getElementById('barcode').value = item.barcode;
+                document.getElementById('name').value = item.name;
+                document.getElementById('category').value = item.category;
+                document.getElementById('cost').value = item.cost;
+                document.getElementById('price').value = item.price;
+                
+                document.getElementById('itemModal').classList.add('active');
+            };
+        }
+
+        // Delete item
+        function deleteItem(id) {
+            if (!confirm('Are you sure you want to delete this item?')) {
+                return;
+            }
+
+            const transaction = db.transaction(['items'], 'readwrite');
+            const objectStore = transaction.objectStore('items');
+            objectStore.delete(id);
+
+            transaction.oncomplete = () => {
+                loadItems();
+            };
+        }
+
+        // Debounce helper
+        function debounce(fn, wait = 300) {
+            let t;
+            return (...args) => {
+                clearTimeout(t);
+                t = setTimeout(() => fn(...args), wait);
+            };
+        }
+
+        // Search functionality
+        const loadItemsDebounced = debounce((searchTerm) => {
+            loadItems(searchTerm);
+        }, 300);
+        
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            loadItemsDebounced(e.target.value);
+        });
+
+        // Page Navigation
+        function switchPage(page) {
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.page-section').forEach(section => section.classList.remove('active'));
+            
+            if (page === 'stock') {
+                document.querySelector('.nav-tab:first-child').classList.add('active');
+                document.getElementById('stockPage').classList.add('active');
+            } else {
+                document.querySelector('.nav-tab:last-child').classList.add('active');
+                document.getElementById('billingPage').classList.add('active');
+                loadCategories();
+            }
+        }
+
+        // Billing Functions - Section 1
+        function loadCategories() {
+            const transaction = db.transaction(['items'], 'readonly');
+            const objectStore = transaction.objectStore('items');
+            const request = objectStore.getAll();
+
+            request.onsuccess = () => {
+                const items = request.result;
+                const categories = [...new Set(items.map(item => item.category))].filter(c => c);
+                displayCategories(categories);
+            };
+        }
+
+        function displayCategories(categories) {
+            const container = document.getElementById('gridContainer');
+            const backButton = document.getElementById('backToCategories');
+            backButton.style.display = 'none';
+            currentCategory = null;
+
+            if (categories.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999;">No categories found</p>';
+                return;
+            }
+
+            container.innerHTML = categories.map(category => {
+                const escapedCategory = escapeHtml(category);
+                return `
+                <div class="category-card" onclick="showCategoryItems('${escapedCategory.replace(/'/g, "\\'")}')">
+                    <div style="font-size: 18px; font-weight: 600; color: #333;">${escapedCategory}</div>
+                </div>
+            `;
+            }).join('');
+        }
+
+        function showCategoryItems(category) {
+            currentCategory = category;
+            const transaction = db.transaction(['items'], 'readonly');
+            const objectStore = transaction.objectStore('items');
+            const request = objectStore.getAll();
+
+            request.onsuccess = () => {
+                const items = request.result.filter(item => item.category === category);
+                displayCategoryItems(category, items);
+                document.getElementById('backToCategories').style.display = 'block';
+            };
+        }
+
+        function showCategories() {
+            loadCategories();
+        }
+
+        function displayCategoryItems(category, items) {
+            const container = document.getElementById('gridContainer');
+            
+            if (items.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999;">No items in this category</p>';
+                return;
+            }
+
+            container.innerHTML = items.map(item => {
+                const escapedName = escapeHtml(item.name);
+                const imageSrc = item.image ? (item.image instanceof Blob ? URL.createObjectURL(item.image) : item.image) : '';
+                return `
+                <div class="item-card" onclick="addItemToBill(${item.id})">
+                    ${imageSrc ? `<img src="${imageSrc}" alt="${escapedName}">` : ''}
+                    <div class="item-name ${!imageSrc ? 'large' : ''}">${escapedName}</div>
+                    <div class="item-price">৳${(item.price || 0).toFixed(2)}</div>
+                </div>
+            `;
+            }).join('');
+        }
+
+        function handleBarcodeEnter(event) {
+            if (event.key === 'Enter') {
+                const barcode = event.target.value.trim();
+                if (barcode) {
+                    addItemByBarcode(barcode);
+                    event.target.value = '';
+                }
+            }
+        }
+
+        function addItemByBarcode(barcode) {
+            const transaction = db.transaction(['items'], 'readonly');
+            const objectStore = transaction.objectStore('items');
+            const index = objectStore.index('barcode');
+            const request = index.getAll(barcode);
+
+            request.onsuccess = () => {
+                const items = request.result;
+                if (items.length > 0) {
+                    addItemToBill(items[0].id);
+                } else {
+                    alert('Item not found with barcode: ' + barcode);
+                }
+            };
+        }
+
+        function handleNameSearch(event) {
+            const searchTerm = event.target.value.trim();
+            const suggestionsList = document.getElementById('suggestionsList');
+            
+            if (searchTerm.length < 2) {
+                suggestionsList.classList.remove('active');
+                suggestions = [];
+                return;
+            }
+
+            // Use indexed query with cursor for better performance
+            const transaction = db.transaction(['items'], 'readonly');
+            const objectStore = transaction.objectStore('items');
+            const index = objectStore.index('name');
+            const lowerSearchTerm = searchTerm.toLowerCase();
+            const suggestionsFound = [];
+            
+            // Use cursor to find matches (more efficient than getAll)
+            const request = index.openCursor();
+            request.onsuccess = (e) => {
+                const cursor = e.target.result;
+                if (cursor && suggestionsFound.length < 10) {
+                    const item = cursor.value;
+                    if (item.name.toLowerCase().includes(lowerSearchTerm)) {
+                        suggestionsFound.push(item);
+                    }
+                    cursor.continue();
+                } else {
+                    suggestions = suggestionsFound;
+                    if (suggestions.length > 0) {
+                        displaySuggestions();
+                    } else {
+                        suggestionsList.classList.remove('active');
+                    }
+                }
+            };
+        }
+        
+        // Debounced version for handleNameSearch
+        const handleNameSearchDebounced = debounce(handleNameSearch, 300);
+
+        function displaySuggestions() {
+            const suggestionsList = document.getElementById('suggestionsList');
+            suggestionsList.innerHTML = suggestions.map((item, index) => {
+                const escapedName = escapeHtml(item.name);
+                return `
+                <div class="suggestion-item ${index === selectedSuggestionIndex ? 'selected' : ''}" 
+                     onclick="selectSuggestion(${index})" 
+                     data-index="${index}">
+                    ${escapedName} - ৳${(item.price || 0).toFixed(2)}
+                </div>
+            `;
+            }).join('');
+            suggestionsList.classList.add('active');
+        }
+
+        function handleSuggestionNavigation(event) {
+            const suggestionsList = document.getElementById('suggestionsList');
+            if (!suggestionsList.classList.contains('active')) return;
+
+            if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                selectedSuggestionIndex = Math.min(selectedSuggestionIndex + 1, suggestions.length - 1);
+                displaySuggestions();
+                const selected = suggestionsList.querySelector(`[data-index="${selectedSuggestionIndex}"]`);
+                if (selected) selected.scrollIntoView({ block: 'nearest' });
+            } else if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                selectedSuggestionIndex = Math.max(selectedSuggestionIndex - 1, -1);
+                displaySuggestions();
+            } else if (event.key === 'Enter' && selectedSuggestionIndex >= 0) {
+                event.preventDefault();
+                selectSuggestion(selectedSuggestionIndex);
+            } else if (event.key === 'Escape') {
+                suggestionsList.classList.remove('active');
+                selectedSuggestionIndex = -1;
+            }
+        }
+
+        function selectSuggestion(index) {
+            if (suggestions[index]) {
+                addItemToBill(suggestions[index].id);
+                document.getElementById('searchNameInput').value = '';
+                document.getElementById('suggestionsList').classList.remove('active');
+                suggestions = [];
+                selectedSuggestionIndex = -1;
+            }
+        }
+
+        function addItemToBill(itemId) {
+            const transaction = db.transaction(['items'], 'readonly');
+            const objectStore = transaction.objectStore('items');
+            const request = objectStore.get(itemId);
+
+            request.onsuccess = () => {
+                const item = request.result;
+                if (!item) return;
+
+                const existingItemIndex = currentBill.findIndex(b => b.id === item.id);
+                if (existingItemIndex >= 0) {
+                    currentBill[existingItemIndex].quantity += 1;
+                } else {
+                    currentBill.push({
+                        id: item.id,
+                        barcode: item.barcode,
+                        name: item.name,
+                        price: item.price,
+                        quantity: 1
+                    });
+                }
+                updateBillDisplay();
+                focusLastQuantity();
+            };
+        }
+
+        function updateBillDisplay() {
+            const tbody = document.getElementById('billTableBody');
+            if (currentBill.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">No items in bill</td></tr>';
+                updatePaymentSummary();
+                return;
+            }
+
+            tbody.innerHTML = currentBill.map((item, index) => {
+                const escapedName = escapeHtml(item.name);
+                return `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${escapedName}</td>
+                    <td>
+                        <input type="number" class="editable-input" value="${(item.price || 0).toFixed(2)}" 
+                               step="0.01" onchange="updateItemPrice(${index}, this.value)" 
+                               onkeypress="if(event.key==='Enter') this.blur()">
+                    </td>
+                    <td>
+                        <input type="number" class="editable-input" value="${item.quantity}" 
+                               min="1" onchange="updateItemQuantity(${index}, this.value)" 
+                               onkeypress="if(event.key==='Enter') {this.blur(); document.getElementById('barcodeInput').focus();}">
+                    </td>
+                    <td>৳${((item.price || 0) * item.quantity).toFixed(2)}</td>
+                    <td>
+                        <button class="btn btn-delete" onclick="removeItemFromBill(${index})" style="padding: 5px 10px; font-size: 12px;" aria-label="Remove ${escapedName} from bill">Delete</button>
+                    </td>
+                </tr>
+            `;
+            }).join('');
+            updatePaymentSummary();
+        }
+
+        function updateItemPrice(index, newPrice) {
+            if (index >= 0 && index < currentBill.length) {
+                currentBill[index].price = parseFloat(newPrice) || 0;
+                updateBillDisplay();
+            }
+        }
+
+        function updateItemQuantity(index, newQuantity) {
+            if (index >= 0 && index < currentBill.length) {
+                const qty = parseInt(newQuantity) || 1;
+                if (qty <= 0) {
+                    removeItemFromBill(index);
+                } else {
+                    currentBill[index].quantity = qty;
+                    updateBillDisplay();
+                }
+            }
+        }
+
+        function removeItemFromBill(index) {
+            if (index >= 0 && index < currentBill.length) {
+                currentBill.splice(index, 1);
+                updateBillDisplay();
+            }
+        }
+
+        function focusLastQuantity() {
+            setTimeout(() => {
+                const inputs = document.querySelectorAll('#billTableBody .editable-input');
+                if (inputs.length > 0) {
+                    const quantityInputs = Array.from(inputs).filter((input, idx) => idx % 2 === 1);
+                    if (quantityInputs.length > 0) {
+                        quantityInputs[quantityInputs.length - 1].focus();
+                        quantityInputs[quantityInputs.length - 1].select();
+                    }
+                }
+            }, 100);
+        }
+
+        // Payment Functions - Section 3
+        function updatePaymentSummary() {
+            const subtotal = currentBill.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const discount = parseFloat(document.getElementById('billDiscount').value) || 0;
+            const total = subtotal - discount;
+            const cash = parseFloat(document.getElementById('cashPayment').value) || 0;
+            const balance = cash - total;
+
+            document.getElementById('subtotal').textContent = `৳${subtotal.toFixed(2)}`;
+            document.getElementById('finalTotal').textContent = `৳${total.toFixed(2)}`;
+            document.getElementById('balance').textContent = `৳${balance.toFixed(2)}`;
+        }
+
+        function numPadInput(value) {
+            const activeElement = document.activeElement;
+            if (activeElement && (activeElement.classList.contains('editable-input') || activeElement.id === 'billDiscount' || activeElement.id === 'cashPayment')) {
+                if (value === '.') {
+                    if (!activeElement.value.includes('.')) {
+                        activeElement.value += value;
+                    }
+                } else {
+                    activeElement.value = activeElement.value === '0' ? value : activeElement.value + value;
+                }
+                activeElement.dispatchEvent(new Event('input'));
+                activeElement.focus();
+            }
+        }
+
+        function numPadBackspace() {
+            const activeElement = document.activeElement;
+            if (activeElement && (activeElement.classList.contains('editable-input') || activeElement.id === 'billDiscount' || activeElement.id === 'cashPayment')) {
+                activeElement.value = activeElement.value.slice(0, -1) || '0';
+                activeElement.dispatchEvent(new Event('input'));
+                activeElement.focus();
+            }
+        }
+
+        function checkout() {
+            const total = parseFloat(document.getElementById('finalTotal').textContent.replace('৳', '')) || 0;
+            const cash = parseFloat(document.getElementById('cashPayment').value) || 0;
+
+            if (currentBill.length === 0) {
+                alert('Bill is empty!');
+                return;
+            }
+
+            if (cash < total) {
+                alert('Cash payment is less than total amount!');
+                return;
+            }
+
+            const receiptNumber = 'R' + Date.now();
+            const date = new Date();
+            const discount = parseFloat(document.getElementById('billDiscount').value) || 0;
+            const balance = cash - total;
+
+            const saleData = {
+                receiptNumber: receiptNumber,
+                date: date.toISOString(),
+                items: currentBill.map(item => ({
+                    barcode: item.barcode,
+                    name: item.name,
+                    quantity: item.quantity,
+                    price: item.price,
+                    total: item.price * item.quantity
+                })),
+                subtotal: currentBill.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                discount: discount,
+                total: total,
+                cashPaid: cash,
+                change: balance
+            };
+
+            // Save to IndexedDB
+            const transaction = db.transaction(['sales'], 'readwrite');
+            const objectStore = transaction.objectStore('sales');
+            objectStore.add(saleData);
+
+            transaction.oncomplete = () => {
+                printReceipt(receiptNumber, date, saleData);
+                resetBilling();
+            };
+        }
+
+        function printReceipt(receiptNumber, date, saleData) {
+            document.getElementById('receiptNumber').textContent = receiptNumber;
+            document.getElementById('receiptDate').textContent = date.toLocaleString();
+            
+            const receiptItems = document.getElementById('receiptItems');
+            receiptItems.innerHTML = saleData.items.map(item => {
+                const escapedName = escapeHtml(item.name);
+                const escapedBarcode = escapeHtml(item.barcode || '');
+                return `
+                <div class="receipt-item">
+                    <div>
+                        <div style="font-weight: bold;">${escapedName}</div>
+                        <div style="font-size: 12px; color: #666;">Barcode: ${escapedBarcode} | Qty: ${item.quantity} x ৳${(item.price || 0).toFixed(2)}</div>
+                    </div>
+                    <div style="font-weight: bold;">৳${(item.total || 0).toFixed(2)}</div>
+                </div>
+            `;
+            }).join('');
+
+            document.getElementById('receiptSubtotal').textContent = `৳${saleData.subtotal.toFixed(2)}`;
+            document.getElementById('receiptDiscount').textContent = `৳${saleData.discount.toFixed(2)}`;
+            document.getElementById('receiptTotal').textContent = `৳${saleData.total.toFixed(2)}`;
+            document.getElementById('receiptCash').textContent = `৳${saleData.cashPaid.toFixed(2)}`;
+            document.getElementById('receiptChange').textContent = `৳${saleData.change.toFixed(2)}`;
+
+            const receiptPrint = document.getElementById('receiptPrint');
+            receiptPrint.classList.add('active');
+            
+            setTimeout(() => {
+                window.print();
+                receiptPrint.classList.remove('active');
+            }, 100);
+        }
+
+        function resetBilling() {
+            currentBill = [];
+            document.getElementById('billDiscount').value = '0';
+            document.getElementById('cashPayment').value = '0';
+            updateBillDisplay();
+            document.getElementById('barcodeInput').focus();
+        }
+
+        // Excel Import Functions
+        function openExcelImportModal() {
+            document.getElementById('excelImportModal').classList.add('active');
+            document.getElementById('excelFile').value = '';
+            document.getElementById('excelPreview').style.display = 'none';
+            document.getElementById('excelImportStatus').style.display = 'none';
+            document.getElementById('importExcelBtn').disabled = true;
+            excelData = null;
+        }
+
+        function closeExcelImportModal() {
+            document.getElementById('excelImportModal').classList.remove('active');
+        }
+
+        function handleExcelFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const extension = file.name.split('.').pop().toLowerCase();
+
+            if (extension === 'csv') {
+                parseCSVFile(file);
+            } else {
+                parseExcelFile(file);
+            }
+        }
+
+        function parseExcelFile(file) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+                    if (rows.length < 2) {
+                        showExcelStatus('Error: Excel sheet must have header + rows', 'error');
+                        return;
+                    }
+
+                    excelData = rows.slice(1).map(row => ({
+                        barcode: String(row[0] || '').trim(),
+                        name: String(row[1] || '').trim(),
+                        category: String(row[2] || '').trim(),
+                        cost: parseFloat(row[3]) || 0,
+                        price: parseFloat(row[4]) || 0,
+                        image: row[5] ? String(row[5]).trim() : null
+                    })).filter(item => item.name && item.name.length > 0);
+
+                    if (excelData.length === 0) {
+                        showExcelStatus('Error: No valid items in Excel', 'error');
+                        return;
+                    }
+
+                    showExcelPreview(excelData);
+                    showExcelStatus(`Loaded ${excelData.length} rows from Excel`, 'success');
+                    document.getElementById('importExcelBtn').disabled = false;
+
+                } catch (err) {
+                    showExcelStatus('Excel Read Error: ' + err.message, 'error');
+                }
+            };
+
+            reader.readAsArrayBuffer(file);
+        }
+
+        function parseCSVFile(file) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                try {
+                    const text = e.target.result;
+                    // Handle both Windows (\r\n) and Unix (\n) line endings
+                    const rows = text.trim().split(/\r?\n/).map(r => {
+                        // Simple CSV parsing - split by comma, but handle quoted fields
+                        const result = [];
+                        let current = '';
+                        let inQuotes = false;
+                        
+                        for (let i = 0; i < r.length; i++) {
+                            const char = r[i];
+                            
+                            if (char === '"') {
+                                inQuotes = !inQuotes;
+                            } else if (char === ',' && !inQuotes) {
+                                result.push(current.trim());
+                                current = '';
+                            } else {
+                                current += char;
+                            }
+                        }
+                        result.push(current.trim()); // Push last field
+                        return result;
+                    });
+
+                    if (rows.length < 2) {
+                        showExcelStatus('Error: CSV must have header row + data rows', 'error');
+                        return;
+                    }
+
+                    const jsonData = rows.slice(1).map((row, index) => ({
+                        barcode: (row[0] || '').trim(),
+                        name: (row[1] || '').trim(),
+                        category: (row[2] || '').trim(),
+                        cost: parseFloat(row[3]) || 0,
+                        price: parseFloat(row[4]) || 0,
+                        image: row[5] ? row[5].trim() : null
+                    })).filter(item => item.name && item.name.length > 0);
+
+                    if (jsonData.length === 0) {
+                        showExcelStatus('Error: No valid rows found in CSV', 'error');
+                        return;
+                    }
+
+                    excelData = jsonData;
+
+                    showExcelPreview(excelData);
+                    showExcelStatus(`Loaded ${excelData.length} items from CSV`, 'success');
+                    document.getElementById('importExcelBtn').disabled = false;
+
+                } catch (err) {
+                    showExcelStatus('CSV Read Error: ' + err.message, 'error');
+                }
+            };
+
+            reader.readAsText(file);
+        }
+
+        function showExcelPreview(data) {
+            const preview = document.getElementById('excelPreview');
+            const previewHead = document.getElementById('excelPreviewHead');
+            const previewBody = document.getElementById('excelPreviewBody');
+
+            previewHead.innerHTML = '<tr><th>Barcode</th><th>Name</th><th>Category</th><th>Cost</th><th>Price</th></tr>';
+            previewBody.innerHTML = data.slice(0, 10).map(item => {
+                const escapedBarcode = escapeHtml(item.barcode || '');
+                const escapedName = escapeHtml(item.name || '');
+                const escapedCategory = escapeHtml(item.category || '');
+                return `
+                <tr>
+                    <td>${escapedBarcode}</td>
+                    <td>${escapedName}</td>
+                    <td>${escapedCategory}</td>
+                    <td>৳${(item.cost || 0).toFixed(2)}</td>
+                    <td>৳${(item.price || 0).toFixed(2)}</td>
+                </tr>
+            `;
+            }).join('');
+
+            preview.style.display = 'block';
+        }
+
+        function showExcelStatus(message, type) {
+            const statusDiv = document.getElementById('excelImportStatus');
+            statusDiv.style.display = 'block';
+            statusDiv.style.background = type === 'error' ? '#ffebee' : '#e8f5e9';
+            statusDiv.style.color = type === 'error' ? '#c62828' : '#2e7d32';
+            statusDiv.innerHTML = message; // Use innerHTML to support <br> tags in error messages
+        }
+
+        function importExcelData() {
+            if (!excelData || excelData.length === 0) {
+                showExcelStatus('No data to import', 'error');
+                return;
+            }
+
+            const transaction = db.transaction(['items'], 'readwrite');
+            const objectStore = transaction.objectStore('items');
+            const barcodeIndex = objectStore.index('barcode');
+            let successCount = 0;
+            let errorCount = 0;
+            let skippedCount = 0;
+            const errors = [];
+
+            // Process items sequentially to check for duplicates
+            function processItem(index) {
+                if (index >= excelData.length) {
+                    let message = `Import complete! ${successCount} items imported`;
+                    if (skippedCount > 0) message += `, ${skippedCount} skipped (duplicates)`;
+                    if (errorCount > 0) message += `, ${errorCount} errors`;
+                    
+                    // Show detailed errors if any
+                    if (errors.length > 0) {
+                        const errorDetails = errors.slice(0, 10).join('<br>');
+                        const errorMsg = errors.length > 10 ? errorDetails + '<br>... and ' + (errors.length - 10) + ' more' : errorDetails;
+                        message += '<br><br>Details:<br>' + errorMsg;
+                    }
+                    
+                    showExcelStatus(message, errorCount > 0 ? 'error' : (skippedCount > 0 ? 'error' : 'success'));
+                    setTimeout(() => {
+                        closeExcelImportModal();
+                        loadItems();
+                    }, 3000);
+                    return;
+                }
+
+                const item = excelData[index];
+                
+                // Check for existing barcode
+                const barcodeCheck = barcodeIndex.get(item.barcode);
+                barcodeCheck.onsuccess = () => {
+                    if (barcodeCheck.result) {
+                        // Barcode exists - skip or update? For now, skip and count as skipped
+                        skippedCount++;
+                        errors.push(`Row ${index + 2}: Barcode "${item.barcode}" already exists - skipped`);
+                        processItem(index + 1);
+                    } else {
+                        // Use put instead of add to handle potential duplicates gracefully
+                        const request = objectStore.put(item);
+                        request.onsuccess = () => {
+                            successCount++;
+                            processItem(index + 1);
+                        };
+                        request.onerror = () => {
+                            errorCount++;
+                            errors.push(`Row ${index + 2}: ${request.error?.message || 'Unknown error'}`);
+                            processItem(index + 1);
+                        };
+                    }
+                };
+                barcodeCheck.onerror = () => {
+                    // Index error, try to add anyway
+                    const request = objectStore.put(item);
+                    request.onsuccess = () => {
+                        successCount++;
+                        processItem(index + 1);
+                    };
+                    request.onerror = () => {
+                        errorCount++;
+                        errors.push(`Row ${index + 2}: ${request.error?.message || 'Unknown error'}`);
+                        processItem(index + 1);
+                    };
+                };
+            }
+
+            processItem(0);
+        }
+
+        // Close modal on outside click
+        document.getElementById('itemModal').addEventListener('click', (e) => {
+            if (e.target.id === 'itemModal') {
+                closeModal();
+            }
+        });
+
+        document.getElementById('excelImportModal').addEventListener('click', (e) => {
+            if (e.target.id === 'excelImportModal') {
+                closeExcelImportModal();
+            }
+        });
+
+        // Close modals on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (document.getElementById('itemModal').classList.contains('active')) {
+                    closeModal();
+                }
+                if (document.getElementById('excelImportModal').classList.contains('active')) {
+                    closeExcelImportModal();
+                }
+            }
+        });
+
+        // Click outside to close suggestions
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-name-wrapper')) {
+                document.getElementById('suggestionsList').classList.remove('active');
+            }
+        });
+
+        // Initialize database on page load
+        initDB();
+    </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+# Environment variables - NEVER commit these!
+.env
+.env.local
+.env.production
+.env.*.local
+*.env
+
+# Credentials
+*credentials*
+*secrets*
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local cleanup/archive artifacts
+archive/
+/supabasebakcup/
+/Food _ Shwapno Online Grocery Shopping in Dhaka, Chattogram, Cumilla & Sylhet_files/
+
+# Local test/import artifacts (keep repo lean)
+/test-*.csv
+/test-*.sh
+/data/samples/
+*.backup
+*.backup.gz
+
+# Supabase
+.supabase/
+
+# Vercel local project linkage
+.vercel/
+
+# AI/IDE local metadata (not for repo)
+.cursor/
+.agents/
+.claude/
+.continue/
+.trae/
+
+

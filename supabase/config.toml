@@ -1,0 +1,37 @@
+# Supabase Configuration
+# This file is used by Supabase CLI for local development and deployment
+
+[api]
+# API settings
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+# Database settings
+port = 54322
+shadow_port = 54320
+major_version = 17
+
+[studio]
+# Supabase Studio settings
+enabled = true
+port = 54323
+
+[inbucket]
+# Email testing (local development)
+enabled = true
+port = 54324
+smtp_port = 54325
+pop3_port = 54326
+
+[storage]
+# Storage settings
+file_size_limit = "50MiB"
+
+[functions]
+# Edge Functions settings
+import_inventory = { verify_jwt = false }
+create_sale = { verify_jwt = true }
