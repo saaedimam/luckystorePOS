@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom'
 import { BulkImport } from '../components/BulkImport'
 import { CategoryManager } from '../components/CategoryManager'
 import { ItemForm } from '../components/ItemForm'
+import { AlertThresholdModal } from '../components/AlertThresholdModal'
+import { StockAdjustmentModal } from '../components/StockAdjustmentModal'
+import { StockMovementLog } from '../components/StockMovementLog'
 import { StoreSelector } from '../components/StoreSelector'
 import { useAuth } from '../hooks/useAuth'
 import { useItemsMutations } from '../hooks/useItemsMutations'
@@ -61,6 +64,10 @@ export function Items() {
   const [success, setSuccess] = useState<string | null>(null)
   const [clearingStock, setClearingStock] = useState(false)
   const [showOutOfStock, setShowOutOfStock] = useState(false)
+  const [adjustingItem, setAdjustingItem] = useState<ItemWithStock | null>(null)
+  const [historyItem, setHistoryItem] = useState<ItemWithStock | null>(null)
+  const [alertConfigItem, setAlertConfigItem] = useState<ItemWithStock | null>(null)
+  const [showStoreHistory, setShowStoreHistory] = useState(false)
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(() => {
     const saved = Number(localStorage.getItem('items-page-size') || '200')
@@ -390,6 +397,13 @@ export function Items() {
               >
                 {showCategories ? 'Hide' : 'Manage Categories'}
               </button>
+              <button
+                onClick={() => setShowStoreHistory(true)}
+                disabled={!currentStore}
+                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+              >
+                Stock History
+              </button>
               {currentStore && outOfStockCount > 0 && (
                 <button
                   onClick={() => setShowOutOfStock((v) => !v)}
@@ -665,12 +679,35 @@ export function Items() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          {currentStore && (
+                            <>
+                              <button
+                                onClick={() => setAlertConfigItem(item)}
+                                className="text-amber-600 hover:text-amber-900 mr-3 hidden sm:inline-block"
+                                title="Configure low stock alerts"
+                              >
+                                Alerts
+                              </button>
+                              <button
+                                onClick={() => setAdjustingItem(item)}
+                                className="text-emerald-600 hover:text-emerald-900 mr-3"
+                              >
+                                Adjust
+                              </button>
+                            </>
+                          )}
+                          <button
+                            onClick={() => setHistoryItem(item)}
+                            className="text-gray-500 hover:text-gray-700 mr-3"
+                          >
+                            History
+                          </button>
                           <button
                             onClick={() => {
                               setEditingItem(item)
                               setShowForm(true)
                             }}
-                            className="text-indigo-600 hover:text-indigo-900 mr-4"
+                            className="text-indigo-600 hover:text-indigo-900 mr-3"
                           >
                             Edit
                           </button>
@@ -758,6 +795,56 @@ export function Items() {
                 />
               </div>
             </div>
+          )}
+
+          {/* Stock Adjustment Modal */}
+          {adjustingItem && currentStore && (
+            <StockAdjustmentModal
+              itemId={adjustingItem.id}
+              itemName={adjustingItem.name}
+              storeId={currentStore.id}
+              storeCode={currentStore.code}
+              currentQty={getStockQty(adjustingItem)}
+              onClose={() => setAdjustingItem(null)}
+              onSuccess={() => {
+                setAdjustingItem(null)
+                setSuccess('Stock adjusted successfully')
+                queryClient.invalidateQueries({ queryKey: inventoryQueryKeys.itemsRoot })
+              }}
+            />
+          )}
+
+          {/* Alert Threshold Modal */}
+          {alertConfigItem && currentStore && (
+            <AlertThresholdModal
+              itemId={alertConfigItem.id}
+              itemName={alertConfigItem.name}
+              storeId={currentStore.id}
+              storeCode={currentStore.code}
+              onClose={() => setAlertConfigItem(null)}
+              onSuccess={() => {
+                setAlertConfigItem(null)
+                setSuccess('Alert configuration saved successfully')
+              }}
+            />
+          )}
+
+          {/* Stock Movement History (per item) */}
+          {historyItem && (
+            <StockMovementLog
+              storeId={currentStore?.id}
+              itemId={historyItem.id}
+              itemName={historyItem.name}
+              onClose={() => setHistoryItem(null)}
+            />
+          )}
+
+          {/* Stock Movement History (store-wide) */}
+          {showStoreHistory && currentStore && (
+            <StockMovementLog
+              storeId={currentStore.id}
+              onClose={() => setShowStoreHistory(false)}
+            />
           )}
         </div>
       </main>

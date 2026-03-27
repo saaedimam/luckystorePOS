@@ -1,9 +1,13 @@
 import { useAuth } from '../hooks/useAuth'
 import { Link, useNavigate } from 'react-router-dom'
 import { StoreSelector } from '../components/StoreSelector'
+import { useStore } from '../hooks/useStore'
+import { LowStockWidget } from '../components/LowStockWidget'
+import { InventorySummaryWidget } from '../components/InventorySummaryWidget'
 
 export function Dashboard() {
   const { profile, signOut } = useAuth()
+  const { currentStore } = useStore()
   const navigate = useNavigate()
 
   const handleLogout = async () => {
@@ -72,7 +76,16 @@ export function Dashboard() {
                 <>You are viewing in <strong>testing mode</strong> (authentication bypassed)</>
               )}
             </p>
+
+            {/* Inventory Analytics Widgets */}
+            {currentStore && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <InventorySummaryWidget storeId={currentStore.id} />
+                <LowStockWidget storeId={currentStore.id} />
+              </div>
+            )}
             
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 px-1">Quick Links</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {(profile?.role === 'admin' || showAllFeatures) && (
                 <Link
