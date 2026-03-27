@@ -11,6 +11,7 @@ import {
 import type { Store, StoreFormData } from '../services/stores'
 import { StoreForm } from '../components/StoreForm'
 import { StoreSelector } from '../components/StoreSelector'
+import { StoreLocatorMap } from '../components/StoreLocatorMap'
 
 export function Stores() {
   const { signOut } = useAuth()
@@ -19,6 +20,7 @@ export function Stores() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [showForm, setShowForm] = useState(false)
+  const [showMap, setShowMap] = useState(false)
   const [editingStore, setEditingStore] = useState<Store | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -125,15 +127,23 @@ export function Stores() {
 
           <div className="mb-6 flex justify-between items-center">
             <h1 className="text-2xl font-bold text-gray-900">Stores Management</h1>
-            <button
-              onClick={() => {
-                setEditingStore(null)
-                setShowForm(true)
-              }}
-              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
-            >
-              Add Store
-            </button>
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => setShowMap((v) => !v)}
+                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+              >
+                {showMap ? '🗺 Hide Map' : '🗺 Show Map'}
+              </button>
+              <button
+                onClick={() => {
+                  setEditingStore(null)
+                  setShowForm(true)
+                }}
+                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+              >
+                Add Store
+              </button>
+            </div>
           </div>
 
           {/* Search */}
@@ -235,6 +245,14 @@ export function Stores() {
               </div>
             )}
           </div>
+
+          {/* Store Locator Map */}
+          {showMap && (
+            <div className="mt-6">
+              <h2 className="text-lg font-semibold text-gray-800 mb-3">Store Locations Map</h2>
+              <StoreLocatorMap stores={stores} />
+            </div>
+          )}
 
           {/* Store Form Modal */}
           {showForm && (

@@ -4,6 +4,7 @@ import { StoreSelector } from '../components/StoreSelector'
 import { useStore } from '../hooks/useStore'
 import { LowStockWidget } from '../components/LowStockWidget'
 import { InventorySummaryWidget } from '../components/InventorySummaryWidget'
+import { ExpiringStockWidget } from '../components/ExpiringStockWidget'
 
 export function Dashboard() {
   const { profile, signOut } = useAuth()
@@ -79,9 +80,10 @@ export function Dashboard() {
 
             {/* Inventory Analytics Widgets */}
             {currentStore && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                 <InventorySummaryWidget storeId={currentStore.id} />
                 <LowStockWidget storeId={currentStore.id} />
+                <ExpiringStockWidget storeId={currentStore.id} />
               </div>
             )}
             
@@ -104,6 +106,54 @@ export function Dashboard() {
                 >
                   <h3 className="text-lg font-semibold text-gray-900">Stores Management</h3>
                   <p className="text-sm text-gray-600 mt-2">Manage store locations</p>
+                </Link>
+              )}
+
+              <Link
+                to="/admin/transfers"
+                className="block p-6 bg-white rounded-lg shadow hover:shadow-md transition border border-indigo-100"
+              >
+                <h3 className="text-lg font-semibold text-indigo-900">Stock Transfers</h3>
+                <p className="text-sm text-gray-600 mt-2">Move inventory between stores safely</p>
+              </Link>
+
+              {(profile?.role === 'admin' || profile?.role === 'manager' || showAllFeatures) && (
+                <Link
+                  to="/admin/reports"
+                  className="block p-6 bg-white rounded-lg shadow hover:shadow-md transition border border-emerald-100"
+                >
+                  <h3 className="text-lg font-semibold text-emerald-900">Inventory Reports</h3>
+                  <p className="text-sm text-gray-600 mt-2">Valuation, top sellers, slow movers &amp; trends</p>
+                </Link>
+              )}
+
+              {(profile?.role === 'admin' || profile?.role === 'manager' || showAllFeatures) && (
+                <Link
+                  to="/admin/suppliers"
+                  className="block p-6 bg-white rounded-lg shadow hover:shadow-md transition border border-purple-100"
+                >
+                  <h3 className="text-lg font-semibold text-purple-900">Suppliers</h3>
+                  <p className="text-sm text-gray-600 mt-2">Manage supplier contacts & details</p>
+                </Link>
+              )}
+
+              {(profile?.role === 'admin' || profile?.role === 'manager' || showAllFeatures) && (
+                <Link
+                  to="/admin/purchase-orders"
+                  className="block p-6 bg-white rounded-lg shadow hover:shadow-md transition border border-orange-100"
+                >
+                  <h3 className="text-lg font-semibold text-orange-900">Purchase Orders</h3>
+                  <p className="text-sm text-gray-600 mt-2">Order and receive stock from suppliers</p>
+                </Link>
+              )}
+
+              {(profile?.role === 'admin' || profile?.role === 'manager' || profile?.role === 'stock' || showAllFeatures) && (
+                <Link
+                  to="/admin/batches"
+                  className="block p-6 bg-white rounded-lg shadow hover:shadow-md transition border border-teal-100"
+                >
+                  <h3 className="text-lg font-semibold text-teal-900">Batch & Expiry Tracking</h3>
+                  <p className="text-sm text-gray-600 mt-2">Track lot numbers, expiry dates & recalls</p>
                 </Link>
               )}
 

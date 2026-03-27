@@ -10,6 +10,11 @@ import { Items } from './pages/Items'
 import { POS } from './pages/POS'
 import { POSCheckoutStatus } from './pages/POSCheckoutStatus'
 import { Stores } from './pages/Stores'
+import { StockTransfers } from './pages/StockTransfers'
+import { InventoryReports } from './pages/InventoryReports'
+import { Suppliers } from './pages/Suppliers'
+import { PurchaseOrders } from './pages/PurchaseOrders'
+import { BatchTracking } from './pages/BatchTracking'
 import { Unauthorized } from './pages/Unauthorized'
 import './App.css'
 
@@ -50,6 +55,46 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['admin', 'manager']}>
                   <Stores />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/transfers"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'manager', 'stock']}>
+                  <StockTransfers />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/reports"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'manager']}>
+                  <InventoryReports />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/suppliers"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'manager']}>
+                  <Suppliers />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/purchase-orders"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'manager', 'stock']}>
+                  <PurchaseOrders />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/batches"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'manager', 'stock']}>
+                  <BatchTracking />
                 </ProtectedRoute>
               }
             />
