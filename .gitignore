@@ -131,3 +131,21 @@ supabase/.temp/
 .continue/
 .trae/
 skills-lock.json
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Temporary scripts
+/*.js
+
+# Data files and Scraper dumps
+**/*.xlsx
+**/*.csv
+apps/scraper/*.txt
+data/inventory/**/*.csv
+data/inventory/**/*.json
+data/inventory/**/*.pdf
+data/inventory/**/*.txt

@@ -10,5 +10,8 @@
     "remove-duplicates": "node scripts/ops/remove-duplicate-items.js",
     "remove-duplicates:dry-run": "node scripts/ops/remove-duplicate-items.js --dry-run"
   },
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.103.3"
+  }
 }

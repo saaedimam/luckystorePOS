@@ -1,5 +1,6 @@
 import puppeteer from 'puppeteer';
 import * as XLSX from 'xlsx';
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -128,13 +129,15 @@ async function scrapeAllCategories() {
   
   let browser;
   try {
+    const defaultChromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+    const hasChrome = fs.existsSync(defaultChromePath);
+    
     browser = await puppeteer.launch({
-      headless: 'new',
+      headless: false,
+      executablePath: hasChrome ? defaultChromePath : undefined,
       args: [
         '--no-sandbox', 
-        '--disable-setuid-sandbox', 
-        '--disable-dev-shm-usage',
-        '--disable-gpu',
+        '--disable-setuid-sandbox',
         '--disable-web-security'
       ],
       timeout: 60000

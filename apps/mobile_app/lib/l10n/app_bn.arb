@@ -1,0 +1,14 @@
+{
+  "@@locale": "bn",
+  "appTitle": "লাকি স্টোর",
+  "checkoutTitle": "চেকআউট",
+  "addToCart": "কার্টে যোগ করুন",
+  "addToWishlist": "উইশলিস্টে যোগ করুন",
+  "buyNow": "এখনই কিনুন",
+  "deliveryTimeNextDay": "পরের দিন",
+  "searchHint": "পণ্য, ব্র্যান্ড এবং বিভাগ খুঁজুন...",
+  "homeTab": "হোম",
+  "categoriesTab": "বিভাগসমূহ",
+  "searchTab": "অনুসন্ধান",
+  "productOfBangladesh": "বাংলাদেশের পণ্য"
+}

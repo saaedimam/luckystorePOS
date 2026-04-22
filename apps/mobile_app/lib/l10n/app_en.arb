@@ -1,0 +1,14 @@
+{
+  "@@locale": "en",
+  "appTitle": "Lucky Store",
+  "checkoutTitle": "Checkout",
+  "addToCart": "Add to Cart",
+  "addToWishlist": "Add to Wishlist",
+  "buyNow": "Buy Now",
+  "deliveryTimeNextDay": "Next Day",
+  "searchHint": "Search products, brands and categories...",
+  "homeTab": "Home",
+  "categoriesTab": "Categories",
+  "searchTab": "Search",
+  "productOfBangladesh": "Product of Bangladesh"
+}

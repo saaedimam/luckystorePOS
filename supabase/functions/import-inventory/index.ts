@@ -20,7 +20,11 @@ interface ParsedRow {
   name: string;
   barcode: string | null;
   sku: string | null;
+  shortCode: string | null;
+  brand: string | null;
+  groupTag: string | null;
   categoryName: string | null;
+  description: string | null;
   supplier: string | null;
   batchCode: string | null;
   expiryDate: string | null;
@@ -52,6 +56,7 @@ interface ImportSummary {
   next_row_index?: number;
   processing_complete?: boolean;
   can_resume?: boolean;
+  is_dry_run?: boolean;
   import_file_name?: string;
   errors: ImportError[];
 }
@@ -76,7 +81,12 @@ function normalizeText(value: unknown): string | null {
 
 function parseNonNegativeNumber(value: unknown, fieldName: string): number {
   if (value === null || value === undefined || String(value).trim() === "") return 0;
-  const parsed = Number(value);
+  
+  // Strip out currency symbols, commas, and letters (e.g. "95 BDT" -> "95", "1,000.50" -> "1000.50")
+  let cleanValue = String(value).replace(/[^0-9.-]/g, '');
+  if (cleanValue === "") return 0;
+
+  const parsed = Number(cleanValue);
   if (!Number.isFinite(parsed) || parsed < 0) {
     throw new Error(`${fieldName} must be a non-negative number`);
   }
@@ -260,6 +270,10 @@ serve(async (req) => {
     const form = await req.formData();
     const requestedImportRunId = normalizeText(form.get("import_run_id"));
     const chunkSize = clampChunkSize(form.get("max_rows"));
+    const isDryRun = form.get("dry_run") === "true";
+    const mappingsRaw = normalizeText(form.get("mappings"));
+    const mappings = mappingsRaw ? JSON.parse(mappingsRaw) : null;
+
     const file = form.get("file") as File | null;
     if (!file && !requestedImportRunId) {
       return new Response(JSON.stringify({ error: "File missing" }), {
@@ -267,6 +281,8 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    summary.is_dry_run = isDryRun;
 
     let existingRunSummary: ImportSummary | null = null;
     if (requestedImportRunId) {
@@ -351,17 +367,28 @@ serve(async (req) => {
     const seenBarcodes = new Map<string, number>();
     const seenSkus = new Map<string, number>();
 
+    // Helper to get value from row based on mapping or fallback
+    const getValue = (row: Record<string, unknown>, internalField: string, fallbacks: string[]) => {
+      if (mappings && mappings[internalField]) {
+        return row[mappings[internalField]];
+      }
+      for (const fallback of fallbacks) {
+        if (row[fallback] !== undefined) return row[fallback];
+      }
+      return undefined;
+    };
+
     for (let i = 0; i < rawRows.length; i++) {
       const row = rawRows[i];
       const rowNumber = i + 2;
 
       try {
-        const name = normalizeText(row.name ?? row.Name);
+        const name = normalizeText(getValue(row, "name", ["name", "Name", "title", "Title"]));
         if (!name) {
-          throw new Error("Missing name");
+          throw new Error("Missing name/title column");
         }
 
-        let barcode = normalizeText(row.barcode ?? row.Barcode);
+        let barcode = normalizeText(getValue(row, "barcode", ["barcode", "Barcode", "gtin", "GTIN", "EAN"]));
         if (!barcode) {
           barcode = generateEAN13();
           if (collectParseErrors) {
@@ -369,20 +396,26 @@ serve(async (req) => {
           }
         }
 
-        const sku = normalizeText(row.sku ?? row.SKU);
-        const categoryName = normalizeText(row.category ?? row.Category);
-        const supplier = normalizeText(row.supplier ?? row.Supplier);
-        const batchCode = normalizeText(row.batch_code ?? row["batch_code"] ?? row["Batch Code"]);
-        const expiryDate = parseExpiryDate(row.expiry_date ?? row["expiry_date"] ?? row["Expiry Date"]);
-        const imageUrl = normalizeText(row.image_url ?? row.imageUrl ?? row["Image URL"]);
-        const cost = parseNonNegativeNumber(row.cost ?? row.Cost, "cost");
-        const price = parseNonNegativeNumber(row.price ?? row.Price, "price");
-        const stockQty = parseNonNegativeInteger(row.stock_qty ?? row["stock_qty"] ?? row["Stock Qty"], "stock_qty");
-        const storeCode = normalizeText(row.store_code ?? row["store_code"] ?? row["Store Code"]);
+        const sku = normalizeText(getValue(row, "sku", ["sku", "SKU", "id", "ID"]));
+        const shortCode = normalizeText(getValue(row, "short_code", ["short_code", "shortCode", "Short Code"]));
+        const brand = normalizeText(getValue(row, "brand", ["brand", "Brand"]));
+        const groupTag = normalizeText(getValue(row, "group_tag", ["group_tag", "groupTag", "item_group_id", "Group Tag"]));
+        const categoryName = normalizeText(getValue(row, "category", ["category", "Category", "google_product_category"]));
+        const description = normalizeText(getValue(row, "description", ["description", "Description"]));
+        
+        const supplier = normalizeText(getValue(row, "supplier", ["supplier", "Supplier"]));
+        const batchCode = normalizeText(getValue(row, "batch_code", ["batch_code", "Batch Code"]));
+        const expiryDate = parseExpiryDate(getValue(row, "expiry_date", ["expiry_date", "Expiry Date"]));
+        const imageUrl = normalizeText(getValue(row, "image_url", ["image_url", "imageUrl", "image_link", "Image URL"]));
+        
+        const cost = parseNonNegativeNumber(getValue(row, "cost", ["cost", "Cost"]), "cost");
+        const price = parseNonNegativeNumber(getValue(row, "price", ["price", "Price"]), "price");
+        const stockQty = parseNonNegativeInteger(getValue(row, "stock_qty", ["stock_qty", "Stock Qty", "quantity", "Quantity"]), "stock_qty");
+        const storeCode = normalizeText(getValue(row, "store_code", ["store_code", "Store Code"]));
 
-        if (stockQty > 0 && !storeCode) {
-          throw new Error("stock_qty provided but store_code is missing");
-        }
+        // If stock_qty is supplied but store_code is absent, skip the stock movement
+        // rather than hard-failing the row. The item will still be upserted correctly.
+        const effectiveStockQty = (stockQty > 0 && !storeCode) ? 0 : stockQty;
 
         if (barcode) {
           const seenAt = seenBarcodes.get(barcode);
@@ -405,14 +438,18 @@ serve(async (req) => {
           name,
           barcode,
           sku,
+          shortCode,
+          brand,
+          groupTag,
           categoryName,
+          description,
           supplier,
           batchCode,
           expiryDate,
           imageUrl,
           cost,
           price,
-          stockQty,
+          stockQty: effectiveStockQty,
           storeCode,
         });
       } catch (err: unknown) {
@@ -536,91 +573,111 @@ serve(async (req) => {
         let itemId: string;
         if (existingItem) {
           itemId = existingItem.id;
-          const { data: updatedItem, error: updateError } = await supabaseClient
-            .from("items")
-            .update({
-              name: row.name,
-              barcode: row.barcode,
-              sku: row.sku,
-              category_id: categoryId,
-              cost: row.cost,
-              price: row.price,
-              image_url: imageUrl,
-              updated_at: new Date().toISOString(),
-            })
-            .eq("id", itemId)
-            .select("id, barcode, sku")
-            .single();
-          if (updateError) throw updateError;
-          if (updatedItem.barcode) itemByBarcode.set(updatedItem.barcode, updatedItem);
-          if (updatedItem.sku) itemBySku.set(updatedItem.sku, updatedItem);
+          if (!isDryRun) {
+            const { data: updatedItem, error: updateError } = await supabaseClient
+              .from("items")
+              .update({
+                name: row.name,
+                barcode: row.barcode,
+                sku: row.sku,
+                short_code: row.shortCode,
+                brand: row.brand,
+                group_tag: row.groupTag,
+                category_id: categoryId,
+                description: row.description,
+                cost: row.cost,
+                price: row.price,
+                image_url: imageUrl,
+                updated_at: new Date().toISOString(),
+              })
+              .eq("id", itemId)
+              .select("id, barcode, sku")
+              .single();
+            if (updateError) throw updateError;
+            if (updatedItem.barcode) itemByBarcode.set(updatedItem.barcode, updatedItem);
+            if (updatedItem.sku) itemBySku.set(updatedItem.sku, updatedItem);
+          }
           summary.items_updated++;
         } else {
-          const { data: insertedItem, error: insertError } = await supabaseClient
-            .from("items")
-            .insert({
-              name: row.name,
-              barcode: row.barcode,
-              sku: row.sku,
-              category_id: categoryId,
-              cost: row.cost,
-              price: row.price,
-              image_url: imageUrl,
-            })
-            .select("id, barcode, sku")
-            .single();
-          if (insertError) throw insertError;
-          itemId = insertedItem.id;
-          if (insertedItem.barcode) itemByBarcode.set(insertedItem.barcode, insertedItem);
-          if (insertedItem.sku) itemBySku.set(insertedItem.sku, insertedItem);
+          if (!isDryRun) {
+            const { data: insertedItem, error: insertError } = await supabaseClient
+              .from("items")
+              .insert({
+                name: row.name,
+                barcode: row.barcode,
+                sku: row.sku,
+                short_code: row.shortCode,
+                brand: row.brand,
+                group_tag: row.groupTag,
+                category_id: categoryId,
+                description: row.description,
+                cost: row.cost,
+                price: row.price,
+                image_url: imageUrl,
+              })
+              .select("id, barcode, sku")
+              .single();
+            if (insertError) throw insertError;
+            itemId = insertedItem.id;
+            if (insertedItem.barcode) itemByBarcode.set(insertedItem.barcode, insertedItem);
+            if (insertedItem.sku) itemBySku.set(insertedItem.sku, insertedItem);
+          } else {
+            itemId = crypto.randomUUID(); // Mock ID for dry run
+          }
           summary.items_inserted++;
         }
 
         let batchId: string | null = null;
         if (row.batchCode || row.expiryDate || row.supplier) {
-          const { data: batch, error: batchError } = await supabaseClient
-            .from("batches")
-            .insert({
-              item_id: itemId,
-              batch_code: row.batchCode,
-              supplier: row.supplier,
-              expiry_date: row.expiryDate,
-              qty: row.stockQty > 0 ? row.stockQty : 0,
-            })
-            .select("id")
-            .single();
-          if (batchError) throw batchError;
-          batchId = batch.id;
+          if (!isDryRun) {
+            const { data: batch, error: batchError } = await supabaseClient
+              .from("batches")
+              .insert({
+                item_id: itemId,
+                batch_code: row.batchCode,
+                supplier: row.supplier,
+                expiry_date: row.expiryDate,
+                qty: row.stockQty > 0 ? row.stockQty : 0,
+              })
+              .select("id")
+              .single();
+            if (batchError) throw batchError;
+            batchId = batch.id;
+          }
           summary.batches_created++;
         }
 
         if (row.stockQty > 0 && row.storeCode) {
           const storeId = storeMap.get(row.storeCode)!;
-          const { data: wasCreated, error: stockApplyError } = await supabaseClient.rpc(
-            "import_apply_stock_delta",
-            {
-              p_store_id: storeId,
-              p_item_id: itemId,
-              p_delta: row.stockQty,
-            },
-          );
-          if (stockApplyError) throw stockApplyError;
-          if (wasCreated) {
-            summary.stock_created++;
+          if (!isDryRun) {
+            const { data: wasCreated, error: stockApplyError } = await supabaseClient.rpc(
+              "import_apply_stock_delta",
+              {
+                p_store_id: storeId,
+                p_item_id: itemId,
+                p_delta: row.stockQty,
+              },
+            );
+            if (stockApplyError) throw stockApplyError;
+            if (wasCreated) {
+              summary.stock_created++;
+            } else {
+              summary.stock_updated++;
+            }
+
+            const { error: movementError } = await supabaseClient.from("stock_movements").insert({
+              store_id: storeId,
+              item_id: itemId,
+              batch_id: batchId,
+              delta: row.stockQty,
+              reason: "import",
+              meta: { source: "inventory-import", row: row.rowNumber },
+              performed_by: actorProfile?.id ?? null,
+            });
+            if (movementError) throw movementError;
           } else {
             summary.stock_updated++;
           }
-
-          const { error: movementError } = await supabaseClient.from("stock_movements").insert({
-            store_id: storeId,
-            item_id: itemId,
-            batch_id: batchId,
-            delta: row.stockQty,
-            reason: "import",
-            meta: { source: "inventory-import", row: row.rowNumber },
-            performed_by: actorProfile?.id ?? null,
-          });
-          if (movementError) throw movementError;
           summary.stock_movements++;
         }
 
