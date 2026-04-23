@@ -108,14 +108,20 @@ class _StaffPinLoginScreenState extends State<StaffPinLoginScreen>
       child: Scaffold(
         backgroundColor: const Color(0xFF0D1117),
         body: SafeArea(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 400),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                padding: EdgeInsets.zero,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
                     // Branded Logo
                     _BrandedLogo(),
                     const SizedBox(height: 32),
@@ -170,15 +176,19 @@ class _StaffPinLoginScreenState extends State<StaffPinLoginScreen>
 
                     const SizedBox(height: 32),
 
-                    if (_loading)
-                      const CircularProgressIndicator(
-                        color: Color(0xFFE8B84B),
-                        strokeWidth: 3,
+                            if (_loading)
+                              const CircularProgressIndicator(
+                                color: Color(0xFFE8B84B),
+                                strokeWidth: 3,
+                              ),
+                          ],
+                        ),
                       ),
-                  ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
         ),
       ),

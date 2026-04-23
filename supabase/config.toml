@@ -31,6 +31,10 @@ pop3_port = 54326
 # Storage settings
 file_size_limit = "50MiB"
 
+[auth]
+[auth.password]
+leaked_password_protection = "error"
+
 # Per-function settings (slugs match supabase/functions/* folder names)
 [functions.import-inventory]
 verify_jwt = false
