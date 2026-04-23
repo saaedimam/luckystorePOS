@@ -1,5 +1,5 @@
 {
-  "installCommand": "if [ ! -d \"flutter\" ]; then git clone https://github.com/flutter/flutter.git -b stable --depth 1; fi && chmod +x ./flutter/bin/flutter && ./flutter/bin/flutter config --enable-web && ./flutter/bin/flutter pub get --verbose",
+  "installCommand": "if [ ! -d \"flutter\" ]; then git clone https://github.com/flutter/flutter.git -b stable; fi && (cd flutter && git checkout ea121f8859) && ./flutter/bin/flutter config --enable-web && ./flutter/bin/flutter pub get",
   "buildCommand": "./build.sh",
   "outputDirectory": "build/web",
   "rewrites": [
