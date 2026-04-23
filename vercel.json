@@ -1,0 +1,11 @@
+{
+  "installCommand": "cd apps/mobile_app && if [ ! -d \"flutter\" ]; then git clone https://github.com/flutter/flutter.git -b stable; fi && (cd flutter && git checkout ea121f8859) && ./flutter/bin/flutter config --enable-web && ./flutter/bin/flutter pub get",
+  "buildCommand": "cd apps/mobile_app && chmod +x build.sh && ./build.sh",
+  "outputDirectory": "apps/mobile_app/build/web",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
