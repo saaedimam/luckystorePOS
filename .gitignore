@@ -2,20 +2,16 @@
 # Lucky Store - Repository-wide gitignore
 # -----------------------------------------------------------------------------
 
-# Environment (explicit common names + wildcard; do not use *.env — too broad)
+# Environment files (local machine secrets/config only; keep examples tracked)
 .env
 .env.local
 .env.*.local
-.env.development
-.env.production
-.env.test
-.env.*
 !.env.example
 !.env*.example
 apps/*/.env
 apps/*/.env.local
 
-# Secrets and keys
+# Secrets and certificates
 *.key
 *.pem
 *.p12
@@ -24,8 +20,6 @@ apps/*/.env.local
 *.csr
 *credentials*
 *secrets*
-
-# Lockfiles: committed for reproducible installs (npm ci). Do not ignore.
 
 # Dependency directories and package manager metadata
 node_modules/
@@ -39,7 +33,7 @@ apps/*/node_modules/
 .yarn/build-state.yml
 .yarn/install-state.gz
 
-# Build outputs and caches (explicit app path + global)
+# Build outputs and caches (monorepo paths kept explicit)
 apps/frontend/dist/
 dist/
 build/
@@ -66,7 +60,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Temporary files
+# Temporary files and local scratch artifacts
 tmp/
 temp/
 *.tmp
@@ -74,8 +68,9 @@ temp/
 *.backup
 *.backup.gz
 *.orig
+/scratch_*.js
 
-# Editor and IDE artifacts (only un-ignore extensions.json — team-safe)
+# Editor and IDE artifacts
 .vscode/*
 !.vscode/extensions.json
 .idea/
@@ -93,17 +88,11 @@ temp/
 **/.DS_Store
 Thumbs.db
 
-# Local cleanup / archives
+# Local archives and one-off backup directories
 archive/
-/supabasebakcup/
+/supabasebackup/
 
-# Local test/import artifacts (keep repository lean)
-/test-*.csv
-/test-*.sh
-/data/samples/
-
-# Database dumps and local exports
-# Never ignore *.sql globally — Supabase migrations and scripts/db are tracked.
+# Database dumps and local exports (do not ignore *.sql globally)
 *.dump
 *.sql.gz
 *.sql.zip
@@ -112,7 +101,16 @@ archive/
 /dumps/
 /backups/
 
-# Docker / local overrides (secrets and machine-specific compose)
+# Generated data artifacts only (keep canonical/source datasets trackable)
+/test-*.csv
+/test-*.sh
+/data/inventory/inventory_chunks/
+/data/inventory/enrichment_report.csv
+/apps/scraper/shwapno-products.xlsx
+/apps/scraper/chaldal-products.xlsx
+/apps/scraper/lucky-store-competitor-prices.xlsx
+
+# Docker / local overrides (machine-specific)
 docker-compose.override.yml
 *.override.yml
 .env.docker
@@ -137,17 +135,3 @@ skills-lock.json
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Temporary scripts
-/*.js
-
-# Data files and Scraper dumps
-**/*.xlsx
-**/*.csv
-apps/scraper/*.txt
-data/inventory/**/*.csv
-data/inventory/**/*.json
-data/inventory/**/*.pdf
-data/inventory/**/*.txt
-.vercel
-.env*.local
