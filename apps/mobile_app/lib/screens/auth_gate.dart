@@ -24,7 +24,11 @@ class AuthGate extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer2<AuthProvider, AppAccessController>(
       builder: (context, auth, access, _) {
-        context.read<PosProvider>().setOfflineSafeMode(access.isOfflineSafeMode);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (context.mounted) {
+            context.read<PosProvider>().setOfflineSafeMode(access.isOfflineSafeMode);
+          }
+        });
         final child = switch (auth.status) {
           // ── Loading: PIN validation in progress ───────────────────────────
           AuthStatus.loading => const _SplashScreen(),
