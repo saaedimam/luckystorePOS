@@ -20,6 +20,10 @@ enum AuthStatus {
 /// - Resolve staff role from backend-authenticated RPC only.
 /// - Require a server-issued Supabase session token before granting access.
 class AuthProvider extends ChangeNotifier {
+  static const String invalidLoginErrorCode = 'INVALID_LOGIN';
+  static const String networkErrorCode = 'NETWORK_ERROR';
+
+  // ── Internal Supabase client ─────────────────────────────────────────────────
   static final SupabaseClient _supabase = Supabase.instance.client;
 
   AuthStatus _status = AuthStatus.unauthenticated;
@@ -35,6 +39,16 @@ class AuthProvider extends ChangeNotifier {
 
   String? _signInError;
   String? get signInError => _signInError;
+  String? _signInErrorCode;
+  String? get signInErrorCode => _signInErrorCode;
+
+  User get currentUserOrThrow {
+    final user = _supabase.auth.currentUser;
+    if (user == null) {
+      throw StateError('No authenticated Supabase session');
+    }
+    return user;
+  }
 
   AuthProvider() {
     _init();
@@ -59,7 +73,11 @@ class AuthProvider extends ChangeNotifier {
 
   Future<bool> signInWithPin(String pin) async {
     _signInError = null;
+    _signInErrorCode = null;
     _setStatus(AuthStatus.loading);
+
+    // Premium authentic feel
+    await Future.delayed(const Duration(milliseconds: 500));
 
     try {
       // Ensure we have a server-issued JWT; anonymous auth still yields
@@ -74,6 +92,7 @@ class AuthProvider extends ChangeNotifier {
 
       if (response == null) {
         _signInError = 'Invalid PIN. Please try again.';
+        _signInErrorCode = invalidLoginErrorCode;
         await signOut();
         return false;
       }
@@ -82,6 +101,7 @@ class AuthProvider extends ChangeNotifier {
       final role = (profile['role'] as String? ?? '').toLowerCase();
       if (role != 'cashier' && role != 'manager' && role != 'admin') {
         _signInError = 'Access role is not allowed for POS.';
+        _signInErrorCode = invalidLoginErrorCode;
         await signOut();
         return false;
       }
@@ -95,10 +115,13 @@ class AuthProvider extends ChangeNotifier {
       );
 
       _setStatus(role == 'cashier' ? AuthStatus.cashier : AuthStatus.manager);
+      debugPrint('[AuthProvider] Verified session established — '
+          'user=${_appUser?.name}, role=${_appUser?.role}');
       return true;
     } catch (e) {
       debugPrint('[AuthProvider] PIN sign-in failed: $e');
       _signInError = 'Sign-in failed. Check network and try again.';
+      _signInErrorCode = networkErrorCode;
       await signOut();
       return false;
     }
@@ -118,8 +141,9 @@ class AuthProvider extends ChangeNotifier {
   }
 
   void clearSignInError() {
-    if (_signInError != null) {
+    if (_signInError != null || _signInErrorCode != null) {
       _signInError = null;
+      _signInErrorCode = null;
       notifyListeners();
     }
   }

@@ -2,6 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import '../../services/offline_transaction_sync_service.dart';
+import '../../services/store_closing_health_check_service.dart';
+import '../../providers/auth_provider.dart';
+
+class _CloseReviewApproval {
+  final bool confirmed;
+  final StoreClosingHealthCheck check;
+  final String? notes;
+  final bool adminOverrideUsed;
+  final String? adminOverrideReason;
+  final String? adminOverrideReasonCategory;
+  final String? adminOverrideNotes;
+  final String? secondaryApproverUserId;
+  final String? secondaryApproverRole;
+
+  const _CloseReviewApproval({
+    required this.confirmed,
+    required this.check,
+    required this.notes,
+    required this.adminOverrideUsed,
+    required this.adminOverrideReason,
+    required this.adminOverrideReasonCategory,
+    required this.adminOverrideNotes,
+    required this.secondaryApproverUserId,
+    required this.secondaryApproverRole,
+  });
+}
 
 class PosSessionSummaryScreen extends StatefulWidget {
   final String sessionId;
@@ -14,6 +42,14 @@ class PosSessionSummaryScreen extends StatefulWidget {
 
 class _PosSessionSummaryScreenState extends State<PosSessionSummaryScreen> {
   final _supabase = Supabase.instance.client;
+  static const List<String> _overrideReasonCategories = [
+    'internet outage',
+    'queue corruption',
+    'emergency close',
+    'manager absence',
+    'system incident',
+    'other',
+  ];
   bool _loading = true;
   String? _error;
   
@@ -91,6 +127,9 @@ class _PosSessionSummaryScreenState extends State<PosSessionSummaryScreen> {
   }
 
   Future<void> _closeSession() async {
+    final approval = await _confirmClosingHealthReview();
+    if (!approval.confirmed) return;
+
     // Show dialog to enter closing cash
     double closingCash = _expectedDrawer; // default
     final confirmed = await showDialog<bool>(
@@ -139,6 +178,20 @@ class _PosSessionSummaryScreenState extends State<PosSessionSummaryScreen> {
     if (confirmed == true) {
       setState(() => _loading = true);
       try {
+        try {
+          await _writeCloseReviewLog(
+            check: approval.check,
+            notes: approval.notes,
+            adminOverrideUsed: approval.adminOverrideUsed,
+            adminOverrideReason: approval.adminOverrideReason,
+            adminOverrideReasonCategory: approval.adminOverrideReasonCategory,
+            adminOverrideNotes: approval.adminOverrideNotes,
+            secondaryApproverUserId: approval.secondaryApproverUserId,
+            secondaryApproverRole: approval.secondaryApproverRole,
+          );
+        } catch (_) {
+          // Do not block physical close if review row already exists.
+        }
         // Backend validated checkout
         try {
           await _supabase.rpc('close_pos_session', params: {
@@ -170,6 +223,457 @@ class _PosSessionSummaryScreenState extends State<PosSessionSummaryScreen> {
             setState(() { _loading = false; });
          }
       }
+    }
+  }
+
+  Future<void> _writeCloseReviewLog({
+    required StoreClosingHealthCheck check,
+    required String? notes,
+    required bool adminOverrideUsed,
+    required String? adminOverrideReason,
+    required String? adminOverrideReasonCategory,
+    required String? adminOverrideNotes,
+    required String? secondaryApproverUserId,
+    required String? secondaryApproverRole,
+  }) async {
+    final auth = context.read<AuthProvider>();
+    final appUser = auth.appUser;
+    if (appUser == null) return;
+    final storeId = (_sessionData?['store_id'] as String?) ?? appUser.storeId;
+    if (storeId.isEmpty) return;
+
+    await _supabase.from('close_review_log').insert({
+      'store_id': storeId,
+      'session_id': widget.sessionId,
+      'reviewer_user_id': appUser.id,
+      'reviewer_role': appUser.role,
+      'reviewed_at': DateTime.now().toIso8601String(),
+      'queue_pending_count': check.queuedPendingCount,
+      'failed_count': check.failedNeedingReview,
+      'conflict_count': check.conflictsUnacknowledged,
+      'last_sync_success_at':
+          OfflineTransactionSyncService.instance.telemetry.lastSuccessAt
+              ?.toIso8601String(),
+      'close_status': check.status.name,
+      'acknowledgement_confirmed': true,
+      'notes': (notes?.trim().isEmpty ?? true) ? null : notes!.trim(),
+      'admin_override': adminOverrideUsed,
+      'override_reason': (adminOverrideReason?.trim().isEmpty ?? true)
+          ? null
+          : adminOverrideReason!.trim(),
+      'override_reason_category':
+          (adminOverrideReasonCategory?.trim().isEmpty ?? true)
+              ? null
+              : adminOverrideReasonCategory!.trim(),
+      'override_notes': (adminOverrideNotes?.trim().isEmpty ?? true)
+          ? null
+          : adminOverrideNotes!.trim(),
+      'dual_approval_required': check.dualApprovalRequired,
+      'secondary_approver_user_id': secondaryApproverUserId,
+      'secondary_approver_role': secondaryApproverRole,
+    });
+  }
+
+  Future<_CloseReviewApproval> _confirmClosingHealthReview() async {
+    final sync = OfflineTransactionSyncService.instance;
+    final appUser = context.read<AuthProvider>().appUser;
+    final role = appUser?.role ?? 'unknown';
+    final isAdminOrOwner = role == 'admin' || role == 'owner';
+    final primaryUserId = appUser?.id;
+    final primaryStoreId = appUser?.storeId;
+    final check = const StoreClosingHealthCheckService().evaluate(
+      queue: sync.queue,
+      telemetry: sync.telemetry,
+      hasInventoryMismatchWarnings: false,
+    );
+    var confirmed = check.status == StoreCloseStatus.green;
+    var notes = '';
+    String? adminOverrideReasonCategory;
+    var adminOverrideNotes = '';
+    String? secondaryApproverRole;
+    var secondaryApproverPin = '';
+    String? secondaryApproverUserId;
+    String? secondaryApprovalError;
+
+    final result = await showDialog<bool>(
+          context: context,
+          builder: (ctx) {
+            final statusLabel = check.status.name.toUpperCase();
+            final statusColor = switch (check.status) {
+              StoreCloseStatus.green => const Color(0xFF2ECC71),
+              StoreCloseStatus.yellow => const Color(0xFFE8B84B),
+              StoreCloseStatus.red => const Color(0xFFE74C3C),
+            };
+            return StatefulBuilder(
+              builder: (context, setInnerState) {
+                return AlertDialog(
+                  backgroundColor: const Color(0xFF161B22),
+                  title: const Text(
+                    'Closing Health Review',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Close status: $statusLabel',
+                        style: TextStyle(
+                          color: statusColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Pending queue: ${check.queuedPendingCount}',
+                        style: const TextStyle(color: Colors.white70),
+                      ),
+                      Text(
+                        'Unreviewed failed: ${check.failedNeedingReview}',
+                        style: const TextStyle(color: Colors.white70),
+                      ),
+                      Text(
+                        'Unacknowledged conflicts: ${check.conflictsUnacknowledged}',
+                        style: const TextStyle(color: Colors.white70),
+                      ),
+                      Text(
+                        'Recent sync success: ${check.lastSyncIsRecent ? 'Yes' : 'No'}',
+                        style: const TextStyle(color: Colors.white70),
+                      ),
+                      if (check.hardStop) ...[
+                        const SizedBox(height: 10),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE74C3C).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: const Color(0xFFE74C3C)),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Hard-stop active',
+                                style: TextStyle(
+                                  color: Color(0xFFE74C3C),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              if (check.pendingQueueHardStop)
+                                const Text(
+                                  '• Pending queue exceeds 50',
+                                  style: TextStyle(color: Colors.white70),
+                                ),
+                              if (check.staleSyncHardStop)
+                                const Text(
+                                  '• No sync success in last 12 hours',
+                                  style: TextStyle(color: Colors.white70),
+                                ),
+                              if (check.criticalConflictHardStop)
+                                const Text(
+                                  '• Critical conflict unresolved',
+                                  style: TextStyle(color: Colors.white70),
+                                ),
+                              if (check.dualApprovalRequired)
+                                const Text(
+                                  '• Escalated hard-stop: two approvals required',
+                                  style: TextStyle(color: Colors.white70),
+                                ),
+                              const SizedBox(height: 4),
+                              Text(
+                                isAdminOrOwner
+                                    ? 'Admin override requires category. Notes are optional.'
+                                    : 'Only admin can override this close.',
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 12),
+                      CheckboxListTile(
+                        value: confirmed,
+                        onChanged: (value) {
+                          setInnerState(() => confirmed = value ?? false);
+                        },
+                        activeColor: const Color(0xFFE8B84B),
+                        contentPadding: EdgeInsets.zero,
+                        controlAffinity: ListTileControlAffinity.leading,
+                        title: const Text(
+                          'I reviewed operational sync health and accept close decision.',
+                          style: TextStyle(color: Colors.white70, fontSize: 13),
+                        ),
+                      ),
+                      if (check.hardStop && isAdminOrOwner) ...[
+                        const SizedBox(height: 8),
+                        DropdownButtonFormField<String>(
+                          value: adminOverrideReasonCategory,
+                          dropdownColor: const Color(0xFF161B22),
+                          decoration: InputDecoration(
+                            hintText: 'Select override category (required)',
+                            hintStyle: const TextStyle(color: Colors.white38),
+                            filled: true,
+                            fillColor: const Color(0xFF0D1117),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide:
+                                  const BorderSide(color: Colors.white12, width: 1),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide:
+                                  const BorderSide(color: Colors.white12, width: 1),
+                            ),
+                          ),
+                          items: _overrideReasonCategories
+                              .map(
+                                (category) => DropdownMenuItem<String>(
+                                  value: category,
+                                  child: Text(
+                                    category,
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: (value) => setInnerState(
+                            () => adminOverrideReasonCategory = value,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        TextField(
+                          maxLines: 2,
+                          onChanged: (value) => adminOverrideNotes = value,
+                          style: const TextStyle(color: Colors.white70),
+                          decoration: InputDecoration(
+                            hintText: 'Override notes (optional)',
+                            hintStyle: const TextStyle(color: Colors.white38),
+                            filled: true,
+                            fillColor: const Color(0xFF0D1117),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide:
+                                  const BorderSide(color: Colors.white12, width: 1),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide:
+                                  const BorderSide(color: Colors.white12, width: 1),
+                            ),
+                          ),
+                        ),
+                        if (check.dualApprovalRequired) ...[
+                          const SizedBox(height: 8),
+                          DropdownButtonFormField<String>(
+                            value: secondaryApproverRole,
+                            dropdownColor: const Color(0xFF161B22),
+                            decoration: InputDecoration(
+                              hintText: 'Second approver role (required)',
+                              hintStyle: const TextStyle(color: Colors.white38),
+                              filled: true,
+                              fillColor: const Color(0xFF0D1117),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide:
+                                    const BorderSide(color: Colors.white12, width: 1),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide:
+                                    const BorderSide(color: Colors.white12, width: 1),
+                              ),
+                            ),
+                            items: const [
+                              DropdownMenuItem<String>(
+                                value: 'admin',
+                                child: Text(
+                                  'admin',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                              DropdownMenuItem<String>(
+                                value: 'owner',
+                                child: Text(
+                                  'owner',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ],
+                            onChanged: (value) => setInnerState(
+                              () => secondaryApproverRole = value,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            onChanged: (value) => secondaryApproverPin = value,
+                            style: const TextStyle(color: Colors.white70),
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              hintText: 'Second approver PIN (required)',
+                              hintStyle: const TextStyle(color: Colors.white38),
+                              filled: true,
+                              fillColor: const Color(0xFF0D1117),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide:
+                                    const BorderSide(color: Colors.white12, width: 1),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide:
+                                    const BorderSide(color: Colors.white12, width: 1),
+                              ),
+                            ),
+                          ),
+                          if ((secondaryApprovalError ?? '').isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Text(
+                                secondaryApprovalError!,
+                                style: const TextStyle(
+                                  color: Colors.redAccent,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ],
+                      const SizedBox(height: 8),
+                      TextField(
+                        maxLines: 3,
+                        onChanged: (value) => notes = value,
+                        style: const TextStyle(color: Colors.white70),
+                        decoration: InputDecoration(
+                          hintText: 'Optional review notes',
+                          hintStyle: const TextStyle(color: Colors.white38),
+                          filled: true,
+                          fillColor: const Color(0xFF0D1117),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide:
+                                const BorderSide(color: Colors.white12, width: 1),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide:
+                                const BorderSide(color: Colors.white12, width: 1),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx, false),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.white54),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: confirmed &&
+                              (!check.hardStop ||
+                                  (isAdminOrOwner &&
+                                      adminOverrideReasonCategory != null))
+                          ? () async {
+                              if (check.dualApprovalRequired) {
+                                if (!isAdminOrOwner ||
+                                    secondaryApproverRole == null ||
+                                    secondaryApproverPin.trim().isEmpty ||
+                                    primaryStoreId == null ||
+                                    primaryUserId == null) {
+                                  setInnerState(() {
+                                    secondaryApprovalError =
+                                        'Second approver role + PIN are required.';
+                                  });
+                                  return;
+                                }
+                                final validCombination =
+                                    (role == 'admin' &&
+                                            (secondaryApproverRole == 'admin' ||
+                                                secondaryApproverRole == 'owner')) ||
+                                        (role == 'owner' &&
+                                            secondaryApproverRole == 'admin');
+                                if (!validCombination) {
+                                  setInnerState(() {
+                                    secondaryApprovalError =
+                                        'Allowed combinations: admin+owner or admin+admin.';
+                                  });
+                                  return;
+                                }
+                                final secondaryId = await _resolveSecondaryApproverId(
+                                  requiredRole: secondaryApproverRole!,
+                                  pin: secondaryApproverPin.trim(),
+                                  storeId: primaryStoreId,
+                                  excludeUserId: primaryUserId,
+                                );
+                                if (secondaryId == null) {
+                                  setInnerState(() {
+                                    secondaryApprovalError =
+                                        'Second approver verification failed.';
+                                  });
+                                  return;
+                                }
+                                secondaryApproverUserId = secondaryId;
+                              }
+                              if (context.mounted) Navigator.pop(ctx, true);
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFE8B84B),
+                        disabledBackgroundColor: const Color(0xFF333A44),
+                      ),
+                      child: const Text(
+                        'Continue to Close',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ) ??
+        false;
+    return _CloseReviewApproval(
+      confirmed: result,
+      check: check,
+      notes: notes,
+      adminOverrideUsed: check.hardStop && isAdminOrOwner && result,
+      adminOverrideReason: check.hardStop ? adminOverrideReasonCategory : null,
+      adminOverrideReasonCategory:
+          check.hardStop ? adminOverrideReasonCategory : null,
+      adminOverrideNotes: check.hardStop ? adminOverrideNotes : null,
+      secondaryApproverUserId:
+          check.dualApprovalRequired ? secondaryApproverUserId : null,
+      secondaryApproverRole:
+          check.dualApprovalRequired ? secondaryApproverRole : null,
+    );
+  }
+
+  Future<String?> _resolveSecondaryApproverId({
+    required String requiredRole,
+    required String pin,
+    required String storeId,
+    required String excludeUserId,
+  }) async {
+    try {
+      final row = await _supabase
+          .from('users')
+          .select('id')
+          .eq('store_id', storeId)
+          .eq('role', requiredRole)
+          .eq('pos_pin', pin)
+          .neq('id', excludeUserId)
+          .maybeSingle();
+      if (row == null) return null;
+      return row['id'] as String?;
+    } catch (_) {
+      return null;
     }
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../models/pos_models.dart';
+import '../../models/sale_transaction_snapshot.dart';
 import '../../providers/pos_provider.dart';
 import 'receipt_screen.dart';
 
@@ -184,12 +185,23 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
     setState(() { _processing = true; _error = null; });
     try {
-      final result = await pos.completeSale(finalisedTenders);
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => ReceiptScreen(saleResult: result)),
+      final traceId =
+          'trace-${DateTime.now().microsecondsSinceEpoch}-${identityHashCode(this)}';
+      final response = await pos.completeSale(
+        finalisedTenders,
+        transactionTraceId: traceId,
       );
+      if (!mounted) return;
+      if (response.isSuccess && response.saleResult != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (_) => ReceiptScreen(saleResult: response.saleResult!)),
+        );
+      } else {
+        await _showServerOutcomeDialog(response);
+        setState(() => _processing = false);
+      }
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -672,7 +684,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Widget _buildActionButton(PosProvider pos) {
     final isPaid = _isPaid(pos);
     final change = _change(pos);
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 6, 16, 4),
       child: Row(
@@ -743,6 +754,31 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       ],
                     ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showServerOutcomeDialog(SaleExecutionResult response) {
+    final partialLines = response.partialFulfillment
+        .map((e) =>
+            '${e['item_id']}: fulfilled ${e['fulfilled_qty']} / backordered ${e['backordered_qty']}')
+        .join('\n');
+    final details = [
+      if (response.message != null) response.message!,
+      if (response.conflictReason != null) 'Reason: ${response.conflictReason}',
+      if (partialLines.isNotEmpty) partialLines,
+    ].join('\n');
+    return showDialog<void>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text('Server Result: ${response.status.name.toUpperCase()}'),
+        content: Text(details.isEmpty ? 'No additional details.' : details),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
           ),
         ],
       ),

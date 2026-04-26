@@ -2,40 +2,75 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/generated/app_localizations.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'theme/app_theme.dart';
 import 'screens/auth_gate.dart';
+import 'screens/startup_config_error_screen.dart';
 import 'providers/auth_provider.dart';
 import 'providers/cart_provider.dart';
 import 'providers/pos_provider.dart';
+import 'controllers/app_access_controller.dart';
 import 'screens/checkout/checkout_screen.dart';
 import 'screens/checkout/bkash_checkout.dart';
 import 'screens/checkout/gamified_reward_screen.dart';
+import 'services/startup_guard_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  runApp(const BootstrapApp());
+}
 
-  await dotenv.load(fileName: ".env");
+class BootstrapApp extends StatefulWidget {
+  const BootstrapApp({super.key});
 
-  await Supabase.initialize(
-    url: dotenv.env['SUPABASE_URL']!,
-    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
-  );
+  @override
+  State<BootstrapApp> createState() => _BootstrapAppState();
+}
 
-  runApp(
-    MultiProvider(
-      providers: [
-        // AuthProvider must be first — other providers may depend on its state.
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => CartProvider()),
-        ChangeNotifierProvider(create: (_) => AppLocaleNotifier()),
-        ChangeNotifierProvider(create: (_) => PosProvider()),
-      ],
-      child: const LuckyStoreApp(),
-    ),
-  );
+class _BootstrapAppState extends State<BootstrapApp> {
+  StartupResult? _startupResult;
+  bool _reloading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _reloadConfig();
+  }
+
+  Future<void> _reloadConfig() async {
+    if (_reloading) return;
+    setState(() => _reloading = true);
+    final result = await StartupGuardService.validateAndBootstrap();
+    if (!mounted) return;
+    setState(() {
+      _startupResult = result;
+      _reloading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final startupResult = _startupResult;
+    if (startupResult == null) {
+      return const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          backgroundColor: Color(0xFF0D1117),
+          body: Center(
+            child: CircularProgressIndicator(color: Color(0xFFE8B84B)),
+          ),
+        ),
+      );
+    }
+
+    return ChangeNotifierProvider(
+      create: (_) => AppLocaleNotifier(),
+      child: LuckyStoreApp(
+        startupResult: startupResult,
+        onReloadConfig: _reloadConfig,
+      ),
+    );
+  }
 }
 
 class AppLocaleNotifier extends ChangeNotifier {
@@ -57,7 +92,14 @@ class L10n {
 }
 
 class LuckyStoreApp extends StatelessWidget {
-  const LuckyStoreApp({super.key});
+  final StartupResult startupResult;
+  final Future<void> Function() onReloadConfig;
+
+  const LuckyStoreApp({
+    super.key,
+    required this.startupResult,
+    required this.onReloadConfig,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -89,8 +131,8 @@ class LuckyStoreApp extends StatelessWidget {
         return supportedLocales.first;
       },
 
-      // AuthGate is the new root — it dispatches based on role.
-      home: const AuthGate(),
+      // Strict mode blocks startup. Flexible modes show diagnostics.
+      home: _buildStartupHome(),
 
       // Named routes used within POS / checkout flows only.
       routes: {
@@ -103,5 +145,35 @@ class LuckyStoreApp extends StatelessWidget {
         '/order-confirmed': (_) => const GamifiedRewardScreen(),
       },
     );
+  }
+
+  Widget _buildStartupHome() {
+    switch (startupResult.state) {
+      case StartupState.blocked:
+        return StartupConfigErrorScreen(
+          missingVariables: startupResult.missingVariables,
+          onReloadConfig: onReloadConfig,
+        );
+      case StartupState.degraded:
+      case StartupState.warning:
+      case StartupState.ready:
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => AuthProvider()),
+            ChangeNotifierProvider(create: (_) => CartProvider()),
+            ChangeNotifierProvider(create: (_) => PosProvider()),
+            ChangeNotifierProxyProvider<AuthProvider, AppAccessController>(
+              create: (_) => AppAccessController(startupResult: startupResult),
+              update: (_, auth, access) {
+                final controller =
+                    access ?? AppAccessController(startupResult: startupResult);
+                controller.updateFromAuth(auth);
+                return controller;
+              },
+            ),
+          ],
+          child: AuthGate(startupResult: startupResult),
+        );
+    }
   }
 }
