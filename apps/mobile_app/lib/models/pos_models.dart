@@ -52,6 +52,7 @@ class PosItem {
       qtyOnHand:  (json['qty_on_hand'] as num? ?? 0).toInt(),
     );
   }
+
 }
 
 // ---------------------------------------------------------------------------
@@ -122,6 +123,8 @@ class SaleResult {
   final double tendered;
   final double changeDue;
   final List<CartItem>? items;
+  final List<PricingResult> pricingResults;
+  final double totalSavings;
 
   const SaleResult({
     required this.saleId,
@@ -132,9 +135,12 @@ class SaleResult {
     required this.tendered,
     required this.changeDue,
     this.items,
+    this.pricingResults = const [],
+    this.totalSavings = 0,
   });
 
   factory SaleResult.fromJson(Map<String, dynamic> json, {List<CartItem>? items}) {
+    final pricingRaw = (json['pricing_results'] as List<dynamic>? ?? const []);
     return SaleResult(
       saleId:      json['sale_id']      as String,
       saleNumber:  json['sale_number']  as String,
@@ -144,8 +150,67 @@ class SaleResult {
       tendered:    (json['tendered']    as num).toDouble(),
       changeDue:   (json['change_due']  as num).toDouble(),
       items:       items,
+      pricingResults: pricingRaw
+          .map((row) => PricingResult.fromJson(Map<String, dynamic>.from(row as Map)))
+          .toList(growable: false),
+      totalSavings: (json['total_savings'] as num? ?? 0).toDouble(),
     );
   }
+}
+
+class PricingResult {
+  final String itemId;
+  final int qty;
+  final double mrp;
+  final double sellingPrice;
+  final double unitDiscount;
+  final double totalSavings;
+
+  const PricingResult({
+    required this.itemId,
+    required this.qty,
+    required this.mrp,
+    required this.sellingPrice,
+    required this.unitDiscount,
+    required this.totalSavings,
+  });
+
+  factory PricingResult.fromJson(Map<String, dynamic> json) {
+    return PricingResult(
+      itemId: json['item_id'] as String,
+      qty: (json['qty'] as num? ?? 0).toInt(),
+      mrp: (json['mrp'] as num? ?? 0).toDouble(),
+      sellingPrice: (json['selling_price'] as num? ?? 0).toDouble(),
+      unitDiscount: (json['unit_discount'] as num? ?? 0).toDouble(),
+      totalSavings: (json['total_savings'] as num? ?? 0).toDouble(),
+    );
+  }
+}
+
+enum SaleExecutionStatus { success, adjusted, rejected, conflict }
+
+class SaleExecutionResult {
+  final SaleExecutionStatus status;
+  final String? conflictReason;
+  final String? message;
+  final List<Map<String, dynamic>> adjustments;
+  final List<Map<String, dynamic>> partialFulfillment;
+  final SaleResult? saleResult;
+  final String? transactionTraceId;
+
+  const SaleExecutionResult({
+    required this.status,
+    required this.conflictReason,
+    required this.message,
+    required this.adjustments,
+    required this.partialFulfillment,
+    required this.saleResult,
+    required this.transactionTraceId,
+  });
+
+  bool get isSuccess =>
+      status == SaleExecutionStatus.success ||
+      status == SaleExecutionStatus.adjusted;
 }
 
 // ---------------------------------------------------------------------------

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +8,8 @@ import '../../providers/pos_provider.dart';
 import '../../providers/auth_provider.dart';
 import 'payment_screen.dart';
 import 'pos_session_summary_screen.dart';
+
+enum PosLoadState { loading, ready, empty, error }
 
 /// The main POS cashier screen — a landscape split-panel tablet UI.
 /// Left (60%): searchable product grid with category filters + barcode scanner.
@@ -26,8 +29,10 @@ class _PosMainScreenState extends State<PosMainScreen> {
   List<PosCategory> _categories = [];
   String? _selectedCategoryId;
   bool _scanning   = false;
-  bool _loadingItems = false;
+  PosLoadState _loadState = PosLoadState.loading;
+  String? _loadError;
   String _searchQuery = '';
+  bool _allowProductAdd = true;
 
   @override
   void initState() {
@@ -38,12 +43,25 @@ class _PosMainScreenState extends State<PosMainScreen> {
 
   Future<void> _init() async {
     final pos = context.read<PosProvider>();
-    final cats = await pos.loadCategories();
-    final items = await pos.searchItems('');
-    if (!mounted) return;
     setState(() {
-      _categories = cats;
-      _items = items;
+      _loadState = PosLoadState.loading;
+      _loadError = null;
+    });
+    final catalog = await pos.loadProductCatalog(
+      query: _searchQuery,
+      categoryId: _selectedCategoryId,
+    );
+    if (!mounted) return;
+    final hasError = catalog.hasError;
+    final isEmpty = catalog.items.isEmpty;
+    setState(() {
+      _categories = catalog.categories;
+      _items = catalog.items;
+      _loadError = catalog.error;
+      _allowProductAdd = !catalog.hasError;
+      _loadState = hasError
+          ? PosLoadState.error
+          : (isEmpty ? PosLoadState.empty : PosLoadState.ready);
     });
   }
 
@@ -55,11 +73,28 @@ class _PosMainScreenState extends State<PosMainScreen> {
   }
 
   Future<void> _doSearch(String q, String? catId) async {
-    setState(() => _loadingItems = true);
+    setState(() {
+      _loadState = PosLoadState.loading;
+      _loadError = null;
+    });
     final pos = context.read<PosProvider>();
-    final items = await pos.searchItems(q, categoryId: catId);
+    List<PosItem> items = const [];
+    String? error;
+    try {
+      items = await pos.searchItems(q, categoryId: catId);
+    } catch (e) {
+      error = _cleanError(e);
+    }
     if (!mounted) return;
-    setState(() { _items = items; _loadingItems = false; });
+    setState(() {
+      _items = items;
+      _categories = _categories;
+      _loadError = error ?? pos.posDebugSnapshot['last_load_error'] as String?;
+      _allowProductAdd = _loadError == null;
+      _loadState = _loadError != null
+          ? PosLoadState.error
+          : (items.isEmpty ? PosLoadState.empty : PosLoadState.ready);
+    });
   }
 
   Future<void> _onBarcodeDetected(BarcodeCapture capture) async {
@@ -137,6 +172,8 @@ class _PosMainScreenState extends State<PosMainScreen> {
     return Column(
       children: [
         _buildTopBar(),
+        _buildFallbackModeBadge(),
+        if (kDebugMode) _buildDebugBanner(),
         _buildCategoryChips(),
         const SizedBox(height: 4),
         Expanded(child: _buildProductGrid()),
@@ -218,12 +255,21 @@ class _PosMainScreenState extends State<PosMainScreen> {
               onTap: () => _showCashierDialog(pos),
             ),
           ),
+          const SizedBox(width: 4),
+          Consumer<PosProvider>(
+            builder: (ctx, pos, _) => _iconButton(
+              icon: Icons.bug_report_outlined,
+              tooltip: 'POS debug snapshot',
+              onTap: () => _showPosDebugDialog(pos),
+            ),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildCategoryChips() {
+    if (_loadState == PosLoadState.error) return const SizedBox.shrink();
     return SizedBox(
       height: 40,
       child: ListView(
@@ -277,11 +323,45 @@ class _PosMainScreenState extends State<PosMainScreen> {
   }
 
   Widget _buildProductGrid() {
-    if (_loadingItems) {
+    if (_loadState == PosLoadState.loading) {
       return const Center(
           child: CircularProgressIndicator(color: Color(0xFFE8B84B)));
     }
-    if (_items.isEmpty) {
+    if (_loadState == PosLoadState.error) {
+      final msg = _loadError ?? 'Data load failed';
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline_rounded,
+                color: Colors.redAccent, size: 48),
+            const SizedBox(height: 8),
+            Text(
+              'Data load failed: $msg',
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.redAccent),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton.icon(
+              onPressed: () {
+                setState(() {
+                  _items = [];
+                  _categories = [];
+                  _allowProductAdd = false;
+                });
+                _init();
+              },
+              icon: const Icon(Icons.refresh, color: Colors.black),
+              label: const Text('Retry', style: TextStyle(color: Colors.black)),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFE8B84B)),
+            ),
+          ],
+        ),
+      );
+    }
+    if (_loadState == PosLoadState.empty || _items.isEmpty) {
+      final storeId = context.read<PosProvider>().storeId ?? 'unknown';
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -289,8 +369,17 @@ class _PosMainScreenState extends State<PosMainScreen> {
             Icon(Icons.search_off_rounded,
                 color: Colors.white.withValues(alpha: 0.2), size: 48),
             const SizedBox(height: 8),
-            Text('No products found',
-                style: TextStyle(color: Colors.white.withValues(alpha: 0.35))),
+            Text(
+              'No products found for store $storeId',
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.6)),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+            OutlinedButton.icon(
+              onPressed: _init,
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
+            ),
           ],
         ),
       );
@@ -307,7 +396,116 @@ class _PosMainScreenState extends State<PosMainScreen> {
       itemCount: _items.length,
       itemBuilder: (ctx, i) => _ProductTile(
         item: _items[i],
-        onTap: () => context.read<PosProvider>().addItem(_items[i]),
+        onTap: _allowProductAdd
+            ? () => context.read<PosProvider>().addItem(_items[i])
+            : () => _showSnack(
+                'Product loading failed. Retry before adding items.',
+                success: false,
+              ),
+      ),
+    );
+  }
+
+  Widget _buildFallbackModeBadge() {
+    return const SizedBox.shrink();
+  }
+
+  Widget _buildDebugBanner() {
+    return Consumer<PosProvider>(
+      builder: (context, pos, _) {
+        final d = pos.posDebugSnapshot;
+        final lastError = (d['last_load_error'] as String?) ?? 'none';
+        const mode = 'RPC';
+        final lastSuccess = _formatTimestamp(pos.lastSuccessfulCatalogLoadAt);
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          color: const Color(0xFF0B1320),
+          child: Text(
+            'Mode: $mode  |  Store: ${d['store_id'] ?? 'null'}  |  Items: ${d['last_item_count'] ?? 0}  |  Cats: ${d['last_category_count'] ?? 0}  |  Last OK: $lastSuccess  |  Last Error: $lastError',
+            style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 11,
+              fontFamily: 'monospace',
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        );
+      },
+    );
+  }
+
+  String _formatTimestamp(DateTime? value) {
+    if (value == null) return 'never';
+    final local = value.toLocal();
+    final h = local.hour % 12 == 0 ? 12 : local.hour % 12;
+    final m = local.minute.toString().padLeft(2, '0');
+    final s = local.second.toString().padLeft(2, '0');
+    final period = local.hour < 12 ? 'AM' : 'PM';
+    return '${local.month}/${local.day} $h:$m:$s $period';
+  }
+
+  String _cleanError(Object e) {
+    final raw = e.toString().replaceFirst('Exception:', '').trim();
+    if (raw.isEmpty) return 'Unknown error';
+    return raw.length > 180 ? '${raw.substring(0, 180)}...' : raw;
+  }
+
+  void _showPosDebugDialog(PosProvider pos) {
+    final debug = pos.posDebugSnapshot;
+    final diagnostics = <String>[
+      'Source mode: ${debug['data_source_mode']}',
+      'Offline safe mode: ${debug['offline_safe_mode']}',
+      'Store ID: ${debug['store_id'] ?? 'null'}',
+      'Cashier ID: ${debug['cashier_id'] ?? 'null'}',
+      'Last load path: ${debug['last_load_path']}',
+      'Last categories count: ${debug['last_category_count']}',
+      'Last items count: ${debug['last_item_count']}',
+      'Last load error: ${debug['last_load_error'] ?? 'none'}',
+      'Last loaded at: ${debug['last_loaded_at'] ?? 'never'}',
+      'Current UI category chips: ${_categories.length}',
+      'Current UI item tiles: ${_items.length}',
+    ];
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF161B22),
+        title: const Text(
+          'POS Debug Snapshot',
+          style: TextStyle(color: Colors.white, fontSize: 16),
+        ),
+        content: SizedBox(
+          width: 520,
+          child: SingleChildScrollView(
+            child: SelectableText(
+              diagnostics.join('\n'),
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 12,
+                height: 1.4,
+              ),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Close', style: TextStyle(color: Colors.white54)),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              await _init();
+              if (!mounted) return;
+              _showSnack('POS data reloaded', success: true);
+            },
+            style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFE8B84B)),
+            child: const Text('Reload', style: TextStyle(color: Colors.black)),
+          ),
+        ],
       ),
     );
   }

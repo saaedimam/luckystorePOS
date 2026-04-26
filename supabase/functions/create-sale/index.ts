@@ -14,17 +14,17 @@ interface SaleItem {
   item_id: string
   quantity: number
   price: number
+  cost?: number
+  discount?: number
 }
 
 interface CreateSaleRequest {
   store_id: string | null
+  client_transaction_id: string
   items: SaleItem[]
   discount: number
-  payment_method: string
-  payment_meta: {
-    cash_paid: number
-    change: number
-  }
+  payment_method_id: string
+  reference?: string
 }
 
 serve(async (req) => {
@@ -61,7 +61,14 @@ serve(async (req) => {
 
     // Parse request body
     const body: CreateSaleRequest = await req.json()
-    const { store_id, items, discount, payment_method, payment_meta } = body
+    const {
+      store_id,
+      client_transaction_id,
+      items,
+      discount,
+      payment_method_id,
+      reference,
+    } = body
 
     // Validate input
     if (!items || items.length === 0) {
@@ -71,149 +78,84 @@ serve(async (req) => {
     if (!store_id) {
       throw new Error('Store ID is required')
     }
-
-    // Start a transaction by doing all operations in sequence
-    // 1. Generate receipt number
-    const { data: receiptData, error: receiptError } = await supabase
-      .rpc('get_new_receipt', { store: store_id })
-
-    if (receiptError) {
-      console.error('Receipt generation error:', receiptError)
-      throw new Error('Failed to generate receipt number')
+    if (!client_transaction_id || client_transaction_id.trim().length === 0) {
+      throw new Error('client_transaction_id is required')
+    }
+    if (!payment_method_id) {
+      throw new Error('payment_method_id is required')
     }
 
-    const receiptNumber = receiptData as string
+    const rpcItems = items.map((item) => ({
+      item_id: item.item_id,
+      qty: item.quantity,
+      unit_price: item.price,
+      cost: item.cost ?? 0,
+      discount: item.discount ?? 0,
+    }))
 
-    // 2. Get item details and check stock availability
-    const itemIds = items.map(item => item.item_id)
-    const { data: itemsData, error: itemsError } = await supabase
-      .from('items')
-      .select('id, name, cost, price')
-      .in('id', itemIds)
-
-    if (itemsError || !itemsData) {
-      throw new Error('Failed to fetch item details')
+    const rpcPayments = [
+      {
+        payment_method_id,
+        amount: rpcItems.reduce((sum, line) => sum + (line.unit_price * line.qty), 0) - (discount ?? 0),
+        reference: reference ?? null,
+      },
+    ]
+    const snapshot = {
+      client_transaction_id,
+      store_id,
+      user_id: profile.id,
+      mode: 'online',
+      pricing_source: 'rpc',
+      inventory_source: 'rpc',
+      created_at: new Date().toISOString(),
+      items: items.map((item) => ({
+        product_id: item.item_id,
+        quantity: item.quantity,
+        unit_price_snapshot: item.price,
+        discount_snapshot: item.discount ?? 0,
+        stock_snapshot: 0,
+      })),
     }
 
-    // Check stock levels
-    const { data: stockData, error: stockError } = await supabase
-      .from('stock_levels')
-      .select('item_id, qty')
-      .eq('store_id', store_id)
-      .in('item_id', itemIds)
-
-    if (stockError) {
-      throw new Error('Failed to check stock levels')
-    }
-
-    // Verify stock availability
-    const stockMap = new Map<string, number>(
-      (stockData ?? []).map((s: { item_id: string; qty: number }) => [s.item_id, s.qty]),
-    )
-    for (const item of items) {
-      const availableQty = stockMap.get(item.item_id) ?? 0
-      if (availableQty < item.quantity) {
-        const itemName = itemsData.find(i => i.id === item.item_id)?.name || 'Unknown item'
-        throw new Error(`Insufficient stock for ${itemName}. Available: ${availableQty}, Required: ${item.quantity}`)
-      }
-    }
-
-    // 3. Calculate subtotal and total
-    const subtotal = items.reduce((sum, item) => {
-      const itemData = itemsData.find(i => i.id === item.item_id)
-      return sum + (item.price * item.quantity)
-    }, 0)
-
-    const total = subtotal - discount
-
-    // 4. Create sale record
-    const { data: saleData, error: saleError } = await supabase
-      .from('sales')
-      .insert({
-        store_id,
-        cashier_id: profile.id,
-        receipt_number: receiptNumber,
-        subtotal,
-        discount,
-        total,
-        payment_method,
-        payment_meta,
-        status: 'completed'
-      })
-      .select()
-      .single()
-
-    if (saleError) {
-      console.error('Sale creation error:', saleError)
-      throw new Error('Failed to create sale record')
-    }
-
-    // 5. Create sale items
-    const saleItems = items.map(item => {
-      const itemData = itemsData.find(i => i.id === item.item_id)
-      return {
-        sale_id: saleData.id,
-        item_id: item.item_id,
-        price: item.price,
-        cost: itemData?.cost || 0,
-        qty: item.quantity,
-        line_total: item.price * item.quantity
-      }
+    const { data: saleResult, error: saleError } = await supabase.rpc('complete_sale', {
+      p_store_id: store_id,
+      p_cashier_id: profile.id,
+      p_session_id: null,
+      p_items: rpcItems,
+      p_payments: rpcPayments,
+      p_discount: discount ?? 0,
+      p_client_transaction_id: client_transaction_id,
+      p_notes: null,
+      p_snapshot: snapshot,
+      p_fulfillment_policy: 'STRICT',
+      p_override_token: null,
+      p_override_reason: null,
     })
 
-    const { error: saleItemsError } = await supabase
-      .from('sale_items')
-      .insert(saleItems)
-
-    if (saleItemsError) {
-      console.error('Sale items error:', saleItemsError)
-      throw new Error('Failed to create sale items')
+    if (saleError) {
+      console.error('complete_sale RPC error:', saleError)
+      throw new Error('Failed to create sale')
     }
 
-    // 6. Update stock levels and create stock movements
-    for (const item of items) {
-      // Decrement stock
-      const { error: stockUpdateError } = await supabase
-        .rpc('decrement_stock', {
-          p_store_id: store_id,
-          p_item_id: item.item_id,
-          p_quantity: item.quantity
-        })
-
-      if (stockUpdateError) {
-        console.error('Stock update error:', stockUpdateError)
-        // Log but don't fail the sale - we'll handle this manually
-      }
-
-      // Create stock movement record
-      const { error: movementError } = await supabase
-        .from('stock_movements')
-        .insert({
-          store_id,
-          item_id: item.item_id,
-          delta: -item.quantity,
-          reason: 'sale',
-          meta: {
-            sale_id: saleData.id,
-            receipt_number: receiptNumber
-          },
-          performed_by: profile.id
-        })
-
-      if (movementError) {
-        console.error('Stock movement error:', movementError)
-        // Log but don't fail the sale
-      }
-    }
+    const result = saleResult as Record<string, unknown>
+    const syncStatus = (result.sync_status as string | undefined) ?? 'synced'
+    const status = (result.status as string | undefined) ?? 'REJECTED'
 
     // Return success response
     return new Response(
       JSON.stringify({
-        success: true,
-        receipt_number: receiptNumber,
-        sale_id: saleData.id,
-        total,
-        items: saleItems.length
+        success: status === 'SUCCESS' || status === 'ADJUSTED',
+        status,
+        sync_status: syncStatus,
+        duplicate_detected: result.duplicate_detected ?? false,
+        conflict_type: result.conflict_type ?? null,
+        conflict_reason: result.conflict_reason ?? null,
+        adjustments: result.adjustments ?? [],
+        message: result.message ?? null,
+        sale_id: result.sale_id,
+        sale_number: result.sale_number,
+        total: result.total_amount ?? 0,
+        items: rpcItems.length,
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

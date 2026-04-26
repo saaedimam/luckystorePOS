@@ -14,6 +14,9 @@ class ReceiptPrinterService {
   /// Generate and print/share a PDF receipt using the 'printing' package.
   Future<void> printPdfReceipt(SaleResult sale, {String storeName = 'Lucky Store'}) async {
     final pdf = pw.Document();
+    final pricingByItemId = <String, PricingResult>{
+      for (final line in sale.pricingResults) line.itemId: line,
+    };
     
     pdf.addPage(
       pw.Page(
@@ -46,7 +49,15 @@ class ReceiptPrinterService {
                             crossAxisAlignment: pw.CrossAxisAlignment.start,
                             children: [
                               pw.Text(item.item.name, style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
-                              pw.Text('${item.qty} x Tk ${item.item.price.toStringAsFixed(2)}', style: const pw.TextStyle(fontSize: 8)),
+                              pw.Text(
+                                '${item.qty} x Tk ${(pricingByItemId[item.item.id]?.sellingPrice ?? item.item.price).toStringAsFixed(2)}',
+                                style: const pw.TextStyle(fontSize: 8),
+                              ),
+                              if (pricingByItemId[item.item.id] != null)
+                                pw.Text(
+                                  'MRP Tk ${pricingByItemId[item.item.id]!.mrp.toStringAsFixed(2)}  Save Tk ${pricingByItemId[item.item.id]!.totalSavings.toStringAsFixed(2)}',
+                                  style: const pw.TextStyle(fontSize: 8),
+                                ),
                             ],
                           ),
                         ),
@@ -59,6 +70,8 @@ class ReceiptPrinterService {
                 pw.SizedBox(height: 5),
                 // Totals
                 _pdfRow('Subtotal', 'Tk ${sale.subtotal.toStringAsFixed(2)}'),
+                if (sale.totalSavings > 0)
+                  _pdfRow('MRP Savings', '- Tk ${sale.totalSavings.toStringAsFixed(2)}'),
                 if (sale.discount > 0)
                   _pdfRow('Discount', '- Tk ${sale.discount.toStringAsFixed(2)}'),
                 pw.Divider(borderStyle: pw.BorderStyle.dashed),

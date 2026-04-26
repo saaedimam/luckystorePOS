@@ -76,6 +76,9 @@ class ReceiptScreen extends StatelessWidget {
   }
 
   Widget _buildReceiptCard() {
+    final pricingByItemId = <String, PricingResult>{
+      for (final line in saleResult.pricingResults) line.itemId: line,
+    };
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -119,8 +122,17 @@ class ReceiptScreen extends StatelessWidget {
                       children: [
                         Text(item.item.name,
                             style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500)),
-                        Text('${item.qty} × ৳ ${item.item.price.toStringAsFixed(0)}',
+                        Text('${item.qty} × ৳ ${(pricingByItemId[item.item.id]?.sellingPrice ?? item.item.price).toStringAsFixed(0)}',
                             style: const TextStyle(color: Colors.white38, fontSize: 11)),
+                        if (pricingByItemId[item.item.id] != null)
+                          Text(
+                            'MRP ৳ ${pricingByItemId[item.item.id]!.mrp.toStringAsFixed(2)}  •  Save ৳ ${pricingByItemId[item.item.id]!.totalSavings.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              color: Color(0xFF2ECC71),
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                       ],
                     ),
                   ),
@@ -137,6 +149,10 @@ class ReceiptScreen extends StatelessWidget {
           // Amount section
           _receiptRow('Subtotal',
               '৳ ${saleResult.subtotal.toStringAsFixed(2)}'),
+          if (saleResult.totalSavings > 0)
+            _receiptRow('MRP Savings',
+                '- ৳ ${saleResult.totalSavings.toStringAsFixed(2)}',
+                valueColor: const Color(0xFF2ECC71)),
           if (saleResult.discount > 0)
             _receiptRow('Discount',
                 '- ৳ ${saleResult.discount.toStringAsFixed(2)}',
