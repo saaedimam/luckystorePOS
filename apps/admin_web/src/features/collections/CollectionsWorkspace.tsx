@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Phone, MessageCircle, FileText, Check, FileClock } from 'lucide-react';
+import { Phone, MessageCircle, FileText, Check } from 'lucide-react';
 import { format } from 'date-fns';
 
 type Receivable = {

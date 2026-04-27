@@ -1,66 +1,127 @@
-# Lucky Store
+# Lucky Store QA Test Suite - Month 2
 
-Lucky Store monorepo containing the Flutter POS application, scraper utilities, and Supabase backend services.
+## Overview
 
-## Repo structure
+Comprehensive Quality Assurance test suite for the Lucky Store Month 2 systems, covering all critical transaction processing flows.
 
-- `apps/mobile_app` - Flutter POS and mobile application (web + iOS + Android targets)
-- `apps/scraper` - Scraping utilities
-- `data/` - Datasets (competitors, inventory samples)
-- `scripts/` - Automation and ops scripts (`deploy`, `ops`, `db`, `data`, `tools`, etc.)
-- `supabase/` - Supabase Edge Functions and migrations
-- `docs/` - Project documentation index ([docs/README.md](./docs/README.md))
-- `archive/` - Deprecated codebases, including legacy frontend and import tools
+## Test Structure
 
-## Setup
-
-### 1) Prerequisites
-
-Install the tools needed for your workflow:
-
-- Flutter SDK (for `apps/mobile_app`)
-- Node.js + npm (for scripts and JavaScript tooling)
-- Supabase CLI (for local DB/functions workflows)
-
-### 2) Install dependencies
-
-```bash
-# Mobile app
-cd apps/mobile_app
-flutter pub get
-
-# Return to repo root for script tooling
-cd ../..
-npm install
+```
+apps/mobile_app/test/
+├── unit/                       # Unit tests (6 files)
+│   ├── duplicate_submission_test.dart
+│   ├── race_conditions_test.dart
+│   ├── overdue_calculations_test.dart
+│   ├── stock_validation_test.dart
+│   ├── offline_queue_test.dart
+│   └── statement_accuracy_test.dart
+├── integration/
+│   └── all_systems_integration_test.dart
+├── load/
+│   └── load_tests.dart
+├── MANUAL_TEST_CHECKLIST.md   # Manual testing checklist
+└── README.md                  # This file
 ```
 
-### 3) Configure environment variables
-
-1. Copy the template:
+## Running Tests
 
 ```bash
-cp .env.example .env
-```
-
-2. Fill in real values in `.env` (or app-local `.env` files where required).
-3. Do **not** commit `.env` files; only commit template files like `.env.example`.
-
-### 4) Run the POS app locally
-
-```bash
+# Navigate to mobile app directory
 cd apps/mobile_app
 
-# Web (Chrome)
-flutter run -d chrome
+# Run all unit tests
+flutter test test/unit/
 
-# Emulator/device
-flutter run
+# Run specific unit test
+flutter test test/unit/duplicate_submission_test.dart
+
+# Run integration tests
+flutter test test/integration/
+
+# Run load tests
+flutter test test/load/
+
+# Run the default widget test
+flutter test test/widget_test.dart
+
+# Run all tests
+flutter test
 ```
 
-## Deploy POS Web to Vercel
+## Test Categories
 
-This repo is configured to build and deploy `apps/mobile_app` to Vercel as a compiled web application. Deployment configuration lives at `/vercel.json` in the repo root, while build commands target `apps/mobile_app`.
+### 1. Duplicate Submissions
+- Idempotency key generation and uniqueness
+- Offline queue duplicate detection
+- RPC-level idempotency
+- Invoice duplicate protection
 
-In Vercel project settings, keep the root directory and `vercel.json` behavior aligned, and configure required environment variables.
+### 2. Race Conditions
+- Concurrent sales of same item
+- Simultaneous payment processing
+- Offline sync guard clauses
+- Session state consistency
 
-Then connect the GitHub repository for automatic deployments, or deploy via CLI from `apps/mobile_app`.
+### 3. Concurrent Payments
+- Split payments across methods
+- Overpayment handling
+- Exact payment flow
+- Change calculation
+
+### 4. Overdue Calculations
+- Days overdue accuracy
+- Aging buckets (0-30, 31-60, 61-90, 90+)
+- Balance from ledger entries
+- Promise to pay handling
+
+### 5. Wrong Cost Inputs
+- Negative cost rejection
+- Zero cost handling
+- Large cost validation
+- Decimal precision (4 places)
+
+### 6. Negative Stock
+- Sales exceeding stock
+- Negative quantity handling
+- Stock validation before sale
+
+### 7. Offline Queue Replay
+- Queue persistence (JSON save/load)
+- Exponential backoff retry
+- Conflict detection
+- State transitions
+
+### 8. Statement Accuracy
+- Double-entry bookkeeping
+- Running balance
+- Debit/credit display
+- Void reversals
+
+### 9. Performance & Load
+- Large inventory search (1000+ items)
+- Customer reports (500+ customers)
+- Ledger display (1000+ entries)
+- Offline queue (500+ transactions)
+
+### 10. Manual Testing
+See `MANUAL_TEST_CHECKLIST.md` for 60+ manual scenarios.
+
+## Dependencies
+
+The tests use only built-in Dart test libraries. No external mock libraries are currently required.
+
+## Notes
+
+- **Unit tests**: Pure Dart logic, no Flutter widget dependencies
+- **Integration tests**: Cross-component flows, mock Supabase where needed
+- **Load tests**: Performance benchmarks with Stopwatch timing
+- **Manual tests**: Human-verified UI flows
+
+## Expected Output
+
+```bash
+00:00 +1: loading test/widget_test.dart
+00:01 +1: All tests passed!
+```
+
+Each test file should output its timing metrics (load tests) for monitoring performance regressions.

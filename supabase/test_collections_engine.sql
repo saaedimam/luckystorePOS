@@ -5,7 +5,7 @@ BEGIN;
 
 -- 1. Setup Test Data
 INSERT INTO tenants (id, name) VALUES ('00000000-0000-0000-0000-000000000001', 'Test Tenant');
-INSERT INTO stores (id, tenant_id, name) VALUES ('00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', 'Test Store');
+INSERT INTO stores (id, tenant_id, code, name) VALUES ('00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', 'TEST001', 'Test Store');
 
 -- Setup Accounts
 INSERT INTO accounts (id, tenant_id, name, type) VALUES 
@@ -25,9 +25,9 @@ INSERT INTO inventory_items (id, tenant_id, name, sku) VALUES
 INSERT INTO parties (id, tenant_id, type, name, phone) VALUES 
 ('00000000-0000-0000-0000-000000000009', '00000000-0000-0000-0000-000000000001', 'customer', 'Test Customer', '01700000000');
 
--- Add initial stock so COGS works
-INSERT INTO stock_movements (tenant_id, store_id, item_id, quantity_change, weighted_average_cost, reference_type, reference_id)
-VALUES ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000007', 10, 50, 'INITIAL', gen_random_uuid());
+-- Add initial stock so COGS works (using current schema)
+INSERT INTO stock_movements (store_id, item_id, delta, reason, meta)
+VALUES ('00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000007', 10, 'INITIAL', '{"note":"Initial stock for test"}');
 
 -- 2. Test Record Sale on Credit (Sell 2 items at 100 each = 200 total)
 DO $$

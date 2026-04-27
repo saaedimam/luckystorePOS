@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, Trash2, Save, Send, Search, Hash } from 'lucide-react';
+import { Trash2, Save, Send, Search } from 'lucide-react';
 
 type Supplier = {
   id: string;
@@ -139,7 +139,7 @@ export const PurchaseEntryPage: React.FC = () => {
       unit_cost: l.unitCost,
     }));
 
-    const { data, error } = await supabase.rpc('record_purchase_v2', {
+    const { error } = await supabase.rpc('record_purchase_v2', {
       p_idempotency_key: `pr_${Date.now()}_${selectedSupplier.id}`,
       p_tenant_id: tenantId,
       p_store_id: storeId,

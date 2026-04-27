@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Party, LedgerEntry } from '../../types/finance';
+import type { Party, LedgerEntry } from '../../types/finance';
 import { format } from 'date-fns';
 
 export const SupplierLedgerPage: React.FC = () => {
