@@ -272,6 +272,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
         // Total due / remaining display
         _buildAmountDisplay(pos),
 
+        // Customer selection
+        _buildCustomerSelection(pos),
+
         // Payment method chips
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
@@ -346,6 +349,134 @@ class _PaymentScreenState extends State<PaymentScreen> {
         _buildActionButton(pos),
         const SizedBox(height: 8),
       ],
+    );
+  }
+
+  Widget _buildCustomerSelection(PosProvider pos) {
+    final party = pos.selectedParty;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      child: InkWell(
+        onTap: () => _showCustomerSearchDialog(pos),
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            color: party != null
+                ? const Color(0xFFE8B84B).withValues(alpha: 0.1)
+                : Colors.white.withValues(alpha: 0.04),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+                color: party != null
+                    ? const Color(0xFFE8B84B).withValues(alpha: 0.3)
+                    : Colors.white.withValues(alpha: 0.08)),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                party != null ? Icons.person_rounded : Icons.person_add_alt_1_rounded,
+                color: party != null ? const Color(0xFFE8B84B) : Colors.white38,
+                size: 18,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      party?.name ?? 'Select Customer (Walk-in)',
+                      style: TextStyle(
+                        color: party != null ? Colors.white : Colors.white38,
+                        fontSize: 13,
+                        fontWeight: party != null ? FontWeight.w600 : FontWeight.w400,
+                      ),
+                    ),
+                    if (party != null)
+                      Text(
+                        'Current Balance: ৳ ${party.currentBalance.toStringAsFixed(2)}',
+                        style: const TextStyle(color: Colors.white38, fontSize: 11),
+                      ),
+                  ],
+                ),
+              ),
+              if (party != null)
+                IconButton(
+                  icon: const Icon(Icons.close_rounded, color: Colors.white38, size: 16),
+                  onPressed: () => pos.setSelectedParty(null),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                )
+              else
+                const Icon(Icons.chevron_right_rounded, color: Colors.white24, size: 18),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showCustomerSearchDialog(PosProvider pos) {
+    final ctrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          backgroundColor: const Color(0xFF161B22),
+          title: const Text('Find Customer', style: TextStyle(color: Colors.white, fontSize: 16)),
+          content: SizedBox(
+            width: 400,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: ctrl,
+                  autofocus: true,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: 'Search by name or phone...',
+                    prefixIcon: const Icon(Icons.search, color: Colors.white38),
+                    filled: true,
+                    fillColor: Colors.white.withValues(alpha: 0.06),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                  ),
+                  onChanged: (v) => setDialogState(() {}),
+                ),
+                const SizedBox(height: 12),
+                FutureBuilder<List<Party>>(
+                  future: pos.searchParties(ctrl.text),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: Padding(padding: EdgeInsets.all(20), child: CircularProgressIndicator()));
+                    }
+                    final parties = snapshot.data ?? [];
+                    if (parties.isEmpty && ctrl.text.isNotEmpty) {
+                      return const Padding(padding: EdgeInsets.all(20), child: Text('No customers found', style: TextStyle(color: Colors.white38)));
+                    }
+                    return SizedBox(
+                      height: 250,
+                      child: ListView.builder(
+                        itemCount: parties.length,
+                        itemBuilder: (ctx, i) => ListTile(
+                          title: Text(parties[i].name, style: const TextStyle(color: Colors.white, fontSize: 14)),
+                          subtitle: Text(parties[i].phone ?? 'No phone', style: const TextStyle(color: Colors.white38, fontSize: 12)),
+                          trailing: Text('৳ ${parties[i].currentBalance}', style: const TextStyle(color: Color(0xFFE8B84B), fontSize: 12)),
+                          onTap: () {
+                            pos.setSelectedParty(parties[i]);
+                            Navigator.pop(ctx);
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel', style: TextStyle(color: Colors.white38))),
+          ],
+        ),
+      ),
     );
   }
 

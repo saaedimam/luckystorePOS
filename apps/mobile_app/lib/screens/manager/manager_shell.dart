@@ -6,6 +6,8 @@ import '../pos/pos_main_screen.dart';
 import '../pos/manager_dashboard_screen.dart';
 import '../inventory_import_screen.dart';
 import '../pos/label_print_screen.dart';
+import 'overdue_customers_screen.dart';
+import '../purchase/purchase_receiving_screen.dart';
 
 /// Top-level shell for manager and admin users.
 ///
@@ -33,6 +35,8 @@ class _ManagerShellState extends State<ManagerShell> {
     _TabDef(label: 'Dashboard', icon: Icons.dashboard_outlined,      activeIcon: Icons.dashboard),
     _TabDef(label: 'Inventory', icon: Icons.upload_file_outlined,    activeIcon: Icons.upload_file),
     _TabDef(label: 'Labels',    icon: Icons.print_outlined,          activeIcon: Icons.print),
+    _TabDef(label: 'Dues',      icon: Icons.account_balance_wallet_outlined, activeIcon: Icons.account_balance_wallet),
+    _TabDef(label: 'Purchase',  icon: Icons.shopping_basket_outlined, activeIcon: Icons.shopping_basket),
   ];
 
   // Lazily-built page widgets — keeps page state alive across tab switches.
@@ -41,6 +45,8 @@ class _ManagerShellState extends State<ManagerShell> {
     const ManagerDashboardScreen(),
     const InventoryImportScreen(),
     const LabelPrintScreen(),
+    const OverdueCustomersScreen(),
+    const PurchaseReceivingScreen(),
   ];
 
   void _onTabSelected(int index) {
