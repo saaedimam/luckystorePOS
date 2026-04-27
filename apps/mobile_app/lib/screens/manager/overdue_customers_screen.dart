@@ -25,17 +25,17 @@ class _OverdueCustomersScreenState extends State<OverdueCustomersScreen> {
   Future<void> _fetchReceivables() async {
     setState(() => _isLoading = true);
     final auth = context.read<AuthProvider>();
-    final tenantId = auth.appUser?.tenantId;
     final storeId = auth.appUser?.storeId;
+    final userId = auth.appUser?.id;
 
-    if (tenantId == null || storeId == null) {
+    if (storeId == null || userId == null) {
       setState(() => _isLoading = false);
       return;
     }
 
     try {
       final response = await _supabase.rpc('get_receivables_aging', params: {
-        'p_tenant_id': tenantId,
+        'p_tenant_id': userId,
         'p_store_id': storeId,
         'p_search': null,
       }) as List<dynamic>;
@@ -80,7 +80,7 @@ Thank you.''';
     final auth = context.read<AuthProvider>();
     try {
       await _supabase.rpc('log_customer_reminder', params: {
-        'p_tenant_id': auth.appUser?.tenantId,
+        'p_tenant_id': auth.appUser?.id,
         'p_store_id': auth.appUser?.storeId,
         'p_party_id': customer['party_id'],
         'p_type': 'whatsapp',
@@ -311,7 +311,7 @@ class _ReceivePaymentSheetState extends State<_ReceivePaymentSheet> {
       
       await supabase.rpc('record_customer_payment', params: {
         'p_idempotency_key': 'pay_${DateTime.now().millisecondsSinceEpoch}_${widget.customer['party_id']}',
-        'p_tenant_id': auth.appUser?.tenantId,
+        'p_tenant_id': auth.appUser?.id,
         'p_store_id': auth.appUser?.storeId,
         'p_party_id': widget.customer['party_id'],
         'p_amount': amount,
@@ -363,7 +363,7 @@ class _ReceivePaymentSheetState extends State<_ReceivePaymentSheet> {
             decoration: BoxDecoration(
               color: const Color(0xFFE8B84B).withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
-              border: BorderSide(color: const Color(0xFFE8B84B).withOpacity(0.3)),
+              border: Border.all(color: const Color(0xFFE8B84B).withOpacity(0.3)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
