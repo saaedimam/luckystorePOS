@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { Skeleton } from '../../components/Skeleton';
-import { Users, CreditCard, FileText, Plus, UserPlus, Save, Check, RefreshCw } from 'lucide-react';
+import { Users, CreditCard, FileText, UserPlus, Save, Check, RefreshCw } from 'lucide-react';
 import { clsx } from 'clsx';
 
 export function SettingsPage() {

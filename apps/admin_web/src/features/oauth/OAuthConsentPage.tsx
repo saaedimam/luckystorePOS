@@ -51,7 +51,7 @@ export function OAuthConsentPage() {
         setError(error.message);
         setActionLoading(false);
       } else {
-        // Redirect back to the third-party client
+        // @ts-ignore - redirect_to property based on Supabase auth OAuth flow
         window.location.href = data.redirect_to;
       }
     } catch (err: any) {
@@ -72,7 +72,7 @@ export function OAuthConsentPage() {
         setError(error.message);
         setActionLoading(false);
       } else {
-        // Redirect back to the third-party client with error
+        // @ts-ignore - redirect_to property based on Supabase auth OAuth flow
         window.location.href = data.redirect_to;
       }
     } catch (err: any) {

@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext } from 'react';
+import { useState, createContext, useContext } from 'react';
 import { AlertCircle, CheckCircle, X } from 'lucide-react';
 
 type NotificationType = 'error' | 'success' | 'info';

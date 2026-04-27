@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { Skeleton } from '../../components/Skeleton';
-import { Search, Filter, Eye, XCircle, ChevronRight, Receipt, User, Calendar, CreditCard, X } from 'lucide-react';
+import { Search, XCircle, ChevronRight, Receipt, CreditCard, X } from 'lucide-react';
 import { clsx } from 'clsx';
 import { format } from 'date-fns';
 import { useNotify } from '../../components/Notification';

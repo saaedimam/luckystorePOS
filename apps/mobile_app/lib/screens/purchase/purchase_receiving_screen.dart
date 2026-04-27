@@ -568,7 +568,7 @@ class _ItemSearchDelegate extends SearchDelegate<String?> {
           children: items.map<Widget>((item) {
             return ListTile(
               title: Text(item.name, style: const TextStyle(color: Colors.white)),
-              subtitle: Text('৳ ${item.price} | ${item.sku ?? ""}', style: const TextStyle(color: Colors.white54)),
+              subtitle: Text('৳ ${item.price} | ${item.sku}', style: const TextStyle(color: Colors.white54)),
               onTap: () => close(context, item.barcode ?? item.id),
             );
           }).toList(),
