@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import '../models/party.dart';
-import '../models/pos_models.dart';
-import '../providers/pos_provider.dart';
-import '../providers/auth_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../models/party.dart';
+import '../../models/pos_models.dart';
+import '../../providers/pos_provider.dart';
 
 /// PurchaseReceivingScreen — fast supplier stock intake (<30s workflow).
 ///
@@ -37,7 +37,6 @@ class _PurchaseReceivingScreenState extends State<PurchaseReceivingScreen> {
   List<Party> _supplierSuggestions = [];
   List<ReceiptLine> _lines = [];
   bool _scanning = false;
-  bool _isDraft = false;
   bool _isPosting = false;
   String? _error;
 
@@ -71,7 +70,7 @@ class _PurchaseReceivingScreenState extends State<PurchaseReceivingScreen> {
       setState(() => _supplierSuggestions = []);
       return;
     }
-    final supabase = Provider.of<AuthProvider>(context, listen: false).supabase;
+    final supabase = Supabase.instance.client;
     final res = await supabase
         .from('parties')
         .select('id, tenant_id, type, name, phone')
@@ -144,7 +143,6 @@ class _PurchaseReceivingScreenState extends State<PurchaseReceivingScreen> {
   Future<void> _submit({bool asDraft = false}) async {
     setState(() {
       _error = null;
-      _isDraft = asDraft;
       _isPosting = true;
     });
 
@@ -172,11 +170,11 @@ class _PurchaseReceivingScreenState extends State<PurchaseReceivingScreen> {
         .toList();
 
     try {
-      final supabase = Provider.of<AuthProvider>(context, listen: false).supabase;
+      final supabase = Supabase.instance.client;
       final tenantId = supabase.auth.currentUser?.id; // simplified
       // In production, extract tenant_id from JWT or user profile
 
-      final response = await supabase.rpc('record_purchase_v2', params: {
+      await supabase.rpc('record_purchase_v2', params: {
         'p_idempotency_key': 'pr_${DateTime.now().millisecondsSinceEpoch}',
         'p_tenant_id': tenantId, // TODO: replace with actual tenant_id
         'p_store_id': supabase.auth.currentUser?.id, // TODO: replace with actual store_id
@@ -238,7 +236,7 @@ class _PurchaseReceivingScreenState extends State<PurchaseReceivingScreen> {
             if (_error != null)
               Container(
                 width: double.infinity,
-                color: Colors.red.withOpacity(0.2),
+                color: Colors.red.withValues(alpha: 0.2),
                 padding: const EdgeInsets.all(12),
                 child: Text(_error!, style: const TextStyle(color: Colors.redAccent)),
               ),
@@ -561,14 +559,13 @@ class _ItemSearchDelegate extends SearchDelegate<String?> {
     if (query.length < 2) {
       return const Center(child: Text('Type at least 2 characters...', style: TextStyle(color: Colors.white54)));
     }
-    return FutureBuilder<Map<String, dynamic>>(
-      future: pos.searchCatalog(query),
+    return FutureBuilder<List<PosItem>>(
+      future: pos.searchItems(query),
       builder: (context, snap) {
         if (!snap.hasData) return const Center(child: CircularProgressIndicator());
-        final items = (snap.data!['items'] as List?) ?? [];
+        final items = snap.data!;
         return ListView(
-          children: items.map<Widget>((j) {
-            final item = PosItem.fromJson(j);
+          children: items.map<Widget>((item) {
             return ListTile(
               title: Text(item.name, style: const TextStyle(color: Colors.white)),
               subtitle: Text('৳ ${item.price} | ${item.sku ?? ""}', style: const TextStyle(color: Colors.white54)),

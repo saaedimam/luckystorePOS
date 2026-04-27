@@ -500,6 +500,34 @@ class PosProvider extends ChangeNotifier {
     });
   }
 
+  // ── Cash closing ─────────────────────────────────────────────────────
+
+  Future<Map<String, dynamic>> recordCashClosing({
+    required double actualCash,
+    required String accountId,
+  }) async {
+    final idempotencyKey = 'cash_closing_${DateTime.now().millisecondsSinceEpoch}';
+    final tenantId = _supabase.auth.currentUser?.userMetadata?['tenant_id'];
+    final storeId = _storeId;
+
+    if (tenantId == null || storeId == null) {
+      return {'status': 'error', 'message': 'Missing tenant or store ID'};
+    }
+
+    try {
+      final result = await _supabase.rpc('record_cash_closing', params: {
+        'p_idempotency_key': idempotencyKey,
+        'p_tenant_id': tenantId,
+        'p_store_id': storeId,
+        'p_account_id': accountId,
+        'p_actual_cash': actualCash,
+      });
+      return result as Map<String, dynamic>;
+    } catch (e) {
+      return {'status': 'error', 'message': e.toString()};
+    }
+  }
+
   // ── Scan / search ──────────────────────────────────────────────────────────
 
   Future<PosItem?> scanItem(String value) async {

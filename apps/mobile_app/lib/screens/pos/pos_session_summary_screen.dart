@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../services/offline_transaction_sync_service.dart';
 import '../../services/store_closing_health_check_service.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/pos_provider.dart';
 
 class _CloseReviewApproval {
   final bool confirmed;
