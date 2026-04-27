@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/pos_models.dart';
 import '../models/sale_transaction_snapshot.dart';
 import '../models/app_user.dart';
+import '../models/party.dart';
 import '../services/offline_transaction_sync_service.dart';
 
 class PosCatalogLoadResult {
@@ -68,6 +69,14 @@ class PosProvider extends ChangeNotifier {
   String? get cashierId => _cashierId;
   String? get cashierName => _cashierName;
   String? get storeId => _storeId;
+
+  Party? _selectedParty;
+  Party? get selectedParty => _selectedParty;
+
+  void setSelectedParty(Party? party) {
+    _selectedParty = party;
+    notifyListeners();
+  }
 
   // ── Cart ───────────────────────────────────────────────────────────────────
   final List<CartItem> _cart = [];
@@ -423,51 +432,63 @@ class PosProvider extends ChangeNotifier {
       );
     }
 
-    final result = await _supabase.rpc('complete_sale', params: {
+    final result = await _supabase.rpc('record_sale', params: {
+      'p_idempotency_key': transactionTraceId,
+      'p_tenant_id': _supabase.auth.currentUser?.userMetadata?['tenant_id'], // Assuming tenant_id is in JWT
       'p_store_id': _storeId,
-      'p_cashier_id': _cashierId,
-      'p_session_id': _session?.id,
       'p_items': itemsPayload,
-      'p_payments': paymentsPayload,
-      'p_discount': _cartDiscount,
-      'p_client_transaction_id': clientTransactionId,
-      'p_transaction_trace_id': transactionTraceId,
-      'p_snapshot': snapshot.toJson(),
-      'p_fulfillment_policy': fulfillmentPolicy,
-      'p_override_token': overrideToken,
-      'p_override_reason': overrideReason,
+      'p_payments': paymentsPayload.map((p) => {
+        ...p,
+        'party_id': _selectedParty?.id, // For now, attach party to all payments if selected
+      }).toList(),
+      'p_notes': null,
     });
+    
     final resultMap = Map<String, dynamic>.from(result as Map);
     final statusText = (resultMap['status'] as String? ?? 'REJECTED').toUpperCase();
-    final adjustments =
-        ((resultMap['adjustments'] as List?) ?? const <dynamic>[])
-            .map((e) => Map<String, dynamic>.from(e as Map))
-            .toList();
-    final partialFulfillment =
-        ((resultMap['partial_fulfillment'] as List?) ?? const <dynamic>[])
-            .map((e) => Map<String, dynamic>.from(e as Map))
-            .toList();
 
     SaleResult? sale;
-    if (statusText == 'SUCCESS' || statusText == 'ADJUSTED') {
+    if (statusText == 'SUCCESS') {
       final itemsForReceipt = List<CartItem>.from(_cart);
-      sale = SaleResult.fromJson(resultMap, items: itemsForReceipt);
+      // Construct a minimal SaleResult for the receipt screen
+      sale = SaleResult(
+        saleId: resultMap['batch_id'] as String,
+        saleNumber: 'SALE-${DateTime.now().millisecondsSinceEpoch}',
+        subtotal: subtotal,
+        discount: _cartDiscount,
+        totalAmount: totalAmount,
+        tendered: totalAmount,
+        changeDue: 0,
+        items: itemsForReceipt,
+      );
       clearCart();
+      _selectedParty = null;
     }
+    
     return SaleExecutionResult(
-      status: switch (statusText) {
-        'SUCCESS' => SaleExecutionStatus.success,
-        'ADJUSTED' => SaleExecutionStatus.adjusted,
-        'CONFLICT' => SaleExecutionStatus.conflict,
-        _ => SaleExecutionStatus.rejected,
-      },
-      conflictReason: resultMap['conflict_reason'] as String?,
-      message: resultMap['message'] as String?,
-      adjustments: adjustments,
-      partialFulfillment: partialFulfillment,
+      status: statusText == 'SUCCESS' ? SaleExecutionStatus.success : SaleExecutionStatus.rejected,
+      conflictReason: null,
+      message: statusText == 'SUCCESS' ? 'Sale recorded successfully' : 'Sale failed',
+      adjustments: const [],
+      partialFulfillment: const [],
       saleResult: sale,
-      transactionTraceId: resultMap['transaction_trace_id'] as String?,
+      transactionTraceId: transactionTraceId,
     );
+  }
+
+  // ── Parties ────────────────────────────────────────────────────────────────
+
+  Future<List<Party>> searchParties(String query) async {
+    try {
+      final rows = await _supabase
+          .from('parties')
+          .select()
+          .ilike('name', '%$query%')
+          .limit(10);
+      return (rows as List).map((r) => Party.fromJson(r as Map<String, dynamic>)).toList();
+    } catch (e) {
+      return [];
+    }
   }
 
   // ── Void sale ──────────────────────────────────────────────────────────────

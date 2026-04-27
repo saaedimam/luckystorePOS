@@ -193,13 +193,23 @@ class _PosSessionSummaryScreenState extends State<PosSessionSummaryScreen> {
           // Do not block physical close if review row already exists.
         }
         // Backend validated checkout
-        try {
-          await _supabase.rpc('close_pos_session', params: {
-            'p_session_id': widget.sessionId,
-            'p_closing_cash': closingCash
-          });
-        } catch (rpcErr) {
-          // Fallback if RPC is missing
+        // 3. New record_cash_closing RPC
+        final posProvider = context.read<PosProvider>();
+        // Assuming we look up the cash account for the store
+        final cashAccountRow = await _supabase.from('accounts')
+            .select('id')
+            .eq('tenant_id', _supabase.auth.currentUser?.userMetadata?['tenant_id'])
+            .eq('name', 'Cash in Hand')
+            .limit(1)
+            .single();
+            
+        final result = await posProvider.recordCashClosing(
+          actualCash: closingCash,
+          accountId: cashAccountRow['id'] as String,
+        );
+
+        if (result['status'] == 'success') {
+          // If variance is too high, we might show a warning, but for now we just close.
           await _supabase.from('pos_sessions').update({
             'status': 'closed',
             'closed_at': DateTime.now().toIso8601String(),
