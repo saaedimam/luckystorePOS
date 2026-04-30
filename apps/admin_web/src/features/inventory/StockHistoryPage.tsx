@@ -1,13 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../lib/api';
+import { useAuth } from '../../lib/AuthContext';
 import { Skeleton } from '../../components/Skeleton';
 import { History, ArrowLeft, ArrowUp, ArrowDown, User, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 
 export function StockHistoryPage() {
-  const storeId = '00000000-0000-0000-0000-000000000000'; // Hardcoded for MVP
-  
+  const { storeId } = useAuth();
+
   const { data: history, isLoading, error } = useQuery({
     queryKey: ['inventory-history', storeId],
     queryFn: () => api.inventory.history(storeId),
@@ -38,17 +39,17 @@ export function StockHistoryPage() {
         ) : (
           <div className="history-list">
             {history?.map((log: any) => (
-              <div 
-                key={log.id} 
-                style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: 'var(--space-6)', 
-                  padding: 'var(--space-4) var(--space-6)', 
-                  borderBottom: '1px solid var(--border-color)' 
+              <div
+                key={log.id}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 'var(--space-6)',
+                  padding: 'var(--space-4) var(--space-6)',
+                  borderBottom: '1px solid var(--border-color)'
                 }}
               >
-                <div style={{ 
+                <div style={{
                   backgroundColor: log.delta > 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
                   color: log.delta > 0 ? 'var(--color-success)' : 'var(--color-danger)',
                   padding: 'var(--space-2)',
@@ -65,8 +66,8 @@ export function StockHistoryPage() {
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                     <span style={{ fontWeight: '700', fontSize: 'var(--font-size-base)' }}>{log.item_name}</span>
-                    <span style={{ 
-                      fontWeight: '800', 
+                    <span style={{
+                      fontWeight: '800',
                       fontSize: 'var(--font-size-lg)',
                       color: log.delta > 0 ? 'var(--color-success)' : 'var(--color-danger)'
                     }}>

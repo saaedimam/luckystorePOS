@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
+import { useAuth } from '../../lib/AuthContext';
 import { Skeleton } from '../../components/Skeleton';
 import { Users, CreditCard, FileText, UserPlus, Save, Check, RefreshCw } from 'lucide-react';
 import { clsx } from 'clsx';
 
 export function SettingsPage() {
-  const storeId = '00000000-0000-0000-0000-000000000000'; // Hardcoded for MVP
+  const { storeId } = useAuth();
   const [activeTab, setActiveTab] = useState<'users' | 'payments' | 'receipt'>('users');
 
   return (
@@ -19,7 +20,7 @@ export function SettingsPage() {
       <div style={{ display: 'flex', gap: 'var(--space-8)' }}>
         {/* Vertical Tabs */}
         <aside style={{ width: '250px', display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
-          <button 
+          <button
             onClick={() => setActiveTab('users')}
             className={clsx('tab-btn', activeTab === 'users' && 'active')}
             style={{
@@ -31,7 +32,7 @@ export function SettingsPage() {
           >
             <Users size={18} /> Users & Roles
           </button>
-          <button 
+          <button
             onClick={() => setActiveTab('payments')}
             className={clsx('tab-btn', activeTab === 'payments' && 'active')}
             style={{
@@ -43,7 +44,7 @@ export function SettingsPage() {
           >
             <CreditCard size={18} /> Payment Methods
           </button>
-          <button 
+          <button
             onClick={() => setActiveTab('receipt')}
             className={clsx('tab-btn', activeTab === 'receipt' && 'active')}
             style={{
@@ -105,7 +106,7 @@ function UsersSettings({ storeId }: { storeId: string }) {
                 <td style={{ padding: 'var(--space-4) 0', fontWeight: '600' }}>{u.full_name}</td>
                 <td style={{ padding: 'var(--space-4) 0' }}>{u.email}</td>
                 <td style={{ padding: 'var(--space-4) 0' }}>
-                  <span style={{ 
+                  <span style={{
                     padding: '2px 8px', borderRadius: '12px', fontSize: 'var(--font-size-xs)', fontWeight: '700',
                     backgroundColor: u.role === 'admin' ? 'rgba(99, 102, 241, 0.1)' : 'rgba(100, 116, 139, 0.1)',
                     color: u.role === 'admin' ? 'var(--color-primary)' : 'var(--text-muted)',
@@ -207,13 +208,13 @@ function ReceiptSettings({ storeId }: { storeId: string }) {
   return (
     <form onSubmit={handleSubmit} style={{ maxWidth: '600px' }}>
       <h2 style={{ fontSize: 'var(--font-size-xl)', fontWeight: '700', marginBottom: 'var(--space-6)' }}>Receipt Configuration</h2>
-      
+
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
         <div className="form-group">
           <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: '600', marginBottom: 'var(--space-1)' }}>Store Name (on receipt)</label>
-          <input 
-            type="text" 
-            value={formData.store_name} 
+          <input
+            type="text"
+            value={formData.store_name}
             onChange={e => setFormData({...formData, store_name: e.target.value})}
             placeholder="Lucky Store"
             style={{ width: '100%', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', backgroundColor: 'var(--input-bg)' }}
@@ -222,8 +223,8 @@ function ReceiptSettings({ storeId }: { storeId: string }) {
 
         <div className="form-group">
           <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: '600', marginBottom: 'var(--space-1)' }}>Header Message</label>
-          <textarea 
-            value={formData.header_text} 
+          <textarea
+            value={formData.header_text}
             onChange={e => setFormData({...formData, header_text: e.target.value})}
             placeholder="Welcome to Lucky Store!"
             style={{ width: '100%', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', backgroundColor: 'var(--input-bg)', minHeight: '80px' }}
@@ -232,8 +233,8 @@ function ReceiptSettings({ storeId }: { storeId: string }) {
 
         <div className="form-group">
           <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: '600', marginBottom: 'var(--space-1)' }}>Footer Message</label>
-          <textarea 
-            value={formData.footer_text} 
+          <textarea
+            value={formData.footer_text}
             onChange={e => setFormData({...formData, footer_text: e.target.value})}
             placeholder="No returns without receipt. Thank you!"
             style={{ width: '100%', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', backgroundColor: 'var(--input-bg)', minHeight: '80px' }}
@@ -241,17 +242,17 @@ function ReceiptSettings({ storeId }: { storeId: string }) {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)', marginTop: 'var(--space-4)' }}>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={updateMutation.isPending}
-            style={{ 
-              backgroundColor: 'var(--color-primary)', 
-              color: 'white', 
-              padding: 'var(--space-3) var(--space-8)', 
-              borderRadius: 'var(--radius-md)', 
-              fontWeight: '700', 
-              display: 'flex', 
-              alignItems: 'center', 
+            style={{
+              backgroundColor: 'var(--color-primary)',
+              color: 'white',
+              padding: 'var(--space-3) var(--space-8)',
+              borderRadius: 'var(--radius-md)',
+              fontWeight: '700',
+              display: 'flex',
+              alignItems: 'center',
               gap: '8px',
               opacity: updateMutation.isPending ? 0.7 : 1
             }}
