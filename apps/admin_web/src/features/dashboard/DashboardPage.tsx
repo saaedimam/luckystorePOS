@@ -2,11 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { useAuth } from '../../lib/AuthContext';
 import { DollarSign, AlertTriangle, Users, Package } from 'lucide-react';
+import type { ReactNode } from 'react';
 
 export function DashboardPage() {
   const { storeId } = useAuth();
 
-  const { data: stats, isLoading, error } = useQuery({
+  // Fetch dashboard statistics; error is intentionally omitted as we handle loading state only.
+  const { data: stats, isLoading } = useQuery({
     queryKey: ['dashboard-stats', storeId],
     queryFn: () => api.dashboard.getStats(storeId),
   });
@@ -63,7 +65,8 @@ export function DashboardPage() {
               </tr>
             </thead>
             <tbody>
-              {stats?.top_products?.map((p: any) => (
+              {/* Define product shape for top_products */}
+              {stats?.top_products?.map((p: DashboardProduct) => (
                 <tr key={p.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                   <td style={{ padding: 'var(--space-3)' }}>{p.name}</td>
                   <td style={{ padding: 'var(--space-3)' }}>{p.qty}</td>
@@ -84,7 +87,25 @@ export function DashboardPage() {
   );
 }
 
-function StatCard({ title, value, icon, badge }: any) {
+interface StatCardProps {
+  title: string;
+  /**
+   * Value can be a formatted string (e.g., "$123.45") or a number.
+   */
+  value: string | number;
+  icon: ReactNode;
+  badge?: string;
+}
+
+// Define product type for top products list
+interface DashboardProduct {
+  id: string | number;
+  name: string;
+  qty: number;
+  revenue: number;
+}
+
+function StatCard({ title, value, icon, badge }: StatCardProps) {
   return (
     <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
