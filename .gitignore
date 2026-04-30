@@ -63,6 +63,7 @@ coverage/
 .flutter-plugins-dependencies
 .packages
 .pub/
+pubspec.lock
 build/
 
 # -----------------------------------------------------------------------------
@@ -72,6 +73,7 @@ build/
 supabase/.temp/
 supabase/.branches/
 supabase/.cache/
+deno.lock
 
 # Dumps / backups only
 dumps/
@@ -81,6 +83,8 @@ backups/
 *.sql.zip
 *.bak.sql
 *.sql.bak
+supabasebakcup/
+*.backup
 
 # -----------------------------------------------------------------------------
 # Logs
@@ -133,6 +137,8 @@ temp/
 *.tmp
 *.bak
 *.orig
+.~*
+*~
 
 # -----------------------------------------------------------------------------
 # Local AI Tool Metadata
@@ -142,6 +148,7 @@ temp/
 .claude/
 .continue/
 .trae/
+skills-lock.json
 
 # -----------------------------------------------------------------------------
 # Data Exports (scoped, not global)
@@ -149,6 +156,14 @@ temp/
 data/exports/
 data/tmp/
 apps/scraper/output/
+
+# Scraper data files (keep code, ignore data)
+apps/scraper/*_products.json
+apps/scraper/scraped_images/
+*.xlsx
+*.xls
+*.csv
+!data/samples/*.csv
 
 # -----------------------------------------------------------------------------
 # Archive / Legacy Local Storage
