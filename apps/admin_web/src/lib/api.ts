@@ -141,4 +141,66 @@ export const api = {
       return data;
     },
   },
+
+  // ---------------------------------------------------------------------
+  // New modules – added per implementation plan (Phase 2 & Phase 4)
+  // ---------------------------------------------------------------------
+  expenses: {
+    /** List expense records with optional filters */
+    list: async (filters?: any) => {
+      const { data, error } = await supabase.rpc('get_expenses', { p_filters: filters });
+      if (error) throw error;
+      return data;
+    },
+    /** Create a new expense */
+    create: async (expense: any) => {
+      const { data, error } = await supabase.rpc('create_expense', { p_expense: expense });
+      if (error) throw error;
+      return data;
+    },
+    /** Fetch expense categories for dropdowns */
+    categories: async () => {
+      const { data, error } = await supabase.rpc('get_expense_categories');
+      if (error) throw error;
+      return data;
+    },
+  },
+  pos: {
+    /** Get POS categories (pill filters) */
+    getCategories: async (storeId: string) => {
+      const { data, error } = await supabase.rpc('get_pos_categories', { p_store_id: storeId });
+      if (error) throw error;
+      return data;
+    },
+    /** Get POS products, optionally filtered by category or search */
+    getProducts: async (storeId: string, category?: string, search?: string) => {
+      const { data, error } = await supabase.rpc('get_pos_products', {
+        p_store_id: storeId,
+        p_category: category,
+        p_search: search,
+      });
+      if (error) throw error;
+      return data;
+    },
+    /** Create a POS sale transaction */
+    createSale: async (saleData: any) => {
+      const { data, error } = await supabase.rpc('create_pos_transaction', { p_sale: saleData });
+      if (error) throw error;
+      return data;
+    },
+  },
+  reminders: {
+    /** List upcoming reminders */
+    list: async (storeId: string) => {
+      const { data, error } = await supabase.rpc('get_upcoming_reminders', { p_store_id: storeId });
+      if (error) throw error;
+      return data;
+    },
+    /** Create a new reminder */
+    create: async (reminder: any) => {
+      const { data, error } = await supabase.rpc('create_reminder', { p_reminder: reminder });
+      if (error) throw error;
+      return data;
+    },
+  },
 };

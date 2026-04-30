@@ -28,11 +28,10 @@ export function App() {
       <NotificationProvider>
         <AuthProvider>
           <BrowserRouter>
-          <AuthGuard>
             <Routes>
               <Route path="/oauth/consent" element={<OAuthConsentPage />} />
               <Route path="/pos" element={<QuickPosPage />} />
-              <Route path="/" element={<Layout />}>
+              <Route path="/" element={<AuthGuard><Layout /></AuthGuard>}>
                 <Route index element={<DashboardPage />} />
                 <Route path="sales" element={<SalesHistoryPage />} />
                 <Route path="products" element={<ProductListPage />} />
@@ -45,7 +44,6 @@ export function App() {
                 <Route path="settings" element={<SettingsPage />} />
               </Route>
             </Routes>
-          </AuthGuard>
           </BrowserRouter>
         </AuthProvider>
       </NotificationProvider>

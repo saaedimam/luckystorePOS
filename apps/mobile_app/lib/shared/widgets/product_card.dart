@@ -95,7 +95,7 @@ class ProductCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        Column(
+                                color: AppTheme.primaryAccent,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Struck-through original price
@@ -124,7 +124,7 @@ class ProductCard extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             // Add to Wishlist heart icon
             Positioned(
               top: 8,
@@ -144,7 +144,7 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             // Add-to-Cart Transformative Button
             Positioned(
               bottom: 10,

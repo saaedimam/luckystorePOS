@@ -44,7 +44,7 @@ class ProductDetailsScreen extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -67,7 +67,7 @@ class ProductDetailsScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  
+
                   // Trust Section (Reviews)
                   Row(
                     children: [
@@ -81,7 +81,7 @@ class ProductDetailsScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Financial Hierarchy
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -118,7 +118,7 @@ class ProductDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   const Divider(color: AppTheme.shadowLight),
                   const SizedBox(height: 16),
-                  
+
                   // Logistics & Delivery
                   Container(
                     padding: const EdgeInsets.all(16),
@@ -126,6 +126,7 @@ class ProductDetailsScreen extends StatelessWidget {
                     child: const Row(
                       children: [
                         Icon(Icons.local_shipping_outlined, color: AppTheme.primaryAccentLight),
+                        Icon(Icons.local_shipping_outlined, color: AppTheme.secondaryAccent),
                         SizedBox(width: 16),
                         Expanded(
                           child: Column(

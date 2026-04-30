@@ -24,14 +24,14 @@ class HomeScreen extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: 'Search products... (Fuzzy Match)',
                   hintStyle: TextStyle(color: AppTheme.textSecondary),
-                  prefixIcon: Icon(Icons.search, color: AppTheme.primaryAccentLight),
+                  prefixIcon: Icon(Icons.search, color: AppTheme.secondaryAccent),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 ),
               ),
             ),
           ),
-          
+
           SliverPadding(
             padding: const EdgeInsets.all(16.0),
             sliver: SliverList(
@@ -58,15 +58,15 @@ class HomeScreen extends StatelessWidget {
                     },
                   ),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 const Text(
                   'Popular Aisles',
                   style: TextStyle(color: AppTheme.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Category Grid
                 GridView.builder(
                   shrinkWrap: true,
@@ -97,9 +97,9 @@ class HomeScreen extends StatelessWidget {
                     );
                   },
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 const Text(
                   'Trending Now',
                   style: TextStyle(color: AppTheme.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
