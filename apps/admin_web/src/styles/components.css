@@ -10,6 +10,15 @@
   position: sticky;
   top: 0;
   z-index: 50;
+  gap: var(--space-4);
+}
+
+@media (max-width: 768px) {
+  .top-header {
+    padding: 0 var(--space-3);
+    height: 56px;
+    flex-wrap: wrap;
+  }
 }
 
 .header-left, .header-right {
@@ -22,6 +31,15 @@
   flex: 1;
   max-width: 600px;
   margin: 0 var(--space-6);
+}
+
+@media (max-width: 768px) {
+  .header-center {
+    margin: 0 var(--space-3);
+    max-width: none;
+    order: 3;
+    width: 100%;
+  }
 }
 
 .search-container {
@@ -177,6 +195,14 @@
   font-size: var(--font-size-sm);
   font-weight: 500;
   transition: all var(--transition-fast);
+  min-height: 44px;
+}
+
+@media (max-width: 768px) {
+  .sidebar-nav-item {
+    font-size: var(--font-size-xs);
+    padding: var(--space-2) var(--space-2);
+  }
 }
 
 .sidebar-nav-item:hover {
@@ -244,6 +270,8 @@
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: background-color var(--transition-fast);
+  min-height: 44px;
+  min-width: 44px;
 }
 
 .button-primary:hover {
@@ -263,6 +291,8 @@
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all var(--transition-fast);
+  min-height: 44px;
+  min-width: 44px;
 }
 
 .button-outline:hover {
@@ -284,6 +314,20 @@
   grid-template-columns: 1fr 380px;
   flex: 1;
   overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+  .pos-content {
+    grid-template-columns: 1fr 320px;
+  }
+}
+
+@media (max-width: 768px) {
+  .pos-content {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+    overflow-y: auto;
+  }
 }
 
 .pos-products {
@@ -367,6 +411,18 @@
   gap: var(--space-4);
 }
 
+@media (max-width: 1024px) {
+  .pos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .pos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
+
 .product-card {
   display: flex;
   flex-direction: column;
@@ -443,6 +499,16 @@
   padding: var(--space-6);
   gap: var(--space-4);
   overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .pos-billing {
+    border-left: none;
+    border-top: 1px solid var(--border-color);
+    padding: var(--space-4);
+    max-height: 50vh;
+    overflow-y: auto;
+  }
 }
 
 .billing-header {
@@ -559,4 +625,232 @@
 
 .dashboard-container p {
   color: var(--text-muted);
+}
+
+/* ========== RESPONSIVE DESIGN IMPROVEMENTS ========== */
+
+/* ===== MOBILE FIRST (< 768px) ===== */
+@media (max-width: 768px) {
+  /* Typography scaling for mobile */
+  .top-header .header-left,
+  .top-header .header-right {
+    gap: var(--space-2);
+  }
+
+  /* Reduce padding on mobile */
+  .main-content {
+    padding: var(--space-4);
+  }
+
+  .card {
+    padding: var(--space-4);
+  }
+
+  /* POS products adjustment for mobile */
+  .pos-products {
+    padding: var(--space-4);
+    gap: var(--space-4);
+  }
+
+  .pos-action-bar {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .pos-search {
+    width: 100%;
+    order: 3;
+  }
+
+  .pos-search .search-input {
+    width: 100%;
+  }
+
+  .pos-action-buttons {
+    order: 1;
+  }
+
+  /* Responsive dashboard grid for mobile */
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  /* Make product cards touch-friendly */
+  .product-card {
+    padding: var(--space-3);
+    min-height: 180px;
+  }
+
+  .product-avatar {
+    width: 56px;
+    height: 56px;
+  }
+
+  /* Improve billing on mobile */
+  .billing-header h2 {
+    font-size: var(--font-size-md);
+  }
+
+  .billing-actions {
+    gap: var(--space-1);
+  }
+
+  .billing-actions .button-outline {
+    min-width: 80px;
+    font-size: var(--font-size-xs);
+  }
+
+  /* Search input responsive */
+  .search-input {
+    padding: var(--space-2) var(--space-2) var(--space-2) 32px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  /* Sidebar responsive */
+  .sidebar {
+    padding: var(--space-4);
+    gap: var(--space-4);
+  }
+
+  .sidebar-header h2 {
+    font-size: var(--font-size-md);
+  }
+
+  .sidebar-header p {
+    font-size: var(--font-size-xs);
+  }
+
+  /* Category pills responsive */
+  .pos-categories {
+    gap: var(--space-1);
+  }
+
+  .category-pill {
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--font-size-xs);
+    min-height: 32px;
+  }
+}
+
+/* ===== TABLET (768px - 1024px) ===== */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
+  .pos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+
+  .main-content {
+    padding: var(--space-6);
+  }
+
+  .pos-products {
+    padding: var(--space-5);
+  }
+
+  .pos-content {
+    grid-template-columns: 1fr 320px;
+  }
+}
+
+/* ===== LARGE SCREENS (> 1024px) ===== */
+@media (min-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  }
+
+  .pos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+}
+
+/* ===== EXTRA LARGE SCREENS (> 1440px) ===== */
+@media (min-width: 1440px) {
+  .max-container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .header-center {
+    max-width: 700px;
+  }
+}
+
+/* ===== ORIENTATION & DEVICE SPECIFIC ===== */
+/* Improve touch targets on all screens */
+input[type="button"],
+input[type="submit"],
+button,
+a.button-primary,
+a.button-outline {
+  min-height: 44px;
+  min-width: 44px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent font zoom on iOS when focused */
+@media (max-width: 768px) {
+  input,
+  select,
+  textarea,
+  button {
+    font-size: 16px !important;
+  }
+}
+
+/* Portrait orientation adjustments */
+@media (orientation: portrait) and (max-width: 768px) {
+  .pos-content {
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .header-center {
+    width: 100%;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (orientation: landscape) and (max-height: 600px) {
+  .top-header {
+    height: 48px;
+  }
+
+  .pos-products {
+    padding: var(--space-3);
+  }
+
+  .pos-billing {
+    max-height: 100vh;
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dark mode optimizations */
+@media (prefers-color-scheme: dark) {
+  .search-input,
+  input,
+  .bg-input {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* High DPI/Retina screens */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .card,
+  .product-card,
+  .button-primary,
+  .button-outline {
+    border-width: 0.5px;
+  }
 }
