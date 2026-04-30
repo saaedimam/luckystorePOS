@@ -473,7 +473,6 @@ class OfflineTransactionSyncService extends ChangeNotifier {
         'p_payments': tx.payments,
         'p_discount': tx.discount,
         'p_client_transaction_id': tx.clientTransactionId,
-        'p_transaction_trace_id': tx.transactionTraceId,
         'p_snapshot': tx.snapshot,
         'p_fulfillment_policy': tx.fulfillmentPolicy,
       });

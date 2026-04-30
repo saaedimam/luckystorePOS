@@ -55,3 +55,30 @@ jobs:
         run: |
           cd apps/mobile_app
           flutter analyze
+
+  admin_web_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: apps/admin_web/package-lock.json
+      - name: Install dependencies
+        run: |
+          cd apps/admin_web
+          npm ci
+      - name: TypeScript check (strict, no emit)
+        run: |
+          cd apps/admin_web
+          npx tsc --noEmit
+      - name: Lint (non-blocking — report only)
+        run: |
+          cd apps/admin_web
+          npm run lint || true
+      - name: Production build (fail-fast on compile errors)
+        run: |
+          cd apps/admin_web
+          npm run build

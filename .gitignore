@@ -63,6 +63,7 @@ coverage/
 .flutter-plugins-dependencies
 .packages
 .pub/
+pubspec.lock
 build/
 
 # -----------------------------------------------------------------------------
@@ -72,6 +73,7 @@ build/
 supabase/.temp/
 supabase/.branches/
 supabase/.cache/
+deno.lock
 
 # Dumps / backups only
 dumps/
@@ -81,6 +83,8 @@ backups/
 *.sql.zip
 *.bak.sql
 *.sql.bak
+supabasebakcup/
+*.backup
 
 # -----------------------------------------------------------------------------
 # Logs
@@ -133,6 +137,8 @@ temp/
 *.tmp
 *.bak
 *.orig
+.~*
+*~
 
 # -----------------------------------------------------------------------------
 # Local AI Tool Metadata
@@ -142,6 +148,7 @@ temp/
 .claude/
 .continue/
 .trae/
+skills-lock.json
 
 # -----------------------------------------------------------------------------
 # Data Exports (scoped, not global)
@@ -150,7 +157,37 @@ data/exports/
 data/tmp/
 apps/scraper/output/
 
+# Scraper data files (keep code, ignore data)
+apps/scraper/*_products.json
+apps/scraper/scraped_images/
+*.xlsx
+*.xls
+*.csv
+!data/samples/*.csv
+
 # -----------------------------------------------------------------------------
 # Archive / Legacy Local Storage
 # -----------------------------------------------------------------------------
 archive/
+
+# -----------------------------------------------------------------------------
+# IDE Inspection Artifacts (IntelliJ / Android Studio)
+# -----------------------------------------------------------------------------
+# These large XML files are auto-generated and should not be versioned.
+SpellCheckingInspection.xml
+AndroidDomInspection.xml
+*.inspectionProfile.xml
+.inspections/
+
+# -----------------------------------------------------------------------------
+# Scratch / One-off SQL files
+# -----------------------------------------------------------------------------
+scratch_*.sql
+apply_*_v2.sql
+
+# -----------------------------------------------------------------------------
+# Flutter asset env (safe to bundle, but keep out of git history)
+# -----------------------------------------------------------------------------
+# app.env is safe-to-bundle (anon key only) but still shouldn't be committed
+# to avoid leaking even non-secret config. Manage via CI secrets.
+apps/mobile_app/assets/app.env
