@@ -4,16 +4,16 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/generated/app_localizations.dart';
 
 import 'theme/app_theme.dart';
-import 'screens/auth_gate.dart';
-import 'screens/startup_config_error_screen.dart';
-import 'providers/auth_provider.dart';
-import 'providers/cart_provider.dart';
-import 'providers/pos_provider.dart';
-import 'controllers/app_access_controller.dart';
-import 'screens/checkout/checkout_screen.dart';
-import 'screens/checkout/bkash_checkout.dart';
-import 'screens/checkout/gamified_reward_screen.dart';
-import 'services/startup_guard_service.dart';
+import 'features/auth/presentation/screens/auth_gate.dart';
+import 'features/auth/presentation/screens/startup_config_error_screen.dart';
+import 'shared/providers/auth_provider.dart';
+import 'shared/providers/cart_provider.dart';
+import 'shared/providers/pos_provider.dart';
+import 'shared/controllers/app_access_controller.dart';
+import 'features/checkout/presentation/screens/checkout_screen.dart';
+import 'features/checkout/presentation/screens/bkash_checkout.dart';
+import 'features/checkout/presentation/screens/gamified_reward_screen.dart';
+import 'shared/services/startup_guard_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
