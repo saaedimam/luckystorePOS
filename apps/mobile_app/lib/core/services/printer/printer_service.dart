@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import '../../network/network_config.dart';
 import '../../utils/result.dart';
 import '../../utils/app_utils.dart';
-import 'printer_constants.dart';
+import '../printer_constants.dart';
 import 'print_retry_queue.dart';
 
 /// Unified Print Service for reliable receipt printing
@@ -100,7 +100,7 @@ class PrinterService {
       }
 
       _connectedPrinterId = printerId;
-      
+
       _broadcastEvent(PrinterEvent(
         type: PrinterEventType.connected,
         printerId: printerId,
@@ -253,7 +253,7 @@ class PrinterService {
       }
     } catch (e, stackTrace) {
       Logger.error('PrinterService.printReceipt failed', e, stackTrace);
-      
+
       _broadcastEvent(PrinterEvent(
         type: PrinterEventType.printError,
         printerId: _connectedPrinterId!,
