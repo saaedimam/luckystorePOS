@@ -4,7 +4,7 @@ import '../../../models/product.dart';
 import '../../utils/result.dart';
 import '../../utils/app_utils.dart';
 import 'printer_service.dart';
-import 'printer_constants.dart';
+import '../printer_constants.dart';
 
 /// Print retry queue with exponential backoff
 /// Implements 3-attempt retry logic with configurable delays
@@ -224,7 +224,7 @@ class PrintRetryQueue {
       printerService.dispose();
     } catch (e, stackTrace) {
       Logger.error('PrintRetryQueue._processNextRetry failed', e, stackTrace);
-      
+
       // Increment retry count
       final updatedJob = job.copyWith(retryCount: retryCount + 1);
       _queue[receiptId] = updatedJob;

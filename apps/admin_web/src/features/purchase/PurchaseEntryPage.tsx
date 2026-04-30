@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../lib/AuthContext';
 import { Trash2, Save, Send, Search } from 'lucide-react';
 
 type Supplier = {
@@ -46,9 +47,8 @@ export const PurchaseEntryPage: React.FC = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // Mock tenant/store (replace with context)
-  const tenantId = '00000000-0000-0000-0000-000000000001';
-  const storeId = '00000000-0000-0000-0000-000000000002';
+  // Auth context
+  const { tenantId, storeId } = useAuth();
 
   // ── Load suppliers ──────────────────────────────────────────────
   useEffect(() => {
