@@ -33,6 +33,7 @@ export function App() {
               <Route path="/pos" element={<QuickPosPage />} />
               <Route path="/" element={<AuthGuard><Layout /></AuthGuard>}>
                 <Route index element={<DashboardPage />} />
+                <Route path="dashboard" element={<DashboardPage />} />
                 <Route path="sales" element={<SalesHistoryPage />} />
                 <Route path="products" element={<ProductListPage />} />
                 <Route path="inventory" element={<InventoryListPage />} />
