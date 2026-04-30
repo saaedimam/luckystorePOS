@@ -1,9 +1,10 @@
-import { LayoutDashboard, ShoppingCart, Package, Warehouse, PlusCircle, Wallet, Users, PhoneCall, Settings, LogOut } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Package, Warehouse, PlusCircle, Wallet, Users, PhoneCall, Settings, LogOut, Monitor } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import '../styles/layout.css';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+  { icon: Monitor, label: 'Quick POS', path: '/pos' },
   { icon: ShoppingCart, label: 'Sales', path: '/sales' },
   { icon: Package, label: 'Products', path: '/products' },
   { icon: Warehouse, label: 'Inventory', path: '/inventory' },

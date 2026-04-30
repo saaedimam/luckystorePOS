@@ -17,6 +17,7 @@ import { CollectionsWorkspace } from '../features/collections/CollectionsWorkspa
 import { PurchaseEntryPage } from '../features/purchase/PurchaseEntryPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
 import { OAuthConsentPage } from '../features/oauth/OAuthConsentPage';
+import { QuickPosPage } from '../features/pos/QuickPosPage';
 
 import { NotificationProvider } from '../components/Notification';
 import { AuthProvider } from '../lib/AuthContext';
@@ -30,6 +31,7 @@ export function App() {
           <AuthGuard>
             <Routes>
               <Route path="/oauth/consent" element={<OAuthConsentPage />} />
+              <Route path="/pos" element={<QuickPosPage />} />
               <Route path="/" element={<Layout />}>
                 <Route index element={<DashboardPage />} />
                 <Route path="sales" element={<SalesHistoryPage />} />
