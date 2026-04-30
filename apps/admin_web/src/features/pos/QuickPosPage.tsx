@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Search, Plus, ScanLine, Info, FolderOpen, Menu, Command, Bell, Moon, Keyboard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 

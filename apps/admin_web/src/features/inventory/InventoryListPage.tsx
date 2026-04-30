@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../lib/api';
+import { useAuth } from '../../lib/AuthContext';
 import { Skeleton } from '../../components/Skeleton';
 import { Search, RefreshCw, History, AlertCircle } from 'lucide-react';
 import { clsx } from 'clsx';
@@ -9,16 +10,16 @@ import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 
 export function InventoryListPage() {
-  const storeId = '00000000-0000-0000-0000-000000000000'; // Hardcoded for MVP
+  const { storeId } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [adjustingProduct, setAdjustingProduct] = useState<any | null>(null);
-  
+
   const { data: inventory, isLoading, error, refetch } = useQuery({
     queryKey: ['inventory', storeId],
     queryFn: () => api.inventory.list(storeId),
   });
 
-  const filteredItems = inventory?.filter((p: any) => 
+  const filteredItems = inventory?.filter((p: any) =>
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     p.sku?.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -33,13 +34,13 @@ export function InventoryListPage() {
           <p style={{ color: 'var(--text-muted)' }}>Monitor and adjust stock levels.</p>
         </div>
         <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
-          <Link 
+          <Link
             to="/inventory/history"
             className="button-secondary"
-            style={{ 
-              backgroundColor: 'var(--bg-card)', 
-              color: 'var(--text-main)', 
-              padding: 'var(--space-2) var(--space-4)', 
+            style={{
+              backgroundColor: 'var(--bg-card)',
+              color: 'var(--text-main)',
+              padding: 'var(--space-2) var(--space-4)',
               borderRadius: 'var(--radius-md)',
               border: '1px solid var(--border-color)',
               display: 'flex',
@@ -51,7 +52,7 @@ export function InventoryListPage() {
           >
             <History size={18} /> View History
           </Link>
-          <button 
+          <button
             onClick={() => refetch()}
             style={{ color: 'var(--text-muted)' }}
           >
@@ -63,15 +64,15 @@ export function InventoryListPage() {
       <div className="card" style={{ padding: 'var(--space-4)', marginBottom: 'var(--space-6)' }}>
         <div style={{ position: 'relative' }}>
           <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Filter by product name or SKU..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ 
-              width: '100%', 
-              padding: 'var(--space-3) var(--space-3) var(--space-3) 40px', 
-              borderRadius: 'var(--radius-md)', 
+            style={{
+              width: '100%',
+              padding: 'var(--space-3) var(--space-3) var(--space-3) 40px',
+              borderRadius: 'var(--radius-md)',
               border: '1px solid var(--border-color)',
               backgroundColor: 'var(--input-bg)'
             }}
@@ -129,11 +130,11 @@ export function InventoryListPage() {
                       padding: '4px 10px',
                       borderRadius: '12px',
                       fontWeight: '700',
-                      backgroundColor: 
+                      backgroundColor:
                         p.reorder_status === 'OK' ? 'rgba(16, 185, 129, 0.1)' :
                         p.reorder_status === 'LOW' ? 'rgba(245, 158, 11, 0.1)' :
                         'rgba(239, 68, 68, 0.1)',
-                      color: 
+                      color:
                         p.reorder_status === 'OK' ? 'var(--color-success)' :
                         p.reorder_status === 'LOW' ? 'var(--color-warning)' :
                         'var(--color-danger)'
@@ -145,12 +146,12 @@ export function InventoryListPage() {
                     {p.last_updated ? formatDistanceToNow(new Date(p.last_updated)) + ' ago' : 'Never'}
                   </td>
                   <td style={{ padding: 'var(--space-4)', textAlign: 'right' }}>
-                    <button 
+                    <button
                       onClick={() => setAdjustingProduct(p)}
-                      style={{ 
-                        backgroundColor: 'var(--color-primary)', 
-                        color: 'white', 
-                        padding: 'var(--space-2) var(--space-4)', 
+                      style={{
+                        backgroundColor: 'var(--color-primary)',
+                        color: 'white',
+                        padding: 'var(--space-2) var(--space-4)',
                         borderRadius: 'var(--radius-md)',
                         fontSize: 'var(--font-size-sm)',
                         fontWeight: '600'
@@ -166,7 +167,7 @@ export function InventoryListPage() {
         </table>
       </div>
 
-      <StockUpdateDrawer 
+      <StockUpdateDrawer
         product={adjustingProduct}
         storeId={storeId}
         onClose={() => setAdjustingProduct(null)}
