@@ -28,6 +28,7 @@ class PosProvider extends ChangeNotifier {
   final _supabase = Supabase.instance.client;
   final _offlineSync = OfflineTransactionSyncService.instance;
   final Map<String, List<PosItem>> _searchCache = {};
+  static const int _searchCacheMaxSize = 100;
   bool _offlineSafeMode = false;
   String _lastPosLoadPath = 'rpc';
   String? _lastPosLoadError;
@@ -409,68 +410,111 @@ class PosProvider extends ChangeNotifier {
       );
     }
 
-    final validation = await _supabase.rpc('validate_sale_intent', params: {
-      'p_snapshot': snapshot.toJson(),
-    });
-    final validationMap = Map<String, dynamic>.from(validation as Map);
-    final validationStatus =
-        (validationMap['validation_status'] as String? ?? 'REJECTED')
-            .toUpperCase();
-    if (validationStatus != 'VALID') {
+    // Resolve tenant_id from the users table (not JWT — claim is not set in Supabase config).
+    String? tenantId;
+    try {
+      final authId = _supabase.auth.currentUser?.id;
+      if (authId != null) {
+        final userRow = await _supabase
+            .from('users')
+            .select('tenant_id')
+            .eq('auth_id', authId)
+            .maybeSingle();
+        tenantId = userRow?['tenant_id'] as String?;
+      }
+    } catch (e) {
+      debugPrint('[PosProvider] Could not resolve tenant_id: $e');
+    }
+
+    if (tenantId == null) {
       return SaleExecutionResult(
-        status: switch (validationStatus) {
-          'REQUIRES_OVERRIDE' => SaleExecutionStatus.conflict,
-          'INSUFFICIENT_STOCK' => SaleExecutionStatus.conflict,
-          'PRICE_CHANGED' => SaleExecutionStatus.rejected,
-          _ => SaleExecutionStatus.rejected,
-        },
-        conflictReason: validationStatus,
-        message: validationMap['message'] as String?,
-        adjustments: const [],
-        partialFulfillment: const [],
+        status: SaleExecutionStatus.rejected,
+        conflictReason: 'tenant_id_missing',
+        message: 'Could not resolve tenant. Please sign out and sign in again.',
+        adjustments: [],
+        partialFulfillment: [],
         saleResult: null,
-        transactionTraceId:
-            validationMap['transaction_trace_id'] as String? ?? transactionTraceId,
+        transactionTraceId: null,
       );
     }
 
+    // Build payments payload matching record_sale's expected shape:
+    // {account_id UUID (ledger_accounts), amount NUMERIC, party_id UUID?}
+    // The DB has resolve_payment_ledger_account() that maps payment_method → ledger account.
+    final recordSalePayments = <Map<String, dynamic>>[];
+    for (final t in tenders) {
+      String? ledgerAccountId;
+      try {
+        final resolved = await _supabase.rpc('resolve_payment_ledger_account', params: {
+          'p_store_id': _storeId,
+          'p_payment_method_id': t.method.id,
+        });
+        ledgerAccountId = resolved as String?;
+      } catch (e) {
+        debugPrint('[PosProvider] resolve_payment_ledger_account failed: $e');
+      }
+      if (ledgerAccountId == null) {
+        return SaleExecutionResult(
+          status: SaleExecutionStatus.rejected,
+          conflictReason: 'payment_account_not_configured',
+          message: 'Ledger account not found for "${t.method.name}". Contact manager.',
+          adjustments: const [],
+          partialFulfillment: const [],
+          saleResult: null,
+          transactionTraceId: transactionTraceId,
+        );
+      }
+      recordSalePayments.add({
+        'account_id': ledgerAccountId,
+        'amount': t.amount,
+        'party_id': _selectedParty?.id,
+      });
+    }
+
+    final recordSaleItems = snapshot.items.map((s) {
+      return <String, dynamic>{
+        'item_id': s.productId,
+        'quantity': s.quantity,
+        'unit_price': s.unitPriceSnapshot,
+      };
+    }).toList();
+
     final result = await _supabase.rpc('record_sale', params: {
       'p_idempotency_key': transactionTraceId,
-      'p_tenant_id': _supabase.auth.currentUser?.userMetadata?['tenant_id'], // Assuming tenant_id is in JWT
+      'p_tenant_id': tenantId,
       'p_store_id': _storeId,
-      'p_items': itemsPayload,
-      'p_payments': paymentsPayload.map((p) => {
-        ...p,
-        'party_id': _selectedParty?.id, // For now, attach party to all payments if selected
-      }).toList(),
-      'p_notes': null,
+      'p_items': recordSaleItems,
+      'p_payments': recordSalePayments,
+      'p_notes': intent.sessionId != null ? 'session:${intent.sessionId}' : null,
     });
-    
+
     final resultMap = Map<String, dynamic>.from(result as Map);
-    final statusText = (resultMap['status'] as String? ?? 'REJECTED').toUpperCase();
+    final statusText = (resultMap['status'] as String? ?? 'error').toLowerCase();
+    final isSuccess = statusText == 'success';
 
     SaleResult? sale;
-    if (statusText == 'SUCCESS') {
+    if (isSuccess) {
       final itemsForReceipt = List<CartItem>.from(_cart);
-      // Construct a minimal SaleResult for the receipt screen
+      final batchId = resultMap['batch_id'] as String? ?? '';
+      final totalRevenue = (resultMap['total_revenue'] as num?)?.toDouble() ?? totalAmount;
       sale = SaleResult(
-        saleId: resultMap['batch_id'] as String,
+        saleId: batchId,
         saleNumber: 'SALE-${DateTime.now().millisecondsSinceEpoch}',
-        subtotal: subtotal,
+        subtotal: totalRevenue + _cartDiscount,
         discount: _cartDiscount,
-        totalAmount: totalAmount,
-        tendered: totalAmount,
-        changeDue: 0,
+        totalAmount: totalRevenue,
+        tendered: tenders.fold(0, (s, t) => s + t.amount),
+        changeDue: (tenders.fold(0.0, (s, t) => s + t.amount) - totalRevenue).clamp(0, double.infinity),
         items: itemsForReceipt,
       );
       clearCart();
       _selectedParty = null;
     }
-    
+
     return SaleExecutionResult(
-      status: statusText == 'SUCCESS' ? SaleExecutionStatus.success : SaleExecutionStatus.rejected,
-      conflictReason: null,
-      message: statusText == 'SUCCESS' ? 'Sale recorded successfully' : 'Sale failed',
+      status: isSuccess ? SaleExecutionStatus.success : SaleExecutionStatus.rejected,
+      conflictReason: isSuccess ? null : (resultMap['error'] as String? ?? 'record_sale_failed'),
+      message: isSuccess ? 'Sale recorded successfully' : 'Sale failed. Please retry.',
       adjustments: const [],
       partialFulfillment: const [],
       saleResult: sale,
@@ -551,6 +595,10 @@ class PosProvider extends ChangeNotifier {
     try {
       final items = await _searchItemsRpc(query, categoryId: categoryId);
       _searchCache[cacheKey] = items;
+      // Evict oldest entry when cache exceeds max size to prevent unbounded growth.
+      if (_searchCache.length > _searchCacheMaxSize) {
+        _searchCache.remove(_searchCache.keys.first);
+      }
       _catalogLoadFailed = false;
       _lastSuccessfulCatalogLoadAt = DateTime.now();
       return items;

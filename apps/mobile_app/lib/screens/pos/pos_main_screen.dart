@@ -14,6 +14,7 @@ enum PosLoadState { loading, ready, empty, error }
 /// The main POS cashier screen — a landscape split-panel tablet UI.
 /// Left (60%): searchable product grid with category filters + barcode scanner.
 /// Right (40%): live cart with totals and the Charge button.
+// TODO: split into sub-widgets (ProductGrid.dart, CategoryBar.dart) under pos/widgets/
 class PosMainScreen extends StatefulWidget {
   const PosMainScreen({super.key});
 

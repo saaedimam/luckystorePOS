@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../lib/api';
+import { useAuth } from '../../lib/AuthContext';
 import { DollarSign, AlertTriangle, Users, Package } from 'lucide-react';
 
 export function DashboardPage() {
-  // Hardcoded store ID for now, should come from auth/context later
-  const storeId = '00000000-0000-0000-0000-000000000000'; 
+  const { storeId } = useAuth();
 
   const { data: stats, isLoading, error } = useQuery({
     queryKey: ['dashboard-stats', storeId],
