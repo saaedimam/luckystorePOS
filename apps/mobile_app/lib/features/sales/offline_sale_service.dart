@@ -8,7 +8,7 @@ import '../../core/db/drift_database.dart';
 import '../../core/db/tables.dart';
 import '../../features/sales/sale_repository.dart';
 import '../../models/sale_transaction_snapshot.dart';
-import '../../utils/app_utils.dart';
+import '../../core/utils/app_utils.dart';
 
 /// Service for managing offline sales operations
 class OfflineSaleService {
@@ -36,7 +36,7 @@ class OfflineSaleService {
   /// Initialize the offline sales service
   Future<void> initialize() async {
     Logger.info('OfflineSaleService initialized');
-    
+
     // Register for connection changes
     final isOnline = await checkConnectivity();
     if (isOnline) {
@@ -183,7 +183,7 @@ class OfflineSaleService {
   Future<Result<void>> retrySync(String syncId) async {
     try {
       final saleResult = await getOfflineSale(syncId);
-      
+
       if (saleResult.isFailure) {
         return Failure<void>('Sale not found');
       }
@@ -209,7 +209,7 @@ class OfflineSaleService {
   Future<Result<void>> syncSale(String syncId) async {
     try {
       final saleResult = await getOfflineSale(syncId);
-      
+
       if (saleResult.isFailure) {
         return Failure<void>('Sale not found');
       }
@@ -237,7 +237,7 @@ class OfflineSaleService {
       ));
 
       final salesResult = await _db.getSalesForSync(QueryLimits.syncQueueBatchSize);
-      
+
       if (salesResult.isFailure) {
         return Failure<void>(salesResult.data);
       }
@@ -281,7 +281,7 @@ class OfflineSaleService {
     try {
       // Get sale items
       final itemsResult = await _db.getSaleItems(sale.id);
-      
+
       if (itemsResult.isFailure) {
         throw Exception('Failed to get sale items');
       }
@@ -331,10 +331,10 @@ class OfflineSaleService {
 
       if (response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        
+
         // Get server sale ID
         final serverSaleId = data['success']['sale_id'] as String?;
-        
+
         // Update sale with server ID
         await _db.offlineSales.update(
           sale..saleId = Value(serverSaleId)
@@ -383,7 +383,7 @@ class OfflineSaleService {
       }
     } catch (e, stackTrace) {
       Logger.error('OfflineSaleService._syncSale failed', e, stackTrace);
-      
+
       // Update failure
       final retryCount = sale.retryCount + 1;
       await _db.offlineSales.update(

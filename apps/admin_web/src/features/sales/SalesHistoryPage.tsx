@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
+import { useAuth } from '../../lib/AuthContext';
 import { Skeleton } from '../../components/Skeleton';
 import { Search, XCircle, ChevronRight, Receipt, CreditCard, X } from 'lucide-react';
 import { clsx } from 'clsx';
@@ -9,10 +10,10 @@ import { useNotify } from '../../components/Notification';
 
 export function SalesHistoryPage() {
   const { notify } = useNotify();
-  const storeId = '00000000-0000-0000-0000-000000000000'; // Hardcoded for MVP
+  const { storeId } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSaleId, setSelectedSaleId] = useState<string | null>(null);
-  
+
   const { data: sales, isLoading, error } = useQuery({
     queryKey: ['sales-history', storeId, searchTerm],
     queryFn: () => api.sales.history(storeId, searchTerm),
@@ -33,15 +34,15 @@ export function SalesHistoryPage() {
       <div className="card" style={{ padding: 'var(--space-4)', marginBottom: 'var(--space-6)', display: 'flex', gap: 'var(--space-4)' }}>
         <div style={{ position: 'relative', flex: 1 }}>
           <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Search by Receipt #..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ 
-              width: '100%', 
-              padding: 'var(--space-3) var(--space-3) var(--space-3) 40px', 
-              borderRadius: 'var(--radius-md)', 
+            style={{
+              width: '100%',
+              padding: 'var(--space-3) var(--space-3) var(--space-3) 40px',
+              borderRadius: 'var(--radius-md)',
               border: '1px solid var(--border-color)',
               backgroundColor: 'var(--input-bg)'
             }}
@@ -106,7 +107,7 @@ export function SalesHistoryPage() {
                     </span>
                   </td>
                   <td style={{ padding: 'var(--space-4)', textAlign: 'right' }}>
-                    <button 
+                    <button
                       onClick={() => setSelectedSaleId(s.id)}
                       style={{ color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '4px', marginLeft: 'auto', fontWeight: '600' }}
                     >
@@ -120,9 +121,9 @@ export function SalesHistoryPage() {
         </table>
       </div>
 
-      <SaleDetailsDrawer 
-        saleId={selectedSaleId} 
-        onClose={() => setSelectedSaleId(null)} 
+      <SaleDetailsDrawer
+        saleId={selectedSaleId}
+        onClose={() => setSelectedSaleId(null)}
       />
     </div>
   );
@@ -162,7 +163,7 @@ function SaleDetailsDrawer({ saleId, onClose }: { saleId: string | null, onClose
   const { sale, items, payments } = data || {};
 
   return (
-    <div 
+    <div
       className="drawer-overlay"
       onClick={onClose}
       style={{
@@ -175,7 +176,7 @@ function SaleDetailsDrawer({ saleId, onClose }: { saleId: string | null, onClose
         backdropFilter: 'blur(2px)'
       }}
     >
-      <div 
+      <div
         className="drawer-content"
         onClick={e => e.stopPropagation()}
         style={{
@@ -207,7 +208,7 @@ function SaleDetailsDrawer({ saleId, onClose }: { saleId: string | null, onClose
               </div>
               <div style={{ textAlign: 'right' }}>
                 <label style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)', display: 'block' }}>Status</label>
-                <span style={{ 
+                <span style={{
                   color: sale.status === 'completed' ? 'var(--color-success)' : 'var(--color-danger)',
                   fontWeight: '700',
                   textTransform: 'uppercase'
@@ -286,7 +287,7 @@ function SaleDetailsDrawer({ saleId, onClose }: { saleId: string | null, onClose
             {sale.status === 'completed' && (
               <div style={{ marginTop: 'auto', borderTop: '1px solid var(--border-color)', paddingTop: 'var(--space-6)' }}>
                 {!showVoidConfirm ? (
-                  <button 
+                  <button
                     onClick={() => setShowVoidConfirm(true)}
                     style={{ width: '100%', color: 'var(--color-danger)', border: '1px solid var(--color-danger)', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                   >
@@ -296,8 +297,8 @@ function SaleDetailsDrawer({ saleId, onClose }: { saleId: string | null, onClose
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', backgroundColor: 'rgba(239, 68, 68, 0.05)', padding: 'var(--space-4)', borderRadius: 'var(--radius-md)' }}>
                     <h4 style={{ color: 'var(--color-danger)', fontWeight: '700' }}>Confirm Void</h4>
                     <p style={{ fontSize: 'var(--font-size-xs)' }}>This will restore stock and reverse session totals. This action cannot be undone.</p>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       placeholder="Reason for voiding (required)..."
                       value={voidReason}
                       onChange={e => setVoidReason(e.target.value)}
@@ -305,7 +306,7 @@ function SaleDetailsDrawer({ saleId, onClose }: { saleId: string | null, onClose
                     />
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-2)' }}>
                       <button onClick={() => setShowVoidConfirm(false)} style={{ padding: 'var(--space-2)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>Cancel</button>
-                      <button 
+                      <button
                         disabled={!voidReason || voidMutation.isPending}
                         onClick={() => voidMutation.mutate(voidReason)}
                         style={{ padding: 'var(--space-2)', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--color-danger)', color: 'white', fontWeight: '600', opacity: (!voidReason || voidMutation.isPending) ? 0.5 : 1 }}
