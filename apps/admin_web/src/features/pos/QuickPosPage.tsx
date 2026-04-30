@@ -33,21 +33,21 @@ export function QuickPosPage() {
       {/* Top Navbar */}
       <header className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
         <div className="flex items-center gap-4">
-          <button 
-            onClick={() => navigate('/')} 
+          <button
+            onClick={() => navigate('/')}
             className="p-2 hover:bg-gray-50 rounded-lg text-gray-500 transition-colors"
             title="Back to Dashboard"
           >
             <Menu size={20} />
           </button>
         </div>
-        
+
         <div className="flex-1 max-w-xl px-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-            <input 
-              type="text" 
-              placeholder="Search or create anything..." 
+            <input
+              type="text"
+              placeholder="Search or create anything..."
               className="w-full pl-10 pr-12 py-2 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
             />
             <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-xs text-gray-400 font-medium">
@@ -80,9 +80,9 @@ export function QuickPosPage() {
             <div className="flex items-center gap-3">
               <div className="relative w-64">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                <input 
-                  type="text" 
-                  placeholder="Search items..." 
+                <input
+                  type="text"
+                  placeholder="Search items..."
                   className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-shadow"
                 />
               </div>
@@ -104,8 +104,8 @@ export function QuickPosPage() {
                 key={category}
                 onClick={() => setActiveCategory(category)}
                 className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                  activeCategory === category 
-                    ? 'bg-emerald-500 text-white shadow-sm' 
+                  activeCategory === category
+                    ? 'bg-emerald-500 text-white shadow-sm'
                     : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-transparent'
                 }`}
               >
@@ -125,7 +125,7 @@ export function QuickPosPage() {
                   <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
                     <Info size={16} />
                   </button>
-                  
+
                   {/* Image/Initials Placeholder */}
                   {product.initials || product.image ? (
                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-lg font-bold ${product.bgColor || 'bg-gray-50'} ${product.textColor || 'text-gray-400'}`}>
