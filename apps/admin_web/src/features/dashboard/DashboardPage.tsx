@@ -17,36 +17,35 @@ export function DashboardPage() {
   });
 
   if (isLoading) return <div className="skeleton">Loading dashboard...</div>;
-  if (error) return <div className="error">Error loading dashboard</div>;
 
   return (
     <div className="dashboard-container">
       <header style={{ marginBottom: 'var(--space-8)' }}>
-        <h1 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700' }}>Shop Overview</h1>
+        <h1 style={{ fontSize: 'var(--font-size-3xl)', fontWeight: '700', color: 'var(--text-main)' }}>Welcome {stats?.user?.name || 'Mohammed'}</h1>
         <p style={{ color: 'var(--text-muted)' }}>Here's what's happening today.</p>
       </header>
 
       <div className="dashboard-grid">
-        <StatCard 
-          title="Today Sales" 
-          value={`$${stats?.total_sales || '0.00'}`} 
-          icon={<DollarSign color="var(--color-success)" />} 
+        <StatCard
+          title="Today Sales"
+          value={`$${stats?.total_sales || '0.00'}`}
+          icon={<DollarSign color="var(--color-success)" />}
         />
-        <StatCard 
-          title="Low Stock" 
-          value={lowStock?.length || 0} 
-          icon={<AlertTriangle color="var(--color-warning)" />} 
+        <StatCard
+          title="Low Stock"
+          value={lowStock?.length || 0}
+          icon={<AlertTriangle color="var(--color-warning)" />}
           badge={lowStock?.length > 0 ? 'Action Needed' : ''}
         />
-        <StatCard 
-          title="Open Sessions" 
-          value={stats?.open_sessions || 0} 
-          icon={<Users color="var(--color-primary)" />} 
+        <StatCard
+          title="Open Sessions"
+          value={stats?.open_sessions || 0}
+          icon={<Users color="var(--color-primary)" />}
         />
-        <StatCard 
-          title="Products" 
-          value={stats?.total_products || 0} 
-          icon={<Package color="var(--color-secondary)" />} 
+        <StatCard
+          title="Products"
+          value={stats?.total_products || 0}
+          icon={<Package color="var(--color-secondary)" />}
         />
       </div>
 
@@ -95,9 +94,9 @@ function StatCard({ title, value, icon, badge }: any) {
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--space-2)' }}>
         <span style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700' }}>{value}</span>
         {badge && (
-          <span style={{ 
-            fontSize: 'var(--font-size-xs)', 
-            backgroundColor: 'rgba(245, 158, 11, 0.1)', 
+          <span style={{
+            fontSize: 'var(--font-size-xs)',
+            backgroundColor: 'rgba(245, 158, 11, 0.1)',
             color: 'var(--color-warning)',
             padding: '2px 6px',
             borderRadius: '4px',

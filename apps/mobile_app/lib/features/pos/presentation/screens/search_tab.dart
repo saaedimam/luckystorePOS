@@ -70,6 +70,7 @@ class _SearchTabState extends State<SearchTab> {
                   hintText: 'Search... (fuzzy matching)',
                   hintStyle: const TextStyle(color: AppTheme.textSecondary),
                   prefixIcon: const Icon(Icons.search, color: AppTheme.primaryAccentLight),
+                  prefixIcon: const Icon(Icons.search, color: AppTheme.secondaryAccent),
                   suffixIcon: _query.isNotEmpty
                       ? IconButton(
                           icon: const Icon(Icons.clear, color: AppTheme.textSecondary),

@@ -19,29 +19,18 @@ export function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
-        <h2 style={{ fontSize: 'var(--font-size-xl)', fontWeight: '700', color: 'var(--color-primary)' }}>
-          Lucky Store
-        </h2>
-        <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)' }}>Admin Panel</p>
+        <h2>Lucky Store</h2>
+        <p>Admin Panel</p>
       </div>
 
-      <nav className="sidebar-nav" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', flex: 1 }}>
+      <nav className="sidebar-nav">
         {navItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
-            style={({ isActive }) => ({
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--space-3)',
-              padding: 'var(--space-3) var(--space-4)',
-              borderRadius: 'var(--radius-md)',
-              textDecoration: 'none',
-              color: isActive ? 'var(--color-primary)' : 'var(--text-muted)',
-              backgroundColor: isActive ? 'rgba(99, 102, 241, 0.1)' : 'transparent',
-              fontWeight: isActive ? '600' : '500',
-              transition: 'all var(--transition-fast)',
-            })}
+            className={({ isActive }) => 
+              isActive ? 'sidebar-nav-item active' : 'sidebar-nav-item'
+            }
           >
             <item.icon size={20} />
             <span>{item.label}</span>
@@ -50,17 +39,7 @@ export function Sidebar() {
       </nav>
 
       <div className="sidebar-footer">
-        <button
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 'var(--space-3)',
-            padding: 'var(--space-3) var(--space-4)',
-            color: 'var(--color-danger)',
-            width: '100%',
-            fontWeight: '500',
-          }}
-        >
+        <button>
           <LogOut size={20} />
           <span>Logout</span>
         </button>

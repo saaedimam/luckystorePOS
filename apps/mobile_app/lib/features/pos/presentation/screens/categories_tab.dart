@@ -61,6 +61,7 @@ class _CategoriesTabState extends State<CategoriesTab> with SingleTickerProvider
               isScrollable: true,
               indicatorColor: AppTheme.primaryAccent,
               labelColor: AppTheme.primaryAccentLight,
+              labelColor: AppTheme.primaryAccent,
               unselectedLabelColor: AppTheme.textSecondary,
               labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               tabs: _tabs.map((t) => Tab(text: t)).toList(),

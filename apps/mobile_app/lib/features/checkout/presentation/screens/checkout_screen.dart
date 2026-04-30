@@ -53,6 +53,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   TextButton(
                     onPressed: () {/* Navigate to address picker */},
                     child: const Text('Change', style: TextStyle(color: AppTheme.primaryAccentLight)),
+                    child: const Text('Change', style: TextStyle(color: AppTheme.secondaryAccent)),
                   ),
                 ],
               ),
