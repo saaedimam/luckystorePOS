@@ -4,29 +4,8 @@
 -- Purpose: Full audit trail for all inventory movements
 -- =============================================================================
 
--- -----------------------------------------------------------------------------
--- 1) Drop existing table if exists (for migration idempotency)
--- -----------------------------------------------------------------------------
-DROP TABLE IF EXISTS public.stock_ledger CASCADE;
-
--- -----------------------------------------------------------------------------
--- 2) Create stock_ledger table
--- Columns:
---   - id: Primary key (UUID)
---   - store_id: Store reference (FK to stores)
---   - product_id: Product reference (FK to items)
---   - previous_quantity: Stock before change
---   - new_quantity: Stock after change
---   - quantity_change: + for additions, - for deductions
---   - transaction_type: 'sale_deduction', 'purchase_add', 'adjustment', etc.
---   - reason: Human-readable reason
---   - movement_id: Unique movement identifier (for deduplication)
---   - performed_by: User/POS terminal ID
---   - reference_id: Related transaction ID (sale_id, purchase_id, etc.)
---   - metadata: Additional context (JSON)
---   - created_at: Timestamp
--- -----------------------------------------------------------------------------
-CREATE TABLE public.stock_ledger (
+-- Note: CREATE TABLE IF NOT EXISTS used (not DROP + recreate) to prevent data destruction on re-run.
+CREATE TABLE IF NOT EXISTS public.stock_ledger (
   -- Primary key
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   

@@ -19,12 +19,14 @@ import { SettingsPage } from '../features/settings/SettingsPage';
 import { OAuthConsentPage } from '../features/oauth/OAuthConsentPage';
 
 import { NotificationProvider } from '../components/Notification';
+import { AuthProvider } from '../lib/AuthContext';
 
 export function App() {
   return (
     <QueryProvider>
       <NotificationProvider>
-        <BrowserRouter>
+        <AuthProvider>
+          <BrowserRouter>
           <AuthGuard>
             <Routes>
               <Route path="/oauth/consent" element={<OAuthConsentPage />} />
@@ -42,7 +44,8 @@ export function App() {
               </Route>
             </Routes>
           </AuthGuard>
-        </BrowserRouter>
+          </BrowserRouter>
+        </AuthProvider>
       </NotificationProvider>
     </QueryProvider>
   );
