@@ -1,5 +1,6 @@
 import { LayoutDashboard, ShoppingCart, Package, Warehouse, PlusCircle, Wallet, Users, PhoneCall, Settings, LogOut, Monitor } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '../lib/AuthContext';
 import '../styles/layout.css';
 
 const navItems = [
@@ -16,6 +17,8 @@ const navItems = [
 ];
 
 export function Sidebar() {
+  const { signOut } = useAuth();
+
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
@@ -39,7 +42,7 @@ export function Sidebar() {
       </nav>
 
       <div className="sidebar-footer">
-        <button>
+        <button onClick={signOut} style={{ color: 'var(--text-sidebar)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)', width: '100%', padding: 'var(--space-2) var(--space-3)', borderRadius: 'var(--radius-md)' }}>
           <LogOut size={20} />
           <span>Logout</span>
         </button>

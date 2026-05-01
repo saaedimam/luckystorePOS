@@ -4,6 +4,7 @@ import { Layout } from '../components/Layout';
 import { DashboardPage } from '../features/dashboard/DashboardPage';
 
 import { AuthGuard } from './AuthGuard';
+import { ErrorBoundary } from './ErrorBoundary';
 
 import { ProductListPage } from '../features/products/ProductListPage';
 
@@ -28,23 +29,24 @@ export function App() {
       <NotificationProvider>
         <AuthProvider>
           <BrowserRouter>
-            <Routes>
-              <Route path="/oauth/consent" element={<OAuthConsentPage />} />
-              <Route path="/pos" element={<QuickPosPage />} />
-              <Route path="/" element={<AuthGuard><Layout /></AuthGuard>}>
-                <Route index element={<DashboardPage />} />
-                <Route path="dashboard" element={<DashboardPage />} />
-                <Route path="sales" element={<SalesHistoryPage />} />
-                <Route path="products" element={<ProductListPage />} />
-                <Route path="inventory" element={<InventoryListPage />} />
-                <Route path="inventory/history" element={<StockHistoryPage />} />
-                <Route path="finance/suppliers" element={<SupplierLedgerPage />} />
-                <Route path="finance/customers" element={<CustomerLedgerPage />} />
-                <Route path="collections" element={<CollectionsWorkspace />} />
-                <Route path="purchase" element={<PurchaseEntryPage />} />
-                <Route path="settings" element={<SettingsPage />} />
-              </Route>
-            </Routes>
+            <ErrorBoundary>
+              <Routes>
+                <Route path="/oauth/consent" element={<OAuthConsentPage />} />
+                <Route path="/" element={<AuthGuard><Layout /></AuthGuard>}>
+                  <Route path="pos" element={<QuickPosPage />} />
+                  <Route index element={<DashboardPage />} />
+                  <Route path="sales" element={<SalesHistoryPage />} />
+                  <Route path="products" element={<ProductListPage />} />
+                  <Route path="inventory" element={<InventoryListPage />} />
+                  <Route path="inventory/history" element={<StockHistoryPage />} />
+                  <Route path="finance/suppliers" element={<SupplierLedgerPage />} />
+                  <Route path="finance/customers" element={<CustomerLedgerPage />} />
+                  <Route path="collections" element={<CollectionsWorkspace />} />
+                  <Route path="purchase" element={<PurchaseEntryPage />} />
+                  <Route path="settings" element={<SettingsPage />} />
+                </Route>
+              </Routes>
+            </ErrorBoundary>
           </BrowserRouter>
         </AuthProvider>
       </NotificationProvider>
