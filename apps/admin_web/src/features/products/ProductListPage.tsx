@@ -7,9 +7,18 @@ import { clsx } from 'clsx';
 import { ProductEditDrawer } from './ProductEditDrawer';
 import { ProductAddModal } from './ProductAddModal';
 import { useNotify } from '../../components/Notification';
+import { useRealtimeSubscription } from '../../hooks/useRealtime';
 
 export function ProductListPage() {
   const { notify } = useNotify();
+
+  // Realtime: refresh product list when items table changes
+  useRealtimeSubscription({
+    table: 'items',
+    event: '*',
+    invalidateKeys: [['products']],
+  });
+
   const [searchTerm, setSearchTerm] = useState('');
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);

@@ -1,24 +1,66 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { useAuth } from '../../lib/AuthContext';
-import { DollarSign, AlertTriangle, Users, Package } from 'lucide-react';
+import { DollarSign, AlertTriangle, Users, Package, TrendingUp } from 'lucide-react';
+import { SkeletonCard, ErrorState } from '../../components/PageState';
+import { useRealtimeSubscription } from '../../hooks/useRealtime';
+import { useNotify } from '../../components/Notification';
 import type { ReactNode } from 'react';
 
 export function DashboardPage() {
   const { storeId } = useAuth();
+  const { notify } = useNotify();
 
-  // Fetch dashboard statistics; error is intentionally omitted as we handle loading state only.
-  const { data: stats, isLoading } = useQuery({
+  // Realtime: show toast when a new sale is inserted on another device
+  useRealtimeSubscription({
+    table: 'sales',
+    event: 'INSERT',
+    filter: storeId ? `store_id=eq.${storeId}` : undefined,
+    invalidateKeys: [['dashboard-stats', storeId], ['low-stock', storeId]],
+    onEvent: () => {
+      notify('New sale recorded on another device', 'success');
+    },
+  });
+
+  const statsQuery = useQuery({
     queryKey: ['dashboard-stats', storeId],
     queryFn: () => api.dashboard.getStats(storeId),
   });
-
-  const { data: lowStock } = useQuery({
+  const lowStockQuery = useQuery({
     queryKey: ['low-stock', storeId],
     queryFn: () => api.dashboard.getLowStock(storeId),
   });
 
-  if (isLoading) return <div className="skeleton">Loading dashboard...</div>;
+  const stats = statsQuery.data;
+  const lowStock = lowStockQuery.data;
+  const isLoading = statsQuery.isLoading;
+  const isError = statsQuery.isError;
+
+  if (isLoading) {
+    return (
+      <div className="dashboard-container">
+        <header style={{ marginBottom: 'var(--space-8)' }}>
+          <div style={{ width: '200px', height: '28px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+          <div style={{ width: '260px', height: '18px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite', marginTop: 'var(--space-2)' }} />
+        </header>
+        <div className="dashboard-grid">
+          {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
+        </div>
+        <section style={{ marginTop: 'var(--space-12)' }}>
+          <div style={{ width: '160px', height: '22px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite', marginBottom: 'var(--space-6)' }} />
+          <div className="card" style={{ height: '200px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite', opacity: 0.3 }} />
+        </section>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="dashboard-container">
+        <ErrorState message="Failed to load dashboard data." onRetry={() => { statsQuery.refetch(); lowStockQuery.refetch(); }} />
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-container">
