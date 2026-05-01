@@ -30,7 +30,7 @@ export function DashboardPage() {
       <div className="dashboard-grid">
         <StatCard
           title="Today Sales"
-          value={`$${stats?.total_sales || '0.00'}`}
+          value={`৳${stats?.total_sales || '0.00'}`}
           icon={<DollarSign color="var(--color-success)" />}
         />
         <StatCard
@@ -90,7 +90,7 @@ export function DashboardPage() {
 interface StatCardProps {
   title: string;
   /**
-   * Value can be a formatted string (e.g., "$123.45") or a number.
+   * Value can be a formatted string (e.g., "৳123.45") or a number.
    */
   value: string | number;
   icon: ReactNode;
