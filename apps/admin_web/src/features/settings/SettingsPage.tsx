@@ -3,8 +3,16 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { useAuth } from '../../lib/AuthContext';
 import { Skeleton } from '../../components/Skeleton';
-import { Users, CreditCard, FileText, UserPlus, Save, Check, RefreshCw } from 'lucide-react';
+import { Users, CreditCard, FileText, UserPlus, Save, Check, RefreshCw, ToggleLeft, ToggleRight } from 'lucide-react';
 import { clsx } from 'clsx';
+import { AddUserModal } from './AddUserModal';
+import { AddPaymentMethodModal } from './AddPaymentMethodModal';
+
+const ROLE_LABELS: Record<string, string> = {
+  admin: 'Admin',
+  manager: 'Manager',
+  cashier: 'Staff',
+};
 
 export function SettingsPage() {
   const { storeId } = useAuth();
@@ -27,7 +35,7 @@ export function SettingsPage() {
               display: 'flex', alignItems: 'center', gap: 'var(--space-3)', padding: 'var(--space-3) var(--space-4)',
               borderRadius: 'var(--radius-md)', border: 'none', textAlign: 'left', fontWeight: '600',
               backgroundColor: activeTab === 'users' ? 'var(--color-primary)' : 'transparent',
-              color: activeTab === 'users' ? 'white' : 'var(--text-muted)'
+              color: activeTab === 'users' ? '#000' : 'var(--text-muted)'
             }}
           >
             <Users size={18} /> Users & Roles
@@ -39,7 +47,7 @@ export function SettingsPage() {
               display: 'flex', alignItems: 'center', gap: 'var(--space-3)', padding: 'var(--space-3) var(--space-4)',
               borderRadius: 'var(--radius-md)', border: 'none', textAlign: 'left', fontWeight: '600',
               backgroundColor: activeTab === 'payments' ? 'var(--color-primary)' : 'transparent',
-              color: activeTab === 'payments' ? 'white' : 'var(--text-muted)'
+              color: activeTab === 'payments' ? '#000' : 'var(--text-muted)'
             }}
           >
             <CreditCard size={18} /> Payment Methods
@@ -51,7 +59,7 @@ export function SettingsPage() {
               display: 'flex', alignItems: 'center', gap: 'var(--space-3)', padding: 'var(--space-3) var(--space-4)',
               borderRadius: 'var(--radius-md)', border: 'none', textAlign: 'left', fontWeight: '600',
               backgroundColor: activeTab === 'receipt' ? 'var(--color-primary)' : 'transparent',
-              color: activeTab === 'receipt' ? 'white' : 'var(--text-muted)'
+              color: activeTab === 'receipt' ? '#000' : 'var(--text-muted)'
             }}
           >
             <FileText size={18} /> Receipt Config
@@ -72,6 +80,8 @@ export function SettingsPage() {
 }
 
 function UsersSettings({ storeId }: { storeId: string }) {
+  const { tenantId } = useAuth();
+  const [showAddUser, setShowAddUser] = useState(false);
   const { data: users, isLoading } = useQuery({
     queryKey: ['settings-users', storeId],
     queryFn: () => api.settings.getUsers(storeId),
@@ -81,7 +91,11 @@ function UsersSettings({ storeId }: { storeId: string }) {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)' }}>
         <h2 style={{ fontSize: 'var(--font-size-xl)', fontWeight: '700' }}>Users & Roles</h2>
-        <button className="button-primary" style={{ padding: 'var(--space-2) var(--space-4)', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--color-primary)', color: 'white', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}>
+        <button
+          className="button-primary"
+          onClick={() => setShowAddUser(true)}
+          style={{ padding: 'var(--space-2) var(--space-4)', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--color-primary)', color: '#000', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}
+        >
           <UserPlus size={18} /> Add User
         </button>
       </div>
@@ -103,39 +117,62 @@ function UsersSettings({ storeId }: { storeId: string }) {
           ) : (
             users?.map((u: any) => (
               <tr key={u.id} style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-                <td style={{ padding: 'var(--space-4) 0', fontWeight: '600' }}>{u.full_name}</td>
-                <td style={{ padding: 'var(--space-4) 0' }}>{u.email}</td>
+                <td style={{ padding: 'var(--space-4) 0', fontWeight: '600' }}>{u.full_name || u.name || '—'}</td>
+                <td style={{ padding: 'var(--space-4) 0' }}>{u.email || '—'}</td>
                 <td style={{ padding: 'var(--space-4) 0' }}>
                   <span style={{
                     padding: '2px 8px', borderRadius: '12px', fontSize: 'var(--font-size-xs)', fontWeight: '700',
-                    backgroundColor: u.role === 'admin' ? 'rgba(99, 102, 241, 0.1)' : 'rgba(100, 116, 139, 0.1)',
-                    color: u.role === 'admin' ? 'var(--color-primary)' : 'var(--text-muted)',
+                    backgroundColor: u.role === 'admin' ? 'rgba(251, 191, 36, 0.15)' : u.role === 'manager' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(100, 116, 139, 0.1)',
+                    color: u.role === 'admin' ? 'var(--color-primary-hover)' : u.role === 'manager' ? 'var(--color-success)' : 'var(--text-muted)',
                     textTransform: 'uppercase'
-                  }}>{u.role}</span>
+                  }}>{ROLE_LABELS[u.role] || u.role}</span>
                 </td>
                 <td style={{ padding: 'var(--space-4) 0', color: 'var(--text-muted)', fontSize: 'var(--font-size-sm)' }}>
-                  {u.last_login ? new Date(u.last_login).toLocaleDateString() : 'Never'}
+                  {u.last_login || u.last_login_at ? new Date(u.last_login || u.last_login_at).toLocaleDateString('en-GB') : 'Never'}
                 </td>
               </tr>
             ))
           )}
         </tbody>
       </table>
+
+      <AddUserModal
+        isOpen={showAddUser}
+        storeId={storeId}
+        tenantId={tenantId}
+        onClose={() => setShowAddUser(false)}
+      />
     </div>
   );
 }
 
 function PaymentsSettings({ storeId }: { storeId: string }) {
+  const [showAddMethod, setShowAddMethod] = useState(false);
+  const queryClient = useQueryClient();
   const { data: payments, isLoading } = useQuery({
     queryKey: ['settings-payments', storeId],
     queryFn: () => api.settings.getPaymentMethods(storeId),
+  });
+
+  const toggleMutation = useMutation({
+    mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
+      api.settings.togglePaymentMethod(id, isActive),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['settings-payments'] });
+    },
   });
 
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)' }}>
         <h2 style={{ fontSize: 'var(--font-size-xl)', fontWeight: '700' }}>Payment Methods</h2>
-        <button style={{ color: 'var(--color-primary)', fontWeight: '600' }}>+ Add Method</button>
+        <button
+          className="button-primary"
+          onClick={() => setShowAddMethod(true)}
+          style={{ padding: 'var(--space-2) var(--space-4)', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--color-primary)', color: '#000', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600' }}
+        >
+          <CreditCard size={18} /> Add Method
+        </button>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
@@ -150,19 +187,40 @@ function PaymentsSettings({ storeId }: { storeId: string }) {
                 </div>
                 <div>
                   <div style={{ fontWeight: '700' }}>{pm.name}</div>
-                  <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)', textTransform: 'uppercase' }}>{pm.type}</div>
+                  <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)', textTransform: 'uppercase' }}>{pm.type?.replace('_', ' ')}</div>
                 </div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
-                <span style={{ color: pm.is_active ? 'var(--color-success)' : 'var(--text-muted)', fontWeight: '600', fontSize: 'var(--font-size-sm)' }}>
+                <button
+                  onClick={() => toggleMutation.mutate({ id: pm.id, isActive: !pm.is_active })}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'var(--space-2)',
+                    padding: 'var(--space-1) var(--space-3)',
+                    borderRadius: 'var(--radius-md)',
+                    backgroundColor: pm.is_active ? 'rgba(16, 185, 129, 0.1)' : 'rgba(100, 116, 139, 0.1)',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: pm.is_active ? 'var(--color-success)' : 'var(--text-muted)',
+                    fontWeight: '600',
+                    fontSize: 'var(--font-size-sm)',
+                  }}
+                >
+                  {pm.is_active ? <ToggleRight size={16} /> : <ToggleLeft size={16} />}
                   {pm.is_active ? 'Active' : 'Inactive'}
-                </span>
-                <button style={{ color: 'var(--text-muted)' }}><RefreshCw size={16} /></button>
+                </button>
               </div>
             </div>
           ))
         )}
       </div>
+
+      <AddPaymentMethodModal
+        isOpen={showAddMethod}
+        storeId={storeId}
+        onClose={() => setShowAddMethod(false)}
+      />
     </div>
   );
 }
@@ -247,7 +305,7 @@ function ReceiptSettings({ storeId }: { storeId: string }) {
             disabled={updateMutation.isPending}
             style={{
               backgroundColor: 'var(--color-primary)',
-              color: 'white',
+              color: '#000',
               padding: 'var(--space-3) var(--space-8)',
               borderRadius: 'var(--radius-md)',
               fontWeight: '700',
