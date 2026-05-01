@@ -3,7 +3,7 @@
 // Fail-fast on critical field corruption to prevent silent bugs
 // =============================================================================
 
-import type { PosProduct, PosCategory } from './types';
+import type { PosProduct, PosCategory, Reminder, ReminderType } from './types';
 
 const DEBUG_POS = import.meta.env.VITE_DEBUG_POS === 'true';
 
@@ -123,5 +123,34 @@ export function mapCategories(rows: any): PosCategory[] {
   }
 
   debugLog('Unexpected categories response type', { type: typeof rows, rows });
+  return [];
+}
+
+/**
+ * Maps a row from reminders table / RPC to Reminder domain type
+ */
+export function mapReminder(row: any): Reminder {
+  return {
+    id: row.id,
+    tenantId: row.tenant_id,
+    storeId: row.store_id,
+    title: row.title,
+    description: row.description,
+    reminderDate: row.reminder_date,
+    reminderType: row.reminder_type as ReminderType,
+    isCompleted: row.is_completed,
+    createdBy: row.created_by,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+/**
+ * Maps an array of reminder rows to Reminder[]
+ */
+export function mapReminders(rows: any): Reminder[] {
+  if (!rows) return [];
+  if (Array.isArray(rows)) return rows.map(mapReminder);
+  if (typeof rows === 'object') return [mapReminder(rows)];
   return [];
 }

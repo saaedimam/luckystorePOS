@@ -19,6 +19,7 @@ import { PurchaseEntryPage } from '../features/purchase/PurchaseEntryPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
 import { OAuthConsentPage } from '../features/oauth/OAuthConsentPage';
 import { QuickPosPage } from '../features/pos/QuickPosPage';
+import { RemindersPage } from '../features/reminders/RemindersPage';
 import { ExpensesPage } from '../features/expenses/ExpensesPage';
 
 import { NotificationProvider } from '../components/Notification';
@@ -46,6 +47,7 @@ export function App() {
                   <Route path="purchase" element={<PurchaseEntryPage />} />
                   <Route path="expenses" element={<ExpensesPage />} />
                   <Route path="settings" element={<SettingsPage />} />
+                  <Route path="reminders" element={<RemindersPage />} />
                 </Route>
               </Routes>
             </ErrorBoundary>
