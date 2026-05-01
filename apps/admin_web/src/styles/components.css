@@ -541,6 +541,59 @@
   gap: var(--space-3);
 }
 
+.billing-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border-light);
+  gap: var(--space-2);
+}
+
+.billing-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.billing-item-name {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.billing-item-price {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.billing-item-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
+.billing-item-controls .button-outline {
+  min-height: 36px;
+  min-width: 36px;
+  padding: 4px 8px;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+}
+
+.billing-item-total {
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  color: var(--text-main);
+  min-width: 70px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
 .billing-summary {
   display: flex;
   flex-direction: column;
