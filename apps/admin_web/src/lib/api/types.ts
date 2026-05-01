@@ -60,3 +60,80 @@ export interface HeldCart {
   discount: number;
   heldAt: number;
 }
+
+export type ReminderType = 'payment_due' | 'follow_up' | 'stock_check' | 'other';
+
+export interface Reminder {
+  id: string;
+  tenantId: string;
+  storeId: string;
+  title: string;
+  description: string | null;
+  reminderDate: string;
+  reminderType: ReminderType;
+  isCompleted: boolean;
+  createdBy: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// =============================================================================
+// Expense Domain Types
+// Aligned with public.expenses table and record_expense RPC
+// =============================================================================
+
+export type ExpensePaymentType = 'Cash' | 'Bank transfer' | 'Bkash' | 'Card';
+
+export type ExpenseCategory =
+  | 'Capital Expenditure'
+  | 'Utility Expenses'
+  | 'Transport & Conveyance'
+  | 'Staff salary'
+  | 'Partners Take'
+  | 'All Other Expenses';
+
+export const EXPENSE_CATEGORIES: ExpenseCategory[] = [
+  'Capital Expenditure',
+  'Utility Expenses',
+  'Transport & Conveyance',
+  'Staff salary',
+  'Partners Take',
+  'All Other Expenses',
+];
+
+export const EXPENSE_PAYMENT_TYPES: ExpensePaymentType[] = [
+  'Cash',
+  'Bank transfer',
+  'Bkash',
+  'Card',
+];
+
+export interface Expense {
+  id: string;
+  storeId: string;
+  expenseDate: string;
+  vendorName: string;
+  description: string;
+  amount: number;
+  paymentType: ExpensePaymentType;
+  category: ExpenseCategory;
+  ledgerBatchId: string | null;
+  createdBy: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ExpenseFormData {
+  expenseDate: string;
+  vendorName: string;
+  description: string;
+  amount: number;
+  paymentType: ExpensePaymentType;
+  category: ExpenseCategory;
+}
+
+export interface RecordExpenseResult {
+  status: 'SUCCESS' | 'ERROR';
+  expense_id?: string;
+  batch_id?: string;
+}

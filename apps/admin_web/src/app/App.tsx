@@ -19,6 +19,7 @@ import { PurchaseEntryPage } from '../features/purchase/PurchaseEntryPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
 import { OAuthConsentPage } from '../features/oauth/OAuthConsentPage';
 import { QuickPosPage } from '../features/pos/QuickPosPage';
+import { ExpensesPage } from '../features/expenses/ExpensesPage';
 
 import { NotificationProvider } from '../components/Notification';
 import { AuthProvider } from '../lib/AuthContext';
@@ -43,6 +44,7 @@ export function App() {
                   <Route path="finance/customers" element={<CustomerLedgerPage />} />
                   <Route path="collections" element={<CollectionsWorkspace />} />
                   <Route path="purchase" element={<PurchaseEntryPage />} />
+                  <Route path="expenses" element={<ExpensesPage />} />
                   <Route path="settings" element={<SettingsPage />} />
                 </Route>
               </Routes>
