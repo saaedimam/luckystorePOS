@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
-import { mapSearchItems, mapCategories } from './api/mappers';
-import type { PosProduct, PosCategory, SaleResult } from './api/types';
+import { mapSearchItems, mapCategories, mapReminder, mapReminders } from './api/mappers';
+import type { PosProduct, PosCategory, SaleResult, Expense, ExpenseFormData, RecordExpenseResult, ExpenseCategory, ExpensePaymentType } from './api/types';
 
 const DEBUG_POS = import.meta.env.VITE_DEBUG_POS === 'true';
 
@@ -150,29 +150,104 @@ export const api = {
       if (error) throw error;
       return data;
     },
+    addUser: async (storeId: string, user: { email: string; password: string; fullName: string; role: string; pin: string; tenantId: string }) => {
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: user.email,
+        password: user.password,
+      });
+      if (authError) throw authError;
+      const authId = authData.user?.id;
+      if (!authId) throw new Error('Signup succeeded but no auth user ID returned');
+      const { data, error } = await supabase
+        .from('users')
+        .insert([{
+          id: authId,
+          auth_id: authId,
+          tenant_id: user.tenantId,
+          store_id: storeId,
+          full_name: user.fullName,
+          role: user.role,
+          pos_pin: user.pin,
+        }])
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    addPaymentMethod: async (storeId: string, method: { name: string; type: string; isActive: boolean }) => {
+      const { data, error } = await supabase
+        .from('payment_methods')
+        .insert([{
+          store_id: storeId,
+          name: method.name,
+          type: method.type,
+          is_active: method.isActive,
+        }])
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    togglePaymentMethod: async (methodId: string, isActive: boolean) => {
+      const { data, error } = await supabase
+        .from('payment_methods')
+        .update({ is_active: isActive })
+        .eq('id', methodId)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
   },
 
   // ---------------------------------------------------------------------
   // New modules – added per implementation plan (Phase 2 & Phase 4)
   // ---------------------------------------------------------------------
   expenses: {
-    /** List expense records with optional filters */
-    list: async (filters?: any) => {
-      const { data, error } = await supabase.rpc('get_expenses', { p_filters: filters });
+    /** List expense records for a store with optional date/category filters */
+    list: async (storeId: string, filters?: { startDate?: string; endDate?: string; category?: string; paymentType?: string }): Promise<Expense[]> => {
+      let query = supabase
+        .from('expenses')
+        .select('*')
+        .eq('store_id', storeId)
+        .order('expense_date', { ascending: false });
+
+      if (filters?.startDate) query = query.gte('expense_date', filters.startDate);
+      if (filters?.endDate) query = query.lte('expense_date', filters.endDate);
+      if (filters?.category) query = query.eq('category', filters.category);
+      if (filters?.paymentType) query = query.eq('payment_type', filters.paymentType);
+
+      const { data, error } = await query;
       if (error) throw error;
-      return data;
+
+      return (data ?? []).map((row: any) => ({
+        id: row.id,
+        storeId: row.store_id,
+        expenseDate: row.expense_date,
+        vendorName: row.vendor_name,
+        description: row.description,
+        amount: Number(row.amount),
+        paymentType: row.payment_type as ExpensePaymentType,
+        category: row.category as ExpenseCategory,
+        ledgerBatchId: row.ledger_batch_id,
+        createdBy: row.created_by,
+        createdAt: row.created_at,
+        updatedAt: row.updated_at,
+      }));
     },
-    /** Create a new expense */
-    create: async (expense: any) => {
-      const { data, error } = await supabase.rpc('create_expense', { p_expense: expense });
+    /** Record a new expense via the record_expense RPC (posts to ledger) */
+    create: async (storeId: string, form: ExpenseFormData): Promise<RecordExpenseResult> => {
+      const { data, error } = await supabase.rpc('record_expense', {
+        p_store_id: storeId,
+        p_date: form.expenseDate,
+        p_vendor: form.vendorName,
+        p_description: form.description,
+        p_amount: form.amount,
+        p_payment_type: form.paymentType,
+        p_category: form.category,
+      });
       if (error) throw error;
-      return data;
-    },
-    /** Fetch expense categories for dropdowns */
-    categories: async () => {
-      const { data, error } = await supabase.rpc('get_expense_categories');
-      if (error) throw error;
-      return data;
+      return data as RecordExpenseResult;
     },
   },
   pos: {
@@ -243,15 +318,62 @@ export const api = {
     },
   },
   reminders: {
-    /** List upcoming reminders */
-    list: async (storeId: string) => {
-      const { data, error } = await supabase.rpc('get_upcoming_reminders', { p_store_id: storeId });
+    /** List upcoming reminders for a store */
+    list: async (storeId: string, includeCompleted = false) => {
+      const { data, error } = await supabase.rpc('get_upcoming_reminders', {
+        p_store_id: storeId,
+        p_include_completed: includeCompleted,
+      });
       if (error) throw error;
-      return data;
+      return mapReminders(data);
     },
     /** Create a new reminder */
-    create: async (reminder: any) => {
-      const { data, error } = await supabase.rpc('create_reminder', { p_reminder: reminder });
+    create: async (params: {
+      tenantId: string;
+      storeId: string;
+      title: string;
+      description?: string | null;
+      reminderDate: string;
+      reminderType: string;
+      createdBy?: string | null;
+    }) => {
+      const { data, error } = await supabase.rpc('create_reminder', {
+        p_tenant_id: params.tenantId,
+        p_store_id: params.storeId,
+        p_title: params.title,
+        p_description: params.description ?? null,
+        p_reminder_date: params.reminderDate,
+        p_reminder_type: params.reminderType,
+        p_created_by: params.createdBy ?? null,
+      });
+      if (error) throw error;
+      return mapReminder(data);
+    },
+    /** Update an existing reminder */
+    update: async (params: {
+      reminderId: string;
+      title?: string;
+      description?: string | null;
+      reminderDate?: string;
+      reminderType?: string;
+      isCompleted?: boolean;
+    }) => {
+      const { data, error } = await supabase.rpc('update_reminder', {
+        p_reminder_id: params.reminderId,
+        p_title: params.title ?? null,
+        p_description: params.description ?? null,
+        p_reminder_date: params.reminderDate ?? null,
+        p_reminder_type: params.reminderType ?? null,
+        p_is_completed: params.isCompleted ?? null,
+      });
+      if (error) throw error;
+      return mapReminder(data);
+    },
+    /** Delete a reminder */
+    delete: async (reminderId: string) => {
+      const { data, error } = await supabase.rpc('delete_reminder', {
+        p_reminder_id: reminderId,
+      });
       if (error) throw error;
       return data;
     },
