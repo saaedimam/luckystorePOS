@@ -1,28 +1,95 @@
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { useAuth } from '../../lib/AuthContext';
 import { Skeleton } from '../../components/Skeleton';
-import { Search, XCircle, ChevronRight, Receipt, CreditCard, X } from 'lucide-react';
+import { Search, XCircle, ChevronRight, Receipt, CreditCard, X, Download, DollarSign, AlertTriangle, TrendingUp } from 'lucide-react';
 import { clsx } from 'clsx';
-import { format } from 'date-fns';
+import { format, startOfDay, startOfWeek, startOfMonth, endOfDay, endOfWeek, endOfMonth, subDays } from 'date-fns';
 import { useNotify } from '../../components/Notification';
+
+type DateRange = 'today' | 'week' | 'month' | 'custom';
+
+function getDateRange(range: DateRange, customStart?: string, customEnd?: string): { startDate: string; endDate: string } {
+  const now = new Date();
+  switch (range) {
+    case 'today':
+      return { startDate: startOfDay(now).toISOString(), endDate: endOfDay(now).toISOString() };
+    case 'week':
+      return { startDate: startOfWeek(now, { weekStartsOn: 6 }).toISOString(), endDate: endOfWeek(now, { weekStartsOn: 6 }).toISOString() };
+    case 'month':
+      return { startDate: startOfMonth(now).toISOString(), endDate: endOfMonth(now).toISOString() };
+    case 'custom':
+      return {
+        startDate: customStart ? startOfDay(new Date(customStart)).toISOString() : startOfDay(now).toISOString(),
+        endDate: customEnd ? endOfDay(new Date(customEnd)).toISOString() : endOfDay(now).toISOString(),
+      };
+  }
+}
+
+function formatCurrency(amount: number): string {
+  return `৳${amount.toLocaleString('en-BD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+function exportSalesToCSV(sales: any[]) {
+  if (!sales.length) return;
+  const headers = ['Receipt #', 'Date & Time', 'Cashier', 'Subtotal', 'Discount', 'Total', 'Status'];
+  const rows = sales.map((s: any) => [
+    s.sale_number,
+    format(new Date(s.created_at), 'dd/MM/yyyy HH:mm'),
+    s.cashier_name,
+    s.subtotal ?? '',
+    s.discount_amount ?? '',
+    s.total_amount,
+    s.status,
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `sales-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 export function SalesHistoryPage() {
   const { notify } = useNotify();
   const { storeId } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSaleId, setSelectedSaleId] = useState<string | null>(null);
+  const [dateRange, setDateRange] = useState<DateRange>('month');
+  const [customStart, setCustomStart] = useState('');
+  const [customEnd, setCustomEnd] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
+
+  const { startDate, endDate } = getDateRange(dateRange, customStart, customEnd);
 
   const { data: sales, isLoading, error } = useQuery({
-    queryKey: ['sales-history', storeId, searchTerm],
-    queryFn: () => api.sales.history(storeId, searchTerm),
+    queryKey: ['sales-history', storeId, searchTerm, startDate, endDate],
+    queryFn: () => api.sales.history(storeId, searchTerm || undefined, startDate, endDate),
   });
 
   if (error) {
     notify('Failed to load sales history. Please check your connection.', 'error');
     return <div className="error">Error loading sales history.</div>;
   }
+
+  const completedSales = (sales ?? []).filter((s: any) => s.status === 'completed');
+  const voidedSales = (sales ?? []).filter((s: any) => s.status === 'voided');
+
+  const totalRevenue = completedSales.reduce((sum: number, s: any) => sum + Number(s.total_amount || 0), 0);
+  const avgTicket = completedSales.length ? totalRevenue / completedSales.length : 0;
+  const voidCount = voidedSales.length;
+
+  const totalPages = Math.ceil((sales?.length ?? 0) / pageSize);
+  const paginatedSales = sales?.slice((currentPage - 1) * pageSize, currentPage * pageSize) ?? [];
+
+  const handleDateRangeChange = (range: DateRange) => {
+    setDateRange(range);
+    setCurrentPage(1);
+  };
 
   return (
     <div className="sales-history-container">
@@ -31,25 +98,148 @@ export function SalesHistoryPage() {
         <p style={{ color: 'var(--text-muted)' }}>Search and review store transactions.</p>
       </header>
 
-      <div className="card" style={{ padding: 'var(--space-4)', marginBottom: 'var(--space-6)', display: 'flex', gap: 'var(--space-4)' }}>
-        <div style={{ position: 'relative', flex: 1 }}>
-          <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-          <input
-            type="text"
-            placeholder="Search by Receipt #..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{
-              width: '100%',
-              padding: 'var(--space-3) var(--space-3) var(--space-3) 40px',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid var(--border-color)',
-              backgroundColor: 'var(--input-bg)'
-            }}
-          />
+      {/* Summary Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-4)', marginBottom: 'var(--space-6)' }}>
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)', padding: 'var(--space-4)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: '500', color: 'var(--text-muted)' }}>Total Revenue</span>
+            <DollarSign size={18} style={{ color: 'var(--color-success)' }} />
+          </div>
+          <span style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700' }}>{formatCurrency(totalRevenue)}</span>
+        </div>
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)', padding: 'var(--space-4)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: '500', color: 'var(--text-muted)' }}>Average Ticket</span>
+            <TrendingUp size={18} style={{ color: 'var(--color-primary)' }} />
+          </div>
+          <span style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700' }}>{formatCurrency(avgTicket)}</span>
+        </div>
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)', padding: 'var(--space-4)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: '500', color: 'var(--text-muted)' }}>Voided</span>
+            <AlertTriangle size={18} style={{ color: voidCount > 0 ? 'var(--color-danger)' : 'var(--text-muted)' }} />
+          </div>
+          <span style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700' }}>{voidCount}</span>
         </div>
       </div>
 
+      {/* Filters Row */}
+      <div className="card" style={{ padding: 'var(--space-4)', marginBottom: 'var(--space-6)' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-4)', alignItems: 'center' }}>
+          {/* Date Range Picker */}
+          <div style={{ display: 'flex', gap: '4px', backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: 'var(--radius-md)', padding: '2px' }}>
+            {(['today', 'week', 'month', 'custom'] as DateRange[]).map((range) => (
+              <button
+                key={range}
+                onClick={() => handleDateRangeChange(range)}
+                style={{
+                  padding: 'var(--space-2) var(--space-3)',
+                  borderRadius: 'var(--radius-md)',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: 'var(--font-size-sm)',
+                  fontWeight: dateRange === range ? '700' : '500',
+                  backgroundColor: dateRange === range ? 'var(--color-primary)' : 'transparent',
+                  color: dateRange === range ? 'white' : 'var(--text-muted)',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                {range === 'today' ? 'Today' : range === 'week' ? 'This Week' : range === 'month' ? 'This Month' : 'Custom'}
+              </button>
+            ))}
+          </div>
+
+          {/* Custom Date Inputs */}
+          {dateRange === 'custom' && (
+            <div style={{ display: 'flex', gap: 'var(--space-2)', alignItems: 'center' }}>
+              <input
+                type="date"
+                value={customStart}
+                onChange={(e) => { setCustomStart(e.target.value); setCurrentPage(1); }}
+                style={{
+                  padding: 'var(--space-2) var(--space-3)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--border-color)',
+                  backgroundColor: 'var(--input-bg)',
+                  fontSize: 'var(--font-size-sm)',
+                }}
+              />
+              <span style={{ color: 'var(--text-muted)' }}>to</span>
+              <input
+                type="date"
+                value={customEnd}
+                onChange={(e) => { setCustomEnd(e.target.value); setCurrentPage(1); }}
+                style={{
+                  padding: 'var(--space-2) var(--space-3)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--border-color)',
+                  backgroundColor: 'var(--input-bg)',
+                  fontSize: 'var(--font-size-sm)',
+                }}
+              />
+            </div>
+          )}
+
+          {/* Search */}
+          <div style={{ position: 'relative', flex: 1, minWidth: '200px' }}>
+            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+            <input
+              type="text"
+              placeholder="Search by Receipt #..."
+              value={searchTerm}
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+              style={{
+                width: '100%',
+                padding: 'var(--space-3) var(--space-3) var(--space-3) 40px',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid var(--border-color)',
+                backgroundColor: 'var(--input-bg)',
+              }}
+            />
+            {searchTerm && (
+              <button
+                onClick={() => { setSearchTerm(''); setCurrentPage(1); }}
+                style={{
+                  position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)',
+                  background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)',
+                  display: 'flex', alignItems: 'center'
+                }}
+              >
+                <X size={16} />
+              </button>
+            )}
+          </div>
+
+          {/* Export Button */}
+          <button
+            onClick={() => exportSalesToCSV(sales ?? [])}
+            disabled={!sales?.length}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 'var(--space-2)',
+              padding: 'var(--space-3) var(--space-4)',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--border-color)',
+              backgroundColor: 'var(--bg-card)',
+              cursor: sales?.length ? 'pointer' : 'not-allowed',
+              opacity: sales?.length ? 1 : 0.5,
+              fontSize: 'var(--font-size-sm)',
+              fontWeight: '600',
+            }}
+          >
+            <Download size={16} />
+            Export CSV
+          </button>
+        </div>
+      </div>
+
+      {/* Results count */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
+        <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-muted)' }}>
+          {sales?.length ?? 0} transaction{sales?.length === 1 ? '' : 's'} found
+        </span>
+      </div>
+
+      {/* Sales Table */}
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
@@ -74,7 +264,7 @@ export function SalesHistoryPage() {
                   <td style={{ padding: 'var(--space-4)', textAlign: 'right' }}><Skeleton style={{ width: '40px', height: '30px', marginLeft: 'auto' }} /></td>
                 </tr>
               ))
-            ) : sales?.length === 0 ? (
+            ) : paginatedSales.length === 0 ? (
               <tr>
                 <td colSpan={6} style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--text-muted)' }}>
                   <Receipt size={48} style={{ marginBottom: 'var(--space-4)', opacity: 0.2 }} />
@@ -82,7 +272,7 @@ export function SalesHistoryPage() {
                 </td>
               </tr>
             ) : (
-              sales?.map((s: any) => (
+              paginatedSales.map((s: any) => (
                 <tr key={s.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                   <td style={{ padding: 'var(--space-4)', fontWeight: '700' }}>{s.sale_number}</td>
                   <td style={{ padding: 'var(--space-4)', color: 'var(--text-muted)', fontSize: 'var(--font-size-sm)' }}>
@@ -119,6 +309,47 @@ export function SalesHistoryPage() {
             )}
           </tbody>
         </table>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 'var(--space-4)', borderTop: '1px solid var(--border-color)' }}>
+            <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-muted)' }}>
+              Page {currentPage} of {totalPages}
+            </span>
+            <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                style={{
+                  padding: 'var(--space-2) var(--space-3)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--border-color)',
+                  backgroundColor: 'var(--bg-card)',
+                  cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                  opacity: currentPage === 1 ? 0.5 : 1,
+                  fontSize: 'var(--font-size-sm)',
+                }}
+              >
+                ← Prev
+              </button>
+              <button
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                style={{
+                  padding: 'var(--space-2) var(--space-3)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--border-color)',
+                  backgroundColor: 'var(--bg-card)',
+                  cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                  opacity: currentPage === totalPages ? 0.5 : 1,
+                  fontSize: 'var(--font-size-sm)',
+                }}
+              >
+                Next →
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <SaleDetailsDrawer
