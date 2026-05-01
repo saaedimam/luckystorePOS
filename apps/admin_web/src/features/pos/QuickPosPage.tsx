@@ -1,9 +1,9 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { useAuth } from '../../lib/AuthContext';
 import { Skeleton } from '../../components/Skeleton';
-import { Search, Plus, ScanLine, AlertCircle, X, Trash2, RefreshCw, ShoppingCart, ChevronUp } from 'lucide-react';
+import { Search, Plus, ScanLine, AlertCircle, X, Trash2, RefreshCw, ShoppingCart, ChevronUp, Banknote, Smartphone, CreditCard, Wallet, PlusCircle } from 'lucide-react';
 import { clsx } from 'clsx';
 import type { PosProduct, PosCategory, CartItem, PaymentInput } from '../../lib/api/types';
 import { ReceiptPreview } from './ReceiptPreview';
@@ -31,6 +31,20 @@ interface CompletedSale {
   batchId?: string;
 }
 
+interface SplitPaymentEntry {
+  id: string;
+  accountId: string;
+  amount: number;
+}
+
+function getPaymentIcon(name: string) {
+  const lower = name.toLowerCase();
+  if (lower.includes('cash') || lower.includes('cash')) return Banknote;
+  if (lower.includes('bkash') || lower.includes('bKash') || lower.includes('mobile')) return Smartphone;
+  if (lower.includes('card') || lower.includes('credit') || lower.includes('debit')) return CreditCard;
+  return Wallet;
+}
+
 export function QuickPosPage() {
   const { storeId, tenantId } = useAuth();
 
@@ -54,9 +68,22 @@ export function QuickPosPage() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>(null);
   const [paymentAmount, setPaymentAmount] = useState('');
+  const [splitPayments, setSplitPayments] = useState<SplitPaymentEntry[]>([]);
+  const [isSplitMode, setIsSplitMode] = useState(false);
+  const [splitMethod, setSplitMethod] = useState<string | null>(null);
+  const [splitAmount, setSplitAmount] = useState('');
 
   // Mobile cart sheet
   const [showMobileCart, setShowMobileCart] = useState(false);
+
+  // Derived: change calculation
+  const paidTotal = isSplitMode
+    ? splitPayments.reduce((sum, p) => sum + p.amount, 0)
+    : (parseFloat(paymentAmount) || 0);
+  const changeAmount = Math.max(0, paidTotal - totalAmount);
+  const remainingAmount = isSplitMode
+    ? Math.max(0, totalAmount - splitPayments.reduce((sum, p) => sum + p.amount, 0))
+    : 0;
 
   // Receipt state
   const [completedSale, setCompletedSale] = useState<CompletedSale | null>(null);
@@ -210,6 +237,36 @@ export function QuickPosPage() {
     }
   }, [storeId, addToCart]);
 
+  // Split payment helpers
+  const addSplitPayment = useCallback(() => {
+    if (!splitMethod) return;
+    const amount = parseFloat(splitAmount);
+    if (isNaN(amount) || amount <= 0) return;
+    if (remainingAmount > 0 && amount > remainingAmount) return;
+    setSplitPayments(prev => [...prev, { id: crypto.randomUUID(), accountId: splitMethod, amount }]);
+    setSplitMethod(null);
+    setSplitAmount('');
+  }, [splitMethod, splitAmount, remainingAmount]);
+
+  const removeSplitPayment = useCallback((id: string) => {
+    setSplitPayments(prev => prev.filter(p => p.id !== id));
+  }, []);
+
+  const resetPaymentModal = useCallback(() => {
+    setShowPaymentModal(false);
+    setSelectedPaymentMethod(null);
+    setPaymentAmount('');
+    setIsSplitMode(false);
+    setSplitPayments([]);
+    setSplitMethod(null);
+    setSplitAmount('');
+    setError(null);
+  }, []);
+
+  const handleQuickAmount = useCallback((amount: number) => {
+    setPaymentAmount(String(amount));
+  }, []);
+
   // Handle checkout
   const handleCheckout = useCallback(async () => {
     if (cart.length === 0) {
@@ -217,15 +274,26 @@ export function QuickPosPage() {
       return;
     }
 
-    if (!selectedPaymentMethod || !paymentAmount) {
-      setError('Please select payment method and enter amount');
-      return;
-    }
-
-    const paid = parseFloat(paymentAmount);
-    if (isNaN(paid) || paid < totalAmount) {
-      setError(`Insufficient payment. Total: ৳${totalAmount.toFixed(2)}`);
-      return;
+    if (isSplitMode) {
+      if (splitPayments.length === 0) {
+        setError('Please add at least one payment');
+        return;
+      }
+      const totalPaid = splitPayments.reduce((sum, p) => sum + p.amount, 0);
+      if (totalPaid < totalAmount) {
+        setError(`Insufficient payment. Remaining: ৳${(totalAmount - totalPaid).toFixed(2)}`);
+        return;
+      }
+    } else {
+      if (!selectedPaymentMethod || !paymentAmount) {
+        setError('Please select payment method and enter amount');
+        return;
+      }
+      const paid = parseFloat(paymentAmount);
+      if (isNaN(paid) || paid < totalAmount) {
+        setError(`Insufficient payment. Total: ৳${totalAmount.toFixed(2)}`);
+        return;
+      }
     }
 
     setIsProcessing(true);
@@ -241,6 +309,31 @@ export function QuickPosPage() {
         }
       }
 
+      let payments: Array<{ account_id: string; amount: number; party_id: string | null }>;
+      let paidTotal: number;
+      let paymentMethodLabel: string;
+
+      if (isSplitMode) {
+        payments = splitPayments.map(p => ({
+          account_id: p.accountId,
+          amount: p.amount,
+          party_id: null,
+        }));
+        paidTotal = splitPayments.reduce((sum, p) => sum + p.amount, 0);
+        paymentMethodLabel = splitPayments.map(p => {
+          const m = paymentMethods.find((m: any) => m.id === p.accountId);
+          return m ? m.name : 'Unknown';
+        }).join(' + ');
+      } else {
+        payments = [{
+          account_id: selectedPaymentMethod!,
+          amount: parseFloat(paymentAmount),
+          party_id: null,
+        }];
+        paidTotal = parseFloat(paymentAmount);
+        paymentMethodLabel = paymentMethods.find((m: any) => m.id === selectedPaymentMethod)?.name || 'Cash';
+      }
+
       const saleData = {
         idempotencyKey: crypto.randomUUID(),
         tenantId: tenantId || '',
@@ -250,11 +343,7 @@ export function QuickPosPage() {
           quantity: item.qty,
           unit_price: item.unitPrice,
         })),
-        payments: [{
-          account_id: selectedPaymentMethod,
-          amount: paid,
-          party_id: null,
-        }],
+        payments,
         notes: null,
       };
 
@@ -264,27 +353,23 @@ export function QuickPosPage() {
       debugLog('Sale result', result);
 
       if (result.status === 'success') {
-        const paymentMethodName = paymentMethods.find((m: any) => m.id === selectedPaymentMethod)?.name || 'Cash';
-        const change = paid - totalAmount;
+        const change = paidTotal - totalAmount;
 
         setCompletedSale({
           cart: [...cart],
           subtotal,
           discount: cartDiscount,
           totalAmount,
-          paymentMethod: paymentMethodName,
-          paidAmount: paid,
+          paymentMethod: paymentMethodLabel,
+          paidAmount: paidTotal,
           changeAmount: change,
           saleNumber: result.saleNumber || result.batchId,
           batchId: result.batchId,
         });
 
         clearCart();
-        setShowPaymentModal(false);
-        setSelectedPaymentMethod(null);
-        setPaymentAmount('');
+        resetPaymentModal();
         setShowMobileCart(false);
-        setError(null);
       } else {
         setError(result.error || 'Sale failed. Please try again.');
       }
@@ -294,7 +379,7 @@ export function QuickPosPage() {
     } finally {
       setIsProcessing(false);
     }
-  }, [cart, storeId, tenantId, selectedPaymentMethod, paymentAmount, totalAmount, subtotal, cartDiscount, paymentMethods, clearCart, addToCart, removeFromCart]);
+  }, [cart, storeId, tenantId, isSplitMode, selectedPaymentMethod, paymentAmount, splitPayments, totalAmount, subtotal, cartDiscount, paymentMethods, clearCart, resetPaymentModal]);
 
   // Get initials for product avatar
   const getInitials = (name: string) => {
@@ -739,103 +824,236 @@ export function QuickPosPage() {
 
       {/* Payment Modal */}
       {showPaymentModal && (
-        <div className="modal-overlay" style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div className="card" style={{
-            width: '400px',
-            maxWidth: '90%',
-            padding: 'var(--space-6)'
-          }}>
-            <h2 style={{ marginBottom: 'var(--space-4)' }}>Payment</h2>
-
-            <div style={{ marginBottom: 'var(--space-4)' }}>
-              <label style={{ display: 'block', marginBottom: 'var(--space-2)', fontWeight: '600' }}>
-                Total Amount
-              </label>
-              <div style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700', color: 'var(--color-primary-hover)' }}>
-                ৳{totalAmount.toFixed(2)}
-              </div>
-            </div>
-
-            <div style={{ marginBottom: 'var(--space-4)' }}>
-              <label style={{ display: 'block', marginBottom: 'var(--space-2)', fontWeight: '600' }}>
-                Payment Method
-              </label>
-              <select
-                value={selectedPaymentMethod || ''}
-                onChange={(e) => setSelectedPaymentMethod(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: 'var(--space-3)',
-                  borderRadius: 'var(--radius-md)',
-                  border: '1px solid var(--border-color)',
-                  backgroundColor: 'var(--input-bg)'
-                }}
-              >
-                <option value="">Select payment method</option>
-                {paymentMethods.map((method: any) => (
-                  <option key={method.id} value={method.id}>
-                    {method.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div style={{ marginBottom: 'var(--space-6)' }}>
-              <label style={{ display: 'block', marginBottom: 'var(--space-2)', fontWeight: '600' }}>
-                Amount
-              </label>
-              <input
-                type="number"
-                value={paymentAmount}
-                onChange={(e) => setPaymentAmount(e.target.value)}
-                placeholder="Enter amount"
-                style={{
-                  width: '100%',
-                  padding: 'var(--space-3)',
-                  borderRadius: 'var(--radius-md)',
-                  border: '1px solid var(--border-color)',
-                  backgroundColor: 'var(--input-bg)'
-                }}
-              />
-            </div>
-
-            <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
+        <div className="payment-modal" onClick={resetPaymentModal}>
+          <div className="payment-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-4)' }}>
+              <h2 style={{ margin: 0 }}>Payment</h2>
               <button
                 className="button-secondary"
-                onClick={() => {
-                  setShowPaymentModal(false);
-                  setSelectedPaymentMethod(null);
-                  setPaymentAmount('');
-                }}
+                onClick={resetPaymentModal}
+                style={{ padding: 'var(--space-2)', minWidth: 36, minHeight: 36 }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Mode Toggle: Single / Split */}
+            <div style={{ display: 'flex', gap: 'var(--space-2)', marginBottom: 'var(--space-4)' }}>
+              <button
+                className={clsx(!isSplitMode && 'button-primary', isSplitMode && 'button-outline')}
+                onClick={() => { setIsSplitMode(false); setSplitPayments([]); }}
                 style={{ flex: 1 }}
+              >
+                <Banknote size={16} style={{ marginRight: 'var(--space-1)' }} />
+                Single Payment
+              </button>
+              <button
+                className={clsx(isSplitMode && 'button-primary', !isSplitMode && 'button-outline')}
+                onClick={() => { setIsSplitMode(true); setSelectedPaymentMethod(null); setPaymentAmount(''); }}
+                style={{ flex: 1 }}
+              >
+                <PlusCircle size={16} style={{ marginRight: 'var(--space-1)' }} />
+                Split Payment
+              </button>
+            </div>
+
+            {/* Total Amount */}
+            <div className="payment-section">
+              <span className="payment-section-label">Total Amount</span>
+              <div className="payment-total-display">৳{totalAmount.toFixed(2)}</div>
+            </div>
+
+            {!isSplitMode ? (
+              <>
+                {/* Payment Method Selector (chips with icons) */}
+                <div className="payment-section">
+                  <span className="payment-section-label">Payment Method</span>
+                  <div className="payment-methods-grid">
+                    {paymentMethods.map((method: any) => {
+                      const Icon = getPaymentIcon(method.name);
+                      return (
+                        <button
+                          key={method.id}
+                          className={clsx('payment-method-chip', selectedPaymentMethod === method.id && 'selected')}
+                          onClick={() => setSelectedPaymentMethod(method.id)}
+                        >
+                          <span className="payment-method-icon"><Icon size={16} /></span>
+                          {method.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Quick Amount Buttons */}
+                <div className="payment-section">
+                  <span className="payment-section-label">Quick Amount</span>
+                  <div className="quick-amount-grid">
+                    <button className="quick-amount-btn" onClick={() => handleQuickAmount(100)}>৳100</button>
+                    <button className="quick-amount-btn" onClick={() => handleQuickAmount(500)}>৳500</button>
+                    <button className="quick-amount-btn" onClick={() => handleQuickAmount(1000)}>৳1000</button>
+                    <button className="quick-amount-btn exact" onClick={() => handleQuickAmount(Math.ceil(totalAmount))}>Exact</button>
+                  </div>
+                </div>
+
+                {/* Amount Input */}
+                <div className="payment-section">
+                  <span className="payment-section-label">Amount Tendered</span>
+                  <input
+                    type="number"
+                    className="payment-input"
+                    value={paymentAmount}
+                    onChange={(e) => setPaymentAmount(e.target.value)}
+                    placeholder="Enter amount"
+                  />
+                </div>
+
+                {/* Change Calculation */}
+                {paidTotal > 0 && (
+                  <div className="change-display">
+                    <div className="change-label">Change</div>
+                    <div className="change-amount">৳{changeAmount.toFixed(2)}</div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                {/* Split Payment: Already added payments */}
+                {splitPayments.length > 0 && (
+                  <div className="payment-section">
+                    <span className="payment-section-label">Payments Added</span>
+                    <div className="split-payment-list">
+                      {splitPayments.map((sp) => {
+                        const m = paymentMethods.find((pm: any) => pm.id === sp.accountId);
+                        const Icon = getPaymentIcon(m?.name || '');
+                        return (
+                          <div key={sp.id} className="split-payment-item">
+                            <div className="split-payment-info">
+                              <Icon size={16} />
+                              <span>{m?.name || 'Unknown'}</span>
+                            </div>
+                            <div className="split-payment-amount">৳{sp.amount.toFixed(2)}</div>
+                            <button
+                              className="button-danger"
+                              onClick={() => removeSplitPayment(sp.id)}
+                              style={{ marginLeft: 'var(--space-2)', padding: '2px 6px', minHeight: 28, minWidth: 28 }}
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Remaining amount */}
+                {remainingAmount > 0 && (
+                  <div className="split-remaining">
+                    <span className="split-remaining-label">Remaining</span>
+                    <span className="split-remaining-amount">৳{remainingAmount.toFixed(2)}</span>
+                  </div>
+                )}
+
+                {/* Add split payment form */}
+                {remainingAmount > 0 && (
+                  <>
+                    <div className="payment-section">
+                      <span className="payment-section-label">Add Payment</span>
+                      <div className="payment-methods-grid">
+                        {paymentMethods.map((method: any) => {
+                          const Icon = getPaymentIcon(method.name);
+                          return (
+                            <button
+                              key={method.id}
+                              className={clsx('payment-method-chip', splitMethod === method.id && 'selected')}
+                              onClick={() => setSplitMethod(method.id)}
+                            >
+                              <span className="payment-method-icon"><Icon size={16} /></span>
+                              {method.name}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {splitMethod && (
+                      <div className="payment-section">
+                        <span className="payment-section-label">Amount</span>
+                        <input
+                          type="number"
+                          className="payment-input"
+                          value={splitAmount}
+                          onChange={(e) => setSplitAmount(e.target.value)}
+                          placeholder={`Max: ৳${remainingAmount.toFixed(2)}`}
+                        />
+                        <button
+                          className="button-primary"
+                          onClick={addSplitPayment}
+                          disabled={!splitMethod || !splitAmount || parseFloat(splitAmount) <= 0 || parseFloat(splitAmount) > remainingAmount}
+                          style={{ marginTop: 'var(--space-2)', width: '100%' }}
+                        >
+                          <PlusCircle size={16} style={{ marginRight: 'var(--space-1)' }} />
+                          Add Payment
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {/* Change Calculation for split */}
+                {splitPayments.length > 0 && paidTotal >= totalAmount && (
+                  <div className="change-display">
+                    <div className="change-label">Change</div>
+                    <div className="change-amount">৳{changeAmount.toFixed(2)}</div>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Error */}
+            {error && (
+              <div style={{
+                padding: 'var(--space-3)',
+                marginBottom: 'var(--space-3)',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                borderRadius: 'var(--radius-md)',
+                color: 'var(--color-danger)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 'var(--space-2)',
+                fontSize: 'var(--font-size-sm)',
+              }}>
+                <AlertCircle size={16} />
+                <span>{error}</span>
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="payment-footer">
+              <button
+                className="button-secondary"
+                onClick={resetPaymentModal}
               >
                 Cancel
               </button>
               <button
                 className="button-primary"
                 onClick={handleCheckout}
-                disabled={isProcessing}
-                style={{ flex: 1 }}
+                disabled={isProcessing || (isSplitMode ? splitPayments.length === 0 || remainingAmount > 0 : !selectedPaymentMethod || !paymentAmount)}
               >
-                {isProcessing ? 'Processing...' : 'Complete Sale'}
+                {isProcessing ? (
+                  <><RefreshCw size={16} className="animate-spin" style={{ marginRight: 'var(--space-1)' }} /> Processing...</>
+                ) : (
+                  'Complete Sale'
+                )}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Receipt Preview Modal */}
       {completedSale && (
         <ReceiptPreview
           cart={completedSale.cart}
