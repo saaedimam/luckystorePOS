@@ -1,10 +1,21 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { useAuth } from '../../lib/AuthContext';
 import { Skeleton } from '../../components/Skeleton';
-import { Bell, Plus, Edit3, Trash2, Check, X, Calendar, AlertCircle } from 'lucide-react';
-import { clsx } from 'clsx';
+import {
+  Bell,
+  Plus,
+  Edit3,
+  Trash2,
+  Check,
+  X,
+  Calendar,
+  AlertCircle,
+  AlertTriangle,
+  Clock,
+  Search,
+} from 'lucide-react';
 import type { Reminder, ReminderType } from '../../lib/api/types';
 
 const REMINDER_TYPES: { value: ReminderType; label: string }[] = [
@@ -50,6 +61,8 @@ export function RemindersPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingReminder, setEditingReminder] = useState<Reminder | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [filterType, setFilterType] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const { data: reminders, isLoading, error } = useQuery({
     queryKey: ['reminders', storeId, showCompleted],
@@ -91,6 +104,36 @@ export function RemindersPage() {
     },
   });
 
+  // Summary counts — computed from raw reminders (all, including completed for accurate counts)
+  const overdueCount = useMemo(
+    () => (reminders ?? []).filter(r => !r.isCompleted && daysUntil(r.reminderDate) < 0).length,
+    [reminders],
+  );
+  const todayCount = useMemo(
+    () => (reminders ?? []).filter(r => !r.isCompleted && daysUntil(r.reminderDate) === 0).length,
+    [reminders],
+  );
+  const upcomingCount = useMemo(
+    () => (reminders ?? []).filter(r => !r.isCompleted && daysUntil(r.reminderDate) > 0).length,
+    [reminders],
+  );
+
+  // Filtered list for display
+  const filtered = useMemo(() => {
+    if (!reminders) return [];
+    return reminders.filter(r => {
+      if (filterType && r.reminderType !== filterType) return false;
+      if (searchTerm) {
+        const q = searchTerm.toLowerCase();
+        const matches =
+          r.title.toLowerCase().includes(q) ||
+          (r.description ?? '').toLowerCase().includes(q);
+        if (!matches) return false;
+      }
+      return true;
+    });
+  }, [reminders, filterType, searchTerm]);
+
   const handleOpenCreate = () => {
     setEditingReminder(null);
     setShowModal(true);
@@ -107,8 +150,8 @@ export function RemindersPage() {
 
   if (error) {
     return (
-      <div className="dashboard-container">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: 'var(--radius-md)', padding: 'var(--space-4)', color: 'var(--color-danger)' }}>
+      <div className="reminders-container">
+        <div className="reminders-error">
           <AlertCircle size={20} />
           <span>Failed to load reminders. {(error as Error).message}</span>
         </div>
@@ -117,148 +160,167 @@ export function RemindersPage() {
   }
 
   return (
-    <div className="dashboard-container">
-      <header style={{ marginBottom: 'var(--space-8)' }}>
-        <h1 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700', color: 'var(--text-main)' }}>Reminders</h1>
-        <p style={{ color: 'var(--text-muted)' }}>Track upcoming payments, follow-ups, and stock checks.</p>
+    <div className="reminders-container">
+      <header className="reminders-header">
+        <div>
+          <h1 className="reminders-title">Reminders</h1>
+          <p className="reminders-subtitle">Track upcoming payments, follow-ups, and stock checks.</p>
+        </div>
+        <button className="button-primary" onClick={handleOpenCreate}>
+          <Plus size={18} /> New Reminder
+        </button>
       </header>
 
+      {/* Summary Cards */}
+      <div className="dashboard-grid">
+        <SummaryCard
+          title="Overdue"
+          count={overdueCount}
+          icon={<AlertTriangle size={20} className="text-red-500" />}
+          variant="danger"
+        />
+        <SummaryCard
+          title="Today"
+          count={todayCount}
+          icon={<Clock size={20} className="text-amber-500" />}
+          variant="warning"
+        />
+        <SummaryCard
+          title="Upcoming"
+          count={upcomingCount}
+          icon={<Calendar size={20} className="text-emerald-600" />}
+          variant="success"
+        />
+      </div>
+
       {/* Toolbar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)', flexWrap: 'wrap', gap: 'var(--space-3)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+      <div className="reminders-toolbar">
+        <div className="reminders-filters-row">
+          <div className="reminders-search">
+            <Search size={18} className="reminders-search-icon" />
+            <input
+              type="text"
+              placeholder="Search reminders..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input reminders-search-input"
+            />
+          </div>
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            className="reminders-filter-select"
+          >
+            <option value="">All Types</option>
+            {REMINDER_TYPES.map(t => (
+              <option key={t.value} value={t.value}>{t.label}</option>
+            ))}
+          </select>
           <button
             onClick={() => setShowCompleted(!showCompleted)}
-            className={clsx('tab-btn', showCompleted && 'active')}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 'var(--space-2)', padding: 'var(--space-2) var(--space-4)',
-              borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)',
-              backgroundColor: showCompleted ? 'var(--color-primary)' : 'transparent',
-              color: showCompleted ? '#000' : 'var(--text-muted)', fontWeight: '600', cursor: 'pointer',
-              fontSize: 'var(--font-size-sm)',
-            }}
+            className={`reminders-toggle-btn ${showCompleted ? 'active' : ''}`}
           >
             <Check size={16} /> Show completed
           </button>
+          {(filterType || searchTerm) && (
+            <button
+              className="reminders-clear-btn"
+              onClick={() => { setFilterType(''); setSearchTerm(''); }}
+            >
+              <X size={14} /> Clear
+            </button>
+          )}
         </div>
-        <button onClick={handleOpenCreate} className="button-primary" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-          <Plus size={18} /> New Reminder
-        </button>
       </div>
 
       {/* Reminder List */}
       {isLoading ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+        <div className="reminders-list">
           {Array.from({ length: 4 }).map((_, i) => (
             <Skeleton key={i} style={{ height: '72px', width: '100%' }} />
           ))}
         </div>
-      ) : !reminders || reminders.length === 0 ? (
-        <div className="card" style={{ textAlign: 'center', padding: 'var(--space-12)' }}>
-          <Bell size={48} style={{ color: 'var(--text-light)', margin: '0 auto var(--space-4)' }} />
-          <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: '600', color: 'var(--text-main)', marginBottom: 'var(--space-2)' }}>
-            No reminders yet
-          </p>
-          <p style={{ color: 'var(--text-muted)', fontSize: 'var(--font-size-sm)' }}>
-            Create your first reminder to stay on top of payments, follow-ups, and stock checks.
+      ) : !filtered || filtered.length === 0 ? (
+        <div className="card reminders-empty">
+          <Bell size={48} className="reminders-empty-icon" />
+          <p className="reminders-empty-title">No reminders found</p>
+          <p className="reminders-empty-text">
+            {reminders?.length === 0
+              ? 'Create your first reminder to stay on top of payments, follow-ups, and stock checks.'
+              : 'No reminders match your current filters.'}
           </p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
-          {reminders.map((r) => {
+        <div className="reminders-list">
+          {filtered.map((r) => {
             const days = daysUntil(r.reminderDate);
             const typeColor = TYPE_COLORS[r.reminderType] || TYPE_COLORS.other;
             const typeLabel = REMINDER_TYPES.find(t => t.value === r.reminderType)?.label ?? 'Other';
-            const isOverdue = days < 0;
+            const isOverdue = days < 0 && !r.isCompleted;
 
             return (
               <div
                 key={r.id}
-                className="card"
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 'var(--space-4)', padding: 'var(--space-4) var(--space-6)',
-                  opacity: r.isCompleted ? 0.6 : 1,
-                  borderLeft: isOverdue && !r.isCompleted ? '3px solid var(--color-danger)' : isOverdue ? 'none' : 'none',
-                }}
+                className={`card reminders-item ${r.isCompleted ? 'completed' : ''} ${isOverdue ? 'overdue' : ''}`}
               >
                 {/* Checkbox */}
                 <button
                   onClick={() => toggleCompleteMutation.mutate(r)}
-                  style={{
-                    width: '24px', height: '24px', borderRadius: 'var(--radius-sm)', flexShrink: 0,
-                    border: r.isCompleted ? '2px solid var(--color-success)' : '2px solid var(--border-color)',
-                    backgroundColor: r.isCompleted ? 'var(--color-success)' : 'transparent',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-                    transition: 'all var(--transition-fast)',
-                  }}
+                  className={`reminders-checkbox ${r.isCompleted ? 'checked' : ''}`}
                 >
-                  {r.isCompleted && <Check size={14} style={{ color: '#fff' }} />}
+                  {r.isCompleted && <Check size={14} className="reminders-checkbox-icon" />}
                 </button>
 
                 {/* Content */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-1)' }}>
-                    <span style={{ fontWeight: '600', color: r.isCompleted ? 'var(--text-light)' : 'var(--text-main)', textDecoration: r.isCompleted ? 'line-through' : 'none' }}>
+                <div className="reminders-item-content">
+                  <div className="reminders-item-header">
+                    <span className={`reminders-item-title ${r.isCompleted ? 'done' : ''}`}>
                       {r.title}
                     </span>
-                    <span style={{
-                      padding: '1px 8px', borderRadius: '12px', fontSize: 'var(--font-size-xs)', fontWeight: '600',
-                      backgroundColor: typeColor.bg, color: typeColor.text,
-                    }}>
+                    <span className="reminders-type-badge" style={{ backgroundColor: typeColor.bg, color: typeColor.text }}>
                       {typeLabel}
                     </span>
-                    {isOverdue && !r.isCompleted && (
-                      <span style={{
-                        padding: '1px 8px', borderRadius: '12px', fontSize: 'var(--font-size-xs)', fontWeight: '600',
-                        backgroundColor: 'rgba(239, 68, 68, 0.1)', color: 'var(--color-danger)',
-                      }}>
+                    {isOverdue && (
+                      <span className="reminders-overdue-badge">
                         Overdue
                       </span>
                     )}
                   </div>
                   {r.description && (
-                    <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-muted)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {r.description}
-                    </p>
+                    <p className="reminders-item-desc">{r.description}</p>
                   )}
                 </div>
 
                 {/* Date */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0, gap: '2px' }}>
-                  <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: '600', color: isOverdue && !r.isCompleted ? 'var(--color-danger)' : 'var(--text-main)' }}>
+                <div className="reminders-item-date">
+                  <span className={`reminders-date-value ${isOverdue ? 'overdue' : ''}`}>
                     {formatReminderDate(r.reminderDate)}
                   </span>
-                  <span style={{ fontSize: 'var(--font-size-xs)', color: isOverdue && !r.isCompleted ? 'var(--color-danger)' : 'var(--text-muted)' }}>
+                  <span className={`reminders-days-label ${isOverdue ? 'overdue' : ''}`}>
                     {daysLabel(days)}
                   </span>
                 </div>
 
                 {/* Actions */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-1)', flexShrink: 0 }}>
+                <div className="reminders-item-actions">
                   <button
                     onClick={() => handleOpenEdit(r)}
                     title="Edit"
-                    style={{
-                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                      padding: 'var(--space-2)', borderRadius: 'var(--radius-md)',
-                      backgroundColor: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', border: 'none',
-                      transition: 'background-color var(--transition-fast)',
-                    }}
+                    className="reminders-action-btn"
                   >
                     <Edit3 size={16} />
                   </button>
                   {deleteConfirm === r.id ? (
-                    <div style={{ display: 'flex', gap: '2px' }}>
+                    <div className="reminders-delete-confirm">
                       <button
                         onClick={() => deleteMutation.mutate(r.id)}
-                        className="button-danger"
-                        style={{ padding: 'var(--space-1) var(--space-2)', fontSize: 'var(--font-size-xs)', minHeight: '28px', minWidth: '28px' }}
+                        className="button-danger reminders-confirm-btn"
                       >
                         Yes
                       </button>
                       <button
                         onClick={() => setDeleteConfirm(null)}
-                        className="button-outline"
-                        style={{ padding: 'var(--space-1) var(--space-2)', fontSize: 'var(--font-size-xs)', minHeight: '28px', minWidth: '28px' }}
+                        className="button-outline reminders-confirm-btn"
                       >
                         No
                       </button>
@@ -267,12 +329,7 @@ export function RemindersPage() {
                     <button
                       onClick={() => handleDelete(r.id)}
                       title="Delete"
-                      style={{
-                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                        padding: 'var(--space-2)', borderRadius: 'var(--radius-md)',
-                        backgroundColor: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', border: 'none',
-                        transition: 'background-color var(--transition-fast)',
-                      }}
+                      className="reminders-action-btn"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -303,6 +360,42 @@ export function RemindersPage() {
     </div>
   );
 }
+
+// ---------------------------------------------------------------------------
+// Summary Card
+// ---------------------------------------------------------------------------
+
+interface SummaryCardProps {
+  title: string;
+  count: number;
+  icon: React.ReactNode;
+  variant: 'danger' | 'warning' | 'success';
+}
+
+const VARIANT_COLORS = {
+  danger: { bg: 'rgba(239, 68, 68, 0.1)', text: 'var(--color-danger)' },
+  warning: { bg: 'rgba(245, 158, 11, 0.1)', text: 'var(--color-warning)' },
+  success: { bg: 'rgba(16, 185, 129, 0.1)', text: 'var(--color-success)' },
+};
+
+function SummaryCard({ title, count, icon, variant }: SummaryCardProps) {
+  const colors = VARIANT_COLORS[variant];
+  return (
+    <div className="card">
+      <div className="reminders-summary-header">
+        <span className="reminders-summary-title">{title}</span>
+        {icon}
+      </div>
+      <span className="reminders-summary-count" style={{ color: colors.text }}>
+        {count}
+      </span>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Reminder Modal (Create / Edit)
+// ---------------------------------------------------------------------------
 
 interface ReminderModalProps {
   reminder: Reminder | null;
@@ -343,107 +436,76 @@ function ReminderModal({ reminder, tenantId, storeId, userId, onSubmit, isLoadin
   };
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 1000,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)', backdropFilter: 'blur(2px)',
-    }}>
-      <div className="card" style={{ width: '100%', maxWidth: '480px', padding: 'var(--space-6)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)' }}>
-          <h2 style={{ fontSize: 'var(--font-size-xl)', fontWeight: '700', color: 'var(--text-main)' }}>
+    <div className="reminders-modal-overlay" onClick={onClose}>
+      <div className="card reminders-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="reminders-modal-header">
+          <h2 className="reminders-modal-title">
             {reminder ? 'Edit Reminder' : 'New Reminder'}
           </h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
+          <button onClick={onClose} className="reminders-modal-close">
             <X size={20} />
           </button>
         </div>
 
         {error && (
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 'var(--space-2)',
-            backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)',
-            borderRadius: 'var(--radius-md)', padding: 'var(--space-2) var(--space-3)',
-            marginBottom: 'var(--space-4)', fontSize: 'var(--font-size-xs)', color: 'var(--color-danger)',
-          }}>
+          <div className="reminders-form-error">
             <AlertCircle size={14} />{error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
-          <div>
-            <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', fontWeight: '600', color: 'var(--text-muted)', marginBottom: 'var(--space-1)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Title *
-            </label>
+        <form onSubmit={handleSubmit} className="reminders-form">
+          <label className="reminders-form-label">
+            Title *
             <input
               type="text"
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Pay supplier due"
-              style={{
-                width: '100%', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)',
-                border: '1px solid var(--border-color)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)',
-              }}
+              className="reminders-form-input"
             />
-          </div>
+          </label>
 
-          <div>
-            <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', fontWeight: '600', color: 'var(--text-muted)', marginBottom: 'var(--space-1)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Description
-            </label>
+          <label className="reminders-form-label">
+            Description
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Optional details..."
-              style={{
-                width: '100%', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)',
-                border: '1px solid var(--border-color)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)',
-                minHeight: '80px', resize: 'vertical',
-              }}
+              className="reminders-form-textarea"
             />
-          </div>
+          </label>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
-            <div>
-              <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', fontWeight: '600', color: 'var(--text-muted)', marginBottom: 'var(--space-1)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                <Calendar size={12} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px' }} />
-                Date *
-              </label>
+          <div className="reminders-form-row">
+            <label className="reminders-form-label">
+              <Calendar size={12} className="reminders-form-label-icon" /> Date *
               <input
                 type="date"
                 required
                 value={reminderDate}
                 onChange={(e) => setReminderDate(e.target.value)}
-                style={{
-                  width: '100%', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)',
-                  border: '1px solid var(--border-color)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)',
-                }}
+                className="reminders-form-input"
               />
-            </div>
-            <div>
-              <label style={{ display: 'block', fontSize: 'var(--font-size-xs)', fontWeight: '600', color: 'var(--text-muted)', marginBottom: 'var(--space-1)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Type *
-              </label>
+            </label>
+            <label className="reminders-form-label">
+              Type *
               <select
                 value={reminderType}
                 onChange={(e) => setReminderType(e.target.value as ReminderType)}
-                style={{
-                  width: '100%', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)',
-                  border: '1px solid var(--border-color)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)',
-                }}
+                className="reminders-form-input"
               >
                 {REMINDER_TYPES.map((t) => (
                   <option key={t.value} value={t.value}>{t.label}</option>
                 ))}
               </select>
-            </div>
+            </label>
           </div>
 
-          <div style={{ display: 'flex', gap: 'var(--space-3)', paddingTop: 'var(--space-2)' }}>
-            <button type="button" onClick={onClose} className="button-outline" style={{ flex: 1 }}>
+          <div className="reminders-form-actions">
+            <button type="button" onClick={onClose} className="button-outline">
               Cancel
             </button>
-            <button type="submit" disabled={isLoading} className="button-primary" style={{ flex: 1, opacity: isLoading ? 0.7 : 1 }}>
+            <button type="submit" disabled={isLoading} className="button-primary" style={{ opacity: isLoading ? 0.7 : 1 }}>
               {isLoading ? 'Saving...' : reminder ? 'Update' : 'Create'}
             </button>
           </div>
