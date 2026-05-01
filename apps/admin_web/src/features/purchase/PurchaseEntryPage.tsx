@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/AuthContext';
 import { Trash2, Save, Send, Search, Package } from 'lucide-react';
+import { ErrorState, EmptyState, SkeletonBlock } from '../../components/PageState';
 import { useDebounce } from '../../hooks/useDebounce';
 
 type Supplier = {
@@ -214,8 +215,8 @@ export const PurchaseEntryPage: React.FC = () => {
                   {suppliersLoading ? (
                     Array.from({ length: 3 }).map((_, i) => (
                       <div key={i} className="px-4 py-3">
-                        <div className="h-4 bg-white/10 rounded animate-pulse w-3/5" />
-                        <div className="h-3 bg-white/5 rounded animate-pulse w-2/5 mt-2" />
+                        <SkeletonBlock className="w-3/5 h-4" />
+                        <SkeletonBlock className="w-2/5 h-3 mt-2" />
                       </div>
                     ))
                   ) : filteredSuppliers.length === 0 ? (

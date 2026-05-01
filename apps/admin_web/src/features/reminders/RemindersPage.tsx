@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { useAuth } from '../../lib/AuthContext';
-import { Skeleton } from '../../components/Skeleton';
+import { SkeletonBlock, SkeletonListItem } from '../../components/PageState';
 import { useDebounce } from '../../hooks/useDebounce';
 import {
   Bell,
@@ -239,7 +239,7 @@ export function RemindersPage() {
       {isLoading ? (
         <div className="reminders-list">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} style={{ height: '72px', width: '100%' }} />
+            <SkeletonListItem key={i} />
           ))}
         </div>
       ) : !filtered || filtered.length === 0 ? (

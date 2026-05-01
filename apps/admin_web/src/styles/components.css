@@ -663,6 +663,73 @@
   font-weight: 500;
 }
 
+/* ── Page State Components ─────────────────────────── */
+
+/* Shared root for empty & error states */
+.page-state-root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12) var(--space-6);
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.page-state-error {
+  color: var(--color-danger);
+}
+
+.page-state-icon {
+  opacity: 0.25;
+  margin-bottom: var(--space-4);
+}
+
+.page-state-icon-el {
+  opacity: 0.4;
+  margin-bottom: var(--space-4);
+}
+
+.page-state-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: var(--space-1);
+}
+
+.page-state-desc {
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-4);
+}
+
+.page-state-retry-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+}
+
+.page-state-retry-btn:hover {
+  background-color: var(--bg-input);
+  border-color: var(--text-muted);
+}
+
+/* Skeleton block — animated pulse placeholder */
+.skeleton-block {
+  background-color: var(--border-color);
+  border-radius: var(--radius-md);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
 /* Dashboard */
 .dashboard-container {
   color: var(--text-main);

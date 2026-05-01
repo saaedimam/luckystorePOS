@@ -2,8 +2,8 @@ import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { useAuth } from '../../lib/AuthContext';
-import { Skeleton } from '../../components/Skeleton';
-import { Search, RefreshCw, History, AlertCircle, Package } from 'lucide-react';
+import { ErrorState, EmptyState, SkeletonBlock } from '../../components/PageState';
+import { Search, RefreshCw, History, Package } from 'lucide-react';
 import { clsx } from 'clsx';
 import { StockUpdateDrawer } from './StockUpdateDrawer';
 import { Link } from 'react-router-dom';
@@ -41,18 +41,14 @@ export function InventoryListPage() {
   if (error) {
     return (
       <div className="inventory-container">
-        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-8)' }}>
+        <header className="flex justify-between items-center mb-8">
           <div>
-            <h1 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700' }}>Stock Inventory</h1>
-            <p style={{ color: 'var(--text-muted)' }}>Monitor and adjust stock levels.</p>
+            <h1 className="text-[var(--font-size-2xl)] font-bold">Stock Inventory</h1>
+            <p className="text-[var(--text-muted)]">Monitor and adjust stock levels.</p>
           </div>
         </header>
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-12)', color: 'var(--color-danger)', textAlign: 'center' }}>
-          <AlertCircle size={48} style={{ opacity: 0.4, marginBottom: 'var(--space-4)' }} />
-          <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: '600', color: 'var(--text-main)', marginBottom: 'var(--space-1)' }}>Failed to load inventory</p>
-          <button onClick={() => refetch()} style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-2)', marginTop: 'var(--space-4)', padding: 'var(--space-2) var(--space-4)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-card)', color: 'var(--text-main)', cursor: 'pointer', fontWeight: '600', fontSize: 'var(--font-size-sm)' }}>
-            <RefreshCw size={14} /> Try Again
-          </button>
+        <div className="card">
+          <ErrorState message="Failed to load inventory." onRetry={() => refetch()} />
         </div>
       </div>
     );
@@ -126,20 +122,22 @@ export function InventoryListPage() {
           <tbody>
             {isLoading ? (
               Array(5).fill(0).map((_, i) => (
-                <tr key={i} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                  <td style={{ padding: 'var(--space-4)' }}><Skeleton style={{ width: '200px', height: '20px' }} /></td>
-                  <td style={{ padding: 'var(--space-4)' }}><Skeleton style={{ width: '60px', height: '20px' }} /></td>
-                  <td style={{ padding: 'var(--space-4)' }}><Skeleton style={{ width: '80px', height: '20px' }} /></td>
-                  <td style={{ padding: 'var(--space-4)' }}><Skeleton style={{ width: '100px', height: '20px' }} /></td>
-                  <td style={{ padding: 'var(--space-4)', textAlign: 'right' }}><Skeleton style={{ width: '100px', height: '30px', marginLeft: 'auto' }} /></td>
+                <tr key={i} className="border-b border-[var(--border-color)]">
+                  <td className="p-4"><SkeletonBlock className="w-[200px] h-5" /></td>
+                  <td className="p-4"><SkeletonBlock className="w-[60px] h-5" /></td>
+                  <td className="p-4"><SkeletonBlock className="w-[80px] h-5" /></td>
+                  <td className="p-4"><SkeletonBlock className="w-[100px] h-5" /></td>
+                  <td className="p-4 text-right"><SkeletonBlock className="w-[100px] h-[30px] ml-auto" /></td>
                 </tr>
               ))
             ) : filteredItems.length === 0 ? (
               <tr>
-                <td colSpan={5} style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--text-muted)' }}>
-                  <Package size={48} style={{ marginBottom: 'var(--space-4)', opacity: 0.2 }} />
-                  <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: '600', color: 'var(--text-main)', marginBottom: 'var(--space-1)' }}>No inventory items</p>
-                  <p style={{ fontSize: 'var(--font-size-sm)' }}>Add products to start tracking stock levels.</p>
+                <td colSpan={5}>
+                  <EmptyState
+                    icon={<Package size={48} />}
+                    title="No inventory items"
+                    description="Add products to start tracking stock levels."
+                  />
                 </td>
               </tr>
             ) : (

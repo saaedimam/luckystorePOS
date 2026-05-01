@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { useAuth } from '../../lib/AuthContext';
-import { Skeleton } from '../../components/Skeleton';
+import { SkeletonBlock } from '../../components/PageState';
 import { useRealtimeSubscription } from '../../hooks/useRealtime';
 import { Search, Plus, ScanLine, AlertCircle, X, Trash2, RefreshCw, ShoppingCart, ChevronUp, Banknote, Smartphone, CreditCard, Wallet, PlusCircle } from 'lucide-react';
 import { clsx } from 'clsx';
@@ -108,6 +108,10 @@ export function QuickPosPage() {
   // Mobile cart sheet
   const [showMobileCart, setShowMobileCart] = useState(false);
 
+  // Cart calculations
+  const subtotal = cart.reduce((sum, item) => sum + item.lineTotal, 0);
+  const totalAmount = Math.max(0, subtotal - cartDiscount);
+
   // Derived: change calculation
   const paidTotal = isSplitMode
     ? splitPayments.reduce((sum, p) => sum + p.amount, 0)
@@ -159,9 +163,7 @@ export function QuickPosPage() {
     enabled: !!storeId,
   });
 
-  // Cart calculations
-  const subtotal = cart.reduce((sum, item) => sum + item.lineTotal, 0);
-  const totalAmount = Math.max(0, subtotal - cartDiscount);
+  // Cart item count
   const itemCount = cart.reduce((sum, item) => sum + item.qty, 0);
 
   // Add item to cart with stock validation
@@ -650,14 +652,14 @@ export function QuickPosPage() {
               Array(8).fill(0).map((_, i) => (
                 <div key={i} className="product-card">
                   <div className="product-avatar">
-                    <Skeleton style={{ width: '100%', height: '100%' }} />
+                    <SkeletonBlock className="w-full h-full" />
                   </div>
                   <div className="product-info">
-                    <Skeleton style={{ width: '80%', height: '20px', marginBottom: 'var(--space-2)' }} />
-                    <Skeleton style={{ width: '40%', height: '16px', marginBottom: 'var(--space-2)' }} />
-                    <Skeleton style={{ width: '30%', height: '18px' }} />
+                    <SkeletonBlock className="w-4/5 h-5 mb-2" />
+                    <SkeletonBlock className="w-2/5 h-4 mb-2" />
+                    <SkeletonBlock className="w-[30%] h-[18px]" />
                   </div>
-                  <Skeleton style={{ width: '100%', height: '36px', marginTop: 'var(--space-2)' }} />
+                  <SkeletonBlock className="w-full h-9 mt-2" />
                 </div>
               ))
             ) : prodError ? (

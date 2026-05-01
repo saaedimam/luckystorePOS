@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { useAuth } from '../../lib/AuthContext';
 import { DollarSign, AlertTriangle, Users, Package, TrendingUp } from 'lucide-react';
-import { SkeletonCard, ErrorState } from '../../components/PageState';
+import { SkeletonCard, SkeletonBlock, ErrorState, EmptyState } from '../../components/PageState';
 import { useRealtimeSubscription } from '../../hooks/useRealtime';
 import { useNotify } from '../../components/Notification';
 import type { ReactNode } from 'react';
@@ -39,16 +39,16 @@ export function DashboardPage() {
   if (isLoading) {
     return (
       <div className="dashboard-container">
-        <header style={{ marginBottom: 'var(--space-8)' }}>
-          <div style={{ width: '200px', height: '28px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite' }} />
-          <div style={{ width: '260px', height: '18px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite', marginTop: 'var(--space-2)' }} />
+        <header className="mb-8">
+          <SkeletonBlock className="w-[200px] h-7" />
+          <SkeletonBlock className="w-[260px] h-[18px] mt-2" />
         </header>
         <div className="dashboard-grid">
           {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
         </div>
-        <section style={{ marginTop: 'var(--space-12)' }}>
-          <div style={{ width: '160px', height: '22px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite', marginBottom: 'var(--space-6)' }} />
-          <div className="card" style={{ height: '200px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite', opacity: 0.3 }} />
+        <section className="mt-12">
+          <SkeletonBlock className="w-[160px] h-[22px] mb-6" />
+          <div className="card skeleton-block h-[200px] opacity-30" />
         </section>
       </div>
     );
@@ -116,8 +116,12 @@ export function DashboardPage() {
                 </tr>
               )) || (
                 <tr>
-                  <td colSpan={3} style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--text-muted)' }}>
-                    No sales data yet today.
+                  <td colSpan={3}>
+                    <EmptyState
+                      icon={<TrendingUp size={48} />}
+                      title="No sales data yet today"
+                      description="Sales will appear here once transactions are recorded."
+                    />
                   </td>
                 </tr>
               )}

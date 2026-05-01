@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/AuthContext';
-import { Phone, MessageCircle, FileText, Check, AlertCircle, X, DollarSign, Users, RefreshCw } from 'lucide-react';
+import { Phone, MessageCircle, FileText, Check, AlertCircle, X, DollarSign, Users } from 'lucide-react';
 import { format } from 'date-fns';
+import { EmptyState, SkeletonCard, SkeletonBlock } from '../../components/PageState';
 import { useDebounce } from '../../hooks/useDebounce';
 
 type Receivable = {
@@ -163,12 +164,7 @@ export const CollectionsWorkspace: React.FC = () => {
       {/* Summary Cards */}
       <div className="dashboard-grid" style={{ marginBottom: 'var(--space-6)' }}>
         {loading ? (
-          Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-              <div style={{ width: '60%', height: '14px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite' }} />
-              <div style={{ width: '40%', height: '24px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite' }} />
-            </div>
-          ))
+          Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
         ) : (
           <>
             <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
@@ -238,24 +234,26 @@ export const CollectionsWorkspace: React.FC = () => {
             <tbody>
               {loading ? (
                 Array.from({ length: 5 }).map((_, i) => (
-                  <tr key={i} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                    <td style={{ padding: 'var(--space-4)' }}>
-                      <div style={{ width: '120px', height: '16px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite' }} />
-                      <div style={{ width: '80px', height: '12px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite', marginTop: 'var(--space-1)' }} />
+                  <tr key={i} className="border-b border-[var(--border-color)]">
+                    <td className="p-4">
+                      <SkeletonBlock className="w-[120px] h-4" />
+                      <SkeletonBlock className="w-[80px] h-3 mt-1" />
                     </td>
-                    <td style={{ padding: 'var(--space-4)', textAlign: 'right' }}><div style={{ width: '80px', height: '18px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite', marginLeft: 'auto' }} /></td>
-                    <td style={{ padding: 'var(--space-4)', textAlign: 'right' }}><div style={{ width: '40px', height: '18px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite', marginLeft: 'auto' }} /></td>
-                    <td style={{ padding: 'var(--space-4)' }}><div style={{ width: '100px', height: '14px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite' }} /></td>
-                    <td style={{ padding: 'var(--space-4)' }}><div style={{ width: '160px', height: '14px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite' }} /></td>
-                    <td style={{ padding: 'var(--space-4)', textAlign: 'right' }}><div style={{ width: '120px', height: '30px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite', marginLeft: 'auto' }} /></td>
+                    <td className="p-4 text-right"><SkeletonBlock className="w-[80px] h-[18px] ml-auto" /></td>
+                    <td className="p-4 text-right"><SkeletonBlock className="w-[40px] h-[18px] ml-auto" /></td>
+                    <td className="p-4"><SkeletonBlock className="w-[100px] h-[14px]" /></td>
+                    <td className="p-4"><SkeletonBlock className="w-[160px] h-[14px]" /></td>
+                    <td className="p-4 text-right"><SkeletonBlock className="w-[120px] h-[30px] ml-auto" /></td>
                   </tr>
                 ))
               ) : receivables.length === 0 ? (
                 <tr>
-                  <td colSpan={6} style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--text-muted)' }}>
-                    <DollarSign size={48} style={{ marginBottom: 'var(--space-4)', opacity: 0.2 }} />
-                    <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: '600', color: 'var(--text-main)', marginBottom: 'var(--space-1)' }}>No outstanding receivables</p>
-                    <p style={{ fontSize: 'var(--font-size-sm)' }}>All customer dues are cleared.</p>
+                  <td colSpan={6}>
+                    <EmptyState
+                      icon={<DollarSign size={48} />}
+                      title="No outstanding receivables"
+                      description="All customer dues are cleared."
+                    />
                   </td>
                 </tr>
               ) : receivables.map((r) => (
