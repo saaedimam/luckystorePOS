@@ -1,0 +1,127 @@
+// =============================================================================
+// RPC-to-Domain Mappers for POS
+// Fail-fast on critical field corruption to prevent silent bugs
+// =============================================================================
+
+import type { PosProduct, PosCategory } from './types';
+
+const DEBUG_POS = import.meta.env.VITE_DEBUG_POS === 'true';
+
+function debugLog(label: string, data: any) {
+  if (DEBUG_POS) {
+    console.log(`[POS Mapper] ${label}:`, JSON.stringify(data, null, 2));
+  }
+}
+
+/**
+ * Maps a row from search_items_pos or lookup_item_by_scan to PosProduct
+ * @throws Error if critical fields (id, price) are missing or invalid
+ */
+export function mapSearchItem(row: any): PosProduct {
+  debugLog('Raw search item', row);
+
+  // Fail-fast: id is non-negotiable
+  if (!row.id && !row.item_id) {
+    throw new Error(
+      `Invalid item: missing id. Raw: ${JSON.stringify(row)}`
+    );
+  }
+
+  // Fail-fast: price must exist and be > 0
+  const price = Number(row.price ?? row.unit_price ?? NaN);
+  if (Number.isNaN(price) || price <= 0) {
+    throw new Error(
+      `Item ${row.name ?? row.id ?? 'unknown'} has invalid price: ${row.price}`
+    );
+  }
+
+  const product: PosProduct = {
+    id: row.id ?? row.item_id,
+    name: row.name ?? 'Unknown',
+    sku: row.sku,
+    barcode: row.barcode,
+    shortCode: row.short_code,
+    brand: row.brand,
+    price,
+    cost: row.cost ? Number(row.cost) : undefined,
+    stock: Number(row.qty_on_hand ?? row.stock ?? 0),
+    category: row.category,
+    categoryId: row.category_id,
+    imageUrl: row.image_url,
+    groupTag: row.group_tag,
+  };
+
+  debugLog('Mapped product', product);
+  return product;
+}
+
+/**
+ * Maps a row from get_pos_categories to PosCategory
+ * @throws Error if id is missing
+ */
+export function mapCategory(row: any): PosCategory {
+  debugLog('Raw category', row);
+
+  if (!row.id) {
+    throw new Error(
+      `Invalid category: missing id. Raw: ${JSON.stringify(row)}`
+    );
+  }
+
+  const category: PosCategory = {
+    id: row.id,
+    name: row.name ?? 'Uncategorized',
+    itemCount: Number(row.item_count ?? 0),
+  };
+
+  debugLog('Mapped category', category);
+  return category;
+}
+
+/**
+ * Maps an array of rows from search_items_pos to PosProduct[]
+ * Handles null/empty JSONB responses gracefully
+ */
+export function mapSearchItems(rows: any): PosProduct[] {
+  if (!rows) {
+    debugLog('Search items response is null/empty', rows);
+    return [];
+  }
+
+  // If rows is already an array, map it
+  if (Array.isArray(rows)) {
+    return rows.map(mapSearchItem);
+  }
+
+  // If rows is a single object, wrap it
+  if (typeof rows === 'object') {
+    return [mapSearchItem(rows)];
+  }
+
+  debugLog('Unexpected search items response type', { type: typeof rows, rows });
+  return [];
+}
+
+/**
+ * Maps an array of rows from get_pos_categories to PosCategory[]
+ * Handles null/empty JSONB responses gracefully
+ */
+export function mapCategories(rows: any): PosCategory[] {
+  if (!rows) {
+    debugLog('Categories response is null/empty', rows);
+    return [];
+  }
+
+  // If rows is already an array, map it
+  if (Array.isArray(rows)) {
+    return rows.map(mapCategory);
+  }
+
+  // If rows is a single object, wrap it
+  if (typeof rows === 'object') {
+    return [mapCategory(rows)];
+  }
+
+  debugLog('Unexpected categories response type', { type: typeof rows, rows });
+  return [];
+}
