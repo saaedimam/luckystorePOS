@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { useAuth } from '../../lib/AuthContext';
 import { Skeleton } from '../../components/Skeleton';
+import { useRealtimeSubscription } from '../../hooks/useRealtime';
 import { Search, Plus, ScanLine, AlertCircle, X, Trash2, RefreshCw, ShoppingCart, ChevronUp, Banknote, Smartphone, CreditCard, Wallet, PlusCircle } from 'lucide-react';
 import { clsx } from 'clsx';
 import type { PosProduct, PosCategory, CartItem, PaymentInput } from '../../lib/api/types';
@@ -47,6 +48,37 @@ function getPaymentIcon(name: string) {
 
 export function QuickPosPage() {
   const { storeId, tenantId } = useAuth();
+
+  // Realtime: refresh product list on stock_levels changes, warn if cart item goes out of stock
+  useRealtimeSubscription({
+    table: 'stock_levels',
+    event: 'UPDATE',
+    filter: storeId ? `store_id=eq.${storeId}` : undefined,
+    invalidateKeys: [['pos-products', storeId]],
+    onEvent: (payload) => {
+      const newRecord = payload.new as Record<string, unknown> | undefined;
+      if (newRecord && typeof newRecord.qty === 'number' && newRecord.qty <= 0) {
+        const itemId = newRecord.item_id as string | undefined;
+        if (itemId) {
+          setCart(prev => {
+            const item = prev.find(i => i.product.id === itemId);
+            if (item) {
+              setError(`⚠ ${item.product.name} is now out of stock!`);
+              setTimeout(() => setError(null), 5000);
+            }
+            return prev;
+          });
+        }
+      }
+    },
+  });
+
+  // Realtime: refresh products when items table changes (add/edit/delete)
+  useRealtimeSubscription({
+    table: 'items',
+    event: '*',
+    invalidateKeys: [['pos-products', storeId], ['pos-categories', storeId]],
+  });
 
   // Category filter state
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
