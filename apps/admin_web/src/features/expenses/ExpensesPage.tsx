@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { useAuth } from '../../lib/AuthContext';
-import { Skeleton } from '../../components/Skeleton';
+import { ErrorState, EmptyState, SkeletonBlock } from '../../components/PageState';
 import { useNotify } from '../../components/Notification';
 import { useDebounce } from '../../hooks/useDebounce';
 import {
@@ -16,8 +16,6 @@ import {
   CreditCard,
   Search,
   SlidersHorizontal,
-  AlertCircle,
-  RefreshCw,
 } from 'lucide-react';
 import { format, startOfDay, startOfWeek, startOfMonth, isToday, isThisWeek, isThisMonth } from 'date-fns';
 import {
@@ -63,12 +61,8 @@ export function ExpensesPage() {
             <p className="expenses-subtitle">Track and manage store expenses.</p>
           </div>
         </header>
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-12)', textAlign: 'center' }}>
-          <AlertCircle size={48} style={{ opacity: 0.4, marginBottom: 'var(--space-4)' }} />
-          <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: '600', color: 'var(--text-main)', marginBottom: 'var(--space-1)' }}>Failed to load expenses</p>
-          <button onClick={() => refetch()} style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-2)', marginTop: 'var(--space-4)', padding: 'var(--space-2) var(--space-4)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-card)', color: 'var(--text-main)', cursor: 'pointer', fontWeight: '600', fontSize: 'var(--font-size-sm)' }}>
-            <RefreshCw size={14} /> Try Again
-          </button>
+        <div className="card">
+          <ErrorState message="Failed to load expenses." onRetry={() => refetch()} />
         </div>
       </div>
     );
@@ -181,20 +175,23 @@ export function ExpensesPage() {
             {isLoading ? (
               Array(5).fill(0).map((_, i) => (
                 <tr key={i}>
-                  <td><Skeleton style={{ width: '80px', height: '18px' }} /></td>
-                  <td><Skeleton style={{ width: '100px', height: '18px' }} /></td>
-                  <td><Skeleton style={{ width: '140px', height: '18px' }} /></td>
-                  <td><Skeleton style={{ width: '90px', height: '18px' }} /></td>
-                  <td><Skeleton style={{ width: '70px', height: '18px' }} /></td>
-                  <td><Skeleton style={{ width: '80px', height: '18px', marginLeft: 'auto' }} /></td>
+                  <td><SkeletonBlock className="w-[80px] h-[18px]" /></td>
+                  <td><SkeletonBlock className="w-[100px] h-[18px]" /></td>
+                  <td><SkeletonBlock className="w-[140px] h-[18px]" /></td>
+                  <td><SkeletonBlock className="w-[90px] h-[18px]" /></td>
+                  <td><SkeletonBlock className="w-[70px] h-[18px]" /></td>
+                  <td><SkeletonBlock className="w-[80px] h-[18px] ml-auto" /></td>
                 </tr>
               ))
             ) : filtered.length === 0 ? (
               <tr>
                 <td colSpan={6} className="expenses-empty">
-                  <Receipt size={48} style={{ marginBottom: 'var(--space-4)', opacity: 0.2 }} />
-                  <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: '600', color: 'var(--text-main)', marginBottom: 'var(--space-1)' }}>No expenses yet</p>
-                  <p style={{ fontSize: 'var(--font-size-sm)' }}>Record your first expense to start tracking spending.</p>
+                  <EmptyState
+                    icon={<Receipt size={48} />}
+                    title="No expenses yet"
+                    description="Record your first expense to start tracking spending."
+                    action={<button className="button-primary" onClick={() => setShowForm(true)}><Plus size={18} /> Add Expense</button>}
+                  />
                 </td>
               </tr>
             ) : (

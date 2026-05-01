@@ -2,8 +2,8 @@ import { useState, useMemo, useRef, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { api } from '../../lib/api';
-import { Skeleton } from '../../components/Skeleton';
-import { Search, Plus, Edit2, Package, AlertCircle, RefreshCw } from 'lucide-react';
+import { ErrorState, EmptyState, SkeletonBlock } from '../../components/PageState';
+import { Search, Plus, Edit2, Package } from 'lucide-react';
 import { clsx } from 'clsx';
 import { ProductEditDrawer } from './ProductEditDrawer';
 import { ProductAddModal } from './ProductAddModal';
@@ -59,18 +59,14 @@ export function ProductListPage() {
   if (error) {
     return (
       <div className="products-container">
-        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-8)' }}>
+        <header className="flex justify-between items-center mb-8">
           <div>
-            <h1 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700' }}>Products</h1>
-            <p style={{ color: 'var(--text-muted)' }}>Manage your shop's catalog.</p>
+            <h1 className="text-[var(--font-size-2xl)] font-bold">Products</h1>
+            <p className="text-[var(--text-muted)]">Manage your shop's catalog.</p>
           </div>
         </header>
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-12)', textAlign: 'center' }}>
-          <AlertCircle size={48} style={{ opacity: 0.4, marginBottom: 'var(--space-4)' }} />
-          <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: '600', color: 'var(--text-main)', marginBottom: 'var(--space-1)' }}>Failed to load products</p>
-          <button onClick={() => refetch()} style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-2)', marginTop: 'var(--space-4)', padding: 'var(--space-2) var(--space-4)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-card)', color: 'var(--text-main)', cursor: 'pointer', fontWeight: '600', fontSize: 'var(--font-size-sm)' }}>
-            <RefreshCw size={14} /> Try Again
-          </button>
+        <div className="card">
+          <ErrorState message="Failed to load products." onRetry={() => refetch()} />
         </div>
       </div>
     );
@@ -138,23 +134,24 @@ export function ProductListPage() {
         </table>
 
         {isLoading ? (
-          <div style={{ padding: 'var(--space-4)' }}>
+          <div className="p-4">
             {Array(5).fill(0).map((_, i) => (
-              <div key={i} style={{ display: 'flex', gap: 'var(--space-4)', padding: 'var(--space-3) 0' }}>
-                <Skeleton style={{ width: '28%', height: '20px' }} />
-                <Skeleton style={{ width: '18%', height: '20px' }} />
-                <Skeleton style={{ width: '12%', height: '20px' }} />
-                <Skeleton style={{ width: '12%', height: '20px' }} />
-                <Skeleton style={{ width: '10%', height: '20px' }} />
+              <div key={i} className="flex gap-4 py-3">
+                <SkeletonBlock className="w-[28%] h-5" />
+                <SkeletonBlock className="w-[18%] h-5" />
+                <SkeletonBlock className="w-[12%] h-5" />
+                <SkeletonBlock className="w-[12%] h-5" />
+                <SkeletonBlock className="w-[10%] h-5" />
               </div>
             ))}
           </div>
         ) : filteredProducts.length === 0 ? (
-          <div style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--text-muted)' }}>
-            <Package size={48} style={{ marginBottom: 'var(--space-4)', opacity: 0.2 }} />
-            <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: '600', color: 'var(--text-main)', marginBottom: 'var(--space-1)' }}>No products yet</p>
-            <p style={{ fontSize: 'var(--font-size-sm)' }}>{searchTerm ? 'No products match your search.' : 'Add your first product to get started.'}</p>
-          </div>
+          <EmptyState
+            icon={<Package size={48} />}
+            title={searchTerm ? 'No products match your search' : 'No products yet'}
+            description={searchTerm ? 'Try adjusting your search terms.' : 'Add your first product to get started.'}
+            action={!searchTerm ? <button className="button-primary" onClick={() => setIsAddModalOpen(true)}><Plus size={18} /> Add Product</button> : undefined}
+          />
         ) : (
           <div
             ref={scrollRef}

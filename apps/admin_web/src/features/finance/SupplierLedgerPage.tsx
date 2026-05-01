@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import type { Party, LedgerEntry } from '../../types/finance';
 import { format } from 'date-fns';
+import { Store } from 'lucide-react';
+import { ErrorState, EmptyState, SkeletonBlock, SkeletonCard } from '../../components/PageState';
 
 export const SupplierLedgerPage: React.FC = () => {
   const [suppliers, setSuppliers] = useState<Party[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [selectedSupplier, setSelectedSupplier] = useState<Party | null>(null);
   const [ledgerEntries, setLedgerEntries] = useState<LedgerEntry[]>([]);
 
@@ -15,13 +18,16 @@ export const SupplierLedgerPage: React.FC = () => {
 
   const fetchSuppliers = async () => {
     setLoading(true);
+    setFetchError(null);
     const { data, error } = await supabase
       .from('parties')
       .select('*')
       .eq('type', 'supplier')
       .order('name');
     
-    if (!error && data) {
+    if (error) {
+      setFetchError(error.message);
+    } else if (data) {
       setSuppliers(data as Party[]);
     }
     setLoading(false);
@@ -40,7 +46,33 @@ export const SupplierLedgerPage: React.FC = () => {
     }
   };
 
-  if (loading) return <div className="skeleton">Loading suppliers...</div>;
+  if (loading) {
+    return (
+      <div className="dashboard-container">
+        <header className="mb-8">
+          <SkeletonBlock className="w-[300px] h-7" />
+          <SkeletonBlock className="w-[280px] h-[18px] mt-2" />
+        </header>
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4">
+          {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+        </div>
+      </div>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <div className="dashboard-container">
+        <header className="mb-8">
+          <h1 className="text-[var(--font-size-2xl)] font-bold text-[var(--text-main)]">Supplier Payable Ledger</h1>
+          <p className="text-[var(--text-muted)]">View supplier statements and transaction history.</p>
+        </header>
+        <div className="card">
+          <ErrorState message="Failed to load suppliers." onRetry={fetchSuppliers} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-container">
@@ -52,7 +84,15 @@ export const SupplierLedgerPage: React.FC = () => {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 'var(--space-6)' }}>
         {/* Supplier List */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 'var(--space-4)' }}>
-          {suppliers.map((s) => (
+          {suppliers.length === 0 ? (
+            <div className="card col-[1/-1]">
+              <EmptyState
+                icon={<Store size={48} />}
+                title="No suppliers yet"
+                description="Suppliers will appear here once they have a balance."
+              />
+            </div>
+          ) : suppliers.map((s) => (
             <button
               key={s.id}
               onClick={() => fetchLedger(s)}
@@ -174,7 +214,7 @@ export const SupplierLedgerPage: React.FC = () => {
             border: '2px dashed var(--border-color)',
             color: 'var(--text-muted)'
           }}>
-            <div style={{ fontSize: '48px', marginBottom: 'var(--space-4)' }}>📒</div>
+            <Store size={48} style={{ marginBottom: 'var(--space-4)', opacity: 0.2 }} />
             <p>Select a supplier to view their statement</p>
           </div>
         )}

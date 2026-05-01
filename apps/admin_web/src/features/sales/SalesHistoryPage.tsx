@@ -3,8 +3,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { api } from '../../lib/api';
 import { useAuth } from '../../lib/AuthContext';
-import { Skeleton } from '../../components/Skeleton';
-import { Search, XCircle, ChevronRight, Receipt, CreditCard, X, Download, DollarSign, AlertTriangle, TrendingUp, AlertCircle, RefreshCw } from 'lucide-react';
+import { ErrorState, EmptyState, SkeletonBlock } from '../../components/PageState';
+import { Search, XCircle, ChevronRight, Receipt, CreditCard, X, Download, DollarSign, AlertTriangle, TrendingUp } from 'lucide-react';
 import { clsx } from 'clsx';
 import { format, startOfDay, startOfWeek, startOfMonth, endOfDay, endOfWeek, endOfMonth, subDays } from 'date-fns';
 import { useNotify } from '../../components/Notification';
@@ -83,16 +83,12 @@ export function SalesHistoryPage() {
   if (error) {
     return (
       <div className="sales-history-container">
-        <header style={{ marginBottom: 'var(--space-8)' }}>
-          <h1 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700' }}>Sales History</h1>
-          <p style={{ color: 'var(--text-muted)' }}>Search and review store transactions.</p>
+        <header className="mb-8">
+          <h1 className="text-[var(--font-size-2xl)] font-bold">Sales History</h1>
+          <p className="text-[var(--text-muted)]">Search and review store transactions.</p>
         </header>
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-12)', textAlign: 'center' }}>
-          <AlertCircle size={48} style={{ opacity: 0.4, marginBottom: 'var(--space-4)' }} />
-          <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: '600', color: 'var(--text-main)', marginBottom: 'var(--space-1)' }}>Failed to load sales history</p>
-          <button onClick={() => refetch()} style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-2)', marginTop: 'var(--space-4)', padding: 'var(--space-2) var(--space-4)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-card)', color: 'var(--text-main)', cursor: 'pointer', fontWeight: '600', fontSize: 'var(--font-size-sm)' }}>
-            <RefreshCw size={14} /> Try Again
-          </button>
+        <div className="card">
+          <ErrorState message="Failed to load sales history." onRetry={() => refetch()} />
         </div>
       </div>
     );
@@ -286,23 +282,23 @@ export function SalesHistoryPage() {
         </table>
 
         {isLoading ? (
-          <div style={{ padding: 'var(--space-4)' }}>
+          <div className="p-4">
             {Array(5).fill(0).map((_, i) => (
-              <div key={i} style={{ display: 'flex', gap: 'var(--space-4)', padding: 'var(--space-3) 0' }}>
-                <Skeleton style={{ width: '120px', height: '20px' }} />
-                <Skeleton style={{ width: '150px', height: '20px' }} />
-                <Skeleton style={{ width: '100px', height: '20px' }} />
-                <Skeleton style={{ width: '80px', height: '20px' }} />
-                <Skeleton style={{ width: '60px', height: '20px' }} />
+              <div key={i} className="flex gap-4 py-3">
+                <SkeletonBlock className="w-[120px] h-5" />
+                <SkeletonBlock className="w-[150px] h-5" />
+                <SkeletonBlock className="w-[100px] h-5" />
+                <SkeletonBlock className="w-[80px] h-5" />
+                <SkeletonBlock className="w-[60px] h-5" />
               </div>
             ))}
           </div>
         ) : paginatedSales.length === 0 ? (
-          <div style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--text-muted)' }}>
-            <Receipt size={48} style={{ marginBottom: 'var(--space-4)', opacity: 0.2 }} />
-            <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: '600', color: 'var(--text-main)', marginBottom: 'var(--space-1)' }}>No sales yet</p>
-            <p style={{ fontSize: 'var(--font-size-sm)' }}>Transactions will appear here once sales are recorded.</p>
-          </div>
+          <EmptyState
+            icon={<Receipt size={48} />}
+            title="No sales yet"
+            description="Transactions will appear here once sales are recorded."
+          />
         ) : (
           <div
             ref={salesScrollRef}

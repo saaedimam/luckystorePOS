@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { useAuth } from '../../lib/AuthContext';
-import { Skeleton } from '../../components/Skeleton';
-import { Users, CreditCard, FileText, UserPlus, Save, Check, RefreshCw, ToggleLeft, ToggleRight } from 'lucide-react';
+import { ErrorState, EmptyState, SkeletonBlock, SkeletonRow } from '../../components/PageState';
+import { Users, CreditCard, FileText, UserPlus, Save, Check, ToggleLeft, ToggleRight } from 'lucide-react';
 import { clsx } from 'clsx';
 import { AddUserModal } from './AddUserModal';
 import { AddPaymentMethodModal } from './AddPaymentMethodModal';
@@ -82,7 +82,7 @@ export function SettingsPage() {
 function UsersSettings({ storeId }: { storeId: string }) {
   const { tenantId } = useAuth();
   const [showAddUser, setShowAddUser] = useState(false);
-  const { data: users, isLoading } = useQuery({
+  const { data: users, isLoading, isError, refetch } = useQuery({
     queryKey: ['settings-users', storeId],
     queryFn: () => api.settings.getUsers(storeId),
   });
@@ -111,9 +111,24 @@ function UsersSettings({ storeId }: { storeId: string }) {
         </thead>
         <tbody>
           {isLoading ? (
-            Array(3).fill(0).map((_, i) => (
-              <tr key={i}><td colSpan={4} style={{ padding: 'var(--space-4) 0' }}><Skeleton style={{ height: '30px', width: '100%' }} /></td></tr>
-            ))
+            Array(3).fill(0).map((_, i) => <SkeletonRow key={i} cols={4} />)
+          ) : isError ? (
+            <tr>
+              <td colSpan={4}>
+                <ErrorState message="Failed to load users." onRetry={() => refetch()} />
+              </td>
+            </tr>
+          ) : users?.length === 0 ? (
+            <tr>
+              <td colSpan={4}>
+                <EmptyState
+                  icon={<Users size={48} />}
+                  title="No users yet"
+                  description="Add your first team member to get started."
+                  action={<button className="button-primary" onClick={() => setShowAddUser(true)}><UserPlus size={18} /> Add User</button>}
+                />
+              </td>
+            </tr>
           ) : (
             users?.map((u: any) => (
               <tr key={u.id} style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
@@ -149,7 +164,7 @@ function UsersSettings({ storeId }: { storeId: string }) {
 function PaymentsSettings({ storeId }: { storeId: string }) {
   const [showAddMethod, setShowAddMethod] = useState(false);
   const queryClient = useQueryClient();
-  const { data: payments, isLoading } = useQuery({
+  const { data: payments, isLoading, isError, refetch: refetchPayments } = useQuery({
     queryKey: ['settings-payments', storeId],
     queryFn: () => api.settings.getPaymentMethods(storeId),
   });
@@ -177,7 +192,16 @@ function PaymentsSettings({ storeId }: { storeId: string }) {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
         {isLoading ? (
-          <Skeleton style={{ height: '200px', width: '100%' }} />
+          <SkeletonBlock className="h-[200px] w-full" />
+        ) : isError ? (
+          <ErrorState message="Failed to load payment methods." onRetry={() => refetchPayments()} />
+        ) : payments?.length === 0 ? (
+          <EmptyState
+            icon={<CreditCard size={48} />}
+            title="No payment methods"
+            description="Add your first payment method to start accepting payments."
+            action={<button className="button-primary" onClick={() => setShowAddMethod(true)}><CreditCard size={18} /> Add Method</button>}
+          />
         ) : (
           payments?.map((pm: any) => (
             <div key={pm.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'var(--space-4)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)' }}>
@@ -227,7 +251,7 @@ function PaymentsSettings({ storeId }: { storeId: string }) {
 
 function ReceiptSettings({ storeId }: { storeId: string }) {
   const queryClient = useQueryClient();
-  const { data: config, isLoading } = useQuery({
+  const { data: config, isLoading, isError, refetch: refetchConfig } = useQuery({
     queryKey: ['settings-receipt', storeId],
     queryFn: () => api.settings.getReceiptConfig(storeId),
   });
@@ -239,7 +263,7 @@ function ReceiptSettings({ storeId }: { storeId: string }) {
   });
 
   // Hydrate form once data is loaded
-  useState(() => {
+  useEffect(() => {
     if (config) {
       setFormData({
         store_name: config.store_name || '',
@@ -247,7 +271,7 @@ function ReceiptSettings({ storeId }: { storeId: string }) {
         footer_text: config.footer_text || ''
       });
     }
-  });
+  }, [config]);
 
   const updateMutation = useMutation({
     mutationFn: (newConfig: any) => api.settings.updateReceiptConfig(storeId, newConfig),
@@ -261,7 +285,11 @@ function ReceiptSettings({ storeId }: { storeId: string }) {
     updateMutation.mutate(formData);
   };
 
-  if (isLoading) return <Skeleton style={{ height: '300px', width: '100%' }} />;
+  if (isLoading) return <SkeletonBlock className="h-[300px] w-full" />;
+
+  if (isError) {
+    return <ErrorState message="Failed to load receipt config." onRetry={() => refetchConfig()} />;
+  }
 
   return (
     <form onSubmit={handleSubmit} style={{ maxWidth: '600px' }}>
