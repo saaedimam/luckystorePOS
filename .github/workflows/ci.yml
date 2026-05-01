@@ -14,7 +14,8 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.0'
+          flutter-version: '3.27.0'
+          channel: 'stable'
       - name: Install dependencies
         run: |
           cd apps/mobile_app
@@ -43,10 +44,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Dart
-        uses: dart-lang/setup-dart@v1
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          sdk: stable
+          flutter-version: '3.27.0'
+          channel: 'stable'
       - name: Install Flutter packages for linting
         run: |
           cd apps/mobile_app
