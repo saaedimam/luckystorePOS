@@ -9,17 +9,26 @@ import { StockUpdateDrawer } from './StockUpdateDrawer';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 
+interface InventoryItem {
+  id: string;
+  name: string;
+  sku?: string;
+  current_qty: number;
+  reorder_status: 'OK' | 'LOW' | 'OUT';
+  last_updated?: string;
+}
+
 export function InventoryListPage() {
   const { storeId } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
-  const [adjustingProduct, setAdjustingProduct] = useState<any | null>(null);
+  const [adjustingProduct, setAdjustingProduct] = useState<InventoryItem | null>(null);
 
   const { data: inventory, isLoading, error, refetch } = useQuery({
     queryKey: ['inventory', storeId],
     queryFn: () => api.inventory.list(storeId),
   });
 
-  const filteredItems = inventory?.filter((p: any) =>
+  const filteredItems = inventory?.filter((p: InventoryItem) =>
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     p.sku?.toLowerCase().includes(searchTerm.toLowerCase())
   );
