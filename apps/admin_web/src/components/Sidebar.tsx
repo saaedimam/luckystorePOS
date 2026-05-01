@@ -1,4 +1,4 @@
-import { LayoutDashboard, ShoppingCart, Package, Warehouse, PlusCircle, Wallet, Users, PhoneCall, Settings, LogOut, Monitor, Receipt } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Package, Warehouse, PlusCircle, Wallet, Users, PhoneCall, Settings, LogOut, Monitor, Receipt, Bell } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../lib/AuthContext';
 import '../styles/layout.css';
@@ -14,6 +14,7 @@ const navItems = [
   { icon: Receipt, label: 'Expenses', path: '/expenses' },
   { icon: Users, label: 'Customer Ledger', path: '/finance/customers' },
   { icon: PhoneCall, label: 'Collections', path: '/collections' },
+  { icon: Bell, label: 'Reminders', path: '/reminders' },
   { icon: Settings, label: 'Settings', path: '/settings' },
 ];
 
