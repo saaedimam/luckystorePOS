@@ -16,10 +16,12 @@ jobs:
         with:
           flutter-version: '3.27.0'
           channel: 'stable'
+      - name: Debug Flutter version
+        run: flutter --version
       - name: Install dependencies
         run: |
           cd apps/mobile_app
-          flutter pub get
+          flutter pub get -v
       - name: Run tests
         run: |
           cd apps/mobile_app
@@ -49,10 +51,12 @@ jobs:
         with:
           flutter-version: '3.27.0'
           channel: 'stable'
+      - name: Debug Flutter version
+        run: flutter --version
       - name: Install Flutter packages for linting
         run: |
           cd apps/mobile_app
-          flutter pub get
+          flutter pub get -v
       - name: Run analyzer
         run: |
           cd apps/mobile_app
