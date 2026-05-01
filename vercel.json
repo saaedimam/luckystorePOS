@@ -4,7 +4,7 @@
   "outputDirectory": "apps/admin_web/dist",
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!assets|favicon|icons).*)",
       "destination": "/index.html"
     }
   ]
