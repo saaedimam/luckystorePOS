@@ -476,7 +476,12 @@ function SaleDetailsDrawer({ saleId, onClose }: { saleId: string | null, onClose
         </header>
 
         {isLoading ? (
-          <Skeleton style={{ width: '100%', height: '400px' }} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <SkeletonBlock className="w-full h-8" />
+            <SkeletonBlock className="w-full h-8" />
+            <SkeletonBlock className="w-full h-8" />
+            <SkeletonBlock className="w-3/4 h-8" />
+          </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)' }}>
             {/* Header Info */}

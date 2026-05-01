@@ -42,7 +42,7 @@ export function useRealtimeSubscription({
       postgresChangesConfig.filter = filter;
     }
 
-    channel = channel.on(
+    channel = (channel as any).on(
       'postgres_changes',
       postgresChangesConfig as { event: string; schema: string; table: string; filter?: string },
       (payload: Record<string, unknown>) => {
