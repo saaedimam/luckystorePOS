@@ -162,10 +162,9 @@ export const api = {
         .from('users')
         .insert([{
           id: authId,
-          auth_id: authId,
           tenant_id: user.tenantId,
           store_id: storeId,
-          full_name: user.fullName,
+          name: user.fullName,
           role: user.role,
           pos_pin: user.pin,
         }])
