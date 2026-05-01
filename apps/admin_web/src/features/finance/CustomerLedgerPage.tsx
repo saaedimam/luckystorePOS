@@ -40,31 +40,42 @@ export const CustomerLedgerPage: React.FC = () => {
     }
   };
 
-  if (loading) return <div className="p-8 text-white/50">Loading customers...</div>;
+  if (loading) return <div className="skeleton">Loading customers...</div>;
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="text-2xl font-bold text-white mb-6">Customer Receivable Ledger</h1>
+    <div className="dashboard-container">
+      <header style={{ marginBottom: 'var(--space-8)' }}>
+        <h1 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700', color: 'var(--text-main)' }}>Customer Receivable Ledger</h1>
+        <p style={{ color: 'var(--text-muted)' }}>View customer statements and transaction history.</p>
+      </header>
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 'var(--space-6)' }}>
         {/* Customer List */}
-        <div className="lg:col-span-1 space-y-4">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 'var(--space-4)' }}>
           {customers.map((c) => (
             <button
               key={c.id}
               onClick={() => fetchLedger(c)}
-              className={`w-full text-left p-4 rounded-xl border transition-all ${
-                selectedCustomer?.id === c.id
-                  ? 'bg-amber-500/10 border-amber-500/50'
-                  : 'bg-white/5 border-white/10 hover:border-white/20'
-              }`}
+              style={{
+                display: 'block',
+                width: '100%',
+                textAlign: 'left',
+                padding: 'var(--space-4)',
+                borderRadius: 'var(--radius-lg)',
+                border: selectedCustomer?.id === c.id ? '2px solid var(--color-primary)' : '1px solid var(--border-color)',
+                backgroundColor: selectedCustomer?.id === c.id ? 'rgba(251, 191, 36, 0.08)' : 'var(--bg-card)',
+                cursor: 'pointer',
+                transition: 'all var(--transition-fast)',
+                boxShadow: selectedCustomer?.id === c.id ? 'var(--shadow-md)' : 'var(--shadow-sm)'
+              }}
+              className="card"
             >
-              <div className="font-semibold text-white">{c.name}</div>
-              <div className="text-sm text-white/40">{c.phone || 'No phone'}</div>
-              <div className={`mt-2 text-lg font-bold ${c.current_balance > 0 ? 'text-amber-400' : 'text-emerald-400'}`}>
+              <div style={{ fontWeight: '600', color: 'var(--text-main)' }}>{c.name}</div>
+              <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-muted)' }}>{c.phone || 'No phone'}</div>
+              <div style={{ marginTop: 'var(--space-2)', fontSize: 'var(--font-size-lg)', fontWeight: '700', color: c.current_balance > 0 ? 'var(--color-warning)' : 'var(--color-success)' }}>
                 ৳ {c.current_balance.toLocaleString()}
               </div>
-              <div className="text-[10px] uppercase tracking-wider text-white/20 mt-1">
+              <div style={{ fontSize: 'var(--font-size-xs)', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-light)', marginTop: '2px' }}>
                 Current Balance (Due)
               </div>
             </button>
@@ -72,73 +83,94 @@ export const CustomerLedgerPage: React.FC = () => {
         </div>
 
         {/* Ledger Detail */}
-        <div className="lg:col-span-2">
-          {selectedCustomer ? (
-            <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
-              <div className="p-4 border-b border-white/10 bg-white/5 flex justify-between items-center">
-                <div>
-                  <h2 className="font-bold text-white">{selectedCustomer.name}</h2>
-                  <p className="text-xs text-white/40">Statement of Account</p>
-                </div>
-                <button 
-                  className="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg transition-colors"
-                  onClick={() => window.print()}
-                >
-                  Print Statement
-                </button>
+        {selectedCustomer ? (
+          <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+            <div style={{
+              padding: 'var(--space-4)',
+              borderBottom: '1px solid var(--border-color)',
+              backgroundColor: 'rgba(0,0,0,0.02)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <div>
+                <h2 style={{ fontWeight: '700', color: 'var(--text-main)' }}>{selectedCustomer.name}</h2>
+                <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)' }}>Statement of Account</p>
               </div>
-              
-              <div className="overflow-x-auto">
-                <table className="w-full text-left">
-                  <thead className="text-[11px] uppercase tracking-wider text-white/40 border-b border-white/5 bg-white/[0.02]">
-                    <tr>
-                      <th className="p-4">Date</th>
-                      <th className="p-4">Reference</th>
-                      <th className="p-4 text-right">Debit (Sale)</th>
-                      <th className="p-4 text-right">Credit (Paid)</th>
-                      <th className="p-4 text-right">Balance</th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-sm text-white/80">
-                    {ledgerEntries.map((entry, idx) => {
-                      const balanceAtPoint = ledgerEntries
-                        .slice(idx)
-                        .reduce((acc, curr) => acc + (curr.debit_amount - curr.credit_amount), 0);
-                        
-                      return (
-                        <tr key={entry.id} className="border-b border-white/5 hover:bg-white/[0.02]">
-                          <td className="p-4 text-white/60">
-                            {format(new Date(entry.effective_date), 'MMM dd, yyyy')}
-                          </td>
-                          <td className="p-4">
-                            <div className="font-medium">{entry.reference_type}</div>
-                            <div className="text-[10px] text-white/30">
-                              {entry.reference_id}
-                            </div>
-                          </td>
-                          <td className="p-4 text-right text-amber-400">
-                            {entry.debit_amount > 0 ? `৳ ${entry.debit_amount.toLocaleString()}` : '-'}
-                          </td>
-                          <td className="p-4 text-right text-emerald-400">
-                            {entry.credit_amount > 0 ? `৳ ${entry.credit_amount.toLocaleString()}` : '-'}
-                          </td>
-                          <td className="p-4 text-right font-bold">
-                            ৳ {balanceAtPoint.toLocaleString()}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+              <button
+                className="button-outline"
+                onClick={() => window.print()}
+              >
+                Print Statement
+              </button>
             </div>
-          ) : (
-            <div className="h-full flex flex-col items-center justify-center p-12 border border-dashed border-white/10 rounded-2xl text-white/20">
-              <div className="text-4xl mb-4">👤</div>
-              <p>Select a customer to view their statement</p>
+            
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{
+                    textAlign: 'left',
+                    borderBottom: '1px solid var(--border-color)',
+                    backgroundColor: 'rgba(0,0,0,0.02)',
+                    color: 'var(--text-muted)',
+                    fontSize: 'var(--font-size-xs)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em'
+                  }}>
+                    <th style={{ padding: 'var(--space-4)' }}>Date</th>
+                    <th style={{ padding: 'var(--space-4)' }}>Reference</th>
+                    <th style={{ padding: 'var(--space-4)', textAlign: 'right' }}>Debit (Sale)</th>
+                    <th style={{ padding: 'var(--space-4)', textAlign: 'right' }}>Credit (Paid)</th>
+                    <th style={{ padding: 'var(--space-4)', textAlign: 'right' }}>Balance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ledgerEntries.map((entry, idx) => {
+                    const balanceAtPoint = ledgerEntries
+                      .slice(idx)
+                      .reduce((acc, curr) => acc + (curr.debit_amount - curr.credit_amount), 0);
+                      
+                    return (
+                      <tr key={entry.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                        <td style={{ padding: 'var(--space-4)', color: 'var(--text-muted)', fontSize: 'var(--font-size-sm)' }}>
+                          {format(new Date(entry.effective_date), 'MMM dd, yyyy')}
+                        </td>
+                        <td style={{ padding: 'var(--space-4)' }}>
+                          <div style={{ fontWeight: '500', color: 'var(--text-main)' }}>{entry.reference_type}</div>
+                          <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-light)' }}>
+                            {entry.reference_id}
+                          </div>
+                        </td>
+                        <td style={{ padding: 'var(--space-4)', textAlign: 'right', color: 'var(--color-warning)', fontWeight: '600' }}>
+                          {entry.debit_amount > 0 ? `৳ ${entry.debit_amount.toLocaleString()}` : '-'}
+                        </td>
+                        <td style={{ padding: 'var(--space-4)', textAlign: 'right', color: 'var(--color-success)', fontWeight: '600' }}>
+                          {entry.credit_amount > 0 ? `৳ ${entry.credit_amount.toLocaleString()}` : '-'}
+                        </td>
+                        <td style={{ padding: 'var(--space-4)', textAlign: 'right', fontWeight: '700', color: 'var(--text-main)' }}>
+                          ৳ {balanceAtPoint.toLocaleString()}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="card" style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 'var(--space-12)',
+            border: '2px dashed var(--border-color)',
+            color: 'var(--text-muted)'
+          }}>
+            <div style={{ fontSize: '48px', marginBottom: 'var(--space-4)' }}>👤</div>
+            <p>Select a customer to view their statement</p>
+          </div>
+        )}
       </div>
     </div>
   );
