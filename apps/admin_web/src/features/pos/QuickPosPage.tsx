@@ -1,15 +1,16 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState, useCallback, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { useAuth } from '../../lib/AuthContext';
 import { Skeleton } from '../../components/Skeleton';
-import {
-  Search, Plus, ScanLine, AlertCircle, X, Trash2, RefreshCw,
-  CheckCircle, ShoppingCart, Pause, Play, Banknote, CreditCard, Smartphone, Wallet, Minus
-} from 'lucide-react';
+import { Search, Plus, ScanLine, AlertCircle, X, Trash2, RefreshCw, ShoppingCart, ChevronUp } from 'lucide-react';
 import { clsx } from 'clsx';
-import type { PosProduct, PosCategory, CartItem, SplitPayment, HeldCart } from '../../lib/api/types';
+import type { PosProduct, PosCategory, CartItem, PaymentInput } from '../../lib/api/types';
+import { ReceiptPreview } from './ReceiptPreview';
 
+import './receipt.css';
+
+// Debug mode toggle (set via VITE_DEBUG_POS=true in .env)
 const DEBUG_POS = import.meta.env.VITE_DEBUG_POS === 'true';
 
 function debugLog(label: string, data: unknown) {
@@ -18,32 +19,20 @@ function debugLog(label: string, data: unknown) {
   }
 }
 
-const HELD_CARTS_KEY = 'luckystore_held_carts';
-
-function loadHeldCarts(storeId: string): HeldCart[] {
-  try {
-    const raw = localStorage.getItem(`${HELD_CARTS_KEY}_${storeId}`);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveHeldCarts(storeId: string, carts: HeldCart[]) {
-  localStorage.setItem(`${HELD_CARTS_KEY}_${storeId}`, JSON.stringify(carts));
-}
-
-function getPaymentIcon(name: string) {
-  const lower = name.toLowerCase();
-  if (lower.includes('cash') || lower.includes('নগদ')) return <Banknote size={18} />;
-  if (lower.includes('bkash') || lower.includes('বকাশ')) return <Smartphone size={18} />;
-  if (lower.includes('card') || lower.includes('কার্ড')) return <CreditCard size={18} />;
-  return <Wallet size={18} />;
+interface CompletedSale {
+  cart: CartItem[];
+  subtotal: number;
+  discount: number;
+  totalAmount: number;
+  paymentMethod: string;
+  paidAmount: number;
+  changeAmount: number;
+  saleNumber?: string;
+  batchId?: string;
 }
 
 export function QuickPosPage() {
   const { storeId, tenantId } = useAuth();
-  const queryClient = useQueryClient();
 
   // Category filter state
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -63,32 +52,17 @@ export function QuickPosPage() {
   // Checkout state
   const [isProcessing, setIsProcessing] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-
-  // Payment state
-  const [selectedPaymentAccountId, setSelectedPaymentAccountId] = useState<string | null>(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>(null);
   const [paymentAmount, setPaymentAmount] = useState('');
-  const [splitPayments, setSplitPayments] = useState<SplitPayment[]>([]);
-  const [isSplitMode, setIsSplitMode] = useState(false);
 
-  // Sale completion state
-  const [lastSaleResult, setLastSaleResult] = useState<{ batchId: string; totalAmount: number } | null>(null);
+  // Mobile cart sheet
+  const [showMobileCart, setShowMobileCart] = useState(false);
 
-  // Hold/Recall state
-  const [heldCarts, setHeldCarts] = useState<HeldCart[]>([]);
-  const [showHoldDrawer, setShowHoldDrawer] = useState(false);
-  const [holdLabel, setHoldLabel] = useState('');
+  // Receipt state
+  const [completedSale, setCompletedSale] = useState<CompletedSale | null>(null);
 
   // Error state
   const [error, setError] = useState<string | null>(null);
-
-  const paymentInputRef = useRef<HTMLInputElement>(null);
-
-  // Load held carts on mount / storeId change
-  useEffect(() => {
-    if (storeId) {
-      setHeldCarts(loadHeldCarts(storeId));
-    }
-  }, [storeId]);
 
   // Debounce search (300ms)
   useEffect(() => {
@@ -119,17 +93,17 @@ export function QuickPosPage() {
     enabled: !!storeId && showPaymentModal,
   });
 
+  // Fetch receipt config
+  const { data: receiptConfig } = useQuery({
+    queryKey: ['settings-receipt', storeId],
+    queryFn: () => api.settings.getReceiptConfig(storeId),
+    enabled: !!storeId,
+  });
+
   // Cart calculations
   const subtotal = cart.reduce((sum, item) => sum + item.lineTotal, 0);
   const totalAmount = Math.max(0, subtotal - cartDiscount);
   const itemCount = cart.reduce((sum, item) => sum + item.qty, 0);
-
-  // Split payment calculations
-  const splitTotal = splitPayments.reduce((sum, p) => sum + p.amount, 0);
-  const remaining = totalAmount - splitTotal;
-  const changeAmount = isSplitMode
-    ? Math.max(0, splitTotal - totalAmount)
-    : Math.max(0, (parseFloat(paymentAmount) || 0) - totalAmount);
 
   // Add item to cart with stock validation
   const addToCart = useCallback((product: PosProduct, qty: number = 1) => {
@@ -210,56 +184,6 @@ export function QuickPosPage() {
     setError(null);
   }, []);
 
-  // Hold cart
-  const holdCart = useCallback(() => {
-    if (cart.length === 0) return;
-    const label = holdLabel.trim() || `Cart #${heldCarts.length + 1}`;
-    const held: HeldCart = {
-      id: crypto.randomUUID(),
-      label,
-      items: [...cart],
-      discount: cartDiscount,
-      heldAt: Date.now(),
-    };
-    const updated = [held, ...heldCarts];
-    setHeldCarts(updated);
-    saveHeldCarts(storeId!, updated);
-    setCart([]);
-    setCartDiscount(0);
-    setHoldLabel('');
-    setShowHoldDrawer(false);
-  }, [cart, cartDiscount, heldCarts, holdLabel, storeId]);
-
-  // Recall cart
-  const recallCart = useCallback((heldCart: HeldCart) => {
-    if (cart.length > 0) {
-      const currentHeld: HeldCart = {
-        id: crypto.randomUUID(),
-        label: `Auto-saved`,
-        items: [...cart],
-        discount: cartDiscount,
-        heldAt: Date.now(),
-      };
-      const updated = [currentHeld, ...heldCarts.filter(h => h.id !== heldCart.id)];
-      setHeldCarts(updated);
-      saveHeldCarts(storeId!, updated);
-    } else {
-      const updated = heldCarts.filter(h => h.id !== heldCart.id);
-      setHeldCarts(updated);
-      saveHeldCarts(storeId!, updated);
-    }
-    setCart(heldCart.items);
-    setCartDiscount(heldCart.discount);
-    setShowHoldDrawer(false);
-  }, [cart, cartDiscount, heldCarts, storeId]);
-
-  // Delete held cart
-  const deleteHeldCart = useCallback((id: string) => {
-    const updated = heldCarts.filter(h => h.id !== id);
-    setHeldCarts(updated);
-    saveHeldCarts(storeId!, updated);
-  }, [heldCarts, storeId]);
-
   // Handle barcode scan
   const handleScanKeyDown = useCallback(async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -286,48 +210,20 @@ export function QuickPosPage() {
     }
   }, [storeId, addToCart]);
 
-  // Add split payment entry
-  const addSplitPayment = useCallback(() => {
-    if (!selectedPaymentAccountId || !paymentAmount) return;
-    const amt = parseFloat(paymentAmount);
-    if (isNaN(amt) || amt <= 0) return;
-    if (amt > remaining + 0.01) {
-      setError(`Amount exceeds remaining ৳${remaining.toFixed(2)}`);
-      setTimeout(() => setError(null), 3000);
-      return;
-    }
-
-    const method = paymentMethods.find((m: any) => m.id === selectedPaymentAccountId);
-    const entry: SplitPayment = {
-      id: crypto.randomUUID(),
-      accountId: selectedPaymentAccountId,
-      methodName: method?.name || 'Unknown',
-      amount: amt,
-    };
-    setSplitPayments(prev => [...prev, entry]);
-    setPaymentAmount('');
-    setSelectedPaymentAccountId(null);
-    setError(null);
-  }, [selectedPaymentAccountId, paymentAmount, remaining, paymentMethods]);
-
-  // Remove split payment entry
-  const removeSplitPayment = useCallback((id: string) => {
-    setSplitPayments(prev => prev.filter(p => p.id !== id));
-  }, []);
-
-  // Handle checkout — single payment
-  const handleSingleCheckout = useCallback(async () => {
+  // Handle checkout
+  const handleCheckout = useCallback(async () => {
     if (cart.length === 0) {
       setError('Cart is empty');
       return;
     }
-    if (!selectedPaymentAccountId || !paymentAmount) {
+
+    if (!selectedPaymentMethod || !paymentAmount) {
       setError('Please select payment method and enter amount');
       return;
     }
 
     const paid = parseFloat(paymentAmount);
-    if (isNaN(paid) || paid < totalAmount - 0.01) {
+    if (isNaN(paid) || paid < totalAmount) {
       setError(`Insufficient payment. Total: ৳${totalAmount.toFixed(2)}`);
       return;
     }
@@ -336,7 +232,6 @@ export function QuickPosPage() {
     setError(null);
 
     try {
-      // Revalidate stock
       for (const cartItem of cart) {
         const fresh = await api.pos.lookupByScan(cartItem.product.sku || cartItem.product.id, storeId);
         if (!fresh || fresh.stock < cartItem.qty) {
@@ -356,7 +251,7 @@ export function QuickPosPage() {
           unit_price: item.unitPrice,
         })),
         payments: [{
-          account_id: selectedPaymentAccountId,
+          account_id: selectedPaymentMethod,
           amount: paid,
           party_id: null,
         }],
@@ -364,20 +259,32 @@ export function QuickPosPage() {
       };
 
       debugLog('Sale payload', saleData);
+
       const result = await api.pos.createSale(saleData);
       debugLog('Sale result', result);
 
       if (result.status === 'success') {
-        setLastSaleResult({
-          batchId: result.batchId || '',
-          totalAmount: result.totalAmount || totalAmount,
+        const paymentMethodName = paymentMethods.find((m: any) => m.id === selectedPaymentMethod)?.name || 'Cash';
+        const change = paid - totalAmount;
+
+        setCompletedSale({
+          cart: [...cart],
+          subtotal,
+          discount: cartDiscount,
+          totalAmount,
+          paymentMethod: paymentMethodName,
+          paidAmount: paid,
+          changeAmount: change,
+          saleNumber: result.saleNumber || result.batchId,
+          batchId: result.batchId,
         });
+
         clearCart();
         setShowPaymentModal(false);
-        setSelectedPaymentAccountId(null);
+        setSelectedPaymentMethod(null);
         setPaymentAmount('');
-        setSplitPayments([]);
-        setIsSplitMode(false);
+        setShowMobileCart(false);
+        setError(null);
       } else {
         setError(result.error || 'Sale failed. Please try again.');
       }
@@ -387,91 +294,7 @@ export function QuickPosPage() {
     } finally {
       setIsProcessing(false);
     }
-  }, [cart, storeId, tenantId, selectedPaymentAccountId, paymentAmount, totalAmount, clearCart]);
-
-  // Handle checkout — split payment
-  const handleSplitCheckout = useCallback(async () => {
-    if (cart.length === 0) {
-      setError('Cart is empty');
-      return;
-    }
-    if (splitPayments.length === 0) {
-      setError('Add at least one payment');
-      return;
-    }
-    if (Math.abs(remaining) > 0.01 && remaining > 0) {
-      setError(`Still ৳${remaining.toFixed(2)} remaining to pay`);
-      return;
-    }
-
-    setIsProcessing(true);
-    setError(null);
-
-    try {
-      for (const cartItem of cart) {
-        const fresh = await api.pos.lookupByScan(cartItem.product.sku || cartItem.product.id, storeId);
-        if (!fresh || fresh.stock < cartItem.qty) {
-          setError(`${cartItem.product.name} is now out of stock. Please adjust quantity.`);
-          setIsProcessing(false);
-          return;
-        }
-      }
-
-      const saleData = {
-        idempotencyKey: crypto.randomUUID(),
-        tenantId: tenantId || '',
-        storeId: storeId || '',
-        items: cart.map(item => ({
-          item_id: item.product.id,
-          quantity: item.qty,
-          unit_price: item.unitPrice,
-        })),
-        payments: splitPayments.map(p => ({
-          account_id: p.accountId,
-          amount: p.amount,
-          party_id: null,
-        })),
-        notes: null,
-      };
-
-      debugLog('Split sale payload', saleData);
-      const result = await api.pos.createSale(saleData);
-      debugLog('Split sale result', result);
-
-      if (result.status === 'success') {
-        setLastSaleResult({
-          batchId: result.batchId || '',
-          totalAmount: result.totalAmount || totalAmount,
-        });
-        clearCart();
-        setShowPaymentModal(false);
-        setSelectedPaymentAccountId(null);
-        setPaymentAmount('');
-        setSplitPayments([]);
-        setIsSplitMode(false);
-      } else {
-        setError(result.error || 'Sale failed. Please try again.');
-      }
-    } catch (err: any) {
-      console.error('[QuickPosPage] Split checkout error:', err);
-      setError(err.message || 'Sale failed. Please try again.');
-    } finally {
-      setIsProcessing(false);
-    }
-  }, [cart, storeId, tenantId, splitPayments, remaining, totalAmount, clearCart]);
-
-  // New sale
-  const startNewSale = useCallback(() => {
-    setLastSaleResult(null);
-  }, []);
-
-  // Quick amount buttons for cash
-  const quickAmounts = [
-    { label: '৳100', value: 100 },
-    { label: '৳500', value: 500 },
-    { label: '৳1000', value: 1000 },
-    { label: 'Exact', value: totalAmount },
-  ];
+  }, [cart, storeId, tenantId, selectedPaymentMethod, paymentAmount, totalAmount, subtotal, cartDiscount, paymentMethods, clearCart, addToCart, removeFromCart]);
 
   // Get initials for product avatar
   const getInitials = (name: string) => {
@@ -497,33 +320,124 @@ export function QuickPosPage() {
     return colors[index];
   };
 
-  // ── Sale Success Overlay ──────────────────────────────────────────
-  if (lastSaleResult) {
-    return (
-      <div className="sale-success-overlay">
-        <div className="sale-success-card">
-          <div className="sale-success-icon">
-            <CheckCircle size={36} />
-          </div>
-          <div className="sale-success-title">Sale Complete</div>
-          <div className="sale-success-detail">
-            Batch: {lastSaleResult.batchId.slice(0, 8).toUpperCase()}
-          </div>
-          <div className="sale-success-amount">
-            ৳{lastSaleResult.totalAmount.toFixed(2)}
-          </div>
-          <div className="sale-success-actions">
-            <button className="button-primary" onClick={startNewSale}>
-              <Plus size={16} /> New Sale
-            </button>
-          </div>
-        </div>
+  const selectedPaymentMethodName = paymentMethods.find((m: any) => m.id === selectedPaymentMethod)?.name;
+
+  // Billing panel content (shared between desktop sidebar and mobile sheet)
+  const billingContent = (
+    <>
+      <div className="billing-header">
+        <h2>Billing Items ({itemCount})</h2>
+        <button
+          className="text-danger"
+          onClick={clearCart}
+          disabled={cart.length === 0}
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: cart.length === 0 ? 'not-allowed' : 'pointer',
+            opacity: cart.length === 0 ? 0.5 : 1
+          }}
+        >
+          Clear Items
+        </button>
       </div>
-    );
-  }
+
+      <div className="billing-items">
+        {cart.length === 0 ? (
+          <div style={{
+            padding: 'var(--space-12)',
+            textAlign: 'center',
+            color: 'var(--text-muted)'
+          }}>
+            <ShoppingCart size={48} style={{ marginBottom: 'var(--space-4)', opacity: 0.2 }} />
+            <p>No items in cart</p>
+          </div>
+        ) : (
+          cart.map((item) => (
+            <div key={item.product.id} className="billing-item">
+              <div className="billing-item-info">
+                <div className="billing-item-name">{item.product.name}</div>
+                <div className="billing-item-price">
+                  ৳{item.product.price.toFixed(2)} × {item.qty}
+                </div>
+              </div>
+              <div className="billing-item-controls">
+                <button
+                  className="button-outline"
+                  onClick={() => updateQty(item.product.id, item.qty - 1)}
+                  style={{ padding: '2px 8px' }}
+                >
+                  -
+                </button>
+                <span style={{ margin: '0 8px' }}>{item.qty}</span>
+                <button
+                  className="button-outline"
+                  onClick={() => updateQty(item.product.id, item.qty + 1)}
+                  style={{ padding: '2px 8px' }}
+                >
+                  +
+                </button>
+                <button
+                  className="text-danger"
+                  onClick={() => removeFromCart(item.product.id)}
+                  style={{
+                    marginLeft: 'var(--space-2)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+              <div className="billing-item-total">
+                ৳{item.lineTotal.toFixed(2)}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      <div className="billing-summary">
+        <div className="billing-row">
+          <span>Sub Total</span>
+          <span>৳{subtotal.toFixed(2)}</span>
+        </div>
+        <div className="billing-actions">
+          <button className="button-outline">Discount</button>
+          <button className="button-outline">Tax</button>
+          <button className="button-outline">Additional Charges</button>
+        </div>
+        <div className="billing-total">
+          <span>Total Amount</span>
+          <span className="text-emerald-600 font-bold">
+            ৳{totalAmount.toFixed(2)}
+          </span>
+        </div>
+        <button
+          className="button-primary w-full mt-4"
+          onClick={() => setShowPaymentModal(true)}
+          disabled={cart.length === 0 || isProcessing}
+          style={{
+            opacity: cart.length === 0 || isProcessing ? 0.5 : 1,
+            cursor: cart.length === 0 || isProcessing ? 'not-allowed' : 'pointer'
+          }}
+        >
+          {isProcessing ? (
+            <>
+              <RefreshCw size={16} className="animate-spin" style={{ marginRight: 'var(--space-2)' }} />
+              Processing...
+            </>
+          ) : (
+            'Continue Billing'
+          )}
+        </button>
+      </div>
+    </>
+  );
 
   return (
-    <div className="pos-container">
+    <div className={clsx('pos-container', showMobileCart && 'pos-container--sheet-open')}>
       <div className="pos-content">
         {/* Left Panel - Products */}
         <div className="pos-products">
@@ -694,24 +608,39 @@ export function QuickPosPage() {
           </div>
         </div>
 
-        {/* Right Panel - Billing */}
+        {/* Right Panel - Billing (desktop only, hidden on mobile) */}
         <div className="pos-billing">
-          <div className="billing-header">
-            <h2>Billing Items ({itemCount})</h2>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-              <button
-                className="button-outline"
-                onClick={() => setShowHoldDrawer(true)}
-                title="View held carts"
-                style={{ padding: '2px 8px' }}
-              >
-                <span className="held-carts-badge">
-                  <Pause size={16} />
-                  {heldCarts.length > 0 && (
-                    <span className="held-carts-count">{heldCarts.length}</span>
-                  )}
-                </span>
-              </button>
+          {billingContent}
+        </div>
+      </div>
+
+      {/* Mobile: Sticky cart trigger bar */}
+      <button
+        className="mobile-cart-trigger"
+        onClick={() => setShowMobileCart(true)}
+      >
+        <span style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+          <ShoppingCart size={20} />
+          {itemCount} {itemCount === 1 ? 'item' : 'items'}
+          <span className="mobile-cart-badge">{itemCount}</span>
+        </span>
+        <span className="mobile-cart-total">৳{totalAmount.toFixed(2)}</span>
+        <ChevronUp size={20} />
+      </button>
+
+      {/* Mobile: Cart sheet overlay */}
+      {showMobileCart && (
+        <>
+          <div
+            className="cart-sheet-overlay"
+            onClick={() => setShowMobileCart(false)}
+          />
+          <div className="cart-sheet">
+            <div className="cart-sheet-handle">
+              <div className="cart-sheet-handle-bar" />
+            </div>
+            <div className="cart-sheet-header">
+              <h2>Billing ({itemCount})</h2>
               <button
                 className="text-danger"
                 onClick={clearCart}
@@ -720,171 +649,89 @@ export function QuickPosPage() {
                   background: 'none',
                   border: 'none',
                   cursor: cart.length === 0 ? 'not-allowed' : 'pointer',
-                  opacity: cart.length === 0 ? 0.5 : 1
+                  opacity: cart.length === 0 ? 0.5 : 1,
+                  fontSize: 'var(--font-size-sm)',
                 }}
               >
                 Clear Items
               </button>
             </div>
-          </div>
-
-          <div className="billing-items">
-            {cart.length === 0 ? (
-              <div style={{
-                padding: 'var(--space-12)',
-                textAlign: 'center',
-                color: 'var(--text-muted)'
-              }}>
-                <AlertCircle size={48} style={{ marginBottom: 'var(--space-4)', opacity: 0.2 }} />
-                <p>No items in cart</p>
-              </div>
-            ) : (
-              cart.map((item) => (
-                <div key={item.product.id} className="billing-item">
-                  <div className="billing-item-info">
-                    <div className="billing-item-name">{item.product.name}</div>
-                    <div className="billing-item-price">
-                      ৳{item.product.price.toFixed(2)} × {item.qty}
+            <div className="cart-sheet-body">
+              {cart.length === 0 ? (
+                <div style={{
+                  padding: 'var(--space-12)',
+                  textAlign: 'center',
+                  color: 'var(--text-muted)'
+                }}>
+                  <ShoppingCart size={48} style={{ marginBottom: 'var(--space-4)', opacity: 0.2 }} />
+                  <p>No items in cart</p>
+                </div>
+              ) : (
+                cart.map((item) => (
+                  <div key={item.product.id} className="billing-item">
+                    <div className="billing-item-info">
+                      <div className="billing-item-name">{item.product.name}</div>
+                      <div className="billing-item-price">
+                        ৳{item.product.price.toFixed(2)} × {item.qty}
+                      </div>
+                    </div>
+                    <div className="billing-item-controls">
+                      <button
+                        className="button-outline"
+                        onClick={() => updateQty(item.product.id, item.qty - 1)}
+                        style={{ padding: '2px 8px' }}
+                      >
+                        -
+                      </button>
+                      <span style={{ margin: '0 8px' }}>{item.qty}</span>
+                      <button
+                        className="button-outline"
+                        onClick={() => updateQty(item.product.id, item.qty + 1)}
+                        style={{ padding: '2px 8px' }}
+                      >
+                        +
+                      </button>
+                      <button
+                        className="text-danger"
+                        onClick={() => removeFromCart(item.product.id)}
+                        style={{
+                          marginLeft: 'var(--space-2)',
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                    <div className="billing-item-total">
+                      ৳{item.lineTotal.toFixed(2)}
                     </div>
                   </div>
-                  <div className="billing-item-controls">
-                    <button
-                      className="button-outline"
-                      onClick={() => updateQty(item.product.id, item.qty - 1)}
-                      style={{ padding: '2px 8px' }}
-                    >
-                      -
-                    </button>
-                    <span style={{ margin: '0 8px' }}>{item.qty}</span>
-                    <button
-                      className="button-outline"
-                      onClick={() => updateQty(item.product.id, item.qty + 1)}
-                      style={{ padding: '2px 8px' }}
-                    >
-                      +
-                    </button>
-                    <button
-                      className="text-danger"
-                      onClick={() => removeFromCart(item.product.id)}
-                      style={{
-                        marginLeft: 'var(--space-2)',
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                  <div className="billing-item-total">
-                    ৳{item.lineTotal.toFixed(2)}
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-
-          <div className="billing-summary">
-            <div className="billing-row">
-              <span>Sub Total</span>
-              <span>৳{subtotal.toFixed(2)}</span>
+                ))
+              )}
             </div>
-            <div className="billing-actions">
-              <button className="button-outline">Discount</button>
-              <button className="button-outline">Tax</button>
-              <button className="button-outline">Additional Charges</button>
-            </div>
-            <div className="billing-total">
-              <span>Total Amount</span>
-              <span className="text-emerald-600 font-bold">
-                ৳{totalAmount.toFixed(2)}
-              </span>
-            </div>
-            <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+            <div className="cart-sheet-footer">
+              <div className="billing-row">
+                <span>Sub Total</span>
+                <span>৳{subtotal.toFixed(2)}</span>
+              </div>
+              <div className="billing-total" style={{ marginTop: 'var(--space-2)' }}>
+                <span>Total Amount</span>
+                <span className="text-emerald-600 font-bold">৳{totalAmount.toFixed(2)}</span>
+              </div>
               <button
-                className="button-secondary"
-                onClick={holdCart}
-                disabled={cart.length === 0}
-                style={{ flex: 1, opacity: cart.length === 0 ? 0.5 : 1 }}
-              >
-                <Pause size={16} /> Hold
-              </button>
-              <button
-                className="button-primary"
+                className="button-primary w-full"
                 onClick={() => setShowPaymentModal(true)}
                 disabled={cart.length === 0 || isProcessing}
                 style={{
-                  flex: 2,
+                  marginTop: 'var(--space-3)',
                   opacity: cart.length === 0 || isProcessing ? 0.5 : 1,
                   cursor: cart.length === 0 || isProcessing ? 'not-allowed' : 'pointer'
                 }}
               >
-                {isProcessing ? (
-                  <>
-                    <RefreshCw size={16} className="animate-spin" style={{ marginRight: 'var(--space-2)' }} />
-                    Processing...
-                  </>
-                ) : (
-                  'Continue Billing'
-                )}
+                {isProcessing ? 'Processing...' : 'Continue Billing'}
               </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Hold Cart Drawer */}
-      {showHoldDrawer && (
-        <>
-          <div className="hold-drawer-overlay" onClick={() => setShowHoldDrawer(false)} />
-          <div className="hold-drawer">
-            <div className="hold-drawer-header">
-              <h3>Held Carts ({heldCarts.length})</h3>
-              <button
-                onClick={() => setShowHoldDrawer(false)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
-              >
-                <X size={20} />
-              </button>
-            </div>
-            <div className="hold-drawer-body">
-              {heldCarts.length === 0 ? (
-                <div className="hold-drawer-empty">
-                  <Pause size={32} style={{ opacity: 0.2, marginBottom: 'var(--space-2)' }} />
-                  <p>No held carts</p>
-                </div>
-              ) : (
-                <div className="held-carts-list">
-                  {heldCarts.map(hc => (
-                    <div key={hc.id} className="held-cart-item" onClick={() => recallCart(hc)}>
-                      <div className="held-cart-info">
-                        <div className="held-cart-label">{hc.label}</div>
-                        <div className="held-cart-meta">
-                          {hc.items.length} item{hc.items.length !== 1 ? 's' : ''} · ৳{hc.items.reduce((s, i) => s + i.lineTotal, 0).toFixed(2)} · {new Date(hc.heldAt).toLocaleTimeString()}
-                        </div>
-                      </div>
-                      <div className="held-cart-actions" onClick={e => e.stopPropagation()}>
-                        <button
-                          className="button-outline"
-                          onClick={() => recallCart(hc)}
-                          style={{ padding: '4px 8px' }}
-                          title="Recall this cart"
-                        >
-                          <Play size={14} />
-                        </button>
-                        <button
-                          className="button-danger"
-                          onClick={() => deleteHeldCart(hc.id)}
-                          style={{ padding: '4px 8px' }}
-                          title="Delete held cart"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           </div>
         </>
@@ -892,211 +739,121 @@ export function QuickPosPage() {
 
       {/* Payment Modal */}
       {showPaymentModal && (
-        <div className="payment-modal">
-          <div className="payment-modal-content">
-            <h2 style={{ marginBottom: 'var(--space-4)', fontSize: 'var(--font-size-xl)', fontWeight: 700 }}>
-              Payment
-            </h2>
+        <div className="modal-overlay" style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div className="card" style={{
+            width: '400px',
+            maxWidth: '90%',
+            padding: 'var(--space-6)'
+          }}>
+            <h2 style={{ marginBottom: 'var(--space-4)' }}>Payment</h2>
 
-            {/* Total Display */}
-            <div className="payment-section">
-              <span className="payment-section-label">Total Amount</span>
-              <div className="payment-total-display">৳{totalAmount.toFixed(2)}</div>
+            <div style={{ marginBottom: 'var(--space-4)' }}>
+              <label style={{ display: 'block', marginBottom: 'var(--space-2)', fontWeight: '600' }}>
+                Total Amount
+              </label>
+              <div style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700', color: 'var(--color-primary-hover)' }}>
+                ৳{totalAmount.toFixed(2)}
+              </div>
             </div>
 
-            {/* Split Mode Toggle */}
-            <div className="payment-section" style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <button
-                className={isSplitMode ? 'button-primary' : 'button-outline'}
-                onClick={() => {
-                  setIsSplitMode(!isSplitMode);
-                  setSplitPayments([]);
-                  setPaymentAmount('');
-                  setSelectedPaymentAccountId(null);
+            <div style={{ marginBottom: 'var(--space-4)' }}>
+              <label style={{ display: 'block', marginBottom: 'var(--space-2)', fontWeight: '600' }}>
+                Payment Method
+              </label>
+              <select
+                value={selectedPaymentMethod || ''}
+                onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: 'var(--space-3)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--border-color)',
+                  backgroundColor: 'var(--input-bg)'
                 }}
-                style={{ fontSize: 'var(--font-size-xs)', padding: 'var(--space-1) var(--space-3)', minHeight: 32, minWidth: 32 }}
               >
-                {isSplitMode ? 'Split Payment ✓' : 'Split Payment'}
-              </button>
-            </div>
-
-            {/* Split Payments List */}
-            {isSplitMode && splitPayments.length > 0 && (
-              <div className="payment-section">
-                <span className="payment-section-label">Payments Added</span>
-                <div className="split-payment-list">
-                  {splitPayments.map(sp => (
-                    <div key={sp.id} className="split-payment-item">
-                      <div className="split-payment-info">
-                        {getPaymentIcon(sp.methodName)}
-                        <span>{sp.methodName}</span>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                        <span className="split-payment-amount">৳{sp.amount.toFixed(2)}</span>
-                        <button
-                          onClick={() => removeSplitPayment(sp.id)}
-                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-danger)' }}
-                        >
-                          <X size={14} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                {remaining > 0.01 && (
-                  <div className="split-remaining">
-                    <span className="split-remaining-label">Remaining</span>
-                    <span className="split-remaining-amount">৳{remaining.toFixed(2)}</span>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Payment Method Selector */}
-            <div className="payment-section">
-              <span className="payment-section-label">Payment Method</span>
-              <div className="payment-methods-grid">
+                <option value="">Select payment method</option>
                 {paymentMethods.map((method: any) => (
-                  <button
-                    key={method.id}
-                    className={`payment-method-chip ${selectedPaymentAccountId === method.id ? 'selected' : ''}`}
-                    onClick={() => setSelectedPaymentAccountId(method.id)}
-                  >
-                    <span className="payment-method-icon">{getPaymentIcon(method.name)}</span>
-                    <span>{method.name}</span>
-                  </button>
+                  <option key={method.id} value={method.id}>
+                    {method.name}
+                  </option>
                 ))}
-              </div>
+              </select>
             </div>
 
-            {/* Quick Amount Buttons (for cash) */}
-            {selectedPaymentAccountId && (
-              <div className="payment-section">
-                <span className="payment-section-label">Quick Amount</span>
-                <div className="quick-amount-grid">
-                  {quickAmounts.map(qa => (
-                    <button
-                      key={qa.label}
-                      className={`quick-amount-btn ${qa.label === 'Exact' ? 'exact' : ''}`}
-                      onClick={() => {
-                        if (isSplitMode) {
-                          const amt = qa.value;
-                          if (amt > remaining + 0.01) return;
-                          const method = paymentMethods.find((m: any) => m.id === selectedPaymentAccountId);
-                          const entry: SplitPayment = {
-                            id: crypto.randomUUID(),
-                            accountId: selectedPaymentAccountId,
-                            methodName: method?.name || 'Unknown',
-                            amount: Math.min(amt, remaining),
-                          };
-                          setSplitPayments(prev => [...prev, entry]);
-                          setSelectedPaymentAccountId(null);
-                        } else {
-                          setPaymentAmount(qa.value.toFixed(2));
-                        }
-                      }}
-                    >
-                      {qa.label === 'Exact' ? 'Exact' : qa.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+            <div style={{ marginBottom: 'var(--space-6)' }}>
+              <label style={{ display: 'block', marginBottom: 'var(--space-2)', fontWeight: '600' }}>
+                Amount
+              </label>
+              <input
+                type="number"
+                value={paymentAmount}
+                onChange={(e) => setPaymentAmount(e.target.value)}
+                placeholder="Enter amount"
+                style={{
+                  width: '100%',
+                  padding: 'var(--space-3)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--border-color)',
+                  backgroundColor: 'var(--input-bg)'
+                }}
+              />
+            </div>
 
-            {/* Amount Input */}
-            {!isSplitMode && (
-              <div className="payment-section">
-                <span className="payment-section-label">Amount</span>
-                <input
-                  ref={paymentInputRef}
-                  type="number"
-                  className="payment-input"
-                  value={paymentAmount}
-                  onChange={(e) => setPaymentAmount(e.target.value)}
-                  placeholder="Enter amount"
-                />
-              </div>
-            )}
-
-            {/* Add Payment Button (Split Mode) */}
-            {isSplitMode && selectedPaymentAccountId && remaining > 0.01 && (
-              <div className="payment-section">
-                <span className="payment-section-label">Add Payment</span>
-                <input
-                  type="number"
-                  className="payment-input"
-                  value={paymentAmount}
-                  onChange={(e) => setPaymentAmount(e.target.value)}
-                  placeholder={`Max ৳${remaining.toFixed(2)}`}
-                  style={{ marginBottom: 'var(--space-2)' }}
-                />
-                <button
-                  className="button-outline w-full"
-                  onClick={addSplitPayment}
-                  disabled={!paymentAmount || !selectedPaymentAccountId}
-                  style={{ minHeight: 36 }}
-                >
-                  <Plus size={14} /> Add Payment
-                </button>
-              </div>
-            )}
-
-            {/* Change Calculation */}
-            {(!isSplitMode ? (parseFloat(paymentAmount) || 0) > totalAmount : splitTotal > totalAmount) && (
-              <div className="change-display">
-                <div className="change-label">Change Due</div>
-                <div className="change-amount">৳{changeAmount.toFixed(2)}</div>
-              </div>
-            )}
-
-            {/* Error in payment modal */}
-            {error && (
-              <div style={{
-                padding: 'var(--space-3)',
-                marginBottom: 'var(--space-3)',
-                backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                border: '1px solid rgba(239, 68, 68, 0.3)',
-                borderRadius: 'var(--radius-md)',
-                color: 'var(--color-danger)',
-                fontSize: 'var(--font-size-sm)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 'var(--space-2)'
-              }}>
-                <AlertCircle size={14} />
-                <span>{error}</span>
-                <button onClick={() => setError(null)} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-danger)' }}>
-                  <X size={14} />
-                </button>
-              </div>
-            )}
-
-            {/* Footer Actions */}
-            <div className="payment-footer">
+            <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
               <button
                 className="button-secondary"
                 onClick={() => {
                   setShowPaymentModal(false);
-                  setSelectedPaymentAccountId(null);
+                  setSelectedPaymentMethod(null);
                   setPaymentAmount('');
-                  setSplitPayments([]);
-                  setIsSplitMode(false);
-                  setError(null);
                 }}
+                style={{ flex: 1 }}
               >
                 Cancel
               </button>
               <button
                 className="button-primary"
-                onClick={isSplitMode ? handleSplitCheckout : handleSingleCheckout}
-                disabled={isProcessing || (isSplitMode ? remaining > 0.01 : false)}
-                style={{ opacity: isProcessing ? 0.5 : 1 }}
+                onClick={handleCheckout}
+                disabled={isProcessing}
+                style={{ flex: 1 }}
               >
                 {isProcessing ? 'Processing...' : 'Complete Sale'}
               </button>
             </div>
           </div>
         </div>
+      )}
+
+      {/* Receipt Preview Modal */}
+      {completedSale && (
+        <ReceiptPreview
+          cart={completedSale.cart}
+          subtotal={completedSale.subtotal}
+          discount={completedSale.discount}
+          totalAmount={completedSale.totalAmount}
+          paymentMethod={completedSale.paymentMethod}
+          paidAmount={completedSale.paidAmount}
+          changeAmount={completedSale.changeAmount}
+          saleNumber={completedSale.saleNumber}
+          batchId={completedSale.batchId}
+          receiptConfig={receiptConfig ? {
+            store_name: receiptConfig.store_name || '',
+            header_text: receiptConfig.header_text || '',
+            footer_text: receiptConfig.footer_text || '',
+          } : null}
+          onClose={() => setCompletedSale(null)}
+        />
       )}
     </div>
   );
