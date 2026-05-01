@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/AuthContext';
-import { Phone, MessageCircle, FileText, Check, AlertCircle, X } from 'lucide-react';
+import { Phone, MessageCircle, FileText, Check, AlertCircle, X, DollarSign, Users, RefreshCw } from 'lucide-react';
 import { format } from 'date-fns';
+import { useDebounce } from '../../hooks/useDebounce';
 
 type Receivable = {
   party_id: string;
@@ -21,6 +22,7 @@ export const CollectionsWorkspace: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search, 300);
 
   // Modals
   const [selectedParty, setSelectedParty] = useState<Receivable | null>(null);
@@ -41,7 +43,7 @@ export const CollectionsWorkspace: React.FC = () => {
     const { data, error } = await supabase.rpc('get_receivables_aging', {
       p_tenant_id: tenantId,
       p_store_id: storeId,
-      p_search: search || null
+      p_search: debouncedSearch || null
     });
 
     if (!error && data) {
@@ -50,12 +52,10 @@ export const CollectionsWorkspace: React.FC = () => {
       setFetchError(error?.message ?? 'Failed to load receivables.');
     }
     setLoading(false);
-  }, [tenantId, storeId, search]);
+  }, [tenantId, storeId, debouncedSearch]);
 
-  // Debounced fetch — re-runs when search changes (300ms delay)
   useEffect(() => {
-    const timer = setTimeout(() => fetchAging(), 300);
-    return () => clearTimeout(timer);
+    fetchAging();
   }, [fetchAging]);
 
   const handleAddNote = async (e: React.FormEvent) => {
@@ -153,6 +153,7 @@ export const CollectionsWorkspace: React.FC = () => {
         }}>
           <AlertCircle size={16} />
           <span>{fetchError}</span>
+          <button onClick={fetchAging} style={{ marginLeft: 'var(--space-2)', background: 'none', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: 'var(--radius-md)', cursor: 'pointer', color: 'var(--color-danger)', padding: '2px 8px', fontSize: 'var(--font-size-xs)', fontWeight: '600' }}>Retry</button>
           <button onClick={() => setFetchError(null)} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-danger)' }}>
             <X size={14} />
           </button>
@@ -161,24 +162,35 @@ export const CollectionsWorkspace: React.FC = () => {
 
       {/* Summary Cards */}
       <div className="dashboard-grid" style={{ marginBottom: 'var(--space-6)' }}>
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-          <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: '500', color: 'var(--text-muted)' }}>Total Receivables</span>
-          <span style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700', color: 'var(--color-warning)' }}>৳ {totalReceivables.toLocaleString()}</span>
-        </div>
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-          <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: '500', color: 'var(--text-muted)' }}>Customers Overdue</span>
-          <span style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700', color: 'var(--color-danger)' }}>{overdueCount}</span>
-        </div>
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-          <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: '500', color: 'var(--text-muted)' }}>Active Promises</span>
-          <span style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700', color: 'var(--color-success)' }}>
-            {receivables.filter(r => r.promise_to_pay_date).length}
-          </span>
-        </div>
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-          <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: '500', color: 'var(--text-muted)' }}>Accounts</span>
-          <span style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700', color: 'var(--text-main)' }}>{receivables.length}</span>
-        </div>
+        {loading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+              <div style={{ width: '60%', height: '14px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+              <div style={{ width: '40%', height: '24px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+            </div>
+          ))
+        ) : (
+          <>
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+              <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: '500', color: 'var(--text-muted)' }}>Total Receivables</span>
+              <span style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700', color: 'var(--color-warning)' }}>৳ {totalReceivables.toLocaleString()}</span>
+            </div>
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+              <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: '500', color: 'var(--text-muted)' }}>Customers Overdue</span>
+              <span style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700', color: 'var(--color-danger)' }}>{overdueCount}</span>
+            </div>
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+              <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: '500', color: 'var(--text-muted)' }}>Active Promises</span>
+              <span style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700', color: 'var(--color-success)' }}>
+                {receivables.filter(r => r.promise_to_pay_date).length}
+              </span>
+            </div>
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+              <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: '500', color: 'var(--text-muted)' }}>Accounts</span>
+              <span style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700', color: 'var(--text-main)' }}>{receivables.length}</span>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Filters */}
@@ -225,15 +237,25 @@ export const CollectionsWorkspace: React.FC = () => {
             </thead>
             <tbody>
               {loading ? (
-                <tr>
-                  <td colSpan={6} style={{ padding: 'var(--space-8)', textAlign: 'center', color: 'var(--text-muted)' }}>
-                    Loading receivables...
-                  </td>
-                </tr>
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                    <td style={{ padding: 'var(--space-4)' }}>
+                      <div style={{ width: '120px', height: '16px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                      <div style={{ width: '80px', height: '12px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite', marginTop: 'var(--space-1)' }} />
+                    </td>
+                    <td style={{ padding: 'var(--space-4)', textAlign: 'right' }}><div style={{ width: '80px', height: '18px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite', marginLeft: 'auto' }} /></td>
+                    <td style={{ padding: 'var(--space-4)', textAlign: 'right' }}><div style={{ width: '40px', height: '18px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite', marginLeft: 'auto' }} /></td>
+                    <td style={{ padding: 'var(--space-4)' }}><div style={{ width: '100px', height: '14px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite' }} /></td>
+                    <td style={{ padding: 'var(--space-4)' }}><div style={{ width: '160px', height: '14px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite' }} /></td>
+                    <td style={{ padding: 'var(--space-4)', textAlign: 'right' }}><div style={{ width: '120px', height: '30px', backgroundColor: 'var(--border-color)', borderRadius: 'var(--radius-md)', animation: 'pulse 1.5s ease-in-out infinite', marginLeft: 'auto' }} /></td>
+                  </tr>
+                ))
               ) : receivables.length === 0 ? (
                 <tr>
-                  <td colSpan={6} style={{ padding: 'var(--space-8)', textAlign: 'center', color: 'var(--text-muted)' }}>
-                    No dues found.
+                  <td colSpan={6} style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--text-muted)' }}>
+                    <DollarSign size={48} style={{ marginBottom: 'var(--space-4)', opacity: 0.2 }} />
+                    <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: '600', color: 'var(--text-main)', marginBottom: 'var(--space-1)' }}>No outstanding receivables</p>
+                    <p style={{ fontSize: 'var(--font-size-sm)' }}>All customer dues are cleared.</p>
                   </td>
                 </tr>
               ) : receivables.map((r) => (

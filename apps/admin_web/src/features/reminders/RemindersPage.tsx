@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { useAuth } from '../../lib/AuthContext';
 import { Skeleton } from '../../components/Skeleton';
+import { useDebounce } from '../../hooks/useDebounce';
 import {
   Bell,
   Plus,
@@ -63,6 +64,7 @@ export function RemindersPage() {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [filterType, setFilterType] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearch = useDebounce(searchTerm, 300);
 
   const { data: reminders, isLoading, error } = useQuery({
     queryKey: ['reminders', storeId, showCompleted],
@@ -123,8 +125,8 @@ export function RemindersPage() {
     if (!reminders) return [];
     return reminders.filter(r => {
       if (filterType && r.reminderType !== filterType) return false;
-      if (searchTerm) {
-        const q = searchTerm.toLowerCase();
+      if (debouncedSearch) {
+        const q = debouncedSearch.toLowerCase();
         const matches =
           r.title.toLowerCase().includes(q) ||
           (r.description ?? '').toLowerCase().includes(q);
@@ -132,7 +134,7 @@ export function RemindersPage() {
       }
       return true;
     });
-  }, [reminders, filterType, searchTerm]);
+  }, [reminders, filterType, debouncedSearch]);
 
   const handleOpenCreate = () => {
     setEditingReminder(null);

@@ -1,12 +1,17 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { api } from '../../lib/api';
 import { useAuth } from '../../lib/AuthContext';
 import { Skeleton } from '../../components/Skeleton';
-import { Search, XCircle, ChevronRight, Receipt, CreditCard, X, Download, DollarSign, AlertTriangle, TrendingUp } from 'lucide-react';
+import { Search, XCircle, ChevronRight, Receipt, CreditCard, X, Download, DollarSign, AlertTriangle, TrendingUp, AlertCircle, RefreshCw } from 'lucide-react';
 import { clsx } from 'clsx';
 import { format, startOfDay, startOfWeek, startOfMonth, endOfDay, endOfWeek, endOfMonth, subDays } from 'date-fns';
 import { useNotify } from '../../components/Notification';
+import { useDebounce } from '../../hooks/useDebounce';
+
+const ROW_HEIGHT = 56;
+const VISIBLE_ROWS = 15;
 
 type DateRange = 'today' | 'week' | 'month' | 'custom';
 
@@ -57,6 +62,7 @@ export function SalesHistoryPage() {
   const { notify } = useNotify();
   const { storeId } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearch = useDebounce(searchTerm, 300);
   const [selectedSaleId, setSelectedSaleId] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<DateRange>('month');
   const [customStart, setCustomStart] = useState('');
@@ -64,16 +70,32 @@ export function SalesHistoryPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 20;
 
+  // Reset page when search changes
+  useMemo(() => { setCurrentPage(1); }, [debouncedSearch]);
+
   const { startDate, endDate } = getDateRange(dateRange, customStart, customEnd);
 
-  const { data: sales, isLoading, error } = useQuery({
-    queryKey: ['sales-history', storeId, searchTerm, startDate, endDate],
+  const { data: sales, isLoading, error, refetch } = useQuery({
+    queryKey: ['sales-history', storeId, debouncedSearch, startDate, endDate],
     queryFn: () => api.sales.history(storeId, searchTerm || undefined, startDate, endDate),
   });
 
   if (error) {
-    notify('Failed to load sales history. Please check your connection.', 'error');
-    return <div className="error">Error loading sales history.</div>;
+    return (
+      <div className="sales-history-container">
+        <header style={{ marginBottom: 'var(--space-8)' }}>
+          <h1 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: '700' }}>Sales History</h1>
+          <p style={{ color: 'var(--text-muted)' }}>Search and review store transactions.</p>
+        </header>
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-12)', textAlign: 'center' }}>
+          <AlertCircle size={48} style={{ opacity: 0.4, marginBottom: 'var(--space-4)' }} />
+          <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: '600', color: 'var(--text-main)', marginBottom: 'var(--space-1)' }}>Failed to load sales history</p>
+          <button onClick={() => refetch()} style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-2)', marginTop: 'var(--space-4)', padding: 'var(--space-2) var(--space-4)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-card)', color: 'var(--text-main)', cursor: 'pointer', fontWeight: '600', fontSize: 'var(--font-size-sm)' }}>
+            <RefreshCw size={14} /> Try Again
+          </button>
+        </div>
+      </div>
+    );
   }
 
   const completedSales = (sales ?? []).filter((s: any) => s.status === 'completed');
@@ -85,6 +107,15 @@ export function SalesHistoryPage() {
 
   const totalPages = Math.ceil((sales?.length ?? 0) / pageSize);
   const paginatedSales = sales?.slice((currentPage - 1) * pageSize, currentPage * pageSize) ?? [];
+
+  const salesScrollRef = useRef<HTMLDivElement>(null);
+
+  const salesVirtualizer = useVirtualizer({
+    count: paginatedSales.length,
+    getScrollElement: () => salesScrollRef.current,
+    estimateSize: () => ROW_HEIGHT,
+    overscan: 5,
+  });
 
   const handleDateRangeChange = (range: DateRange) => {
     setDateRange(range);
@@ -187,7 +218,7 @@ export function SalesHistoryPage() {
               type="text"
               placeholder="Search by Receipt #..."
               value={searchTerm}
-              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+              onChange={(e) => setSearchTerm(e.target.value)}
               style={{
                 width: '100%',
                 padding: 'var(--space-3) var(--space-3) var(--space-3) 40px',
@@ -198,7 +229,7 @@ export function SalesHistoryPage() {
             />
             {searchTerm && (
               <button
-                onClick={() => { setSearchTerm(''); setCurrentPage(1); }}
+                onClick={() => setSearchTerm('')}
                 style={{
                   position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)',
                   background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)',
@@ -241,74 +272,95 @@ export function SalesHistoryPage() {
 
       {/* Sales Table */}
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
           <thead>
             <tr style={{ textAlign: 'left', borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(0,0,0,0.02)', color: 'var(--text-muted)' }}>
-              <th style={{ padding: 'var(--space-4)' }}>Receipt #</th>
-              <th style={{ padding: 'var(--space-4)' }}>Date & Time</th>
-              <th style={{ padding: 'var(--space-4)' }}>Cashier</th>
-              <th style={{ padding: 'var(--space-4)' }}>Amount</th>
-              <th style={{ padding: 'var(--space-4)' }}>Status</th>
-              <th style={{ padding: 'var(--space-4)', textAlign: 'right' }}>Actions</th>
+              <th style={{ padding: 'var(--space-4)', width: '18%' }}>Receipt #</th>
+              <th style={{ padding: 'var(--space-4)', width: '24%' }}>Date & Time</th>
+              <th style={{ padding: 'var(--space-4)', width: '18%' }}>Cashier</th>
+              <th style={{ padding: 'var(--space-4)', width: '16%' }}>Amount</th>
+              <th style={{ padding: 'var(--space-4)', width: '14%' }}>Status</th>
+              <th style={{ padding: 'var(--space-4)', textAlign: 'right', width: '10%' }}>Actions</th>
             </tr>
           </thead>
-          <tbody>
-            {isLoading ? (
-              Array(5).fill(0).map((_, i) => (
-                <tr key={i} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                  <td style={{ padding: 'var(--space-4)' }}><Skeleton style={{ width: '120px', height: '20px' }} /></td>
-                  <td style={{ padding: 'var(--space-4)' }}><Skeleton style={{ width: '150px', height: '20px' }} /></td>
-                  <td style={{ padding: 'var(--space-4)' }}><Skeleton style={{ width: '100px', height: '20px' }} /></td>
-                  <td style={{ padding: 'var(--space-4)' }}><Skeleton style={{ width: '80px', height: '20px' }} /></td>
-                  <td style={{ padding: 'var(--space-4)' }}><Skeleton style={{ width: '60px', height: '20px' }} /></td>
-                  <td style={{ padding: 'var(--space-4)', textAlign: 'right' }}><Skeleton style={{ width: '40px', height: '30px', marginLeft: 'auto' }} /></td>
-                </tr>
-              ))
-            ) : paginatedSales.length === 0 ? (
-              <tr>
-                <td colSpan={6} style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--text-muted)' }}>
-                  <Receipt size={48} style={{ marginBottom: 'var(--space-4)', opacity: 0.2 }} />
-                  <p>No sales found.</p>
-                </td>
-              </tr>
-            ) : (
-              paginatedSales.map((s: any) => (
-                <tr key={s.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                  <td style={{ padding: 'var(--space-4)', fontWeight: '700' }}>{s.sale_number}</td>
-                  <td style={{ padding: 'var(--space-4)', color: 'var(--text-muted)', fontSize: 'var(--font-size-sm)' }}>
-                    {format(new Date(s.created_at), 'MMM d, yyyy HH:mm')}
-                  </td>
-                  <td style={{ padding: 'var(--space-4)' }}>{s.cashier_name}</td>
-                  <td style={{ padding: 'var(--space-4)', fontWeight: '700' }}>৳{s.total_amount}</td>
-                  <td style={{ padding: 'var(--space-4)' }}>
-                    <span className={clsx(
-                      'badge',
-                      s.status === 'completed' ? 'badge-success' : 'badge-danger'
-                    )} style={{
-                      fontSize: 'var(--font-size-xs)',
-                      padding: '2px 8px',
-                      borderRadius: '12px',
-                      fontWeight: '700',
-                      backgroundColor: s.status === 'completed' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                      color: s.status === 'completed' ? 'var(--color-success)' : 'var(--color-danger)',
-                      textTransform: 'uppercase'
-                    }}>
-                      {s.status}
-                    </span>
-                  </td>
-                  <td style={{ padding: 'var(--space-4)', textAlign: 'right' }}>
-                    <button
-                      onClick={() => setSelectedSaleId(s.id)}
-                      style={{ color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '4px', marginLeft: 'auto', fontWeight: '600' }}
-                    >
-                      Details <ChevronRight size={16} />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
         </table>
+
+        {isLoading ? (
+          <div style={{ padding: 'var(--space-4)' }}>
+            {Array(5).fill(0).map((_, i) => (
+              <div key={i} style={{ display: 'flex', gap: 'var(--space-4)', padding: 'var(--space-3) 0' }}>
+                <Skeleton style={{ width: '120px', height: '20px' }} />
+                <Skeleton style={{ width: '150px', height: '20px' }} />
+                <Skeleton style={{ width: '100px', height: '20px' }} />
+                <Skeleton style={{ width: '80px', height: '20px' }} />
+                <Skeleton style={{ width: '60px', height: '20px' }} />
+              </div>
+            ))}
+          </div>
+        ) : paginatedSales.length === 0 ? (
+          <div style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--text-muted)' }}>
+            <Receipt size={48} style={{ marginBottom: 'var(--space-4)', opacity: 0.2 }} />
+            <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: '600', color: 'var(--text-main)', marginBottom: 'var(--space-1)' }}>No sales yet</p>
+            <p style={{ fontSize: 'var(--font-size-sm)' }}>Transactions will appear here once sales are recorded.</p>
+          </div>
+        ) : (
+          <div
+            ref={salesScrollRef}
+            style={{ height: `${Math.min(paginatedSales.length, VISIBLE_ROWS) * ROW_HEIGHT + 4}px`, overflow: 'auto' }}
+          >
+            <div style={{ height: `${salesVirtualizer.getTotalSize()}px`, width: '100%', position: 'relative' }}>
+              {salesVirtualizer.getVirtualItems().map((virtualRow) => {
+                const s = paginatedSales[virtualRow.index];
+                return (
+                  <div
+                    key={s.id}
+                    style={{
+                      height: `${virtualRow.size}px`,
+                      transform: `translateY(${virtualRow.start}px)`,
+                      position: 'absolute',
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      borderBottom: '1px solid var(--border-color)',
+                    }}
+                    onClick={() => setSelectedSaleId(s.id)}
+                  >
+                    <div style={{ padding: 'var(--space-4)', width: '18%', fontWeight: '700' }}>{s.sale_number}</div>
+                    <div style={{ padding: 'var(--space-4)', width: '24%', color: 'var(--text-muted)', fontSize: 'var(--font-size-sm)' }}>
+                      {format(new Date(s.created_at), 'MMM d, yyyy HH:mm')}
+                    </div>
+                    <div style={{ padding: 'var(--space-4)', width: '18%' }}>{s.cashier_name}</div>
+                    <div style={{ padding: 'var(--space-4)', width: '16%', fontWeight: '700' }}>৳{s.total_amount}</div>
+                    <div style={{ padding: 'var(--space-4)', width: '14%' }}>
+                      <span className={clsx(
+                        'badge',
+                        s.status === 'completed' ? 'badge-success' : 'badge-danger'
+                      )} style={{
+                        fontSize: 'var(--font-size-xs)',
+                        padding: '2px 8px',
+                        borderRadius: '12px',
+                        fontWeight: '700',
+                        backgroundColor: s.status === 'completed' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                        color: s.status === 'completed' ? 'var(--color-success)' : 'var(--color-danger)',
+                        textTransform: 'uppercase'
+                      }}>
+                        {s.status}
+                      </span>
+                    </div>
+                    <div style={{ padding: 'var(--space-4)', textAlign: 'right', width: '10%' }}>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setSelectedSaleId(s.id); }}
+                        style={{ color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '4px', marginLeft: 'auto', fontWeight: '600' }}
+                      >
+                        Details <ChevronRight size={16} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Pagination */}
         {totalPages > 1 && (
