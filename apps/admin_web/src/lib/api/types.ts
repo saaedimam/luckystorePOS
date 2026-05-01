@@ -45,3 +45,18 @@ export interface SaleResult {
   totalAmount?: number;
   error?: string;
 }
+
+export interface SplitPayment {
+  id: string;
+  accountId: string;
+  methodName: string;
+  amount: number;
+}
+
+export interface HeldCart {
+  id: string;
+  label: string;
+  items: CartItem[];
+  discount: number;
+  heldAt: number;
+}
