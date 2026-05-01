@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/AuthContext';
-import { Trash2, Save, Send, Search } from 'lucide-react';
+import { Trash2, Save, Send, Search, Package } from 'lucide-react';
+import { useDebounce } from '../../hooks/useDebounce';
 
 type Supplier = {
   id: string;
@@ -37,6 +38,7 @@ export const PurchaseEntryPage: React.FC = () => {
 
   // Item search
   const [itemSearch, setItemSearch] = useState('');
+  const debouncedItemSearch = useDebounce(itemSearch, 300);
   const [itemResults, setItemResults] = useState<Item[]>([]);
   const [showItemDropdown, setShowItemDropdown] = useState(false);
   const [quickQty, setQuickQty] = useState(1);
@@ -44,6 +46,7 @@ export const PurchaseEntryPage: React.FC = () => {
 
   // Status
   const [loading, setLoading] = useState(false);
+  const [suppliersLoading, setSuppliersLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -56,12 +59,14 @@ export const PurchaseEntryPage: React.FC = () => {
   }, []);
 
   const loadSuppliers = async () => {
+    setSuppliersLoading(true);
     const { data, error } = await supabase
       .from('parties')
       .select('id, name, phone')
       .eq('type', 'supplier')
       .order('name');
     if (!error && data) setSuppliers(data as Supplier[]);
+    setSuppliersLoading(false);
   };
 
   // ── Supplier search ─────────────────────────────────────────────
@@ -80,20 +85,20 @@ export const PurchaseEntryPage: React.FC = () => {
 
   // ── Item search ─────────────────────────────────────────────────
   useEffect(() => {
-    if (itemSearch.length < 2) {
+    if (debouncedItemSearch.length < 2) {
       setItemResults([]);
       return;
     }
-    const delay = setTimeout(async () => {
+    const fetchItems = async () => {
       const { data, error } = await supabase
         .from('inventory_items')
         .select('id, name, sku, barcode, price')
-        .or(`name.ilike.%${itemSearch}%,sku.ilike.%${itemSearch}%,barcode.ilike.%${itemSearch}%`)
+        .or(`name.ilike.%${debouncedItemSearch}%,sku.ilike.%${debouncedItemSearch}%,barcode.ilike.%${debouncedItemSearch}%`)
         .limit(8);
       if (!error && data) setItemResults(data as Item[]);
-    }, 300);
-    return () => clearTimeout(delay);
-  }, [itemSearch]);
+    };
+    fetchItems();
+  }, [debouncedItemSearch]);
 
   const addItem = (item: Item) => {
     const cost = quickCost ? parseFloat(quickCost) : item.price;
@@ -206,7 +211,16 @@ export const PurchaseEntryPage: React.FC = () => {
               </div>
               {showSupplierDropdown && (
                 <div className="absolute z-10 top-full left-0 right-0 mt-2 bg-[#161B22] border border-white/10 rounded-xl max-h-48 overflow-y-auto">
-                  {filteredSuppliers.map(s => (
+                  {suppliersLoading ? (
+                    Array.from({ length: 3 }).map((_, i) => (
+                      <div key={i} className="px-4 py-3">
+                        <div className="h-4 bg-white/10 rounded animate-pulse w-3/5" />
+                        <div className="h-3 bg-white/5 rounded animate-pulse w-2/5 mt-2" />
+                      </div>
+                    ))
+                  ) : filteredSuppliers.length === 0 ? (
+                    <div className="p-4 text-white/30 text-sm text-center">No suppliers found</div>
+                  ) : filteredSuppliers.map(s => (
                     <button
                       key={s.id}
                       onClick={() => selectSupplier(s)}
@@ -216,9 +230,6 @@ export const PurchaseEntryPage: React.FC = () => {
                       <span className="text-white/40 text-sm">{s.phone}</span>
                     </button>
                   ))}
-                  {filteredSuppliers.length === 0 && (
-                    <div className="p-4 text-white/30 text-sm">No suppliers found</div>
-                  )}
                 </div>
               )}
             </div>
@@ -318,7 +329,10 @@ export const PurchaseEntryPage: React.FC = () => {
               <h3 className="font-semibold text-white">Receipt Lines ({lines.length})</h3>
             </div>
             {lines.length === 0 ? (
-              <div className="p-8 text-center text-white/30">No items added yet</div>
+              <div className="p-8 text-center">
+                <Package size={32} className="mx-auto text-white/20 mb-3" />
+                <p className="text-white/30 text-sm">No items added yet. Search or scan items above.</p>
+              </div>
             ) : (
               <div className="divide-y divide-white/5">
                 {lines.map((l, i) => (
