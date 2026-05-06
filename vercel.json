@@ -5,12 +5,12 @@
       "destination": "/index.html"
     },
     {
-      "source": "/admin/:path*",
-      "destination": "/apps/admin_web/dist/:path*"
-    },
-    {
       "source": "/admin",
       "destination": "/apps/admin_web/dist/index.html"
+    },
+    {
+      "source": "/admin/(.*)",
+      "destination": "/apps/admin_web/dist/$1"
     },
     {
       "source": "/privacy",
