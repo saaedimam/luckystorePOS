@@ -1,11 +1,34 @@
 {
-  "installCommand": "cd apps/admin_web && npm install",
-  "buildCommand": "cd apps/admin_web && npm run build",
-  "outputDirectory": "apps/admin_web/dist",
   "rewrites": [
     {
-      "source": "/((?!assets|favicon|icons).*)",
-      "destination": "/index.html"
+      "source": "/admin/:path*",
+      "destination": "/apps/admin_web/dist/:path*"
+    },
+    {
+      "source": "/admin",
+      "destination": "/apps/admin_web/dist/index.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy-policy.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms-of-service.html"
+    },
+    {
+      "source": "/assets/(.*)",
+      "destination": "/apps/admin_web/dist/assets/$1"
+    },
+    {
+      "source": "/favicon",
+      "destination": "/apps/admin_web/dist/favicon"
+    },
+    {
+      "source": "/icons",
+      "destination": "/apps/admin_web/dist/icons"
     }
-  ]
+  ],
+  "buildCommand": "cd apps/admin_web && npm install && npm run build",
+  "outputDirectory": "."
 }
