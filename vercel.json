@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/",
+      "destination": "/index.html"
+    },
+    {
       "source": "/admin/:path*",
       "destination": "/apps/admin_web/dist/:path*"
     },
