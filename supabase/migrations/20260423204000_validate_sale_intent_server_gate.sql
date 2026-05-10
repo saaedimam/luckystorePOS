@@ -39,7 +39,7 @@ BEGIN
       i.active,
       i.name,
       i.price,
-      COALESCE(sl.qty_on_hand, 0) AS qty_on_hand
+      COALESCE(sl.qty, 0) AS qty_on_hand
     INTO v_live_item
     FROM public.items i
     LEFT JOIN public.stock_levels sl

@@ -32,7 +32,7 @@ AS $$
     'price',        i.price,
     'cost',         i.cost,
     'group_tag',    i.group_tag,
-    'image_url',    i.image_url,
+    'image_url',    NULL::text,
     'qty_on_hand',  COALESCE(sl.qty, 0),
     'category',     c.name
   )
@@ -41,7 +41,7 @@ AS $$
          ON sl.item_id = i.id AND sl.store_id = p_store_id
   LEFT JOIN public.categories c
          ON c.id = i.category_id
-  WHERE i.active = true
+  WHERE i.is_active = true
     AND (
       i.sku        = p_scan_value OR
       i.barcode    = p_scan_value OR
@@ -83,7 +83,7 @@ AS $$
       i.price,
       i.cost,
       i.group_tag,
-      i.image_url,
+      NULL::text AS image_url,
       c.name        AS category,
       c.id          AS category_id,
       COALESCE(sl.qty, 0) AS qty_on_hand
@@ -92,7 +92,7 @@ AS $$
            ON sl.item_id = i.id AND sl.store_id = p_store_id
     LEFT JOIN public.categories c
            ON c.id = i.category_id
-    WHERE i.active = true
+    WHERE i.is_active = true
       AND (
         p_query = '' OR
         i.name        ILIKE '%' || p_query || '%' OR
@@ -131,7 +131,7 @@ AS $$
       c.name,
       COUNT(i.id) AS item_count
     FROM public.categories c
-    JOIN public.items i ON i.category_id = c.id AND i.active = true
+    JOIN public.items i ON i.category_id = c.id AND i.is_active = true
     GROUP BY c.id, c.name
     HAVING COUNT(i.id) > 0
   ) r;

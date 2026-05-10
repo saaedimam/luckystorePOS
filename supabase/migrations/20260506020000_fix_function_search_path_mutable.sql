@@ -21,7 +21,12 @@ ALTER FUNCTION public.mark_followup_resolved SET search_path = public, pg_temp;
 -- Batch 2: Data protection and reminder functions
 ALTER FUNCTION public.prevent_sale_audit_log_mutation SET search_path = public, pg_temp;
 ALTER FUNCTION public.record_customer_payment SET search_path = public, pg_temp;
-ALTER FUNCTION public.set_updated_at_timestamp SET search_path = public, pg_temp;
+DO $$
+BEGIN
+  IF to_regprocedure('public.set_updated_at_timestamp()') IS NOT NULL THEN
+    ALTER FUNCTION public.set_updated_at_timestamp() SET search_path = public, pg_temp;
+  END IF;
+END $$;
 ALTER FUNCTION public.get_upcoming_reminders SET search_path = public, pg_temp;
 ALTER FUNCTION public.create_reminder SET search_path = public, pg_temp;
 ALTER FUNCTION public.check_idempotency SET search_path = public, pg_temp;

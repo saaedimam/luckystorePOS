@@ -14,15 +14,11 @@ CREATE POLICY "categories_select_tenant_isolated"
   FOR SELECT
   TO authenticated
   USING (
-    -- User can see categories from their store
-    store_id = public.get_current_user_store_id()
-    OR
-    -- Admins/managers/advisors can see categories from their tenant
     EXISTS (
       SELECT 1
       FROM public.users u
       WHERE u.auth_id = auth.uid()
-        AND u.role IN ('admin', 'manager', 'advisor')
+        AND u.role IN ('admin', 'manager', 'advisor', 'cashier')
         AND u.tenant_id = public.get_current_user_tenant_id()
     )
   );

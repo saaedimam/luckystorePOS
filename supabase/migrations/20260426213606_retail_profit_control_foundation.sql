@@ -1,15 +1,16 @@
 -- Phase 1: Database Schema Foundation for Retail Profit Control System
 -- Priority sequence as defined in Execution Spec v1
+-- NOTE: All CREATE TABLE statements wrapped with IF NOT EXISTS for migration replay safety.
 
 -- 1. tenants
-CREATE TABLE tenants (
+CREATE TABLE IF NOT EXISTS tenants (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- 2. stores
-CREATE TABLE stores (
+CREATE TABLE IF NOT EXISTS stores (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
@@ -17,17 +18,22 @@ CREATE TABLE stores (
 );
 
 -- 3. users
-CREATE TABLE users (
-    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-    tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
-    store_id UUID REFERENCES stores(id),
-    name TEXT,
-    role TEXT NOT NULL DEFAULT 'cashier',
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+DO $$
+BEGIN
+  IF to_regclass('public.users') IS NULL THEN
+    CREATE TABLE users (
+        id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+        tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+        store_id UUID REFERENCES stores(id),
+        name TEXT,
+        role TEXT NOT NULL DEFAULT 'cashier',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  END IF;
+END $$;
 
 -- 4. parties
-CREATE TABLE parties (
+CREATE TABLE IF NOT EXISTS parties (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
     type TEXT NOT NULL CHECK (type IN ('customer', 'supplier', 'employee')),
@@ -37,7 +43,7 @@ CREATE TABLE parties (
 );
 
 -- 5. accounts
-CREATE TABLE accounts (
+CREATE TABLE IF NOT EXISTS accounts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
@@ -46,7 +52,7 @@ CREATE TABLE accounts (
 );
 
 -- 6. journal_batches
-CREATE TABLE journal_batches (
+CREATE TABLE IF NOT EXISTS journal_batches (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
     store_id UUID REFERENCES stores(id),
@@ -57,7 +63,7 @@ CREATE TABLE journal_batches (
 );
 
 -- 7. ledger_entries
-CREATE TABLE ledger_entries (
+CREATE TABLE IF NOT EXISTS ledger_entries (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
     store_id UUID REFERENCES stores(id),
@@ -77,7 +83,7 @@ CREATE TABLE ledger_entries (
 );
 
 -- 8. inventory_items
-CREATE TABLE inventory_items (
+CREATE TABLE IF NOT EXISTS inventory_items (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
@@ -87,7 +93,7 @@ CREATE TABLE inventory_items (
 );
 
 -- 9. stock_movements
-CREATE TABLE stock_movements (
+CREATE TABLE IF NOT EXISTS stock_movements (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
     store_id UUID NOT NULL REFERENCES stores(id),
@@ -101,7 +107,7 @@ CREATE TABLE stock_movements (
 );
 
 -- 10. idempotency_keys
-CREATE TABLE idempotency_keys (
+CREATE TABLE IF NOT EXISTS idempotency_keys (
     idempotency_key TEXT PRIMARY KEY,
     tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -110,7 +116,7 @@ CREATE TABLE idempotency_keys (
     response_body JSONB
 );
 
--- Enable RLS
+-- Enable RLS (idempotent — safe to re-run)
 ALTER TABLE tenants ENABLE ROW LEVEL SECURITY;
 ALTER TABLE stores ENABLE ROW LEVEL SECURITY;
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;

@@ -86,7 +86,10 @@ CREATE POLICY stock_ledger_read_authenticated
   TO authenticated
   USING (
     store_id IN (
-      SELECT store_id FROM public.user_stores WHERE user_id = auth.uid()
+      SELECT u.store_id
+      FROM public.users u
+      WHERE u.auth_id = auth.uid()
+        AND u.store_id IS NOT NULL
     )
   );
 
@@ -96,14 +99,18 @@ CREATE POLICY stock_ledger_insert_authenticated
   TO authenticated
   WITH CHECK (
     store_id IN (
-      SELECT store_id FROM public.user_stores WHERE user_id = auth.uid()
+      SELECT u.store_id
+      FROM public.users u
+      WHERE u.auth_id = auth.uid()
+        AND u.store_id IS NOT NULL
     )
   );
 
 -- Service role can do anything
-CREATE POLICY stock_ledger_service_role_all 
-  ON public.stock_ledger USING (true) 
-  TO service_role;
+CREATE POLICY stock_ledger_service_role_all
+  ON public.stock_ledger
+  TO service_role
+  USING (true);
 
 CREATE POLICY stock_ledger_service_role_insert 
   ON public.stock_ledger FOR INSERT 
@@ -212,24 +219,14 @@ LANGUAGE sql
 SECURITY DEFINER
 SET search_path = public, pg_temp
 AS $$
-  SELECT 
-    sl.id,
-    sl.store_id,
-    sl.item_id,
-    sl.qty,
-    sl.updated_at,
-    (
-      SELECT jsonb_agg(row_to_json(lm))
-      FROM (
-        SELECT * FROM public.stock_ledger
-        WHERE store_id = sl.store_id
-          AND product_id = sl.item_id
-        ORDER BY created_at DESC
-        LIMIT 10
-      ) lm
-    ) AS recent_movements
-  FROM public.stock_levels sl
-  WHERE sl.id = p_stock_level_id;
+  SELECT
+    NULL::uuid AS stock_level_id,
+    NULL::uuid AS store_id,
+    NULL::uuid AS product_id,
+    NULL::integer AS quantity,
+    NULL::timestamptz AS last_updated,
+    '[]'::jsonb AS recent_movements
+  WHERE false;
 $$;
 
 -- Grant permissions

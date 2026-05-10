@@ -38,17 +38,14 @@ CREATE TEMP TABLE temp_inventory_apr10th (
 -- OR use Supabase dashboard Table Editor to import
 
 -- Step 2: Insert categories
-INSERT INTO public.categories (id, name, description, created_at, updated_at)
+INSERT INTO public.categories (id, category, name)
 SELECT DISTINCT
   uuid_generate_v4(),
   COALESCE(NULLIF(trim(category), ''), 'Uncategorized'),
-  COALESCE(NULLIF(trim(category), ''), 'Uncategorized') || ' products',
-  NOW(),
-  NOW()
+  COALESCE(NULLIF(trim(category), ''), 'Uncategorized')
 FROM temp_inventory_apr10th
 WHERE trim(category) IS NOT NULL
-  AND trim(category) != ''
-ON CONFLICT (name) DO NOTHING;
+  AND trim(category) != '';
 
 -- Step 3: Insert items with MRP
 INSERT INTO public.items (
@@ -63,9 +60,6 @@ INSERT INTO public.items (
   cost,            -- Purchase cost
   image_url,
   barcode,
-  supplier,
-  batch_code,
-  expiry_date,
   active,
   created_at,
   updated_at
@@ -82,9 +76,6 @@ SELECT
   COALESCE(cost, 0),           -- Cost
   NULLIF(trim(image_url), ''),
   NULLIF(trim(barcode), ''),
-  NULLIF(trim(supplier), ''),
-  NULLIF(trim(batch_code), ''),
-  expiry_date,
   true,
   NOW(),
   NOW()
@@ -92,43 +83,29 @@ FROM temp_inventory_apr10th t
 LEFT JOIN public.categories c ON c.name = COALESCE(NULLIF(trim(t.category), ''), 'Uncategorized')
 WHERE trim(item_name) IS NOT NULL
   AND trim(item_name) != ''
-ON CONFLICT (sku) DO UPDATE SET
-  name = EXCLUDED.name,
-  description = EXCLUDED.description,
-  category_id = EXCLUDED.category_id,
-  price = EXCLUDED.price,
-  mrp = EXCLUDED.mrp,
-  cost = EXCLUDED.cost,
-  image_url = EXCLUDED.image_url,
-  barcode = EXCLUDED.barcode,
-  supplier = EXCLUDED.supplier,
-  batch_code = EXCLUDED.batch_code,
-  expiry_date = EXCLUDED.expiry_date,
-  updated_at = NOW();
+  AND NOT EXISTS (
+    SELECT 1
+    FROM public.items existing
+    WHERE existing.sku = COALESCE(NULLIF(trim(t.sku), ''), 'SKU-' || t.sl::text)
+  );
 
 -- Step 4: Insert stock levels
 INSERT INTO public.stock_levels (
-  id,
-  item_id,
   store_id,
+  item_id,
   qty,
-  low_stock_threshold,
-  created_at,
-  updated_at
+  reserved
 )
 SELECT
-  uuid_generate_v4(),
-  i.id,
   '4acf0fb2-f831-4205-b9f8-e1e8b4e6e8fd'::uuid,  -- Your store ID
+  i.id,
   COALESCE(initial_stock_qty, 0),
-  5,  -- Default low stock threshold
-  NOW(),
-  NOW()
+  0
 FROM temp_inventory_apr10th t
 JOIN public.items i ON i.sku = COALESCE(NULLIF(trim(t.sku), ''), 'SKU-' || t.sl::text)
-ON CONFLICT (item_id, store_id) DO UPDATE SET
+ON CONFLICT (store_id, item_id) DO UPDATE SET
   qty = EXCLUDED.qty,
-  updated_at = NOW();
+  reserved = EXCLUDED.reserved;
 
 -- Step 5: Verify import
 SELECT

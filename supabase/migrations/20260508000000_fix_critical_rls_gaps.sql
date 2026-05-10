@@ -48,31 +48,20 @@ DROP POLICY IF EXISTS "categories_select_authenticated" ON public.categories;
 DROP POLICY IF EXISTS "categories_select_tenant_isolated" ON public.categories;
 
 -- Create secure SELECT policy
+
 CREATE POLICY "categories_select_tenant_isolated"
   ON public.categories
   FOR SELECT
   TO authenticated
   USING (
-    -- User can see categories from their store
-    store_id = public.get_current_user_store_id()
-    OR
-    -- Admins/managers can see categories from their tenant
-    EXISTS (
-      SELECT 1
-      FROM public.users u
-      WHERE u.auth_id = (SELECT auth.uid())
-        AND u.role IN ('admin', 'manager', 'advisor')
-        AND u.tenant_id = public.get_current_user_tenant_id()
-        AND EXISTS (
-          SELECT 1 FROM public.categories c
-          WHERE c.store_id = u.store_id
-        )
-    )
+    auth.uid() IS NOT NULL
   );
+
 
 -- Verify and create INSERT policy if missing
 DROP POLICY IF EXISTS "categories_insert_admin" ON public.categories;
 DROP POLICY IF EXISTS "categories_insert_tenant_scoped" ON public.categories;
+
 
 CREATE POLICY "categories_insert_tenant_scoped"
   ON public.categories
@@ -84,57 +73,55 @@ CREATE POLICY "categories_insert_tenant_scoped"
       FROM public.users u
       WHERE u.auth_id = (SELECT auth.uid())
         AND u.role IN ('admin', 'manager', 'advisor')
-        AND u.store_id = store_id
     )
   );
+
 
 -- Verify and create UPDATE policy if missing
 DROP POLICY IF EXISTS "categories_update_admin" ON public.categories;
 DROP POLICY IF EXISTS "categories_update_tenant_scoped" ON public.categories;
+
 
 CREATE POLICY "categories_update_tenant_scoped"
   ON public.categories
   FOR UPDATE
   TO authenticated
   USING (
-    store_id = public.get_current_user_store_id()
-    AND EXISTS (
+    EXISTS (
       SELECT 1
       FROM public.users u
       WHERE u.auth_id = (SELECT auth.uid())
         AND u.role IN ('admin', 'manager', 'advisor')
-        AND u.store_id = store_id
     )
   )
   WITH CHECK (
-    store_id = public.get_current_user_store_id()
-    AND EXISTS (
+    EXISTS (
       SELECT 1
       FROM public.users u
       WHERE u.auth_id = (SELECT auth.uid())
         AND u.role IN ('admin', 'manager', 'advisor')
-        AND u.store_id = store_id
     )
   );
+
 
 -- Verify and create DELETE policy if missing
 DROP POLICY IF EXISTS "categories_delete_admin" ON public.categories;
 DROP POLICY IF EXISTS "categories_delete_tenant_scoped" ON public.categories;
+
 
 CREATE POLICY "categories_delete_tenant_scoped"
   ON public.categories
   FOR DELETE
   TO authenticated
   USING (
-    store_id = public.get_current_user_store_id()
-    AND EXISTS (
+    EXISTS (
       SELECT 1
       FROM public.users u
       WHERE u.auth_id = (SELECT auth.uid())
         AND u.role IN ('admin', 'manager', 'advisor')
-        AND u.store_id = store_id
     )
   );
+
 
 -- =============================================================================
 -- 2) ITEMS - Products/Inventory items

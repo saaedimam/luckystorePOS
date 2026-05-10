@@ -11,28 +11,83 @@
 -- ============================================================================
 
 -- Period closing and validation (should be admin only)
-REVOKE EXECUTE ON FUNCTION public.close_accounting_period(uuid, date, date) FROM authenticated;
-REVOKE EXECUTE ON FUNCTION public.validate_trial_balance(uuid, date, date) FROM authenticated;
-REVOKE EXECUTE ON FUNCTION public.replay_sale_ledger_chain(uuid) FROM authenticated;
+DO $$
+BEGIN
+  IF to_regprocedure('public.close_accounting_period(uuid, date, date)') IS NOT NULL THEN
+    REVOKE EXECUTE ON FUNCTION public.close_accounting_period(uuid, date, date) FROM authenticated;
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF to_regprocedure('public.validate_trial_balance(uuid, date, date)') IS NOT NULL THEN
+    REVOKE EXECUTE ON FUNCTION public.validate_trial_balance(uuid, date, date) FROM authenticated;
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF to_regprocedure('public.replay_sale_ledger_chain(uuid)') IS NOT NULL THEN
+    REVOKE EXECUTE ON FUNCTION public.replay_sale_ledger_chain(uuid) FROM authenticated;
+  END IF;
+END $$;
 
 -- Ledger worker management (should be admin only)
-REVOKE EXECUTE ON FUNCTION public.register_ledger_worker(text) FROM authenticated;
-REVOKE EXECUTE ON FUNCTION public.deactivate_ledger_worker(text) FROM authenticated;
-REVOKE EXECUTE ON FUNCTION public.reclaim_stale_ledger_locks() FROM authenticated;
+DO $$
+BEGIN
+  IF to_regprocedure('public.register_ledger_worker(text)') IS NOT NULL THEN
+    REVOKE EXECUTE ON FUNCTION public.register_ledger_worker(text) FROM authenticated;
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF to_regprocedure('public.deactivate_ledger_worker(text)') IS NOT NULL THEN
+    REVOKE EXECUTE ON FUNCTION public.deactivate_ledger_worker(text) FROM authenticated;
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF to_regprocedure('public.reclaim_stale_ledger_locks()') IS NOT NULL THEN
+    REVOKE EXECUTE ON FUNCTION public.reclaim_stale_ledger_locks() FROM authenticated;
+  END IF;
+END $$;
 
 -- ============================================================================
 -- MANAGER-ONLY FUNCTIONS: Overrides and Risk Management
 -- ============================================================================
 
 -- POS override token issuance (should be manager only)
-REVOKE EXECUTE ON FUNCTION public.issue_pos_override_token(uuid, text, jsonb, integer) FROM authenticated;
+DO $$
+BEGIN
+  IF to_regprocedure('public.issue_pos_override_token(uuid, text, jsonb, integer)') IS NOT NULL THEN
+    REVOKE EXECUTE ON FUNCTION public.issue_pos_override_token(uuid, text, jsonb, integer) FROM authenticated;
+  END IF;
+END $$;
 
 -- Void sales (should require manager approval)
-REVOKE EXECUTE ON FUNCTION public.void_sale(uuid, text) FROM authenticated;
+DO $$
+BEGIN
+  IF to_regprocedure('public.void_sale(uuid, text)') IS NOT NULL THEN
+    REVOKE EXECUTE ON FUNCTION public.void_sale(uuid, text) FROM authenticated;
+  END IF;
+END $$;
 
 -- Close risk analytics (manager dashboard)
-REVOKE EXECUTE ON FUNCTION public.get_close_risk_analytics(uuid, uuid, date, date) FROM authenticated;
-REVOKE EXECUTE ON FUNCTION public.get_monthly_governance_scorecard(uuid, uuid, date) FROM authenticated;
+DO $$
+BEGIN
+  IF to_regprocedure('public.get_close_risk_analytics(uuid, uuid, date, date)') IS NOT NULL THEN
+    REVOKE EXECUTE ON FUNCTION public.get_close_risk_analytics(uuid, uuid, date, date) FROM authenticated;
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF to_regprocedure('public.get_monthly_governance_scorecard(uuid, uuid, date)') IS NOT NULL THEN
+    REVOKE EXECUTE ON FUNCTION public.get_monthly_governance_scorecard(uuid, uuid, date) FROM authenticated;
+  END IF;
+END $$;
 
 -- ============================================================================
 -- FUNCTIONS WITH INTERNAL AUTH CHECKS: Keep accessible but rely on internal checks
