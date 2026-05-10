@@ -267,8 +267,13 @@ DROP FUNCTION IF EXISTS public.record_purchase_v2();
 -- $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Revoke and grant permissions
-REVOKE ALL ON FUNCTION public.record_purchase_v2(TEXT, UUID, UUID, UUID, TEXT, NUMERIC, JSONB, NUMERIC, UUID, UUID, TEXT, TEXT) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.record_purchase_v2(TEXT, UUID, UUID, UUID, TEXT, NUMERIC, JSONB, NUMERIC, UUID, UUID, TEXT, TEXT) TO authenticated;
+DO $$
+BEGIN
+  IF to_regprocedure('public.record_purchase_v2(text,uuid,uuid,uuid,text,numeric,jsonb,numeric,uuid,uuid,text,text)') IS NOT NULL THEN
+    REVOKE ALL ON FUNCTION public.record_purchase_v2(TEXT, UUID, UUID, UUID, TEXT, NUMERIC, JSONB, NUMERIC, UUID, UUID, TEXT, TEXT) FROM PUBLIC;
+    GRANT EXECUTE ON FUNCTION public.record_purchase_v2(TEXT, UUID, UUID, UUID, TEXT, NUMERIC, JSONB, NUMERIC, UUID, UUID, TEXT, TEXT) TO authenticated;
+  END IF;
+END $$;
 
 -- ---------------------------------------------------------------------------
 -- Helper RPC: post_draft_purchase_receipt

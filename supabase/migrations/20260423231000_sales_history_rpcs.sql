@@ -28,7 +28,7 @@ STABLE
 AS $$
 BEGIN
   RETURN QUERY
-  SELECT 
+  SELECT
     s.id,
     s.sale_number,
     s.total_amount,
@@ -89,7 +89,7 @@ BEGIN
   SELECT jsonb_agg(jsonb_build_object(
     'item_name', i.name,
     'qty', si.qty,
-    'unit_price', si.unit_price,
+    'unit_price', si.price,
     'line_total', si.line_total,
     'sku', i.sku
   )) INTO v_items
@@ -144,10 +144,10 @@ SECURITY DEFINER
 SET search_path = public, pg_temp
 STABLE
 AS $$
-  -- Note: email is in public.users if synced, or we might need to join auth.users 
+  -- Note: email is in public.users if synced, or we might need to join auth.users
   -- but we'll stick to public.users for simplicity in this lean app.
-  SELECT id, full_name, role, email, last_login 
-  FROM public.users 
+  SELECT id, full_name, role, email, last_login_at AS last_login
+  FROM public.users
   WHERE store_id = p_store_id OR role = 'admin'
   ORDER BY role ASC, full_name ASC;
 $$;
@@ -181,7 +181,7 @@ AS $$
 BEGIN
   -- Auth: manager/admin only
   IF NOT EXISTS (
-    SELECT 1 FROM public.users 
+    SELECT 1 FROM public.users
     WHERE auth_id = auth.uid() AND role IN ('admin', 'manager')
   ) THEN
     RAISE EXCEPTION 'Access denied';
@@ -193,7 +193,7 @@ BEGIN
     store_name = EXCLUDED.store_name,
     header_text = EXCLUDED.header_text,
     footer_text = EXCLUDED.footer_text;
-    
+
   RETURN (SELECT * FROM public.receipt_config WHERE store_id = p_store_id);
 END;
 $$;

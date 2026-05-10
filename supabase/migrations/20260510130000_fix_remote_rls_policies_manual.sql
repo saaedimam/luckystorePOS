@@ -38,12 +38,11 @@ CREATE POLICY "categories_select_tenant_isolated"
   FOR SELECT
   TO authenticated
   USING (
-    store_id = public.get_current_user_store_id()
-    OR EXISTS (
+    EXISTS (
       SELECT 1
       FROM public.users u
       WHERE u.auth_id = auth.uid()
-        AND u.role IN ('admin', 'manager', 'advisor')
+        AND u.role IN ('admin', 'manager', 'advisor', 'cashier')
         AND u.tenant_id = public.get_current_user_tenant_id()
     )
   );
@@ -53,21 +52,21 @@ CREATE POLICY "categories_manage_authorized"
   FOR ALL
   TO authenticated
   USING (
-    store_id = public.get_current_user_store_id()
-    AND EXISTS (
+    EXISTS (
       SELECT 1
       FROM public.users u
       WHERE u.auth_id = auth.uid()
         AND u.role IN ('admin', 'manager', 'advisor')
+        AND u.tenant_id = public.get_current_user_tenant_id()
     )
   )
   WITH CHECK (
-    store_id = public.get_current_user_store_id()
-    AND EXISTS (
+    EXISTS (
       SELECT 1
       FROM public.users u
       WHERE u.auth_id = auth.uid()
         AND u.role IN ('admin', 'manager', 'advisor')
+        AND u.tenant_id = public.get_current_user_tenant_id()
     )
   );
 
@@ -148,12 +147,6 @@ CREATE POLICY "stock_transfer_items_select_tenant"
   TO authenticated
   USING (
     EXISTS (
-      SELECT 1
-      FROM public.stock_transfers st
-      WHERE st.id = stock_transfer_items.transfer_id
-        AND st.store_id = public.get_current_user_store_id()
-    )
-    OR EXISTS (
       SELECT 1
       FROM public.users u
       WHERE u.auth_id = auth.uid()

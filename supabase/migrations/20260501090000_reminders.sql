@@ -1,5 +1,5 @@
 -- Reminders table for general store reminders (payments, follow-ups, stock checks, etc.)
-CREATE TABLE reminders (
+CREATE TABLE IF NOT EXISTS reminders (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
     store_id UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
@@ -13,24 +13,31 @@ CREATE TABLE reminders (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_reminders_tenant_store ON reminders(tenant_id, store_id);
-CREATE INDEX idx_reminders_date ON reminders(reminder_date);
-CREATE INDEX idx_reminders_type ON reminders(reminder_type);
-CREATE INDEX idx_reminders_completed ON reminders(is_completed);
+CREATE INDEX IF NOT EXISTS idx_reminders_tenant_store ON reminders(tenant_id, store_id);
+CREATE INDEX IF NOT EXISTS idx_reminders_date ON reminders(reminder_date);
+CREATE INDEX IF NOT EXISTS idx_reminders_type ON reminders(reminder_type);
+CREATE INDEX IF NOT EXISTS idx_reminders_completed ON reminders(is_completed);
 
 ALTER TABLE reminders ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "reminders_select" ON reminders FOR SELECT TO authenticated
-    USING (EXISTS (SELECT 1 FROM users u WHERE u.auth_id = auth.uid() AND u.tenant_id = reminders.tenant_id));
-
-CREATE POLICY "reminders_insert" ON reminders FOR INSERT TO authenticated
-    WITH CHECK (EXISTS (SELECT 1 FROM users u WHERE u.auth_id = auth.uid() AND u.tenant_id = reminders.tenant_id AND u.role IN ('admin', 'manager')));
-
-CREATE POLICY "reminders_update" ON reminders FOR UPDATE TO authenticated
-    USING (EXISTS (SELECT 1 FROM users u WHERE u.auth_id = auth.uid() AND u.tenant_id = reminders.tenant_id AND u.role IN ('admin', 'manager')));
-
-CREATE POLICY "reminders_delete" ON reminders FOR DELETE TO authenticated
-    USING (EXISTS (SELECT 1 FROM users u WHERE u.auth_id = auth.uid() AND u.tenant_id = reminders.tenant_id AND u.role IN ('admin', 'manager')));
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'reminders' AND policyname = 'reminders_select') THEN
+    CREATE POLICY "reminders_select" ON reminders FOR SELECT TO authenticated
+      USING (EXISTS (SELECT 1 FROM users u WHERE u.auth_id = auth.uid() AND u.tenant_id = reminders.tenant_id));
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'reminders' AND policyname = 'reminders_insert') THEN
+    CREATE POLICY "reminders_insert" ON reminders FOR INSERT TO authenticated
+      WITH CHECK (EXISTS (SELECT 1 FROM users u WHERE u.auth_id = auth.uid() AND u.tenant_id = reminders.tenant_id AND u.role IN ('admin', 'manager')));
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'reminders' AND policyname = 'reminders_update') THEN
+    CREATE POLICY "reminders_update" ON reminders FOR UPDATE TO authenticated
+      USING (EXISTS (SELECT 1 FROM users u WHERE u.auth_id = auth.uid() AND u.tenant_id = reminders.tenant_id AND u.role IN ('admin', 'manager')));
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'reminders' AND policyname = 'reminders_delete') THEN
+    CREATE POLICY "reminders_delete" ON reminders FOR DELETE TO authenticated
+      USING (EXISTS (SELECT 1 FROM users u WHERE u.auth_id = auth.uid() AND u.tenant_id = reminders.tenant_id AND u.role IN ('admin', 'manager')));
+  END IF;
+END $$;
 
 -- RPC: get_upcoming_reminders
 -- Lists reminders for a store, ordered by date ascending, with optional completed filter
@@ -118,7 +125,7 @@ END;
 $$;
 
 REVOKE ALL ON FUNCTION public.update_reminder(UUID, TEXT, TEXT, DATE, TEXT, BOOLEAN) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.update_reminder(UUID, TEXT, DATE, TEXT, BOOLEAN) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.update_reminder(UUID, TEXT, TEXT, DATE, TEXT, BOOLEAN) TO authenticated;
 
 -- RPC: delete_reminder
 CREATE OR REPLACE FUNCTION public.delete_reminder(

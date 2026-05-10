@@ -435,8 +435,13 @@ DROP FUNCTION IF EXISTS public.complete_sale();
 -- END;
 -- $$;
 
-REVOKE ALL ON FUNCTION public.complete_sale(uuid,uuid,uuid,jsonb,jsonb,numeric,text) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.complete_sale(uuid,uuid,uuid,jsonb,jsonb,numeric,text) TO authenticated;
+DO $$
+BEGIN
+  IF to_regprocedure('public.complete_sale(uuid,uuid,uuid,jsonb,jsonb,numeric,text)') IS NOT NULL THEN
+    REVOKE ALL ON FUNCTION public.complete_sale(uuid,uuid,uuid,jsonb,jsonb,numeric,text) FROM PUBLIC;
+    GRANT EXECUTE ON FUNCTION public.complete_sale(uuid,uuid,uuid,jsonb,jsonb,numeric,text) TO authenticated;
+  END IF;
+END $$;
 
 -- ---------------------------------------------------------------------------
 -- 10) RPC: void_sale()
@@ -521,3 +526,13 @@ GRANT EXECUTE ON FUNCTION public.void_sale(uuid, text) TO authenticated;
 --     AND table_name IN ('sales','sale_items','sale_payments',
 --                        'payment_methods','discounts','pos_sessions');
 -- ---------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS public.returns (
+    id uuid DEFAULT gen_random_uuid() NOT NULL PRIMARY KEY,
+    sale_id uuid REFERENCES public.sales(id),
+    store_id uuid REFERENCES public.stores(id),
+    processed_by uuid REFERENCES public.users(id),
+    refund_amount numeric(15,2),
+    reason text,
+    created_at timestamp with time zone DEFAULT now()
+);

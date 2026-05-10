@@ -79,6 +79,13 @@ drop policy if exists "batches_no_client_access" on public.batches;
 create policy "batches_no_client_access"
   on public.batches for all to authenticated using (false) with check (false);
 
+create table if not exists public.receipt_counters (
+  store_id uuid not null references public.stores(id),
+  date date not null,
+  counter integer default 0,
+  primary key (store_id, date)
+);
+
 alter table public.receipt_counters enable row level security;
 
 drop policy if exists "receipt_counters_no_client_access" on public.receipt_counters;
@@ -93,8 +100,24 @@ create policy "returns_no_client_access"
 
 -- Security advisor: mutable search_path on SECURITY DEFINER / RPC functions
 alter function public.decrement_stock(uuid, uuid, integer) set search_path = public, pg_temp;
-alter function public.get_new_receipt(uuid) set search_path = public, pg_temp;
+
+DO $$
+BEGIN
+  IF to_regprocedure('public.get_new_receipt(uuid)') IS NOT NULL THEN
+    alter function public.get_new_receipt(uuid) set search_path = public, pg_temp;
+  END IF;
+END $$;
+
 alter function public.import_apply_stock_delta(uuid, uuid, integer) set search_path = public, pg_temp;
-alter function public.update_competitor_price_timestamp() set search_path = public, pg_temp;
-alter function public.update_timestamp() set search_path = public, pg_temp;
+
+DO $$
+BEGIN
+  IF to_regprocedure('public.update_competitor_price_timestamp()') IS NOT NULL THEN
+    alter function public.update_competitor_price_timestamp() set search_path = public, pg_temp;
+  END IF;
+  IF to_regprocedure('public.update_timestamp()') IS NOT NULL THEN
+    alter function public.update_timestamp() set search_path = public, pg_temp;
+  END IF;
+END $$;
+
 alter function public.upsert_stock_level(uuid, uuid, integer) set search_path = public, pg_temp;
