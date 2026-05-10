@@ -53,6 +53,42 @@ This writes TypeScript database types to `apps/admin_web/src/lib/database.types.
 npm run dev
 ```
 
+## Browser Debugging With Antigravity + Chrome DevTools MCP
+
+Chrome DevTools MCP is accessed through Antigravity.
+
+Default local app URL:
+
+```text
+http://localhost:5173
+```
+
+Recommended sequence:
+1. Start local Supabase.
+2. Start the frontend with `npm run dev`.
+3. Open `http://localhost:5173` in Chrome through Antigravity.
+4. Use Chrome DevTools MCP to inspect console errors, failed network requests, route state, and relevant DOM state.
+5. Confirm Supabase traffic targets local `http://127.0.0.1:54321`, not a remote Supabase project.
+6. Capture a browser evidence report before asking Codex to edit code.
+7. Send the evidence report to Codex.
+8. Codex patches the smallest root cause.
+9. Run `npm run typecheck` and `npm run build`.
+10. Re-test the same browser path through Antigravity.
+
+Evidence to capture:
+- route URL
+- user action
+- expected behavior
+- actual behavior
+- console errors
+- failed request URL/status/method
+- Supabase endpoint detected
+- relevant DOM/UI state
+- files suspected
+- recommended next patch
+
+Do not capture, print, or commit secrets from browser storage, environment files, cookies, auth tokens, refresh tokens, or service-role keys.
+
 ## Verification
 ```bash
 npm run lint
