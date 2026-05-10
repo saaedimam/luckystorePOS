@@ -17,7 +17,7 @@ DECLARE
 BEGIN
   -- 1) Calculate Today's Sales & Orders
   SELECT 
-    COALESCE(SUM(total_amount), 0),
+    COALESCE(SUM(total), 0),
     COUNT(id)
   INTO 
     v_today_sales,
@@ -76,7 +76,7 @@ BEGIN
     SELECT generate_series(CURRENT_DATE - INTERVAL '6 days', CURRENT_DATE, '1 day'::interval)::date AS sale_date
   ) d
   LEFT JOIN (
-    SELECT created_at::date as sale_date, SUM(total_amount) as daily_sales
+    SELECT created_at::date as sale_date, SUM(total) as daily_sales
     FROM public.sales
     WHERE store_id = p_store_id AND status = 'completed'
     GROUP BY created_at::date

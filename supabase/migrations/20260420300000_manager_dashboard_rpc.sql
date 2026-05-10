@@ -22,7 +22,7 @@ DECLARE
 BEGIN
   -- 1) Calculate Today's Sales & Orders
   SELECT 
-    COALESCE(SUM(total_amount), 0),
+    COALESCE(SUM(total), 0),
     COUNT(id)
   INTO 
     v_today_sales,
