@@ -83,20 +83,6 @@ export function SalesHistoryPage() {
     queryFn: () => api.sales.history(storeId, searchTerm || undefined, startDate, endDate),
   });
 
-  if (error) {
-    return (
-      <div className="sales-history-container">
-        <PageHeader 
-          title="Sales History" 
-          subtitle="Search and review store transactions." 
-        />
-        <div className="card">
-          <ErrorState message="Failed to load sales history." onRetry={() => refetch()} />
-        </div>
-      </div>
-    );
-  }
-
   const completedSales = (sales ?? []).filter((s: { status: string }) => s.status === 'completed');
   const voidedSales = (sales ?? []).filter((s: { status: string }) => s.status === 'voided');
 
@@ -120,6 +106,20 @@ export function SalesHistoryPage() {
     setDateRange(range);
     setCurrentPage(1);
   };
+
+  if (error) {
+    return (
+      <div className="sales-history-container">
+        <PageHeader
+          title="Sales History"
+          subtitle="Search and review store transactions."
+        />
+        <div className="card">
+          <ErrorState message="Failed to load sales history." onRetry={() => refetch()} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="sales-history-container">
