@@ -1,9 +1,8 @@
 {
-    "cleanUrls": true,
     "rewrites": [
           {
-                  "source": "/admin/assets/:path*",
-                  "destination": "/assets/:path*"
+                  "source": "/admin/assets/(.*)",
+                  "destination": "/assets/$1"
           },
           {
                   "source": "/admin/sw.js",
@@ -18,7 +17,7 @@
                   "destination": "/index.html"
           },
           {
-                  "source": "/admin/:path*",
+                  "source": "/admin/(.*)",
                   "destination": "/index.html"
           }
     ]
