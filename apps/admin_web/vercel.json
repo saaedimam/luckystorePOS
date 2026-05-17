@@ -14,11 +14,11 @@
                   "destination": "/manifest.json"
           },
           {
-                  "source": "/admin/:path*",
+                  "source": "/admin",
                   "destination": "/index.html"
           },
           {
-                  "source": "/:path*",
+                  "source": "/admin/:path*",
                   "destination": "/index.html"
           }
     ]
