@@ -230,3 +230,5 @@ artifacts/quarantine/
 artifacts/governance/certification-report.json
 artifacts/governance/environment-fingerprint.json
 artifacts/governance/staging-fingerprint.json
+.vercel
+.env*.local
