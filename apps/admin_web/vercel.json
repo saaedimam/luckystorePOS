@@ -6,7 +6,19 @@
                   "destination": "/assets/:path*"
           },
           {
+                  "source": "/admin/sw.js",
+                  "destination": "/sw.js"
+          },
+          {
+                  "source": "/admin/manifest.json",
+                  "destination": "/manifest.json"
+          },
+          {
                   "source": "/admin/:path*",
+                  "destination": "/index.html"
+          },
+          {
+                  "source": "/:path*",
                   "destination": "/index.html"
           }
     ]
