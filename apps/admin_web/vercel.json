@@ -1,16 +1,12 @@
 {
-  "cleanUrls": true,
+    "cleanUrls": true,
     "rewrites": [
           {
-                  "source": "/admin",
-                  "destination": "/index.html"
+                  "source": "/admin/assets/:path*",
+                  "destination": "/assets/:path*"
           },
           {
-                  "source": "/admin/assets/(.*)",
-                  "destination": "/assets/$1"
-          },
-          {
-                  "source": "/admin/(.*)",
+                  "source": "/admin/:path*",
                   "destination": "/index.html"
           }
     ]
