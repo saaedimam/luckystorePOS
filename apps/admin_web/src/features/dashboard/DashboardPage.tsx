@@ -424,10 +424,13 @@ export function DashboardPage() {
             <div className="bg-surface rounded-md border border-border-default shadow-level-1">
               {lowStock && lowStock.length > 0 ? (
                 <ul className="divide-y divide-border-default">
-                  {lowStock.slice(0, 5).map((item: { id: string, name: string, quantity: number }) => (
-                    <li key={item.id} className="flex justify-between items-center px-4 py-3">
-                      <span className="text-sm text-text-primary">{item.name}</span>
-                      <span className="text-sm font-semibold text-danger">{item.quantity} left</span>
+                  {lowStock.slice(0, 5).map((item: { item_id: string, item_name: string, current_qty: number, sku?: string }) => (
+                    <li key={item.item_id} className="flex justify-between items-center px-4 py-3">
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-sm text-text-primary truncate">{item.item_name}</span>
+                        {item.sku && <span className="text-xs text-text-muted">{item.sku}</span>}
+                      </div>
+                      <span className="text-sm font-semibold text-danger ml-4 shrink-0">{item.current_qty} left</span>
                     </li>
                   ))}
                 </ul>
