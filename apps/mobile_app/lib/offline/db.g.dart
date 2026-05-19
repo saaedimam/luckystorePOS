@@ -1836,6 +1836,436 @@ class TelemetrySnapshotsCompanion extends UpdateCompanion<TelemetrySnapshot> {
   }
 }
 
+class $TransactionOutboxesTable extends TransactionOutboxes
+    with TableInfo<$TransactionOutboxesTable, TransactionOutboxEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TransactionOutboxesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _actionTypeMeta = const VerificationMeta(
+    'actionType',
+  );
+  @override
+  late final GeneratedColumn<String> actionType = GeneratedColumn<String>(
+    'action_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _payloadMeta = const VerificationMeta(
+    'payload',
+  );
+  @override
+  late final GeneratedColumn<String> payload = GeneratedColumn<String>(
+    'payload',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<TransactionStatus, int> status =
+      GeneratedColumn<int>(
+        'status',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+        defaultValue: Constant(TransactionStatus.pending.index),
+      ).withConverter<TransactionStatus>(
+        $TransactionOutboxesTable.$converterstatus,
+      );
+  static const VerificationMeta _idempotencyKeyMeta = const VerificationMeta(
+    'idempotencyKey',
+  );
+  @override
+  late final GeneratedColumn<String> idempotencyKey = GeneratedColumn<String>(
+    'idempotency_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _retryCountMeta = const VerificationMeta(
+    'retryCount',
+  );
+  @override
+  late final GeneratedColumn<int> retryCount = GeneratedColumn<int>(
+    'retry_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    actionType,
+    payload,
+    status,
+    idempotencyKey,
+    retryCount,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'transaction_outboxes';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TransactionOutboxEntry> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('action_type')) {
+      context.handle(
+        _actionTypeMeta,
+        actionType.isAcceptableOrUnknown(data['action_type']!, _actionTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_actionTypeMeta);
+    }
+    if (data.containsKey('payload')) {
+      context.handle(
+        _payloadMeta,
+        payload.isAcceptableOrUnknown(data['payload']!, _payloadMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadMeta);
+    }
+    if (data.containsKey('idempotency_key')) {
+      context.handle(
+        _idempotencyKeyMeta,
+        idempotencyKey.isAcceptableOrUnknown(
+          data['idempotency_key']!,
+          _idempotencyKeyMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_idempotencyKeyMeta);
+    }
+    if (data.containsKey('retry_count')) {
+      context.handle(
+        _retryCountMeta,
+        retryCount.isAcceptableOrUnknown(data['retry_count']!, _retryCountMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TransactionOutboxEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TransactionOutboxEntry(
+      id:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}id'],
+          )!,
+      actionType:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}action_type'],
+          )!,
+      payload:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}payload'],
+          )!,
+      status: $TransactionOutboxesTable.$converterstatus.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}status'],
+        )!,
+      ),
+      idempotencyKey:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.string,
+            data['${effectivePrefix}idempotency_key'],
+          )!,
+      retryCount:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.int,
+            data['${effectivePrefix}retry_count'],
+          )!,
+    );
+  }
+
+  @override
+  $TransactionOutboxesTable createAlias(String alias) {
+    return $TransactionOutboxesTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<TransactionStatus, int, int> $converterstatus =
+      const EnumIndexConverter<TransactionStatus>(TransactionStatus.values);
+}
+
+class TransactionOutboxEntry extends DataClass
+    implements Insertable<TransactionOutboxEntry> {
+  final String id;
+  final String actionType;
+  final String payload;
+  final TransactionStatus status;
+  final String idempotencyKey;
+  final int retryCount;
+  const TransactionOutboxEntry({
+    required this.id,
+    required this.actionType,
+    required this.payload,
+    required this.status,
+    required this.idempotencyKey,
+    required this.retryCount,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['action_type'] = Variable<String>(actionType);
+    map['payload'] = Variable<String>(payload);
+    {
+      map['status'] = Variable<int>(
+        $TransactionOutboxesTable.$converterstatus.toSql(status),
+      );
+    }
+    map['idempotency_key'] = Variable<String>(idempotencyKey);
+    map['retry_count'] = Variable<int>(retryCount);
+    return map;
+  }
+
+  TransactionOutboxesCompanion toCompanion(bool nullToAbsent) {
+    return TransactionOutboxesCompanion(
+      id: Value(id),
+      actionType: Value(actionType),
+      payload: Value(payload),
+      status: Value(status),
+      idempotencyKey: Value(idempotencyKey),
+      retryCount: Value(retryCount),
+    );
+  }
+
+  factory TransactionOutboxEntry.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TransactionOutboxEntry(
+      id: serializer.fromJson<String>(json['id']),
+      actionType: serializer.fromJson<String>(json['actionType']),
+      payload: serializer.fromJson<String>(json['payload']),
+      status: $TransactionOutboxesTable.$converterstatus.fromJson(
+        serializer.fromJson<int>(json['status']),
+      ),
+      idempotencyKey: serializer.fromJson<String>(json['idempotencyKey']),
+      retryCount: serializer.fromJson<int>(json['retryCount']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'actionType': serializer.toJson<String>(actionType),
+      'payload': serializer.toJson<String>(payload),
+      'status': serializer.toJson<int>(
+        $TransactionOutboxesTable.$converterstatus.toJson(status),
+      ),
+      'idempotencyKey': serializer.toJson<String>(idempotencyKey),
+      'retryCount': serializer.toJson<int>(retryCount),
+    };
+  }
+
+  TransactionOutboxEntry copyWith({
+    String? id,
+    String? actionType,
+    String? payload,
+    TransactionStatus? status,
+    String? idempotencyKey,
+    int? retryCount,
+  }) => TransactionOutboxEntry(
+    id: id ?? this.id,
+    actionType: actionType ?? this.actionType,
+    payload: payload ?? this.payload,
+    status: status ?? this.status,
+    idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+    retryCount: retryCount ?? this.retryCount,
+  );
+  TransactionOutboxEntry copyWithCompanion(TransactionOutboxesCompanion data) {
+    return TransactionOutboxEntry(
+      id: data.id.present ? data.id.value : this.id,
+      actionType:
+          data.actionType.present ? data.actionType.value : this.actionType,
+      payload: data.payload.present ? data.payload.value : this.payload,
+      status: data.status.present ? data.status.value : this.status,
+      idempotencyKey:
+          data.idempotencyKey.present
+              ? data.idempotencyKey.value
+              : this.idempotencyKey,
+      retryCount:
+          data.retryCount.present ? data.retryCount.value : this.retryCount,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TransactionOutboxEntry(')
+          ..write('id: $id, ')
+          ..write('actionType: $actionType, ')
+          ..write('payload: $payload, ')
+          ..write('status: $status, ')
+          ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('retryCount: $retryCount')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, actionType, payload, status, idempotencyKey, retryCount);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TransactionOutboxEntry &&
+          other.id == this.id &&
+          other.actionType == this.actionType &&
+          other.payload == this.payload &&
+          other.status == this.status &&
+          other.idempotencyKey == this.idempotencyKey &&
+          other.retryCount == this.retryCount);
+}
+
+class TransactionOutboxesCompanion
+    extends UpdateCompanion<TransactionOutboxEntry> {
+  final Value<String> id;
+  final Value<String> actionType;
+  final Value<String> payload;
+  final Value<TransactionStatus> status;
+  final Value<String> idempotencyKey;
+  final Value<int> retryCount;
+  final Value<int> rowid;
+  const TransactionOutboxesCompanion({
+    this.id = const Value.absent(),
+    this.actionType = const Value.absent(),
+    this.payload = const Value.absent(),
+    this.status = const Value.absent(),
+    this.idempotencyKey = const Value.absent(),
+    this.retryCount = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TransactionOutboxesCompanion.insert({
+    required String id,
+    required String actionType,
+    required String payload,
+    this.status = const Value.absent(),
+    required String idempotencyKey,
+    this.retryCount = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       actionType = Value(actionType),
+       payload = Value(payload),
+       idempotencyKey = Value(idempotencyKey);
+  static Insertable<TransactionOutboxEntry> custom({
+    Expression<String>? id,
+    Expression<String>? actionType,
+    Expression<String>? payload,
+    Expression<int>? status,
+    Expression<String>? idempotencyKey,
+    Expression<int>? retryCount,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (actionType != null) 'action_type': actionType,
+      if (payload != null) 'payload': payload,
+      if (status != null) 'status': status,
+      if (idempotencyKey != null) 'idempotency_key': idempotencyKey,
+      if (retryCount != null) 'retry_count': retryCount,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TransactionOutboxesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? actionType,
+    Value<String>? payload,
+    Value<TransactionStatus>? status,
+    Value<String>? idempotencyKey,
+    Value<int>? retryCount,
+    Value<int>? rowid,
+  }) {
+    return TransactionOutboxesCompanion(
+      id: id ?? this.id,
+      actionType: actionType ?? this.actionType,
+      payload: payload ?? this.payload,
+      status: status ?? this.status,
+      idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+      retryCount: retryCount ?? this.retryCount,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (actionType.present) {
+      map['action_type'] = Variable<String>(actionType.value);
+    }
+    if (payload.present) {
+      map['payload'] = Variable<String>(payload.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<int>(
+        $TransactionOutboxesTable.$converterstatus.toSql(status.value),
+      );
+    }
+    if (idempotencyKey.present) {
+      map['idempotency_key'] = Variable<String>(idempotencyKey.value);
+    }
+    if (retryCount.present) {
+      map['retry_count'] = Variable<int>(retryCount.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TransactionOutboxesCompanion(')
+          ..write('id: $id, ')
+          ..write('actionType: $actionType, ')
+          ..write('payload: $payload, ')
+          ..write('status: $status, ')
+          ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('retryCount: $retryCount, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$OfflineDatabase extends GeneratedDatabase {
   _$OfflineDatabase(QueryExecutor e) : super(e);
   $OfflineDatabaseManager get managers => $OfflineDatabaseManager(this);
@@ -1846,6 +2276,8 @@ abstract class _$OfflineDatabase extends GeneratedDatabase {
   late final $SyncConflictsTable syncConflicts = $SyncConflictsTable(this);
   late final $TelemetrySnapshotsTable telemetrySnapshots =
       $TelemetrySnapshotsTable(this);
+  late final $TransactionOutboxesTable transactionOutboxes =
+      $TransactionOutboxesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1855,6 +2287,7 @@ abstract class _$OfflineDatabase extends GeneratedDatabase {
     deadLetterEvents,
     syncConflicts,
     telemetrySnapshots,
+    transactionOutboxes,
   ];
 }
 
@@ -2888,6 +3321,258 @@ typedef $$TelemetrySnapshotsTableProcessedTableManager =
       TelemetrySnapshot,
       PrefetchHooks Function()
     >;
+typedef $$TransactionOutboxesTableCreateCompanionBuilder =
+    TransactionOutboxesCompanion Function({
+      required String id,
+      required String actionType,
+      required String payload,
+      Value<TransactionStatus> status,
+      required String idempotencyKey,
+      Value<int> retryCount,
+      Value<int> rowid,
+    });
+typedef $$TransactionOutboxesTableUpdateCompanionBuilder =
+    TransactionOutboxesCompanion Function({
+      Value<String> id,
+      Value<String> actionType,
+      Value<String> payload,
+      Value<TransactionStatus> status,
+      Value<String> idempotencyKey,
+      Value<int> retryCount,
+      Value<int> rowid,
+    });
+
+class $$TransactionOutboxesTableFilterComposer
+    extends Composer<_$OfflineDatabase, $TransactionOutboxesTable> {
+  $$TransactionOutboxesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get actionType => $composableBuilder(
+    column: $table.actionType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<TransactionStatus, TransactionStatus, int>
+  get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get retryCount => $composableBuilder(
+    column: $table.retryCount,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$TransactionOutboxesTableOrderingComposer
+    extends Composer<_$OfflineDatabase, $TransactionOutboxesTable> {
+  $$TransactionOutboxesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get actionType => $composableBuilder(
+    column: $table.actionType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get retryCount => $composableBuilder(
+    column: $table.retryCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$TransactionOutboxesTableAnnotationComposer
+    extends Composer<_$OfflineDatabase, $TransactionOutboxesTable> {
+  $$TransactionOutboxesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get actionType => $composableBuilder(
+    column: $table.actionType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get payload =>
+      $composableBuilder(column: $table.payload, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<TransactionStatus, int> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get retryCount => $composableBuilder(
+    column: $table.retryCount,
+    builder: (column) => column,
+  );
+}
+
+class $$TransactionOutboxesTableTableManager
+    extends
+        RootTableManager<
+          _$OfflineDatabase,
+          $TransactionOutboxesTable,
+          TransactionOutboxEntry,
+          $$TransactionOutboxesTableFilterComposer,
+          $$TransactionOutboxesTableOrderingComposer,
+          $$TransactionOutboxesTableAnnotationComposer,
+          $$TransactionOutboxesTableCreateCompanionBuilder,
+          $$TransactionOutboxesTableUpdateCompanionBuilder,
+          (
+            TransactionOutboxEntry,
+            BaseReferences<
+              _$OfflineDatabase,
+              $TransactionOutboxesTable,
+              TransactionOutboxEntry
+            >,
+          ),
+          TransactionOutboxEntry,
+          PrefetchHooks Function()
+        > {
+  $$TransactionOutboxesTableTableManager(
+    _$OfflineDatabase db,
+    $TransactionOutboxesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer:
+              () => $$TransactionOutboxesTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer:
+              () => $$TransactionOutboxesTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer:
+              () => $$TransactionOutboxesTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> actionType = const Value.absent(),
+                Value<String> payload = const Value.absent(),
+                Value<TransactionStatus> status = const Value.absent(),
+                Value<String> idempotencyKey = const Value.absent(),
+                Value<int> retryCount = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TransactionOutboxesCompanion(
+                id: id,
+                actionType: actionType,
+                payload: payload,
+                status: status,
+                idempotencyKey: idempotencyKey,
+                retryCount: retryCount,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String actionType,
+                required String payload,
+                Value<TransactionStatus> status = const Value.absent(),
+                required String idempotencyKey,
+                Value<int> retryCount = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TransactionOutboxesCompanion.insert(
+                id: id,
+                actionType: actionType,
+                payload: payload,
+                status: status,
+                idempotencyKey: idempotencyKey,
+                retryCount: retryCount,
+                rowid: rowid,
+              ),
+          withReferenceMapper:
+              (p0) =>
+                  p0
+                      .map(
+                        (e) => (
+                          e.readTable(table),
+                          BaseReferences(db, table, e),
+                        ),
+                      )
+                      .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$TransactionOutboxesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$OfflineDatabase,
+      $TransactionOutboxesTable,
+      TransactionOutboxEntry,
+      $$TransactionOutboxesTableFilterComposer,
+      $$TransactionOutboxesTableOrderingComposer,
+      $$TransactionOutboxesTableAnnotationComposer,
+      $$TransactionOutboxesTableCreateCompanionBuilder,
+      $$TransactionOutboxesTableUpdateCompanionBuilder,
+      (
+        TransactionOutboxEntry,
+        BaseReferences<
+          _$OfflineDatabase,
+          $TransactionOutboxesTable,
+          TransactionOutboxEntry
+        >,
+      ),
+      TransactionOutboxEntry,
+      PrefetchHooks Function()
+    >;
 
 class $OfflineDatabaseManager {
   final _$OfflineDatabase _db;
@@ -2900,4 +3585,6 @@ class $OfflineDatabaseManager {
       $$SyncConflictsTableTableManager(_db, _db.syncConflicts);
   $$TelemetrySnapshotsTableTableManager get telemetrySnapshots =>
       $$TelemetrySnapshotsTableTableManager(_db, _db.telemetrySnapshots);
+  $$TransactionOutboxesTableTableManager get transactionOutboxes =>
+      $$TransactionOutboxesTableTableManager(_db, _db.transactionOutboxes);
 }

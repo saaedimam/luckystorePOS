@@ -5,14 +5,17 @@ import '../../core/network/network_config.dart';
 import '../../core/errors/exceptions.dart';
 import '../../core/utils/result.dart';
 import '../../core/utils/app_utils.dart';
-
+import '../../offline/sync_action_audit_log.dart';
+import '../../offline/db.dart';
 
 /// Inventory service for stock operations
 class InventoryService {
   final http.Client _client;
+  final SyncActionAuditLog? _auditLog;
 
-  InventoryService({http.Client? client})
-      : _client = client ?? http.Client();
+  InventoryService({http.Client? client, SyncActionAuditLog? auditLog})
+      : _client = client ?? http.Client(),
+        _auditLog = auditLog;
 
   /// Deduct stock from inventory
   /// Returns: Result with deduction details (movement_id, new_quantity, etc.)
@@ -22,6 +25,30 @@ class InventoryService {
     required int quantity,
     Map<String, dynamic>? metadata,
   }) async {
+    final auditLog = _auditLog;
+    final payload = {
+      'store_id': storeId,
+      'product_id': productId,
+      'quantity': quantity,
+      if (metadata != null) 'metadata': metadata,
+    };
+
+    final idempotencyKey = 'deduct-stock:$storeId:$productId:${DateTime.now().millisecondsSinceEpoch}';
+    TransactionOutboxEntry? outboxEntry;
+
+    // STEP 2: Write PENDING action to Drift before network call
+    if (auditLog != null) {
+      try {
+        outboxEntry = await auditLog.recordPendingAction(
+          actionType: 'DEDUCT_STOCK',
+          payload: payload,
+          idempotencyKey: idempotencyKey,
+        );
+      } catch (e) {
+        Logger.error('Failed to log PENDING action to outbox: $e');
+      }
+    }
+
     try {
       final url = Uri.parse('${NetworkConfig.supabaseUrl}/rpc/deduct_stock');
       final headers = {
@@ -30,12 +57,7 @@ class InventoryService {
         'Authorization': 'Bearer ${NetworkConfig.supabaseServiceKey}',
       };
 
-      final body = jsonEncode({
-        'store_id': storeId,
-        'product_id': productId,
-        'quantity': quantity,
-        if (metadata != null) 'metadata': metadata,
-      });
+      final body = jsonEncode(payload);
 
       final response = await _client
           .post(url, headers: headers, body: body)
@@ -46,15 +68,27 @@ class InventoryService {
 
         // Check for error in response
         if (data['error'] != null) {
+          if (outboxEntry != null && auditLog != null) {
+            await auditLog.markActionFailed(outboxEntry.id);
+          }
           return Failure<Map<String, dynamic>>(
             data['error']['message'] ?? 'Stock deduction failed',
             metadata: data,
           );
         }
 
+        // STEP 2: Update Drift row to SYNCED on success and clear from outbox
+        if (outboxEntry != null && auditLog != null) {
+          await auditLog.markActionSynced(outboxEntry.id);
+          await auditLog.db.deleteTransaction(outboxEntry.id);
+        }
+
         return Success<Map<String, dynamic>>(data);
       } else {
         final error = jsonDecode(response.body);
+        if (outboxEntry != null && auditLog != null) {
+          await auditLog.markActionFailed(outboxEntry.id);
+        }
         return Failure<Map<String, dynamic>>(
           'Failed to deduct stock: ${error['message'] ?? error['error'] ?? 'Unknown error'}',
           metadata: error,
@@ -63,6 +97,10 @@ class InventoryService {
     } catch (e, stackTrace) {
       Logger.error('InventoryService.deductStock failed', e, stackTrace);
       
+      if (outboxEntry != null && auditLog != null) {
+        await auditLog.markActionFailed(outboxEntry.id);
+      }
+
       if (e is http.ClientException) {
         return Failure<Map<String, dynamic>>(
           'Network error during stock deduction',
@@ -82,6 +120,114 @@ class InventoryService {
 
       return Failure<Map<String, dynamic>>(
         'Stock deduction failed: ${e.toString()}',
+        exception: e as Exception,
+      );
+    }
+  }
+
+  /// Restock stock in inventory
+  /// Returns: Result with operation details
+  Future<Result<Map<String, dynamic>>> restockStock({
+    required String storeId,
+    required String productId,
+    required int quantity,
+    Map<String, dynamic>? metadata,
+  }) async {
+    final auditLog = _auditLog;
+    final payload = {
+      'store_id': storeId,
+      'product_id': productId,
+      'quantity': quantity,
+      if (metadata != null) 'metadata': metadata,
+    };
+
+    final idempotencyKey = 'restock-stock:$storeId:$productId:${DateTime.now().millisecondsSinceEpoch}';
+    TransactionOutboxEntry? outboxEntry;
+
+    // Write PENDING action to Drift before network call
+    if (auditLog != null) {
+      try {
+        outboxEntry = await auditLog.recordPendingAction(
+          actionType: 'RESTOCK',
+          payload: payload,
+          idempotencyKey: idempotencyKey,
+        );
+      } catch (e) {
+        Logger.error('Failed to log PENDING action to outbox: $e');
+      }
+    }
+
+    try {
+      final url = Uri.parse('${NetworkConfig.supabaseUrl}/rpc/increment_stock');
+      final headers = {
+        'Content-Type': 'application/json',
+        'apikey': NetworkConfig.supabaseServiceKey,
+        'Authorization': 'Bearer ${NetworkConfig.supabaseServiceKey}',
+      };
+
+      final body = jsonEncode(payload);
+
+      final response = await _client
+          .post(url, headers: headers, body: body)
+          .timeout(Duration(seconds: NetworkConfig.requestTimeout));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+
+        // Check for error in response
+        if (data['error'] != null) {
+          if (outboxEntry != null && auditLog != null) {
+            await auditLog.markActionFailed(outboxEntry.id);
+          }
+          return Failure<Map<String, dynamic>>(
+            data['error']['message'] ?? 'Stock restock failed',
+            metadata: data,
+          );
+        }
+
+        // Update Drift row to SYNCED on success and clear from outbox
+        if (outboxEntry != null && auditLog != null) {
+          await auditLog.markActionSynced(outboxEntry.id);
+          await auditLog.db.deleteTransaction(outboxEntry.id);
+        }
+
+        return Success<Map<String, dynamic>>(data);
+      } else {
+        final error = jsonDecode(response.body);
+        if (outboxEntry != null && auditLog != null) {
+          await auditLog.markActionFailed(outboxEntry.id);
+        }
+        return Failure<Map<String, dynamic>>(
+          'Failed to restock stock: ${error['message'] ?? error['error'] ?? 'Unknown error'}',
+          metadata: error,
+        );
+      }
+    } catch (e, stackTrace) {
+      Logger.error('InventoryService.restockStock failed', e, stackTrace);
+      
+      if (outboxEntry != null && auditLog != null) {
+        await auditLog.markActionFailed(outboxEntry.id);
+      }
+
+      if (e is http.ClientException) {
+        return Failure<Map<String, dynamic>>(
+          'Network error during stock restock',
+          exception: NetworkException('Connection failed'),
+        );
+      } else if (e is FormatException) {
+        return Failure<Map<String, dynamic>>(
+          'Invalid response format from server',
+          exception: const ValidationException('Malformed server response'),
+        );
+      } else if (e is TimeoutException) {
+        return Failure<Map<String, dynamic>>(
+          'Stock restock timeout',
+          exception: const NetworkException('Request timed out'),
+        );
+      }
+
+      return Failure<Map<String, dynamic>>(
+        'Stock restock failed: ${e.toString()}',
         exception: e as Exception,
       );
     }
