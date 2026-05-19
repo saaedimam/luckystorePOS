@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-05-19T22:14:36.698Z",
+  "generated_at": "2026-05-19T22:27:39.092Z",
   "categories": {
     "security_definer_missing_search_path": [
       "close_pos_session(p_session_id uuid, p_closing_cash numeric)",
@@ -213,6 +213,8 @@
       "qty:supabase/functions/create-sale/index.ts:6694e811a433446e0dd40a2f5f7af9ef148c5a264cab77f5d0c59103b4a1e0d8",
       "qty:supabase/functions/create-sale/index.ts:93afb60fbd682cfc356b24b60646174ae1c3e75992e3cf6a91fafd281b292b28",
       "qty:supabase/functions/import-inventory/index.ts:f28e3069dd75c115ec085785322c433690cad53803fe6dc1876b1b0bf44d4608",
+      "qty:supabase/functions/send-invoice/index.ts:178aca1b68e76e79eca871bf9bd9639bcdc666983925c4df2c01a4b3806381fc",
+      "qty:supabase/functions/send-invoice/index.ts:543adf2f9e6124bef51021b5ea3d9c50cc960d7ee76dd48fe10bbcbd2c2fbc87",
       "qty:supabase/functions/stitch-orchestrator/index.ts:2a6798d93ea1ef0980ea0418f85d81ebe98d8202842b7a0ae8936b41e3413fd4",
       "qty:supabase/functions/stitch-orchestrator/index.ts:598fe0271baf1bb2fabc8f05d246f456ef726e1cf40452ee2f1eb55232f0d463",
       "qty:supabase/functions/sync-alert-bridge/index.ts:226777105d789e231e54ed708b265c6499aa2a96eb2385e30f5eba094cb6cfc3",

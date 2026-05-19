@@ -1,6 +1,6 @@
 Migration Dependency Analysis
-Generated: 2026-05-19T22:14:41.378Z
-Migrations: 105
+Generated: 2026-05-19T22:27:41.012Z
+Migrations: 108
 
 CRITICAL DEPENDENCY ISSUES
 ===========================
@@ -167,7 +167,7 @@ CRITICAL DEPENDENCY ISSUES
   [CRITICAL] forward_dependency: competitor_prices
   [CRITICAL] forward_dependency: cleanup_old_competitor_prices
 
-UNSAFE MIGRATIONS (59)
+UNSAFE MIGRATIONS (60)
 ====================
 
 20260301000000_baseline_core_tables.sql (foundational)

@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-05-19T22:14:41.429Z",
-  "migration_count": 105,
-  "objects_tracked": 271,
-  "conflicts_detected": 604,
+  "timestamp": "2026-05-19T22:27:41.063Z",
+  "migration_count": 108,
+  "objects_tracked": 278,
+  "conflicts_detected": 608,
   "ownership_graph": {
     "extensions": {
       "type": "extensions schema if needed\nCREATE SCHEMA IF NOT EXISTS",
@@ -7714,6 +7714,146 @@
         }
       ],
       "conflicts": []
+    },
+    "products_guest_read": {
+      "type": "POLICY",
+      "owner": "20260522000000_storefront_rls.sql",
+      "owner_timestamp": "20260522000000",
+      "created_at": "20260522000000",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000000_storefront_rls.sql",
+          "timestamp": "20260522000000"
+        }
+      ],
+      "conflicts": []
+    },
+    "categories_guest_read": {
+      "type": "POLICY",
+      "owner": "20260522000000_storefront_rls.sql",
+      "owner_timestamp": "20260522000000",
+      "created_at": "20260522000000",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000000_storefront_rls.sql",
+          "timestamp": "20260522000000"
+        }
+      ],
+      "conflicts": []
+    },
+    "stores_guest_read": {
+      "type": "POLICY",
+      "owner": "20260522000000_storefront_rls.sql",
+      "owner_timestamp": "20260522000000",
+      "created_at": "20260522000000",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000000_storefront_rls.sql",
+          "timestamp": "20260522000000"
+        }
+      ],
+      "conflicts": []
+    },
+    "online_orders_guest_insert": {
+      "type": "POLICY",
+      "owner": "20260522000000_storefront_rls.sql",
+      "owner_timestamp": "20260522000000",
+      "created_at": "20260522000000",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000000_storefront_rls.sql",
+          "timestamp": "20260522000000"
+        }
+      ],
+      "conflicts": []
+    },
+    "online_order_items_guest_insert": {
+      "type": "POLICY",
+      "owner": "20260522000000_storefront_rls.sql",
+      "owner_timestamp": "20260522000000",
+      "created_at": "20260522000000",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000000_storefront_rls.sql",
+          "timestamp": "20260522000000"
+        }
+      ],
+      "conflicts": []
+    },
+    "delivery_zones_guest_read": {
+      "type": "POLICY",
+      "owner": "20260522000000_storefront_rls.sql",
+      "owner_timestamp": "20260522000000",
+      "created_at": "20260522000000",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000000_storefront_rls.sql",
+          "timestamp": "20260522000000"
+        }
+      ],
+      "conflicts": []
+    },
+    "pg_net": {
+      "type": "EXTENSION IF NOT EXISTS",
+      "owner": "20260523000000_whatsapp_webhook.sql",
+      "owner_timestamp": "20260523000000",
+      "created_at": "20260523000000",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260523000000_whatsapp_webhook.sql",
+          "timestamp": "20260523000000"
+        }
+      ],
+      "conflicts": []
     }
   },
   "conflicts": [
@@ -13084,6 +13224,42 @@
       "creators": [
         "20260521000002_online_order_module.sql",
         "20260521000002_online_order_module.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000002_online_order_module.sql",
+        "20260521000003_invoice_storage.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "authenticated",
+      "creators": [
+        "20260520000000_add_whatsapp_invoice_columns.sql",
+        "20260521000003_invoice_storage.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000003_invoice_storage.sql",
+        "20260521000003_invoice_storage.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000003_invoice_storage.sql",
+        "20260523000000_whatsapp_webhook.sql"
       ],
       "severity": "high"
     },
@@ -18549,6 +18725,42 @@
       "creators": [
         "20260521000002_online_order_module.sql",
         "20260521000002_online_order_module.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000002_online_order_module.sql",
+        "20260521000003_invoice_storage.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "authenticated",
+      "creators": [
+        "20260520000000_add_whatsapp_invoice_columns.sql",
+        "20260521000003_invoice_storage.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000003_invoice_storage.sql",
+        "20260521000003_invoice_storage.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000003_invoice_storage.sql",
+        "20260523000000_whatsapp_webhook.sql"
       ],
       "severity": "high"
     },

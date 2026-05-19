@@ -71,36 +71,27 @@ export function ReceiptPreview({
     const phoneNumber = window.prompt('Enter Customer WhatsApp Number (with country code, e.g., 88017...):');
     if (!phoneNumber) return;
 
+    if (!batchId) {
+      alert('Sale ID is missing. Cannot generate server invoice.');
+      return;
+    }
+
     setIsSharing(true);
     try {
       const storeName = receiptConfig?.store_name || 'Lucky Store';
-      const blob = generateInvoicePdfBlob({
-        saleNumber: saleNumber || 'DRAFT',
-        cart,
-        subtotal,
-        discount,
-        totalAmount,
-        paidAmount,
-        changeAmount,
-        paymentMethod,
-        storeName,
+      
+      // Call Edge Function to generate and upload PDF
+      const { data, error } = await supabase.functions.invoke('send-invoice', {
+        body: { saleId: batchId }
       });
 
-      const fileName = `invoices/${saleNumber || 'draft'}_${Date.now()}.pdf`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('invoices')
-        .upload(fileName, blob);
+      if (error) throw error;
+      if (!data?.publicUrl) throw new Error('No public URL returned from server.');
 
-      if (uploadError) throw uploadError;
+      const publicUrl = data.publicUrl;
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('invoices')
-        .getPublicUrl(uploadData.path);
-
-      // Update sale info if we have a batchId (sale ID)
-      if (batchId) {
-        await salesService.updateWhatsAppInfo(batchId, phoneNumber, publicUrl);
-      }
+      // Update sale info with phone number and PDF link
+      await salesService.updateWhatsAppInfo(batchId, phoneNumber, publicUrl);
 
       const message = `Hello! Here is your invoice from ${storeName}: ${publicUrl}`;
       const whatsappUrl = `https://wa.me/${phoneNumber.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
@@ -108,7 +99,7 @@ export function ReceiptPreview({
       window.open(whatsappUrl, '_blank');
     } catch (error) {
       console.error('WhatsApp Share Error:', error);
-      alert('Failed to share invoice via WhatsApp.');
+      alert('Failed to share invoice via WhatsApp. Error: ' + (error instanceof Error ? error.message : String(error)));
     } finally {
       setIsSharing(false);
     }

@@ -18,7 +18,7 @@ import { VoiceInput } from '../../components/cashier/VoiceInput';
 import { SaleSurface } from '../../components/cashier/SaleSurface';
 
 // Lazy load heavy management/partner dashboards for instant tree-shaking
-const ManagerPartnerView = React.lazy(() => import('./ManagerPartnerView'));
+const ManagerPartnerView = React.lazy(() => import('./ManagerPartnerView').then(m => ({ default: m.ManagerPartnerView })));
 
 export function DashboardPage() {
   const { storeId, user, signOut } = useAuth();
@@ -791,7 +791,6 @@ export function DashboardPage() {
         refetchAll={refetchAll}
         metrics={metrics}
         dismissedProjections={dismissedProjections}
-        setDismissedProjections={setDismissedProjections}
         filteredFeed={filteredFeed}
         handleQuickRestock={handleQuickRestock}
         pendingRestocks={pendingRestocks}

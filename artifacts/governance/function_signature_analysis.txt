@@ -1,7 +1,7 @@
 Function Signature Registry
-Generated: 2026-05-19T22:14:41.321Z
-Migrations: 105
-Functions Tracked: 191
+Generated: 2026-05-19T22:27:40.956Z
+Migrations: 108
+Functions Tracked: 193
 Missing Functions: 75
 Conflicts: 75
 

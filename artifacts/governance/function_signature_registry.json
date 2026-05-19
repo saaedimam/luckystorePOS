@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-05-19T22:14:41.321Z",
-  "migration_count": 105,
-  "functions_tracked": 191,
+  "timestamp": "2026-05-19T22:27:40.956Z",
+  "migration_count": 108,
+  "functions_tracked": 193,
   "missing_functions": 75,
   "conflicts_detected": 75,
   "registry": {
@@ -5501,6 +5501,48 @@
       "params": "",
       "created_by": "20260521000002_online_order_module.sql",
       "created_timestamp": "20260521000002",
+      "is_security_definer": false,
+      "search_path": "implicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": [
+        {
+          "type": "unsafe_search_path",
+          "severity": "medium",
+          "message": "Function created without SECURITY DEFINER or explicit search_path"
+        }
+      ]
+    },
+    "handle_sale_deletion_cleanup()": {
+      "signature": "handle_sale_deletion_cleanup()",
+      "name": "handle_sale_deletion_cleanup",
+      "params": "",
+      "created_by": "20260521000003_invoice_storage.sql",
+      "created_timestamp": "20260521000003",
+      "is_security_definer": false,
+      "search_path": "implicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": [
+        {
+          "type": "unsafe_search_path",
+          "severity": "medium",
+          "message": "Function created without SECURITY DEFINER or explicit search_path"
+        }
+      ]
+    },
+    "trigger_whatsapp_notification()": {
+      "signature": "trigger_whatsapp_notification()",
+      "name": "trigger_whatsapp_notification",
+      "params": "",
+      "created_by": "20260523000000_whatsapp_webhook.sql",
+      "created_timestamp": "20260523000000",
       "is_security_definer": false,
       "search_path": "implicit",
       "mutated_by": [],

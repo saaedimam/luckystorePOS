@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-05-19T22:14:41.378Z",
-  "migration_count": 105,
+  "timestamp": "2026-05-19T22:27:41.012Z",
+  "migration_count": 108,
   "dependency_graph": {
     "20260301000000_baseline_core_tables.sql": {
       "sequence": 0,
@@ -3602,6 +3602,55 @@
       },
       "unsafe_assumptions": [],
       "risks": []
+    },
+    "20260521000003_invoice_storage.sql": {
+      "sequence": 105,
+      "timestamp": "20260521000003",
+      "category": "uncategorized",
+      "dependencies": {
+        "objects": [],
+        "migrations": [],
+        "satisfied": true,
+        "unsatisfied_objects": []
+      },
+      "unsafe_assumptions": [],
+      "risks": []
+    },
+    "20260522000000_storefront_rls.sql": {
+      "sequence": 106,
+      "timestamp": "20260522000000",
+      "category": "hardening",
+      "dependencies": {
+        "objects": [],
+        "migrations": [],
+        "satisfied": true,
+        "unsatisfied_objects": []
+      },
+      "unsafe_assumptions": [],
+      "risks": [
+        {
+          "type": "dangling_hardening",
+          "severity": "high",
+          "message": "Hardening migration with no explicit dependencies - may run before owner objects"
+        }
+      ]
+    },
+    "20260523000000_whatsapp_webhook.sql": {
+      "sequence": 107,
+      "timestamp": "20260523000000",
+      "category": "uncategorized",
+      "dependencies": {
+        "objects": [
+          "online_orders"
+        ],
+        "migrations": [
+          "20260521000002_online_order_module.sql"
+        ],
+        "satisfied": true,
+        "unsatisfied_objects": []
+      },
+      "unsafe_assumptions": [],
+      "risks": []
     }
   },
   "object_owners": {
@@ -3875,7 +3924,9 @@
     "online_orders": "20260521000002_online_order_module.sql",
     "online_order_items": "20260521000002_online_order_module.sql",
     "delivery_zones": "20260521000002_online_order_module.sql",
-    "handle_online_order_stock_reservation": "20260521000002_online_order_module.sql"
+    "handle_online_order_stock_reservation": "20260521000002_online_order_module.sql",
+    "handle_sale_deletion_cleanup": "20260521000003_invoice_storage.sql",
+    "trigger_whatsapp_notification": "20260523000000_whatsapp_webhook.sql"
   },
   "unsafe_migrations": {
     "20260301000000_baseline_core_tables.sql": {
@@ -5907,6 +5958,18 @@
           "issue": "object_not_found"
         }
       ]
+    },
+    "20260522000000_storefront_rls.sql": {
+      "category": "hardening",
+      "risks": [
+        {
+          "type": "dangling_hardening",
+          "severity": "high",
+          "message": "Hardening migration with no explicit dependencies - may run before owner objects"
+        }
+      ],
+      "unsatisfied_objects": [],
+      "unsafe_assumptions": []
     }
   },
   "critical_issues": [
