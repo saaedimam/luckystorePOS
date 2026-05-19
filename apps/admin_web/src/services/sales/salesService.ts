@@ -41,5 +41,19 @@ export const salesService = {
 
     if (error) throw error;
     return data;
+  },
+
+  async updateWhatsAppInfo(saleId: string, whatsapp: string, pdfUrl: string) {
+    const { error } = await supabase
+      .from('sales')
+      .update({
+        customer_whatsapp: whatsapp,
+        invoice_pdf_url: pdfUrl,
+        invoice_sent_via: 'whatsapp',
+        invoice_sent_at: new Date().toISOString(),
+      })
+      .eq('id', saleId);
+
+    if (error) throw error;
   }
 };

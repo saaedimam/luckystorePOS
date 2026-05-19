@@ -1,6 +1,6 @@
 Migration Dependency Analysis
-Generated: 2026-05-19T14:32:53.946Z
-Migrations: 100
+Generated: 2026-05-19T22:11:22.426Z
+Migrations: 105
 
 CRITICAL DEPENDENCY ISSUES
 ===========================
@@ -39,6 +39,7 @@ CRITICAL DEPENDENCY ISSUES
   [CRITICAL] forward_dependency: adjust_stock
 
 20260420100000_pos_transactions.sql
+  [CRITICAL] forward_dependency: sale_items
   [CRITICAL] forward_dependency: complete_sale
   [CRITICAL] forward_dependency: void_sale
   [CRITICAL] forward_dependency: adjust_stock
@@ -104,6 +105,10 @@ CRITICAL DEPENDENCY ISSUES
 20260423232000_production_hardening.sql
   [CRITICAL] forward_dependency: stock_movements
 
+20260423240000_sheets_migration_expenses_and_rpc.sql
+  [CRITICAL] forward_dependency: expenses
+  [CRITICAL] runtime_before_foundation: Runtime migration depends on not-yet-created foundation
+
 20260425110000_authenticate_staff_pin.sql
   [CRITICAL] forward_dependency: users
   [CRITICAL] forward_dependency: authenticate_staff_pin
@@ -153,7 +158,7 @@ CRITICAL DEPENDENCY ISSUES
 20260511030000_enrich_inventory_list.sql
   [CRITICAL] forward_dependency: get_inventory_list
 
-UNSAFE MIGRATIONS (55)
+UNSAFE MIGRATIONS (57)
 ====================
 
 20260301000000_baseline_core_tables.sql (foundational)
@@ -182,7 +187,7 @@ UNSAFE MIGRATIONS (55)
   Unsatisfied: adjust_stock
 
 20260420100000_pos_transactions.sql (uncategorized)
-  Unsatisfied: complete_sale, void_sale, adjust_stock
+  Unsatisfied: sale_items, complete_sale, void_sale, adjust_stock
 
 20260420100001_pos_scanner_rpcs.sql (runtime-only)
   Unsatisfied: lookup_item_by_scan, search_items_pos, get_pos_categories

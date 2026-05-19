@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-05-19T14:32:53.946Z",
-  "migration_count": 100,
+  "timestamp": "2026-05-19T22:11:22.426Z",
+  "migration_count": 105,
   "dependency_graph": {
     "20260301000000_baseline_core_tables.sql": {
       "sequence": 0,
@@ -577,6 +577,12 @@
         "satisfied": false,
         "unsatisfied_objects": [
           {
+            "object": "sale_items",
+            "owner": "20260521000000_core_pos_schema.sql",
+            "owner_timestamp": "20260521000000",
+            "issue": "forward_dependency"
+          },
+          {
             "object": "complete_sale",
             "owner": "20260423232000_production_hardening.sql",
             "owner_timestamp": "20260423232000",
@@ -598,6 +604,12 @@
       },
       "unsafe_assumptions": [],
       "risks": [
+        {
+          "type": "forward_dependency",
+          "object": "sale_items",
+          "depends_on_migration": "20260521000000_core_pos_schema.sql",
+          "severity": "critical"
+        },
         {
           "type": "forward_dependency",
           "object": "complete_sale",
@@ -1680,11 +1692,30 @@
           "20260423240000_sheets_migration_expenses_and_rpc.sql",
           "20260423213000_ledger_and_daily_reconciliation.sql"
         ],
-        "satisfied": true,
-        "unsatisfied_objects": []
+        "satisfied": false,
+        "unsatisfied_objects": [
+          {
+            "object": "expenses",
+            "owner": "20260521000000_core_pos_schema.sql",
+            "owner_timestamp": "20260521000000",
+            "issue": "forward_dependency"
+          }
+        ]
       },
       "unsafe_assumptions": [],
-      "risks": []
+      "risks": [
+        {
+          "type": "forward_dependency",
+          "object": "expenses",
+          "depends_on_migration": "20260521000000_core_pos_schema.sql",
+          "severity": "critical"
+        },
+        {
+          "type": "runtime_before_foundation",
+          "severity": "critical",
+          "message": "Runtime migration depends on not-yet-created foundation"
+        }
+      ]
     },
     "20260425000000_ledger_reversals_and_deferred_constraints.sql": {
       "sequence": 39,
@@ -3380,6 +3411,137 @@
       },
       "unsafe_assumptions": [],
       "risks": []
+    },
+    "20260519215146_quarterly_ledger_archive.sql": {
+      "sequence": 100,
+      "timestamp": "20260519215146",
+      "category": "uncategorized",
+      "dependencies": {
+        "objects": [
+          "inventory_snapshots",
+          "pg_advisory_lock",
+          "pg_advisory_unlock",
+          "date_trunc",
+          "archive_stock_ledger_quarterly"
+        ],
+        "migrations": [
+          "20260519215146_quarterly_ledger_archive.sql"
+        ],
+        "satisfied": true,
+        "unsatisfied_objects": []
+      },
+      "unsafe_assumptions": [
+        {
+          "object": "pg_advisory_lock",
+          "issue": "object_not_found"
+        },
+        {
+          "object": "pg_advisory_unlock",
+          "issue": "object_not_found"
+        },
+        {
+          "object": "date_trunc",
+          "issue": "object_not_found"
+        }
+      ],
+      "risks": [
+        {
+          "type": "missing_object",
+          "object": "pg_advisory_lock",
+          "severity": "high"
+        },
+        {
+          "type": "missing_object",
+          "object": "pg_advisory_unlock",
+          "severity": "high"
+        },
+        {
+          "type": "missing_object",
+          "object": "date_trunc",
+          "severity": "high"
+        }
+      ]
+    },
+    "20260520000000_add_whatsapp_invoice_columns.sql": {
+      "sequence": 101,
+      "timestamp": "20260520000000",
+      "category": "uncategorized",
+      "dependencies": {
+        "objects": [
+          "sales"
+        ],
+        "migrations": [
+          "20260420100000_pos_transactions.sql"
+        ],
+        "satisfied": true,
+        "unsatisfied_objects": []
+      },
+      "unsafe_assumptions": [],
+      "risks": []
+    },
+    "20260521000000_core_pos_schema.sql": {
+      "sequence": 102,
+      "timestamp": "20260521000000",
+      "category": "foundational",
+      "dependencies": {
+        "objects": [
+          "sales",
+          "customers",
+          "products",
+          "sale_items",
+          "payments",
+          "credit_ledger",
+          "expenses",
+          "inventory_adjustments"
+        ],
+        "migrations": [
+          "20260420100000_pos_transactions.sql",
+          "20260521000000_core_pos_schema.sql"
+        ],
+        "satisfied": true,
+        "unsatisfied_objects": []
+      },
+      "unsafe_assumptions": [],
+      "risks": []
+    },
+    "20260521000001_complete_sale_rpc_v2.sql": {
+      "sequence": 103,
+      "timestamp": "20260521000001",
+      "category": "runtime-only",
+      "dependencies": {
+        "objects": [
+          "sales"
+        ],
+        "migrations": [
+          "20260420100000_pos_transactions.sql"
+        ],
+        "satisfied": true,
+        "unsatisfied_objects": []
+      },
+      "unsafe_assumptions": [],
+      "risks": []
+    },
+    "20260521000002_online_order_module.sql": {
+      "sequence": 104,
+      "timestamp": "20260521000002",
+      "category": "uncategorized",
+      "dependencies": {
+        "objects": [
+          "products",
+          "riders",
+          "online_orders",
+          "online_order_items",
+          "delivery_zones"
+        ],
+        "migrations": [
+          "20260521000000_core_pos_schema.sql",
+          "20260521000002_online_order_module.sql"
+        ],
+        "satisfied": true,
+        "unsatisfied_objects": []
+      },
+      "unsafe_assumptions": [],
+      "risks": []
     }
   },
   "object_owners": {
@@ -3436,7 +3598,7 @@
     "idx_sales_cashier_created": "20260420100000_pos_transactions.sql",
     "idx_sales_session": "20260420100000_pos_transactions.sql",
     "idx_sales_status": "20260420100000_pos_transactions.sql",
-    "sale_items": "20260420100000_pos_transactions.sql",
+    "sale_items": "20260521000000_core_pos_schema.sql",
     "idx_sale_items_sale": "20260420100000_pos_transactions.sql",
     "idx_sale_items_item": "20260420100000_pos_transactions.sql",
     "sale_payments": "20260420100000_pos_transactions.sql",
@@ -3514,7 +3676,7 @@
     "reclaim_stale_ledger_locks": "20260423233000_ledger_posting_hardening.sql",
     "claim_ledger_posting_jobs": "20260423233000_ledger_posting_hardening.sql",
     "process_ledger_posting_batch": "20260423233000_ledger_posting_hardening.sql",
-    "expenses": "20260423240000_sheets_migration_expenses_and_rpc.sql",
+    "expenses": "20260521000000_core_pos_schema.sql",
     "ensure_expense_ledger_accounts": "20260423240000_sheets_migration_expenses_and_rpc.sql",
     "record_expense": "20260423240000_sheets_migration_expenses_and_rpc.sql",
     "import_historical_daily_sale": "20260423240000_sheets_migration_expenses_and_rpc.sql",
@@ -3637,7 +3799,23 @@
     "check_price_alerts": "20260514000001_create_competitor_prices.sql",
     "increment_stock": "20260519100000_increment_stock_rpc.sql",
     "trigger_sync_alert_bridge": "20260519150000_sync_alert_bridge_trigger.sql",
-    "trigger_stitch_orchestrator": "20260519160000_stitch_orchestrator_trigger.sql"
+    "trigger_stitch_orchestrator": "20260519160000_stitch_orchestrator_trigger.sql",
+    "inventory_snapshots": "20260519215146_quarterly_ledger_archive.sql",
+    "idx_inventory_snapshots_period": "20260519215146_quarterly_ledger_archive.sql",
+    "idx_inventory_snapshots_store_period": "20260519215146_quarterly_ledger_archive.sql",
+    "archive_stock_ledger_quarterly": "20260519215146_quarterly_ledger_archive.sql",
+    "unified_stock_movements": "20260519215146_quarterly_ledger_archive.sql",
+    "customers": "20260521000000_core_pos_schema.sql",
+    "products": "20260521000000_core_pos_schema.sql",
+    "payments": "20260521000000_core_pos_schema.sql",
+    "credit_ledger": "20260521000000_core_pos_schema.sql",
+    "inventory_adjustments": "20260521000000_core_pos_schema.sql",
+    "complete_sale_v2": "20260521000001_complete_sale_rpc_v2.sql",
+    "riders": "20260521000002_online_order_module.sql",
+    "online_orders": "20260521000002_online_order_module.sql",
+    "online_order_items": "20260521000002_online_order_module.sql",
+    "delivery_zones": "20260521000002_online_order_module.sql",
+    "handle_online_order_stock_reservation": "20260521000002_online_order_module.sql"
   },
   "unsafe_migrations": {
     "20260301000000_baseline_core_tables.sql": {
@@ -4026,6 +4204,12 @@
       "risks": [
         {
           "type": "forward_dependency",
+          "object": "sale_items",
+          "depends_on_migration": "20260521000000_core_pos_schema.sql",
+          "severity": "critical"
+        },
+        {
+          "type": "forward_dependency",
           "object": "complete_sale",
           "depends_on_migration": "20260423232000_production_hardening.sql",
           "severity": "critical"
@@ -4044,6 +4228,12 @@
         }
       ],
       "unsatisfied_objects": [
+        {
+          "object": "sale_items",
+          "owner": "20260521000000_core_pos_schema.sql",
+          "owner_timestamp": "20260521000000",
+          "issue": "forward_dependency"
+        },
         {
           "object": "complete_sale",
           "owner": "20260423232000_production_hardening.sql",
@@ -4726,6 +4916,31 @@
           "issue": "object_not_found"
         }
       ]
+    },
+    "20260423240000_sheets_migration_expenses_and_rpc.sql": {
+      "category": "runtime-only",
+      "risks": [
+        {
+          "type": "forward_dependency",
+          "object": "expenses",
+          "depends_on_migration": "20260521000000_core_pos_schema.sql",
+          "severity": "critical"
+        },
+        {
+          "type": "runtime_before_foundation",
+          "severity": "critical",
+          "message": "Runtime migration depends on not-yet-created foundation"
+        }
+      ],
+      "unsatisfied_objects": [
+        {
+          "object": "expenses",
+          "owner": "20260521000000_core_pos_schema.sql",
+          "owner_timestamp": "20260521000000",
+          "issue": "forward_dependency"
+        }
+      ],
+      "unsafe_assumptions": []
     },
     "20260425110000_authenticate_staff_pin.sql": {
       "category": "uncategorized",
@@ -5521,6 +5736,41 @@
       ],
       "unsatisfied_objects": [],
       "unsafe_assumptions": []
+    },
+    "20260519215146_quarterly_ledger_archive.sql": {
+      "category": "uncategorized",
+      "risks": [
+        {
+          "type": "missing_object",
+          "object": "pg_advisory_lock",
+          "severity": "high"
+        },
+        {
+          "type": "missing_object",
+          "object": "pg_advisory_unlock",
+          "severity": "high"
+        },
+        {
+          "type": "missing_object",
+          "object": "date_trunc",
+          "severity": "high"
+        }
+      ],
+      "unsatisfied_objects": [],
+      "unsafe_assumptions": [
+        {
+          "object": "pg_advisory_lock",
+          "issue": "object_not_found"
+        },
+        {
+          "object": "pg_advisory_unlock",
+          "issue": "object_not_found"
+        },
+        {
+          "object": "date_trunc",
+          "issue": "object_not_found"
+        }
+      ]
     }
   },
   "critical_issues": [
@@ -5675,6 +5925,12 @@
     {
       "migration": "20260420100000_pos_transactions.sql",
       "risks": [
+        {
+          "type": "forward_dependency",
+          "object": "sale_items",
+          "depends_on_migration": "20260521000000_core_pos_schema.sql",
+          "severity": "critical"
+        },
         {
           "type": "forward_dependency",
           "object": "complete_sale",
@@ -5956,6 +6212,22 @@
           "object": "stock_movements",
           "depends_on_migration": "20260426213606_retail_profit_control_foundation.sql",
           "severity": "critical"
+        }
+      ]
+    },
+    {
+      "migration": "20260423240000_sheets_migration_expenses_and_rpc.sql",
+      "risks": [
+        {
+          "type": "forward_dependency",
+          "object": "expenses",
+          "depends_on_migration": "20260521000000_core_pos_schema.sql",
+          "severity": "critical"
+        },
+        {
+          "type": "runtime_before_foundation",
+          "severity": "critical",
+          "message": "Runtime migration depends on not-yet-created foundation"
         }
       ]
     },

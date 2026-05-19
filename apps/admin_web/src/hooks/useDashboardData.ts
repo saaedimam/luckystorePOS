@@ -56,30 +56,40 @@ export function useDashboardData(storeId: string | null) {
     ...commonOptions,
   });
 
+  const recentSalesQuery = useQuery({
+    queryKey: ['recent-sales-dashboard', storeId],
+    queryFn: () => api.sales.history(storeId!),
+    ...commonOptions,
+  });
+
   return {
     statsQuery,
     lowStockQuery,
     remindersQuery,
     dailySalesQuery,
     expensesQuery,
+    recentSalesQuery,
     isLoading:
       statsQuery.isLoading ||
       lowStockQuery.isLoading ||
       remindersQuery.isLoading ||
       dailySalesQuery.isLoading ||
-      expensesQuery.isLoading,
+      expensesQuery.isLoading ||
+      recentSalesQuery.isLoading,
     isError:
       statsQuery.isError ||
       lowStockQuery.isError ||
       remindersQuery.isError ||
       dailySalesQuery.isError ||
-      expensesQuery.isError,
+      expensesQuery.isError ||
+      recentSalesQuery.isError,
     refetchAll: () => {
       statsQuery.refetch();
       lowStockQuery.refetch();
       remindersQuery.refetch();
       dailySalesQuery.refetch();
       expensesQuery.refetch();
+      recentSalesQuery.refetch();
     },
   };
 }

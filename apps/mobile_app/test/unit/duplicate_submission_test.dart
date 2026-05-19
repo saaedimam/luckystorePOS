@@ -17,9 +17,10 @@ class MockSupabaseClient extends Mock implements SupabaseClient {}
 void main() {
   group('Idempotency Key Generation', () {
     test('generateClientTransactionId produces unique IDs for same inputs', () {
+      var counter = 0;
       String generateId(String storeId, String cashierId) {
         final millis = DateTime.now().millisecondsSinceEpoch;
-        final rand = (millis % 10000).toString();
+        final rand = '${counter++}';
         final shortStore = storeId.replaceAll('-', '').substring(0, 8);
         final shortCashier = cashierId.replaceAll('-', '').substring(0, 8);
         return 'tx-$shortStore-$shortCashier-$millis-$rand';

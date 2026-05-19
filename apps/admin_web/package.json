@@ -18,9 +18,15 @@
     "@tanstack/react-query-devtools": "^5.100.7",
     "@tanstack/react-virtual": "^3.13.24",
     "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
+    "framer-motion": "^12.39.0",
     "i18next": "^26.1.0",
     "i18next-browser-languagedetector": "^8.2.1",
+    "idb-keyval": "^6.2.2",
+    "indexeddb-fs": "^2.1.5",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "lucide-react": "^1.9.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
@@ -28,7 +34,9 @@
     "react-i18next": "^17.0.7",
     "react-router-dom": "^7.14.2",
     "recharts": "^3.8.1",
-    "zod": "^4.3.6"
+    "sonner": "^2.0.7",
+    "zod": "^4.3.6",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

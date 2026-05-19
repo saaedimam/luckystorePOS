@@ -63,4 +63,31 @@ export const pos = {
       error: data?.status !== 'success' ? 'Sale failed' : undefined,
     };
   },
+
+  completeSaleV2: async (payload: {
+    storeId: string;
+    cashierId: string;
+    customerId?: string;
+    items: Array<{ product_id: string; qty: number; unit_price: number; discount?: number }>;
+    payments: Array<{ method: string; amount: number; reference?: string }>;
+    total: number;
+    discount: number;
+    operationId: string;
+    offlineCreatedAt?: string;
+  }): Promise<any> => {
+    debugLog('Completing sale V2', payload);
+    const { data, error } = await supabase.rpc('complete_sale_v2', {
+      p_store_id: payload.storeId,
+      p_cashier_id: payload.cashierId,
+      p_customer_id: payload.customerId || null,
+      p_items: payload.items,
+      p_payments: payload.payments,
+      p_total: payload.total,
+      p_discount: payload.discount,
+      p_operation_id: payload.operationId,
+      p_offline_created_at: payload.offlineCreatedAt || new Date().toISOString(),
+    });
+    if (error) throw error;
+    return data;
+  },
 };

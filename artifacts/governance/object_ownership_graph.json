@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-05-19T14:32:53.997Z",
-  "migration_count": 100,
-  "objects_tracked": 256,
-  "conflicts_detected": 585,
+  "timestamp": "2026-05-19T22:11:22.480Z",
+  "migration_count": 105,
+  "objects_tracked": 271,
+  "conflicts_detected": 604,
   "ownership_graph": {
     "extensions": {
       "type": "extensions schema if needed\nCREATE SCHEMA IF NOT EXISTS",
@@ -917,6 +917,102 @@
           "type": "TABLE",
           "migration": "20260517170305_fix_parties_rls.sql",
           "timestamp": "20260517170305"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260519215146_quarterly_ledger_archive.sql",
+          "timestamp": "20260519215146"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260520000000_add_whatsapp_invoice_columns.sql",
+          "timestamp": "20260520000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260521000001_complete_sale_rpc_v2.sql",
+          "timestamp": "20260521000001"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260521000002_online_order_module.sql",
+          "timestamp": "20260521000002"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260521000002_online_order_module.sql",
+          "timestamp": "20260521000002"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260521000002_online_order_module.sql",
+          "timestamp": "20260521000002"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260521000002_online_order_module.sql",
+          "timestamp": "20260521000002"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260521000002_online_order_module.sql",
+          "timestamp": "20260521000002"
         }
       ],
       "drops": [
@@ -1951,6 +2047,86 @@
           "action": "ALTER",
           "migration": "20260517170305_fix_parties_rls.sql",
           "timestamp": "20260517170305"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260519215146_quarterly_ledger_archive.sql",
+          "timestamp": "20260519215146"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260520000000_add_whatsapp_invoice_columns.sql",
+          "timestamp": "20260520000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260521000001_complete_sale_rpc_v2.sql",
+          "timestamp": "20260521000001"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260521000002_online_order_module.sql",
+          "timestamp": "20260521000002"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260521000002_online_order_module.sql",
+          "timestamp": "20260521000002"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260521000002_online_order_module.sql",
+          "timestamp": "20260521000002"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260521000002_online_order_module.sql",
+          "timestamp": "20260521000002"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260521000002_online_order_module.sql",
+          "timestamp": "20260521000002"
         }
       ],
       "conflicts": []
@@ -7238,6 +7414,306 @@
         }
       ],
       "conflicts": []
+    },
+    "tenant": {
+      "type": "POLICY",
+      "owner": "20260519215146_quarterly_ledger_archive.sql",
+      "owner_timestamp": "20260519215146",
+      "created_at": "20260519215146",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260519215146_quarterly_ledger_archive.sql",
+          "timestamp": "20260519215146"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_inventory_snapshots_period": {
+      "type": "INDEX IF NOT EXISTS",
+      "owner": "20260519215146_quarterly_ledger_archive.sql",
+      "owner_timestamp": "20260519215146",
+      "created_at": "20260519215146",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260519215146_quarterly_ledger_archive.sql",
+          "timestamp": "20260519215146"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_inventory_snapshots_store_period": {
+      "type": "INDEX IF NOT EXISTS",
+      "owner": "20260519215146_quarterly_ledger_archive.sql",
+      "owner_timestamp": "20260519215146",
+      "created_at": "20260519215146",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260519215146_quarterly_ledger_archive.sql",
+          "timestamp": "20260519215146"
+        }
+      ],
+      "conflicts": []
+    },
+    "customers_select_all": {
+      "type": "POLICY",
+      "owner": "20260521000000_core_pos_schema.sql",
+      "owner_timestamp": "20260521000000",
+      "created_at": "20260521000000",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        }
+      ],
+      "conflicts": []
+    },
+    "customers_insert_all": {
+      "type": "POLICY",
+      "owner": "20260521000000_core_pos_schema.sql",
+      "owner_timestamp": "20260521000000",
+      "created_at": "20260521000000",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        }
+      ],
+      "conflicts": []
+    },
+    "products_select_all": {
+      "type": "POLICY",
+      "owner": "20260521000000_core_pos_schema.sql",
+      "owner_timestamp": "20260521000000",
+      "created_at": "20260521000000",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        }
+      ],
+      "conflicts": []
+    },
+    "products_write_manager_owner": {
+      "type": "POLICY",
+      "owner": "20260521000000_core_pos_schema.sql",
+      "owner_timestamp": "20260521000000",
+      "created_at": "20260521000000",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        }
+      ],
+      "conflicts": []
+    },
+    "expenses_select_all": {
+      "type": "POLICY",
+      "owner": "20260521000000_core_pos_schema.sql",
+      "owner_timestamp": "20260521000000",
+      "created_at": "20260521000000",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        }
+      ],
+      "conflicts": []
+    },
+    "expenses_write_manager_owner": {
+      "type": "POLICY",
+      "owner": "20260521000000_core_pos_schema.sql",
+      "owner_timestamp": "20260521000000",
+      "created_at": "20260521000000",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        }
+      ],
+      "conflicts": []
+    },
+    "sales_insert_cashier": {
+      "type": "POLICY",
+      "owner": "20260521000000_core_pos_schema.sql",
+      "owner_timestamp": "20260521000000",
+      "created_at": "20260521000000",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        }
+      ],
+      "conflicts": []
+    },
+    "payments_insert_cashier": {
+      "type": "POLICY",
+      "owner": "20260521000000_core_pos_schema.sql",
+      "owner_timestamp": "20260521000000",
+      "created_at": "20260521000000",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        }
+      ],
+      "conflicts": []
+    },
+    "adj_write_manager_owner": {
+      "type": "POLICY",
+      "owner": "20260521000000_core_pos_schema.sql",
+      "owner_timestamp": "20260521000000",
+      "created_at": "20260521000000",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        }
+      ],
+      "conflicts": []
+    },
+    "riders_tenant_isolation": {
+      "type": "POLICY",
+      "owner": "20260521000002_online_order_module.sql",
+      "owner_timestamp": "20260521000002",
+      "created_at": "20260521000002",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260521000002_online_order_module.sql",
+          "timestamp": "20260521000002"
+        }
+      ],
+      "conflicts": []
+    },
+    "online_orders_tenant_isolation": {
+      "type": "POLICY",
+      "owner": "20260521000002_online_order_module.sql",
+      "owner_timestamp": "20260521000002",
+      "created_at": "20260521000002",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260521000002_online_order_module.sql",
+          "timestamp": "20260521000002"
+        }
+      ],
+      "conflicts": []
+    },
+    "online_order_items_tenant_isolation": {
+      "type": "POLICY",
+      "owner": "20260521000002_online_order_module.sql",
+      "owner_timestamp": "20260521000002",
+      "created_at": "20260521000002",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260521000002_online_order_module.sql",
+          "timestamp": "20260521000002"
+        }
+      ],
+      "conflicts": []
     }
   },
   "conflicts": [
@@ -12437,6 +12913,177 @@
       "creators": [
         "20260519150000_sync_alert_bridge_trigger.sql",
         "20260519160000_stitch_orchestrator_trigger.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260519160000_stitch_orchestrator_trigger.sql",
+        "20260519215146_quarterly_ledger_archive.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260519215146_quarterly_ledger_archive.sql",
+        "20260519215146_quarterly_ledger_archive.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260519215146_quarterly_ledger_archive.sql",
+        "20260519215146_quarterly_ledger_archive.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260519215146_quarterly_ledger_archive.sql",
+        "20260520000000_add_whatsapp_invoice_columns.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "authenticated",
+      "creators": [
+        "20260426231000_fix_stock_levels_rls.sql",
+        "20260520000000_add_whatsapp_invoice_columns.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "authenticated",
+      "creators": [
+        "20260520000000_add_whatsapp_invoice_columns.sql",
+        "20260520000000_add_whatsapp_invoice_columns.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260520000000_add_whatsapp_invoice_columns.sql",
+        "20260521000000_core_pos_schema.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000000_core_pos_schema.sql",
+        "20260521000000_core_pos_schema.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000000_core_pos_schema.sql",
+        "20260521000000_core_pos_schema.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000000_core_pos_schema.sql",
+        "20260521000000_core_pos_schema.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000000_core_pos_schema.sql",
+        "20260521000000_core_pos_schema.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000000_core_pos_schema.sql",
+        "20260521000000_core_pos_schema.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000000_core_pos_schema.sql",
+        "20260521000000_core_pos_schema.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000000_core_pos_schema.sql",
+        "20260521000001_complete_sale_rpc_v2.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000001_complete_sale_rpc_v2.sql",
+        "20260521000002_online_order_module.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000002_online_order_module.sql",
+        "20260521000002_online_order_module.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000002_online_order_module.sql",
+        "20260521000002_online_order_module.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000002_online_order_module.sql",
+        "20260521000002_online_order_module.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000002_online_order_module.sql",
+        "20260521000002_online_order_module.sql"
       ],
       "severity": "high"
     },
@@ -17731,6 +18378,177 @@
       "creators": [
         "20260519150000_sync_alert_bridge_trigger.sql",
         "20260519160000_stitch_orchestrator_trigger.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260519160000_stitch_orchestrator_trigger.sql",
+        "20260519215146_quarterly_ledger_archive.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260519215146_quarterly_ledger_archive.sql",
+        "20260519215146_quarterly_ledger_archive.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260519215146_quarterly_ledger_archive.sql",
+        "20260519215146_quarterly_ledger_archive.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260519215146_quarterly_ledger_archive.sql",
+        "20260520000000_add_whatsapp_invoice_columns.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "authenticated",
+      "creators": [
+        "20260426231000_fix_stock_levels_rls.sql",
+        "20260520000000_add_whatsapp_invoice_columns.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "authenticated",
+      "creators": [
+        "20260520000000_add_whatsapp_invoice_columns.sql",
+        "20260520000000_add_whatsapp_invoice_columns.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260520000000_add_whatsapp_invoice_columns.sql",
+        "20260521000000_core_pos_schema.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000000_core_pos_schema.sql",
+        "20260521000000_core_pos_schema.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000000_core_pos_schema.sql",
+        "20260521000000_core_pos_schema.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000000_core_pos_schema.sql",
+        "20260521000000_core_pos_schema.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000000_core_pos_schema.sql",
+        "20260521000000_core_pos_schema.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000000_core_pos_schema.sql",
+        "20260521000000_core_pos_schema.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000000_core_pos_schema.sql",
+        "20260521000000_core_pos_schema.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000000_core_pos_schema.sql",
+        "20260521000001_complete_sale_rpc_v2.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000001_complete_sale_rpc_v2.sql",
+        "20260521000002_online_order_module.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000002_online_order_module.sql",
+        "20260521000002_online_order_module.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000002_online_order_module.sql",
+        "20260521000002_online_order_module.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000002_online_order_module.sql",
+        "20260521000002_online_order_module.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000002_online_order_module.sql",
+        "20260521000002_online_order_module.sql"
       ],
       "severity": "high"
     },

@@ -11,6 +11,10 @@ import { NotificationProvider } from '../components/Notification';
 import { OfflineIndicator } from '../components/OfflineIndicator';
 import { InstallPrompt } from '../components/InstallPrompt';
 import { AuthProvider } from '../lib/AuthContext';
+import { useSyncSales } from '../hooks/useSyncSales';
+import { OfflineBanner } from '../components/ui/OfflineBanner';
+import { ToastProvider } from '../components/ui/ToastProvider';
+import { ErrorBoundary as GlobalErrorBoundary } from '../components/ui/ErrorBoundary';
 
 const LazyProductListPage = React.lazy(() => import('../features/products/ProductListPage').then(m => ({ default: m.ProductListPage })));
 const LazyInventoryListPage = React.lazy(() => import('../features/inventory/InventoryListPage').then(m => ({ default: m.InventoryListPage })));
@@ -140,17 +144,18 @@ const router = createBrowserRouter([
 });
 
 export function App() {
+  useSyncSales(); // Background sync engine
+
   return (
     <QueryProvider>
-      <NotificationProvider>
-        <AuthProvider>
-          <ErrorBoundary>
-            <OfflineIndicator />
-            <RouterProvider router={router} />
-            <InstallPrompt />
-          </ErrorBoundary>
-        </AuthProvider>
-      </NotificationProvider>
+      <AuthProvider>
+        <GlobalErrorBoundary>
+          <ToastProvider />
+          <OfflineBanner />
+          <RouterProvider router={router} />
+          <InstallPrompt />
+        </GlobalErrorBoundary>
+      </AuthProvider>
     </QueryProvider>
   );
 }

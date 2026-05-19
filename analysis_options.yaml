@@ -1,0 +1,6 @@
+# Root analyzer configuration to prevent ad-hoc analysis of non-package directories
+analyzer:
+  exclude:
+    - "lib/**"
+    - "test/**"
+    - "scripts/**"

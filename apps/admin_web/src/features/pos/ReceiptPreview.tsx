@@ -1,6 +1,9 @@
-import { useRef, useEffect } from 'react';
-import { Printer, X } from 'lucide-react';
+import { useRef, useEffect, useState } from 'react';
+import { Printer, X, MessageCircle, Loader2 } from 'lucide-react';
 import type { CartItem } from '../../lib/api/types';
+import { generateInvoicePdfBlob } from '../../utils/PdfGenerator';
+import { supabase } from '../../lib/supabase';
+import { salesService } from '../../services/sales/salesService';
 
 interface ReceiptConfig {
   store_name: string;
@@ -45,11 +48,12 @@ export function ReceiptPreview({
   paidAmount,
   changeAmount,
   saleNumber,
-  batchId: _batchId,
+  batchId,
   receiptConfig,
   onClose,
 }: ReceiptPreviewProps) {
   const receiptRef = useRef<HTMLDivElement>(null);
+  const [isSharing, setIsSharing] = useState(false);
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
@@ -63,6 +67,53 @@ export function ReceiptPreview({
     window.print();
   };
 
+  const handleWhatsAppShare = async () => {
+    const phoneNumber = window.prompt('Enter Customer WhatsApp Number (with country code, e.g., 88017...):');
+    if (!phoneNumber) return;
+
+    setIsSharing(true);
+    try {
+      const storeName = receiptConfig?.store_name || 'Lucky Store';
+      const blob = generateInvoicePdfBlob({
+        saleNumber: saleNumber || 'DRAFT',
+        cart,
+        subtotal,
+        discount,
+        totalAmount,
+        paidAmount,
+        changeAmount,
+        paymentMethod,
+        storeName,
+      });
+
+      const fileName = `invoices/${saleNumber || 'draft'}_${Date.now()}.pdf`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('invoices')
+        .upload(fileName, blob);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('invoices')
+        .getPublicUrl(uploadData.path);
+
+      // Update sale info if we have a batchId (sale ID)
+      if (batchId) {
+        await salesService.updateWhatsAppInfo(batchId, phoneNumber, publicUrl);
+      }
+
+      const message = `Hello! Here is your invoice from ${storeName}: ${publicUrl}`;
+      const whatsappUrl = `https://wa.me/${phoneNumber.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
+      
+      window.open(whatsappUrl, '_blank');
+    } catch (error) {
+      console.error('WhatsApp Share Error:', error);
+      alert('Failed to share invoice via WhatsApp.');
+    } finally {
+      setIsSharing(false);
+    }
+  };
+
   const storeName = receiptConfig?.store_name || 'Lucky Store';
   const headerText = receiptConfig?.header_text || '';
   const footerText = receiptConfig?.footer_text || '';
@@ -73,6 +124,10 @@ export function ReceiptPreview({
         <div className="receipt-modal-header">
           <h2>Sale Complete</h2>
           <div className="receipt-modal-actions">
+            <button className="button-whatsapp" onClick={handleWhatsAppShare} disabled={isSharing}>
+              {isSharing ? <Loader2 className="animate-spin" size={16} /> : <MessageCircle size={16} />}
+              WhatsApp
+            </button>
             <button className="button-primary" onClick={handlePrint}>
               <Printer size={16} /> Print Receipt
             </button>

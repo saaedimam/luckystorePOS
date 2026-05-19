@@ -8,9 +8,11 @@ import { Search, ScanLine, AlertCircle, X, RefreshCw, ShoppingCart, ChevronUp } 
 import { clsx } from 'clsx';
 import type { PosProduct } from '../../lib/api/types';
 import { ReceiptPreview } from './ReceiptPreview';
-import { CartPanel } from './CartPanel';
-import { PaymentModal } from './PaymentModal';
-import { usePosCart } from './usePosCart';
+import { TouchCart } from './components/TouchCart';
+import { ModernPaymentModal } from './ModernPaymentModal';
+import { useCartStore } from '../../stores/useCartStore';
+import { useOfflineStore } from '../../stores/useOfflineStore';
+import { useSyncSales } from '../../hooks/useSyncSales';
 import { usePosScanner } from './usePosScanner';
 import { usePosSale } from './usePosSale';
 import { ProductCard } from '../../components/product/ProductCard';
@@ -33,8 +35,9 @@ export function QuickPosPage() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [showMobileCart, setShowMobileCart] = useState(false);
 
-  // Cart hook
-  const cart = usePosCart(handleError);
+  // Cart hook (Zustand)
+  const cart = useCartStore();
+  const { pendingCount } = useSyncSales();
 
   // Realtime: refresh product list on stock_levels changes
   useRealtimeSubscription({
@@ -47,14 +50,12 @@ export function QuickPosPage() {
       if (newRecord && typeof newRecord.qty === 'number' && newRecord.qty <= 0) {
         const itemId = newRecord.item_id as string | undefined;
         if (itemId) {
-          cart.setCart(prev => {
-            const item = prev.find(i => i.product.id === itemId);
-            if (item) {
-              setError(`⚠ ${item.product.name} is now out of stock!`);
-              setTimeout(() => setError(null), 5000);
-            }
-            return prev;
-          });
+          const itemInCart = cart.items.find(i => i.product.id === itemId);
+          if (itemInCart) {
+            setError(`⚠ ${itemInCart.product.name} is now out of stock!`);
+            setTimeout(() => setError(null), 5000);
+            cart.removeItem(itemId);
+          }
         }
       }
     },
@@ -67,7 +68,7 @@ export function QuickPosPage() {
   });
 
   // Scanner hook
-  const scanner = usePosScanner(storeId, cart.addToCart, handleError, cart.totalAmount === 0);
+  const scanner = usePosScanner(storeId, cart.addItem, handleError, cart.getTotal() === 0);
 
   // Fetch categories
   const { data: categories = [], isLoading: catLoading, error: catError } = useQuery({
@@ -99,10 +100,10 @@ export function QuickPosPage() {
 
   // Sale hook
   const sale = usePosSale(
-    cart.cart,
-    cart.totalAmount,
-    cart.subtotal,
-    cart.cartDiscount,
+    cart.items as any,
+    cart.getTotal(),
+    cart.getTotal(), // Subtotal is same as total for now in simplified store
+    0, // cartDiscount
     storeId,
     tenantId,
     paymentMethods,
@@ -156,7 +157,15 @@ export function QuickPosPage() {
         <div className="pos-products">
           {/* Action Bar */}
           <div className="pos-action-bar">
-            <h1 className="text-xl font-bold">Quick POS</h1>
+            <div className="flex flex-col">
+              <h1 className="text-2xl font-black tracking-tight">Lucky Store POS</h1>
+              {pendingCount > 0 && (
+                <div className="flex items-center gap-2 text-[10px] font-bold text-sky-400 uppercase tracking-widest bg-sky-400/10 px-2 py-0.5 rounded-full w-fit">
+                  <div className="w-1.5 h-1.5 bg-sky-400 rounded-full animate-pulse" />
+                  {pendingCount} syncing
+                </div>
+              )}
+            </div>
             <div className="pos-action-buttons">
               <div className="pos-search">
                 <Search className="search-icon" />
@@ -261,7 +270,7 @@ export function QuickPosPage() {
                 <ProductCard
                   key={product.id}
                   product={product}
-                  onAddToCart={(p) => cart.addToCart(p, 1)}
+                  onAddToCart={(p) => cart.addItem(p)}
                 />
               ))
             )}
@@ -270,21 +279,7 @@ export function QuickPosPage() {
 
         {/* Right Panel - Billing (desktop only) */}
         <div className="pos-billing">
-          <CartPanel
-            cart={cart.cart}
-            itemCount={cart.itemCount}
-            subtotal={cart.subtotal}
-            totalAmount={cart.totalAmount}
-            discountType={cart.discountType}
-            discountValue={cart.discountValue}
-            isProcessing={sale.isProcessing}
-            onClearCart={cart.clearCart}
-            onRemoveFromCart={cart.removeFromCart}
-            onUpdateQty={cart.updateQty}
-            onSetDiscountValue={cart.setDiscountValue}
-            onSetDiscountType={cart.setDiscountType}
-            onContinueBilling={() => sale.setShowPaymentModal(true)}
-          />
+          <TouchCart onCheckout={() => sale.setShowPaymentModal(true)} />
         </div>
       </div>
 
@@ -295,10 +290,10 @@ export function QuickPosPage() {
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
           <ShoppingCart size={20} />
-          {cart.itemCount} {cart.itemCount === 1 ? 'item' : 'items'}
-          <span className="mobile-cart-badge">{cart.itemCount}</span>
+          {cart.getItemCount()} {cart.getItemCount() === 1 ? 'item' : 'items'}
+          <span className="mobile-cart-badge">{cart.getItemCount()}</span>
         </span>
-        <span className="mobile-cart-total">৳{cart.totalAmount.toFixed(2)}</span>
+        <span className="mobile-cart-total">৳{cart.getTotal().toFixed(2)}</span>
         <ChevronUp size={20} />
       </button>
 
@@ -311,16 +306,16 @@ export function QuickPosPage() {
               <div className="cart-sheet-handle-bar" />
             </div>
             <div className="cart-sheet-header">
-              <h2>Billing ({cart.itemCount})</h2>
+              <h2>Billing ({cart.getItemCount()})</h2>
               <button
                 className="text-danger"
                 onClick={cart.clearCart}
-                disabled={cart.cart.length === 0}
+                disabled={cart.items.length === 0}
                 style={{
                   background: 'none',
                   border: 'none',
-                  cursor: cart.cart.length === 0 ? 'not-allowed' : 'pointer',
-                  opacity: cart.cart.length === 0 ? 0.5 : 1,
+                  cursor: cart.items.length === 0 ? 'not-allowed' : 'pointer',
+                  opacity: cart.items.length === 0 ? 0.5 : 1,
                   fontSize: 'var(--font-size-sm)',
                 }}
               >
@@ -328,31 +323,19 @@ export function QuickPosPage() {
               </button>
             </div>
             <div className="cart-sheet-body">
-              <CartPanel
-                cart={cart.cart}
-                itemCount={cart.itemCount}
-                subtotal={cart.subtotal}
-                totalAmount={cart.totalAmount}
-                discountType={cart.discountType}
-                discountValue={cart.discountValue}
-                isProcessing={sale.isProcessing}
-                onClearCart={cart.clearCart}
-                onRemoveFromCart={cart.removeFromCart}
-                onUpdateQty={cart.updateQty}
-                onSetDiscountValue={cart.setDiscountValue}
-                onSetDiscountType={cart.setDiscountType}
-                onContinueBilling={() => sale.setShowPaymentModal(true)}
-              />
+              <TouchCart onCheckout={() => {
+                setShowMobileCart(false);
+                sale.setShowPaymentModal(true);
+              }} />
             </div>
           </div>
         </>
       )}
 
-      {/* Payment Modal */}
-      <PaymentModal
-        show={sale.showPaymentModal}
-        totalAmount={cart.totalAmount}
-        isProcessing={sale.isProcessing}
+          <ModernPaymentModal
+            show={sale.showPaymentModal}
+            totalAmount={cart.getTotal()}
+            isProcessing={sale.isProcessing}
         isSplitMode={sale.isSplitMode}
         selectedPaymentMethod={sale.selectedPaymentMethod}
         paymentAmount={sale.paymentAmount}

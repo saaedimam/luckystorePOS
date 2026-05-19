@@ -1,8 +1,8 @@
 Object Ownership Analysis
-Generated: 2026-05-19T14:32:53.997Z
-Migrations: 100
-Objects Tracked: 256
-Conflicts: 585
+Generated: 2026-05-19T22:11:22.480Z
+Migrations: 105
+Objects Tracked: 271
+Conflicts: 604
 
 CANONICAL OWNERSHIP
 ==================
@@ -28,7 +28,7 @@ RPC Functions (0)
 
 Security Functions (0)
 
-HIGH-RISK CONFLICTS (584)
+HIGH-RISK CONFLICTS (603)
 ====================
 [duplicate_creator] public
 [duplicate_creator] public
@@ -609,6 +609,25 @@ HIGH-RISK CONFLICTS (584)
 [duplicate_creator] public
 [duplicate_creator] expenses_delete
 [duplicate_creator] expenses_update
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] authenticated
+[duplicate_creator] authenticated
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
 [duplicate_creator] public
 [duplicate_creator] public
 [duplicate_creator] public

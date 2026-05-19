@@ -557,6 +557,19 @@ The POS dashboard has been upgraded into a self-healing, automated retail contro
 
 ---
 
+## 🚀 Cashier-First Antigravity Dashboard
+
+The POS admin web dashboard (`DashboardPage.tsx` / `ManagerPartnerView.tsx`) has been fundamentally reimagined from a generic widget-grid into an elite, temporal feed-based "Antigravity" dashboard tailored for fast-moving Bangladeshi corner stores.
+
+### Key Capabilities & Architectural Changes
+1. **Temporal Activity Feed**: Eliminated spatial navigation hell. Replaced the generic 6-card grid with a unified, chronologically sorted feed of `DayGroup` items (Sales, Expenses, System Events, Collections) mapping exactly to how a store manager perceives the day's flow.
+2. **Vercel-Inspired Command Palette (CmdK)**: Built a purely presentational, keyboard-first `CmdK` dialog allowing cashiers to trigger quick actions (Focus Search, Toggle Density, Timeline Jump, Trigger Quick Restock) without mouse travel. Features a pristine `bg-surface-overlay backdrop-blur-md z-[100]` glassmorphic overlay that completely prevents visual bleeding.
+3. **Ghost Mode (Density Toggle)**: Implemented state for UI density (`compact` vs `comfortable`), granting cashiers larger touch targets and breathable layouts while retaining high-density views for managers.
+4. **Strict Data Masking (Partner View)**: Inset views conditionally mask sensitive overhead expenses and partner capital splits (`৳••••••`) based on user role (`manager` vs `cashier`), ensuring zero financial data exposure on shared cashier tablets.
+5. **Robust Type Safety**: Eliminated `any` usage within dashboard structures, strictly enforcing `GroupedFeedItem` union types and dynamic payment percentages to eliminate compile-time errors.
+
+---
+
 ## 📊 Repository Statistics
 
 - **Migration files**: 97 active + quarantined archive
@@ -568,4 +581,4 @@ The POS dashboard has been upgraded into a self-healing, automated retail contro
 
 ---
 
-*Last updated: 2026-05-19T20:10+06:00 — Stability & Parity lifecycle sync: production Vercel URL, routing contract, .vercelignore surface, CI/CD pipeline documentation, mobile headless test strategy, POS Control Tower & Stitch Integration Gold Standard Certification.*
+*Last updated: 2026-05-19T23:55+06:00 — Stability & Parity lifecycle sync: production Vercel URL, routing contract, .vercelignore surface, Cashier-First Antigravity Dashboard temporal feed & CmdK palette architecture.*

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-05-19T14:32:35.344Z",
+  "generated_at": "2026-05-19T22:11:10.743Z",
   "categories": {
     "security_definer_missing_search_path": [
       "close_pos_session(p_session_id uuid, p_closing_cash numeric)",
@@ -108,6 +108,7 @@
       "20260327200005_batch_expiry_tracking.sql:adjust_stock:20260423232000_production_hardening.sql",
       "20260420100000_pos_transactions.sql:adjust_stock:20260423232000_production_hardening.sql",
       "20260420100000_pos_transactions.sql:complete_sale:20260423232000_production_hardening.sql",
+      "20260420100000_pos_transactions.sql:sale_items:20260521000000_core_pos_schema.sql",
       "20260420100000_pos_transactions.sql:void_sale:20260423232000_production_hardening.sql",
       "20260420100001_pos_scanner_rpcs.sql:get_pos_categories:20260511060000_update_pos_categories_with_visual_fields.sql",
       "20260420100001_pos_scanner_rpcs.sql:lookup_item_by_scan:20260512160000_fix_all_rpc_qty_references.sql",
@@ -138,6 +139,7 @@
       "20260423231000_sales_history_rpcs.sql:get_store_users:20260512000000_customer_staff_analytics.sql",
       "20260423231000_sales_history_rpcs.sql:update_receipt_config_simple:20260506000004_repair_remaining_rpc_functions.sql",
       "20260423232000_production_hardening.sql:stock_movements:20260426213606_retail_profit_control_foundation.sql",
+      "20260423240000_sheets_migration_expenses_and_rpc.sql:expenses:20260521000000_core_pos_schema.sql",
       "20260425110000_authenticate_staff_pin.sql:authenticate_staff_pin:20260510140100_fix_pgcrypto_schema.sql",
       "20260425110000_authenticate_staff_pin.sql:users:20260426213606_retail_profit_control_foundation.sql",
       "20260427010000_purchase_receiving_v2.sql:purchase_receipt_items:20260506000004_repair_remaining_rpc_functions.sql",
@@ -170,6 +172,7 @@
       "full_name:apps/mobile_app/lib/shared/providers/auth_provider.dart:7cd37fe2269820ec1495b839d0f46a63ea08748c6139248f6a617e94ec187917",
       "full_name:apps/mobile_app/lib/shared/providers/pos_provider.dart:2f6594dbbca46faf78c14ebe4853ba87a408039b506e1183a56ccd491811b8be",
       "full_name:apps/mobile_app/lib/shared/providers/pos_provider.dart:dfa8addf2ed29da30e1a83b6b9e1914523fe283950a7baa3a41fccf265201d16",
+      "product_id:apps/admin_web/src/lib/api/domains/pos.ts:1e06eed37bc2995c66a77921d39a6a74b10b4c5f885e16ee28a77fc07bbcf609",
       "product_id:apps/admin_web/src/lib/api/types.ts:5fa7d1c184629be9a655915e7fda79bd4d5483ad5b453e1f630d99f072c943ee",
       "product_id:apps/mobile_app/lib/features/sales/conflict_resolver.dart:463c399551adbced10060130591d3177ab970c459e5de907e390ec98d9020b45",
       "product_id:apps/mobile_app/lib/features/sales/conflict_resolver.dart:499602606c0fab9b2e91551746e33410d6c191980c89d27581106d63a3b38f96",
@@ -180,6 +183,7 @@
       "product_id:supabase/functions/sync-alert-bridge/index.ts:1df9a537cad2be40e81efeba2158489b1a804fe1d8b6141749a24b3595baeee0",
       "product_id:supabase/functions/sync-alert-bridge/index.ts:b8910a52dd3808207004ee001ebc21b9e77a6c3764637cd72e46a2c3a71d2a58",
       "product_id:supabase/functions/sync-alert-bridge/index.ts:c9e74d121d653628b3ab5723ec23b5552fda743cd7a02f163b5668613dabc69c",
+      "qty:apps/admin_web/src/lib/api/domains/pos.ts:1e06eed37bc2995c66a77921d39a6a74b10b4c5f885e16ee28a77fc07bbcf609",
       "qty:apps/admin_web/src/lib/api/domains/reports.ts:2c1617e1a54ea99f35253fdf8a12f0f8736d33eee3cfaf7b8c429e813bbb271d",
       "qty:apps/admin_web/src/lib/api/domains/reports.ts:811a098070261ff1e27d6155b66f03a515030e97d2224885d8788d778bc53386",
       "qty:apps/admin_web/src/lib/api/domains/reports.ts:86873c39f2846302c6ff84211482a8e0ec36c5db038988fc8de1031e3d082465",

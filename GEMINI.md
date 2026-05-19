@@ -65,5 +65,5 @@ Based on last 30 days: 0% Opus, 0% Sonnet, 0% Haiku.
 - Architecture, debugging, synthesis: Opus with thinking
 - Subagents for data gathering: Haiku
 - Consider Haiku for subagents to reduce cost by 80-90%.
-<!-- updated 2026-05-19T19:52 -->
+<!-- updated 2026-05-19T22:58 -->
 <!-- /TOKEN_OPTIMIZER:MODEL_ROUTING -->

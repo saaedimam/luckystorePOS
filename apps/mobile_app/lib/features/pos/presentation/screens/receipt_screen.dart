@@ -8,6 +8,9 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_button_styles.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../shared/services/pdf_invoice_service.dart';
+import 'package:share_plus/share_plus.dart';
+
 
 /// Receipt screen shown after a successful sale.
 /// Displays a clean receipt with all line items, totals, payment breakdown,
@@ -296,11 +299,29 @@ class ReceiptScreen extends StatelessWidget {
   }
 
   Future<void> _shareReceipt(BuildContext context) async {
-    final pdf = await _buildReceiptPdf();
-    await Printing.sharePdf(
-      bytes: pdf,
-      filename: 'receipt-${saleResult.saleNumber}.pdf',
-    );
+    try {
+      final file = await PdfInvoiceService.generateInvoicePdf(
+        sale: saleResult,
+        storeName: 'LUCKY STORE',
+        storeAddress: 'Dhaka, Bangladesh',
+        storePhone: '+880 1234 567890',
+      );
+
+      final xFile = XFile(file.path);
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [xFile],
+          text: 'Invoice for ${saleResult.saleNumber} from Lucky Store',
+          subject: 'Invoice ${saleResult.saleNumber}',
+        ),
+      );
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error sharing invoice: $e')),
+        );
+      }
+    }
   }
 
   Future<Uint8List> _buildReceiptPdf() async {

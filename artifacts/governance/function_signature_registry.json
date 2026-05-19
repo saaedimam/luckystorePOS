@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-05-19T14:32:53.889Z",
-  "migration_count": 100,
-  "functions_tracked": 188,
+  "timestamp": "2026-05-19T22:11:22.368Z",
+  "migration_count": 105,
+  "functions_tracked": 191,
   "missing_functions": 75,
   "conflicts_detected": 75,
   "registry": {
@@ -5464,6 +5464,57 @@
       "missing": false,
       "conflicts": [],
       "risks": []
+    },
+    "archive_stock_ledger_quarterly(p_cutoff_date TIMESTAMPTZ DEFAULT (now()": {
+      "signature": "archive_stock_ledger_quarterly(p_cutoff_date TIMESTAMPTZ DEFAULT (now()",
+      "name": "archive_stock_ledger_quarterly",
+      "params": "p_cutoff_date TIMESTAMPTZ DEFAULT (now(",
+      "created_by": "20260519215146_quarterly_ledger_archive.sql",
+      "created_timestamp": "20260519215146",
+      "is_security_definer": true,
+      "search_path": "explicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
+    },
+    "complete_sale_v2(p_store_id uuid,\n    p_cashier_id uuid,\n    p_customer_id uuid DEFAULT NULL,\n    p_items jsonb DEFAULT '[]'::jsonb, -- [{product_id, qty, unit_price, discount}]\n    p_payments jsonb DEFAULT '[]'::jsonb, -- [{method, amount, reference}]\n    p_total numeric DEFAULT 0,\n    p_discount numeric DEFAULT 0,\n    p_offline_created_at timestamptz DEFAULT NULL,\n    p_operation_id text DEFAULT NULL)": {
+      "signature": "complete_sale_v2(p_store_id uuid,\n    p_cashier_id uuid,\n    p_customer_id uuid DEFAULT NULL,\n    p_items jsonb DEFAULT '[]'::jsonb, -- [{product_id, qty, unit_price, discount}]\n    p_payments jsonb DEFAULT '[]'::jsonb, -- [{method, amount, reference}]\n    p_total numeric DEFAULT 0,\n    p_discount numeric DEFAULT 0,\n    p_offline_created_at timestamptz DEFAULT NULL,\n    p_operation_id text DEFAULT NULL)",
+      "name": "complete_sale_v2",
+      "params": "p_store_id uuid,\n    p_cashier_id uuid,\n    p_customer_id uuid DEFAULT NULL,\n    p_items jsonb DEFAULT '[]'::jsonb, -- [{product_id, qty, unit_price, discount}]\n    p_payments jsonb DEFAULT '[]'::jsonb, -- [{method, amount, reference}]\n    p_total numeric DEFAULT 0,\n    p_discount numeric DEFAULT 0,\n    p_offline_created_at timestamptz DEFAULT NULL,\n    p_operation_id text DEFAULT NULL",
+      "created_by": "20260521000001_complete_sale_rpc_v2.sql",
+      "created_timestamp": "20260521000001",
+      "is_security_definer": true,
+      "search_path": "explicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
+    },
+    "handle_online_order_stock_reservation()": {
+      "signature": "handle_online_order_stock_reservation()",
+      "name": "handle_online_order_stock_reservation",
+      "params": "",
+      "created_by": "20260521000002_online_order_module.sql",
+      "created_timestamp": "20260521000002",
+      "is_security_definer": false,
+      "search_path": "implicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": [
+        {
+          "type": "unsafe_search_path",
+          "severity": "medium",
+          "message": "Function created without SECURITY DEFINER or explicit search_path"
+        }
+      ]
     }
   },
   "conflicts": [

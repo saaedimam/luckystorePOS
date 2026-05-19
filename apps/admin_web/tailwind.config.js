@@ -65,8 +65,9 @@ export default {
         },
       },
       fontFamily: {
+        sans: ['HindSiliguri', 'system-ui', 'sans-serif'],
         primary: 'var(--font-family-primary)',
-        mono: 'var(--font-family-mono)',
+        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
       },
       boxShadow: {
         'level-1': 'var(--elevation-1)',
@@ -93,7 +94,16 @@ export default {
         'lg': 'var(--radius-lg)',
         'xl': 'var(--radius-xl)',
         'full': 'var(--radius-full)',
-      }
+      },
+      animation: {
+        'fade-in': 'fadeIn 120ms cubic-bezier(0.4, 0, 0.2, 1) forwards',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0', transform: 'translateY(1px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
     },
   },
   plugins: [],
