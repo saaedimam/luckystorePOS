@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-05-19T22:11:10.743Z",
+  "generated_at": "2026-05-19T22:14:36.698Z",
   "categories": {
     "security_definer_missing_search_path": [
       "close_pos_session(p_session_id uuid, p_closing_cash numeric)",
@@ -31,7 +31,7 @@
       "orphan_grant:ensure_sale_ledger_accounts(uuid):authenticated:20260423213000_ledger_and_daily_reconciliation.sql",
       "orphan_grant:generate_daily_reconciliation(uuid, date):authenticated:20260423213000_ledger_and_daily_reconciliation.sql",
       "orphan_grant:get_close_risk_analytics(uuid, uuid, date, date):authenticated:20260423143000_close_review_log_and_analytics.sql",
-      "orphan_grant:get_customer_analytics(uuid, integer):authenticated:20260512000000_customer_analytics_staff_performance_rpcs.sql",
+      "orphan_grant:get_customer_analytics(uuid, integer):authenticated:20260512000000_customer_staff_analytics.sql",
       "orphan_grant:get_daily_movement_trend(uuid, integer):authenticated:20260327200003_analytics.sql",
       "orphan_grant:get_expected_cash(UUID, UUID, UUID, DATE):authenticated:20260506000002_repair_missing_domain_functions.sql",
       "orphan_grant:get_expiring_batches(uuid, integer):authenticated:20260327200005_batch_expiry_tracking.sql",
@@ -47,7 +47,7 @@
       "orphan_grant:get_sale_details(uuid):authenticated:20260423231000_sales_history_rpcs.sql",
       "orphan_grant:get_sales_history(uuid, text, timestamptz, timestamptz, integer, integer):authenticated:20260423231000_sales_history_rpcs.sql",
       "orphan_grant:get_slow_moving_items(uuid, integer, integer):authenticated:20260327200003_analytics.sql",
-      "orphan_grant:get_staff_performance(uuid, integer):authenticated:20260512000000_customer_analytics_staff_performance_rpcs.sql",
+      "orphan_grant:get_staff_performance(uuid, integer):authenticated:20260512000000_customer_staff_analytics.sql",
       "orphan_grant:get_stock_history_simple(uuid, uuid, integer):authenticated:20260423230000_lean_inventory_rpcs.sql",
       "orphan_grant:get_stock_level_by_id(uuid, uuid):authenticated:20260506000004_repair_remaining_rpc_functions.sql",
       "orphan_grant:get_stock_movements(uuid, uuid, integer, integer):authenticated:20260327200000_stock_adjustments.sql",
@@ -136,7 +136,7 @@
       "20260423231000_sales_history_rpcs.sql:get_receipt_config_simple:20260506000004_repair_remaining_rpc_functions.sql",
       "20260423231000_sales_history_rpcs.sql:get_sale_details:20260506000004_repair_remaining_rpc_functions.sql",
       "20260423231000_sales_history_rpcs.sql:get_sales_history:20260506000004_repair_remaining_rpc_functions.sql",
-      "20260423231000_sales_history_rpcs.sql:get_store_users:20260512000000_customer_staff_analytics.sql",
+      "20260423231000_sales_history_rpcs.sql:get_store_users:20260512000001_customer_analytics_staff_performance_rpcs.sql",
       "20260423231000_sales_history_rpcs.sql:update_receipt_config_simple:20260506000004_repair_remaining_rpc_functions.sql",
       "20260423232000_production_hardening.sql:stock_movements:20260426213606_retail_profit_control_foundation.sql",
       "20260423240000_sheets_migration_expenses_and_rpc.sql:expenses:20260521000000_core_pos_schema.sql",
@@ -160,9 +160,14 @@
       "20260506000004_repair_remaining_rpc_functions.sql:get_current_user_store_id:20260508000000_fix_critical_rls_gaps.sql",
       "20260506000004_repair_remaining_rpc_functions.sql:get_current_user_tenant_id:20260508000000_fix_critical_rls_gaps.sql",
       "20260506000004_repair_remaining_rpc_functions.sql:get_stock_level_by_id:20260511125848_update_rpcs_for_inventory_movements.sql",
-      "20260506000004_repair_remaining_rpc_functions.sql:get_store_users:20260512000000_customer_staff_analytics.sql",
+      "20260506000004_repair_remaining_rpc_functions.sql:get_store_users:20260512000001_customer_analytics_staff_performance_rpcs.sql",
       "20260506000004_repair_remaining_rpc_functions.sql:record_purchase_v2:20260511125848_update_rpcs_for_inventory_movements.sql",
-      "20260511030000_enrich_inventory_list.sql:get_inventory_list:20260512160000_fix_all_rpc_qty_references.sql"
+      "20260511030000_enrich_inventory_list.sql:get_inventory_list:20260512160000_fix_all_rpc_qty_references.sql",
+      "20260512000000_customer_staff_analytics.sql:get_customer_analytics:20260512000001_customer_analytics_staff_performance_rpcs.sql",
+      "20260512000000_customer_staff_analytics.sql:get_staff_performance:20260512000001_customer_analytics_staff_performance_rpcs.sql",
+      "20260512000000_customer_staff_analytics.sql:get_store_users:20260512000001_customer_analytics_staff_performance_rpcs.sql",
+      "20260514000001_create_competitor_prices.sql:cleanup_old_competitor_prices:20260514000002_competitor_prices_table.sql",
+      "20260514000001_create_competitor_prices.sql:competitor_prices:20260514000002_competitor_prices_table.sql"
     ],
     "legacy_runtime_fields": [
       "active:apps/admin_web/src/lib/api/domains/products.ts:94d41b9ed1c06d97eb75541961f05c299e7a66e165f82a023f44372a05fa7851",

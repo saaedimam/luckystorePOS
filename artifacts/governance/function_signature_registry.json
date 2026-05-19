@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-19T22:11:22.368Z",
+  "timestamp": "2026-05-19T22:14:41.321Z",
   "migration_count": 105,
   "functions_tracked": 191,
   "missing_functions": 75,
@@ -2805,13 +2805,13 @@
         },
         {
           "type": "REPLACE",
-          "migration": "20260512000000_customer_analytics_staff_performance_rpcs.sql",
+          "migration": "20260512000000_customer_staff_analytics.sql",
           "timestamp": "20260512000000"
         },
         {
           "type": "REPLACE",
-          "migration": "20260512000000_customer_staff_analytics.sql",
-          "timestamp": "20260512000000"
+          "migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "timestamp": "20260512000001"
         }
       ],
       "granted_by": [],
@@ -3026,14 +3026,14 @@
         {
           "role": "authenticated",
           "permissions": "EXECUTE",
-          "migration": "20260512000000_customer_analytics_staff_performance_rpcs.sql",
+          "migration": "20260512000000_customer_staff_analytics.sql",
           "timestamp": "20260512000000"
         },
         {
           "role": "authenticated",
           "permissions": "EXECUTE",
-          "migration": "20260512000000_customer_staff_analytics.sql",
-          "timestamp": "20260512000000"
+          "migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "timestamp": "20260512000001"
         }
       ],
       "conflicts": [
@@ -3055,8 +3055,8 @@
           "count": 4
         }
       ],
-      "dropped_by": "20260512000000_customer_staff_analytics.sql",
-      "dropped_timestamp": "20260512000000",
+      "dropped_by": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+      "dropped_timestamp": "20260512000001",
       "revoked_by": [
         {
           "role": "PUBLIC",
@@ -3067,14 +3067,14 @@
         {
           "role": "PUBLIC",
           "permissions": "ALL",
-          "migration": "20260512000000_customer_analytics_staff_performance_rpcs.sql",
+          "migration": "20260512000000_customer_staff_analytics.sql",
           "timestamp": "20260512000000"
         },
         {
           "role": "PUBLIC",
           "permissions": "ALL",
-          "migration": "20260512000000_customer_staff_analytics.sql",
-          "timestamp": "20260512000000"
+          "migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "timestamp": "20260512000001"
         }
       ]
     },
@@ -5152,15 +5152,15 @@
       "signature": "get_customer_analytics(p_store_id uuid,\n  p_limit    integer DEFAULT 50)",
       "name": "get_customer_analytics",
       "params": "p_store_id uuid,\n  p_limit    integer DEFAULT 50",
-      "created_by": "20260512000000_customer_analytics_staff_performance_rpcs.sql",
+      "created_by": "20260512000000_customer_staff_analytics.sql",
       "created_timestamp": "20260512000000",
       "is_security_definer": true,
       "search_path": "explicit",
       "mutated_by": [
         {
           "type": "REPLACE",
-          "migration": "20260512000000_customer_staff_analytics.sql",
-          "timestamp": "20260512000000"
+          "migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "timestamp": "20260512000001"
         }
       ],
       "granted_by": [],
@@ -5173,15 +5173,15 @@
       "signature": "get_staff_performance(p_store_id uuid,\n  p_days     integer DEFAULT 30)",
       "name": "get_staff_performance",
       "params": "p_store_id uuid,\n  p_days     integer DEFAULT 30",
-      "created_by": "20260512000000_customer_analytics_staff_performance_rpcs.sql",
+      "created_by": "20260512000000_customer_staff_analytics.sql",
       "created_timestamp": "20260512000000",
       "is_security_definer": true,
       "search_path": "explicit",
       "mutated_by": [
         {
           "type": "REPLACE",
-          "migration": "20260512000000_customer_staff_analytics.sql",
-          "timestamp": "20260512000000"
+          "migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "timestamp": "20260512000001"
         }
       ],
       "granted_by": [],
@@ -5199,20 +5199,20 @@
         {
           "role": "authenticated",
           "permissions": "EXECUTE",
-          "migration": "20260512000000_customer_analytics_staff_performance_rpcs.sql",
+          "migration": "20260512000000_customer_staff_analytics.sql",
           "timestamp": "20260512000000"
         },
         {
           "role": "authenticated",
           "permissions": "EXECUTE",
-          "migration": "20260512000000_customer_staff_analytics.sql",
-          "timestamp": "20260512000000"
+          "migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "timestamp": "20260512000001"
         }
       ],
       "conflicts": [
         {
           "type": "orphan_grant",
-          "migration": "20260512000000_customer_analytics_staff_performance_rpcs.sql"
+          "migration": "20260512000000_customer_staff_analytics.sql"
         }
       ],
       "risks": [
@@ -5232,14 +5232,14 @@
         {
           "role": "PUBLIC",
           "permissions": "ALL",
-          "migration": "20260512000000_customer_analytics_staff_performance_rpcs.sql",
+          "migration": "20260512000000_customer_staff_analytics.sql",
           "timestamp": "20260512000000"
         },
         {
           "role": "PUBLIC",
           "permissions": "ALL",
-          "migration": "20260512000000_customer_staff_analytics.sql",
-          "timestamp": "20260512000000"
+          "migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "timestamp": "20260512000001"
         }
       ]
     },
@@ -5252,20 +5252,20 @@
         {
           "role": "authenticated",
           "permissions": "EXECUTE",
-          "migration": "20260512000000_customer_analytics_staff_performance_rpcs.sql",
+          "migration": "20260512000000_customer_staff_analytics.sql",
           "timestamp": "20260512000000"
         },
         {
           "role": "authenticated",
           "permissions": "EXECUTE",
-          "migration": "20260512000000_customer_staff_analytics.sql",
-          "timestamp": "20260512000000"
+          "migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "timestamp": "20260512000001"
         }
       ],
       "conflicts": [
         {
           "type": "orphan_grant",
-          "migration": "20260512000000_customer_analytics_staff_performance_rpcs.sql"
+          "migration": "20260512000000_customer_staff_analytics.sql"
         }
       ],
       "risks": [
@@ -5285,14 +5285,14 @@
         {
           "role": "PUBLIC",
           "permissions": "ALL",
-          "migration": "20260512000000_customer_analytics_staff_performance_rpcs.sql",
+          "migration": "20260512000000_customer_staff_analytics.sql",
           "timestamp": "20260512000000"
         },
         {
           "role": "PUBLIC",
           "permissions": "ALL",
-          "migration": "20260512000000_customer_staff_analytics.sql",
-          "timestamp": "20260512000000"
+          "migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "timestamp": "20260512000001"
         }
       ]
     },
@@ -5343,15 +5343,15 @@
       "signature": "cleanup_old_competitor_prices()",
       "name": "cleanup_old_competitor_prices",
       "params": "",
-      "created_by": "20260514000001_competitor_prices_table.sql",
+      "created_by": "20260514000001_create_competitor_prices.sql",
       "created_timestamp": "20260514000001",
       "is_security_definer": false,
       "search_path": "implicit",
       "mutated_by": [
         {
           "type": "REPLACE",
-          "migration": "20260514000001_create_competitor_prices.sql",
-          "timestamp": "20260514000001"
+          "migration": "20260514000002_competitor_prices_table.sql",
+          "timestamp": "20260514000002"
         }
       ],
       "granted_by": [],
@@ -5370,15 +5370,15 @@
       "signature": "trigger_cleanup_competitor_prices()",
       "name": "trigger_cleanup_competitor_prices",
       "params": "",
-      "created_by": "20260514000001_competitor_prices_table.sql",
+      "created_by": "20260514000001_create_competitor_prices.sql",
       "created_timestamp": "20260514000001",
       "is_security_definer": false,
       "search_path": "implicit",
       "mutated_by": [
         {
           "type": "REPLACE",
-          "migration": "20260514000001_create_competitor_prices.sql",
-          "timestamp": "20260514000001"
+          "migration": "20260514000002_competitor_prices_table.sql",
+          "timestamp": "20260514000002"
         }
       ],
       "granted_by": [],
@@ -5397,15 +5397,15 @@
       "signature": "check_price_alerts(p_store_id uuid, p_threshold numeric default 0.15)",
       "name": "check_price_alerts",
       "params": "p_store_id uuid, p_threshold numeric default 0.15",
-      "created_by": "20260514000001_competitor_prices_table.sql",
+      "created_by": "20260514000001_create_competitor_prices.sql",
       "created_timestamp": "20260514000001",
       "is_security_definer": false,
       "search_path": "implicit",
       "mutated_by": [
         {
           "type": "REPLACE",
-          "migration": "20260514000001_create_competitor_prices.sql",
-          "timestamp": "20260514000001"
+          "migration": "20260514000002_competitor_prices_table.sql",
+          "timestamp": "20260514000002"
         }
       ],
       "granted_by": [],
@@ -6025,14 +6025,14 @@
     {
       "type": "orphan_grant",
       "function": "get_customer_analytics(uuid, integer)",
-      "grant_migration": "20260512000000_customer_analytics_staff_performance_rpcs.sql",
+      "grant_migration": "20260512000000_customer_staff_analytics.sql",
       "role": "authenticated",
       "severity": "high"
     },
     {
       "type": "orphan_grant",
       "function": "get_staff_performance(uuid, integer)",
-      "grant_migration": "20260512000000_customer_analytics_staff_performance_rpcs.sql",
+      "grant_migration": "20260512000000_customer_staff_analytics.sql",
       "role": "authenticated",
       "severity": "high"
     },

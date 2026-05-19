@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-19T22:11:22.426Z",
+  "timestamp": "2026-05-19T22:14:41.378Z",
   "migration_count": 105,
   "dependency_graph": {
     "20260301000000_baseline_core_tables.sql": {
@@ -1499,8 +1499,8 @@
           },
           {
             "object": "get_store_users",
-            "owner": "20260512000000_customer_staff_analytics.sql",
-            "owner_timestamp": "20260512000000",
+            "owner": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+            "owner_timestamp": "20260512000001",
             "issue": "forward_dependency"
           },
           {
@@ -1549,7 +1549,7 @@
         {
           "type": "forward_dependency",
           "object": "get_store_users",
-          "depends_on_migration": "20260512000000_customer_staff_analytics.sql",
+          "depends_on_migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
           "severity": "critical"
         },
         {
@@ -2558,8 +2558,8 @@
         "unsatisfied_objects": [
           {
             "object": "get_store_users",
-            "owner": "20260512000000_customer_staff_analytics.sql",
-            "owner_timestamp": "20260512000000",
+            "owner": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+            "owner_timestamp": "20260512000001",
             "issue": "forward_dependency"
           },
           {
@@ -2606,7 +2606,7 @@
         {
           "type": "forward_dependency",
           "object": "get_store_users",
-          "depends_on_migration": "20260512000000_customer_staff_analytics.sql",
+          "depends_on_migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
           "severity": "critical"
         },
         {
@@ -3122,27 +3122,8 @@
         }
       ]
     },
-    "20260512000000_customer_analytics_staff_performance_rpcs.sql": {
-      "sequence": 85,
-      "timestamp": "20260512000000",
-      "category": "runtime-only",
-      "dependencies": {
-        "objects": [
-          "get_store_users",
-          "get_customer_analytics",
-          "get_staff_performance"
-        ],
-        "migrations": [
-          "20260512000000_customer_staff_analytics.sql"
-        ],
-        "satisfied": true,
-        "unsatisfied_objects": []
-      },
-      "unsafe_assumptions": [],
-      "risks": []
-    },
     "20260512000000_customer_staff_analytics.sql": {
-      "sequence": 86,
+      "sequence": 85,
       "timestamp": "20260512000000",
       "category": "uncategorized",
       "dependencies": {
@@ -3151,8 +3132,63 @@
           "get_customer_analytics",
           "get_staff_performance"
         ],
+        "migrations": [],
+        "satisfied": false,
+        "unsatisfied_objects": [
+          {
+            "object": "get_store_users",
+            "owner": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+            "owner_timestamp": "20260512000001",
+            "issue": "forward_dependency"
+          },
+          {
+            "object": "get_customer_analytics",
+            "owner": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+            "owner_timestamp": "20260512000001",
+            "issue": "forward_dependency"
+          },
+          {
+            "object": "get_staff_performance",
+            "owner": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+            "owner_timestamp": "20260512000001",
+            "issue": "forward_dependency"
+          }
+        ]
+      },
+      "unsafe_assumptions": [],
+      "risks": [
+        {
+          "type": "forward_dependency",
+          "object": "get_store_users",
+          "depends_on_migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "severity": "critical"
+        },
+        {
+          "type": "forward_dependency",
+          "object": "get_customer_analytics",
+          "depends_on_migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "severity": "critical"
+        },
+        {
+          "type": "forward_dependency",
+          "object": "get_staff_performance",
+          "depends_on_migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "severity": "critical"
+        }
+      ]
+    },
+    "20260512000001_customer_analytics_staff_performance_rpcs.sql": {
+      "sequence": 86,
+      "timestamp": "20260512000001",
+      "category": "runtime-only",
+      "dependencies": {
+        "objects": [
+          "get_store_users",
+          "get_customer_analytics",
+          "get_staff_performance"
+        ],
         "migrations": [
-          "20260512000000_customer_staff_analytics.sql"
+          "20260512000001_customer_analytics_staff_performance_rpcs.sql"
         ],
         "satisfied": true,
         "unsatisfied_objects": []
@@ -3250,26 +3286,8 @@
         }
       ]
     },
-    "20260514000001_competitor_prices_table.sql": {
-      "sequence": 90,
-      "timestamp": "20260514000001",
-      "category": "foundational",
-      "dependencies": {
-        "objects": [
-          "competitor_prices",
-          "cleanup_old_competitor_prices"
-        ],
-        "migrations": [
-          "20260514000001_create_competitor_prices.sql"
-        ],
-        "satisfied": true,
-        "unsatisfied_objects": []
-      },
-      "unsafe_assumptions": [],
-      "risks": []
-    },
     "20260514000001_create_competitor_prices.sql": {
-      "sequence": 91,
+      "sequence": 90,
       "timestamp": "20260514000001",
       "category": "uncategorized",
       "dependencies": {
@@ -3277,8 +3295,50 @@
           "competitor_prices",
           "cleanup_old_competitor_prices"
         ],
+        "migrations": [],
+        "satisfied": false,
+        "unsatisfied_objects": [
+          {
+            "object": "competitor_prices",
+            "owner": "20260514000002_competitor_prices_table.sql",
+            "owner_timestamp": "20260514000002",
+            "issue": "forward_dependency"
+          },
+          {
+            "object": "cleanup_old_competitor_prices",
+            "owner": "20260514000002_competitor_prices_table.sql",
+            "owner_timestamp": "20260514000002",
+            "issue": "forward_dependency"
+          }
+        ]
+      },
+      "unsafe_assumptions": [],
+      "risks": [
+        {
+          "type": "forward_dependency",
+          "object": "competitor_prices",
+          "depends_on_migration": "20260514000002_competitor_prices_table.sql",
+          "severity": "critical"
+        },
+        {
+          "type": "forward_dependency",
+          "object": "cleanup_old_competitor_prices",
+          "depends_on_migration": "20260514000002_competitor_prices_table.sql",
+          "severity": "critical"
+        }
+      ]
+    },
+    "20260514000002_competitor_prices_table.sql": {
+      "sequence": 91,
+      "timestamp": "20260514000002",
+      "category": "foundational",
+      "dependencies": {
+        "objects": [
+          "competitor_prices",
+          "cleanup_old_competitor_prices"
+        ],
         "migrations": [
-          "20260514000001_create_competitor_prices.sql"
+          "20260514000002_competitor_prices_table.sql"
         ],
         "satisfied": true,
         "unsatisfied_objects": []
@@ -3286,21 +3346,8 @@
       "unsafe_assumptions": [],
       "risks": []
     },
-    "20260517000000_add_expense_delete_update_policies.sql": {
-      "sequence": 92,
-      "timestamp": "20260517000000",
-      "category": "dead",
-      "dependencies": {
-        "objects": [],
-        "migrations": [],
-        "satisfied": true,
-        "unsatisfied_objects": []
-      },
-      "unsafe_assumptions": [],
-      "risks": []
-    },
     "20260517000000_fix_expenses_rls.sql": {
-      "sequence": 93,
+      "sequence": 92,
       "timestamp": "20260517000000",
       "category": "hardening",
       "dependencies": {
@@ -3317,6 +3364,19 @@
           "message": "Hardening migration with no explicit dependencies - may run before owner objects"
         }
       ]
+    },
+    "20260517000001_add_expense_delete_update_policies.sql": {
+      "sequence": 93,
+      "timestamp": "20260517000001",
+      "category": "dead",
+      "dependencies": {
+        "objects": [],
+        "migrations": [],
+        "satisfied": true,
+        "unsatisfied_objects": []
+      },
+      "unsafe_assumptions": [],
+      "risks": []
     },
     "20260517114959_add_user_pos_fields.sql": {
       "sequence": 94,
@@ -3662,7 +3722,7 @@
     "get_sales_history": "20260506000004_repair_remaining_rpc_functions.sql",
     "get_sale_details": "20260506000004_repair_remaining_rpc_functions.sql",
     "get_payment_methods": "20260506000004_repair_remaining_rpc_functions.sql",
-    "get_store_users": "20260512000000_customer_staff_analytics.sql",
+    "get_store_users": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
     "get_receipt_config_simple": "20260506000004_repair_remaining_rpc_functions.sql",
     "update_receipt_config_simple": "20260506000004_repair_remaining_rpc_functions.sql",
     "ledger_workers": "20260423233000_ledger_posting_hardening.sql",
@@ -3783,20 +3843,20 @@
     "idx_daily_sales_store_date": "20260511040000_create_daily_sales_table.sql",
     "idx_daily_sales_date": "20260511040000_create_daily_sales_table.sql",
     "handle_updated_at": "20260511040000_create_daily_sales_table.sql",
-    "get_customer_analytics": "20260512000000_customer_staff_analytics.sql",
-    "get_staff_performance": "20260512000000_customer_staff_analytics.sql",
+    "get_customer_analytics": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+    "get_staff_performance": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
     "is_admin_in_tenant": "20260512140000_fix_users_recursion.sql",
-    "with": "20260514000001_create_competitor_prices.sql",
-    "competitor_prices": "20260514000001_create_competitor_prices.sql",
-    "idx_competitor_prices_store_id": "20260514000001_create_competitor_prices.sql",
-    "idx_competitor_prices_product_id": "20260514000001_create_competitor_prices.sql",
-    "idx_competitor_prices_competitor": "20260514000001_create_competitor_prices.sql",
-    "idx_competitor_prices_scraped_at": "20260514000001_create_competitor_prices.sql",
-    "idx_competitor_prices_batch": "20260514000001_create_competitor_prices.sql",
-    "idx_competitor_prices_store_product_scraped": "20260514000001_create_competitor_prices.sql",
-    "cleanup_old_competitor_prices": "20260514000001_create_competitor_prices.sql",
-    "trigger_cleanup_competitor_prices": "20260514000001_create_competitor_prices.sql",
-    "check_price_alerts": "20260514000001_create_competitor_prices.sql",
+    "with": "20260514000002_competitor_prices_table.sql",
+    "competitor_prices": "20260514000002_competitor_prices_table.sql",
+    "idx_competitor_prices_store_id": "20260514000002_competitor_prices_table.sql",
+    "idx_competitor_prices_product_id": "20260514000002_competitor_prices_table.sql",
+    "idx_competitor_prices_competitor": "20260514000002_competitor_prices_table.sql",
+    "idx_competitor_prices_scraped_at": "20260514000002_competitor_prices_table.sql",
+    "idx_competitor_prices_batch": "20260514000002_competitor_prices_table.sql",
+    "idx_competitor_prices_store_product_scraped": "20260514000002_competitor_prices_table.sql",
+    "cleanup_old_competitor_prices": "20260514000002_competitor_prices_table.sql",
+    "trigger_cleanup_competitor_prices": "20260514000002_competitor_prices_table.sql",
+    "check_price_alerts": "20260514000002_competitor_prices_table.sql",
     "increment_stock": "20260519100000_increment_stock_rpc.sql",
     "trigger_sync_alert_bridge": "20260519150000_sync_alert_bridge_trigger.sql",
     "trigger_stitch_orchestrator": "20260519160000_stitch_orchestrator_trigger.sql",
@@ -4778,7 +4838,7 @@
         {
           "type": "forward_dependency",
           "object": "get_store_users",
-          "depends_on_migration": "20260512000000_customer_staff_analytics.sql",
+          "depends_on_migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
           "severity": "critical"
         },
         {
@@ -4830,8 +4890,8 @@
         },
         {
           "object": "get_store_users",
-          "owner": "20260512000000_customer_staff_analytics.sql",
-          "owner_timestamp": "20260512000000",
+          "owner": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "owner_timestamp": "20260512000001",
           "issue": "forward_dependency"
         },
         {
@@ -5412,7 +5472,7 @@
         {
           "type": "forward_dependency",
           "object": "get_store_users",
-          "depends_on_migration": "20260512000000_customer_staff_analytics.sql",
+          "depends_on_migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
           "severity": "critical"
         },
         {
@@ -5463,8 +5523,8 @@
       "unsatisfied_objects": [
         {
           "object": "get_store_users",
-          "owner": "20260512000000_customer_staff_analytics.sql",
-          "owner_timestamp": "20260512000000",
+          "owner": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "owner_timestamp": "20260512000001",
           "issue": "forward_dependency"
         },
         {
@@ -5682,6 +5742,50 @@
       "unsatisfied_objects": [],
       "unsafe_assumptions": []
     },
+    "20260512000000_customer_staff_analytics.sql": {
+      "category": "uncategorized",
+      "risks": [
+        {
+          "type": "forward_dependency",
+          "object": "get_store_users",
+          "depends_on_migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "severity": "critical"
+        },
+        {
+          "type": "forward_dependency",
+          "object": "get_customer_analytics",
+          "depends_on_migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "severity": "critical"
+        },
+        {
+          "type": "forward_dependency",
+          "object": "get_staff_performance",
+          "depends_on_migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "severity": "critical"
+        }
+      ],
+      "unsatisfied_objects": [
+        {
+          "object": "get_store_users",
+          "owner": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "owner_timestamp": "20260512000001",
+          "issue": "forward_dependency"
+        },
+        {
+          "object": "get_customer_analytics",
+          "owner": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "owner_timestamp": "20260512000001",
+          "issue": "forward_dependency"
+        },
+        {
+          "object": "get_staff_performance",
+          "owner": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "owner_timestamp": "20260512000001",
+          "issue": "forward_dependency"
+        }
+      ],
+      "unsafe_assumptions": []
+    },
     "20260512150000_fix_dashboard_rpc.sql": {
       "category": "runtime-only",
       "risks": [
@@ -5724,6 +5828,38 @@
           "issue": "object_not_found"
         }
       ]
+    },
+    "20260514000001_create_competitor_prices.sql": {
+      "category": "uncategorized",
+      "risks": [
+        {
+          "type": "forward_dependency",
+          "object": "competitor_prices",
+          "depends_on_migration": "20260514000002_competitor_prices_table.sql",
+          "severity": "critical"
+        },
+        {
+          "type": "forward_dependency",
+          "object": "cleanup_old_competitor_prices",
+          "depends_on_migration": "20260514000002_competitor_prices_table.sql",
+          "severity": "critical"
+        }
+      ],
+      "unsatisfied_objects": [
+        {
+          "object": "competitor_prices",
+          "owner": "20260514000002_competitor_prices_table.sql",
+          "owner_timestamp": "20260514000002",
+          "issue": "forward_dependency"
+        },
+        {
+          "object": "cleanup_old_competitor_prices",
+          "owner": "20260514000002_competitor_prices_table.sql",
+          "owner_timestamp": "20260514000002",
+          "issue": "forward_dependency"
+        }
+      ],
+      "unsafe_assumptions": []
     },
     "20260517000000_fix_expenses_rls.sql": {
       "category": "hardening",
@@ -6170,7 +6306,7 @@
         {
           "type": "forward_dependency",
           "object": "get_store_users",
-          "depends_on_migration": "20260512000000_customer_staff_analytics.sql",
+          "depends_on_migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
           "severity": "critical"
         },
         {
@@ -6399,7 +6535,7 @@
         {
           "type": "forward_dependency",
           "object": "get_store_users",
-          "depends_on_migration": "20260512000000_customer_staff_analytics.sql",
+          "depends_on_migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
           "severity": "critical"
         },
         {
@@ -6440,6 +6576,46 @@
           "type": "forward_dependency",
           "object": "get_inventory_list",
           "depends_on_migration": "20260512160000_fix_all_rpc_qty_references.sql",
+          "severity": "critical"
+        }
+      ]
+    },
+    {
+      "migration": "20260512000000_customer_staff_analytics.sql",
+      "risks": [
+        {
+          "type": "forward_dependency",
+          "object": "get_store_users",
+          "depends_on_migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "severity": "critical"
+        },
+        {
+          "type": "forward_dependency",
+          "object": "get_customer_analytics",
+          "depends_on_migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "severity": "critical"
+        },
+        {
+          "type": "forward_dependency",
+          "object": "get_staff_performance",
+          "depends_on_migration": "20260512000001_customer_analytics_staff_performance_rpcs.sql",
+          "severity": "critical"
+        }
+      ]
+    },
+    {
+      "migration": "20260514000001_create_competitor_prices.sql",
+      "risks": [
+        {
+          "type": "forward_dependency",
+          "object": "competitor_prices",
+          "depends_on_migration": "20260514000002_competitor_prices_table.sql",
+          "severity": "critical"
+        },
+        {
+          "type": "forward_dependency",
+          "object": "cleanup_old_competitor_prices",
+          "depends_on_migration": "20260514000002_competitor_prices_table.sql",
           "severity": "critical"
         }
       ]
