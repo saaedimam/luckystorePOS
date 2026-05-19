@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../config/environment_contract.dart';
+import '../../offline/db.dart';
+import '../../offline/background_sync_service.dart';
 
 enum StartupState {
   ready,
@@ -22,6 +24,8 @@ class StartupResult {
   final List<String> missingVariables;
   final List<String> warnings;
   final bool supabaseInitialized;
+  final OfflineDatabase offlineDatabase;
+  final BackgroundSyncService backgroundSyncService;
 
   const StartupResult({
     required this.state,
@@ -29,11 +33,15 @@ class StartupResult {
     required this.missingVariables,
     required this.warnings,
     required this.supabaseInitialized,
+    required this.offlineDatabase,
+    required this.backgroundSyncService,
   });
 }
 
 class StartupGuardService {
   static bool _supabaseInitialized = false;
+  static OfflineDatabase? _offlineDatabase;
+  static BackgroundSyncService? _backgroundSyncService;
 
   static Future<StartupResult> validateAndBootstrap() async {
     const envPath = 'assets/app.env';
@@ -56,9 +64,6 @@ class StartupGuardService {
     final isStrictProduction = kReleaseMode && !devMode;
     final mode = isStrictProduction ? StartupMode.strict : StartupMode.development;
 
-    // 1) Validate startup-critical env only -> 2) attempt init -> 3) derive state.
-    // Runtime/mobile startup must not be blocked by legacy, docs-only, or optional
-    // integration variables.
     if (infra.missing.isNotEmpty) {
       if (isStrictProduction) {
         return _buildResult(
@@ -80,12 +85,14 @@ class StartupGuardService {
 
     try {
       await _initializeSupabaseIfNeeded();
-    } catch (_) {
+      _initializeOfflineStack();
+    } catch (e) {
+      debugPrint('[StartupGuardService] Bootstrap failed: $e');
       return _buildResult(
         state: StartupState.blocked,
         mode: isStrictProduction ? StartupMode.strict : StartupMode.development,
         missingVariables: const [],
-        warnings: const ['Supabase bootstrap failed. Check configuration and connectivity.'],
+        warnings: const ['Supabase or Offline bootstrap failed. Check configuration and connectivity.'],
       );
     }
 
@@ -109,6 +116,14 @@ class StartupGuardService {
       anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
     );
     _supabaseInitialized = true;
+  }
+
+  static void _initializeOfflineStack() {
+    if (_offlineDatabase != null) return;
+    _offlineDatabase = OfflineDatabase();
+    
+    _backgroundSyncService = BackgroundSyncService(_offlineDatabase!, Supabase.instance.client);
+    _backgroundSyncService!.start();
   }
 
   static bool _isTrue(String? value) {
@@ -137,6 +152,8 @@ class StartupGuardService {
       missingVariables: missingVariables,
       warnings: warnings,
       supabaseInitialized: _supabaseInitialized,
+      offlineDatabase: _offlineDatabase!,
+      backgroundSyncService: _backgroundSyncService!,
     );
   }
 }

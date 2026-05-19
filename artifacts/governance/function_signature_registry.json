@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-05-17T13:43:33.434Z",
-  "migration_count": 92,
-  "functions_tracked": 198,
-  "missing_functions": 76,
-  "conflicts_detected": 125,
+  "timestamp": "2026-05-19T14:32:53.889Z",
+  "migration_count": 100,
+  "functions_tracked": 188,
+  "missing_functions": 75,
+  "conflicts_detected": 75,
   "registry": {
     "decrement_stock(p_store_id uuid,\n  p_item_id uuid,\n  p_quantity integer)": {
       "signature": "decrement_stock(p_store_id uuid,\n  p_item_id uuid,\n  p_quantity integer)",
@@ -293,11 +293,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -318,12 +313,6 @@
           "permissions": "ALL",
           "migration": "20260327200000_stock_adjustments.sql",
           "timestamp": "20260327200000"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -357,11 +346,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -376,12 +360,6 @@
           "permissions": "ALL",
           "migration": "20260327200000_stock_adjustments.sql",
           "timestamp": "20260327200000"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -499,12 +477,6 @@
           "permissions": "ALL",
           "migration": "20260327200001_low_stock_alerts.sql",
           "timestamp": "20260327200001"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -552,12 +524,6 @@
           "permissions": "ALL",
           "migration": "20260327200001_low_stock_alerts.sql",
           "timestamp": "20260327200001"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -615,11 +581,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -628,12 +589,6 @@
           "permissions": "ALL",
           "migration": "20260327200002_stock_transfers.sql",
           "timestamp": "20260327200002"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -661,11 +616,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -674,12 +624,6 @@
           "permissions": "ALL",
           "migration": "20260327200002_stock_transfers.sql",
           "timestamp": "20260327200002"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -767,11 +711,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -780,12 +719,6 @@
           "permissions": "ALL",
           "migration": "20260327200003_analytics.sql",
           "timestamp": "20260327200003"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -813,11 +746,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -826,12 +754,6 @@
           "permissions": "ALL",
           "migration": "20260327200003_analytics.sql",
           "timestamp": "20260327200003"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -859,11 +781,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -872,12 +789,6 @@
           "permissions": "ALL",
           "migration": "20260327200003_analytics.sql",
           "timestamp": "20260327200003"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -905,11 +816,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -918,12 +824,6 @@
           "permissions": "ALL",
           "migration": "20260327200003_analytics.sql",
           "timestamp": "20260327200003"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -994,11 +894,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -1007,12 +902,6 @@
           "permissions": "ALL",
           "migration": "20260327200004_suppliers_purchase_orders.sql",
           "timestamp": "20260327200004"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -1070,11 +959,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -1083,12 +967,6 @@
           "permissions": "ALL",
           "migration": "20260327200005_batch_expiry_tracking.sql",
           "timestamp": "20260327200005"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -1116,11 +994,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -1129,12 +1002,6 @@
           "permissions": "ALL",
           "migration": "20260327200005_batch_expiry_tracking.sql",
           "timestamp": "20260327200005"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -1270,12 +1137,6 @@
           "permissions": "EXECUTE",
           "migration": "20260420100000_pos_transactions.sql",
           "timestamp": "20260420100000"
-        },
-        {
-          "role": "pos_manager",
-          "permissions": "EXECUTE",
-          "migration": "20260506030000_restrict_authenticated_sensitive_functions.sql",
-          "timestamp": "20260506030000"
         }
       ],
       "conflicts": [
@@ -1297,18 +1158,6 @@
           "permissions": "ALL",
           "migration": "20260420100000_pos_transactions.sql",
           "timestamp": "20260420100000"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
-        },
-        {
-          "role": "authenticated",
-          "permissions": "EXECUTE",
-          "migration": "20260506030000_restrict_authenticated_sensitive_functions.sql",
-          "timestamp": "20260506030000"
         }
       ]
     },
@@ -1372,7 +1221,13 @@
       "created_timestamp": "20260420100001",
       "is_security_definer": true,
       "search_path": "explicit",
-      "mutated_by": [],
+      "mutated_by": [
+        {
+          "type": "REPLACE",
+          "migration": "20260511060000_update_pos_categories_with_visual_fields.sql",
+          "timestamp": "20260511060000"
+        }
+      ],
       "granted_by": [],
       "revoked_by": [],
       "missing": false,
@@ -1484,6 +1339,18 @@
           "permissions": "EXECUTE",
           "migration": "20260423000000_grant_pos_anon.sql",
           "timestamp": "20260423000000"
+        },
+        {
+          "role": "authenticated",
+          "permissions": "EXECUTE",
+          "migration": "20260511060000_update_pos_categories_with_visual_fields.sql",
+          "timestamp": "20260511060000"
+        },
+        {
+          "role": "service_role",
+          "permissions": "EXECUTE",
+          "migration": "20260511060000_update_pos_categories_with_visual_fields.sql",
+          "timestamp": "20260511060000"
         }
       ],
       "conflicts": [
@@ -1497,6 +1364,12 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
+        },
+        {
+          "type": "multiple_grants_same_role",
+          "severity": "medium",
+          "role": "authenticated",
+          "count": 2
         }
       ],
       "revoked_by": [
@@ -1505,6 +1378,20 @@
           "permissions": "ALL",
           "migration": "20260420100001_pos_scanner_rpcs.sql",
           "timestamp": "20260420100001"
+        },
+        {
+          "role": "PUBLIC",
+          "permissions": "ALL",
+          "migration": "20260511060000_update_pos_categories_with_visual_fields.sql",
+          "timestamp": "20260511060000"
+        }
+      ],
+      "mutated_by": [
+        {
+          "type": "ALTER",
+          "alteration": "OWNER TO postgres",
+          "migration": "20260511060000_update_pos_categories_with_visual_fields.sql",
+          "timestamp": "20260511060000"
         }
       ]
     },
@@ -1578,12 +1465,6 @@
           "permissions": "ALL",
           "migration": "20260420300000_manager_dashboard_rpc.sql",
           "timestamp": "20260420300000"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         },
         {
           "role": "PUBLIC",
@@ -1723,11 +1604,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -1736,12 +1612,6 @@
           "permissions": "ALL",
           "migration": "20260423123000_offline_sync_idempotency.sql",
           "timestamp": "20260423123000"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -1825,11 +1695,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -1838,18 +1703,6 @@
           "permissions": "ALL",
           "migration": "20260423143000_close_review_log_and_analytics.sql",
           "timestamp": "20260423143000"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
-        },
-        {
-          "role": "authenticated",
-          "permissions": "EXECUTE",
-          "migration": "20260506030000_restrict_authenticated_sensitive_functions.sql",
-          "timestamp": "20260506030000"
         }
       ]
     },
@@ -1892,11 +1745,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -1905,18 +1753,6 @@
           "permissions": "ALL",
           "migration": "20260423182000_monthly_governance_scorecard.sql",
           "timestamp": "20260423182000"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
-        },
-        {
-          "role": "authenticated",
-          "permissions": "EXECUTE",
-          "migration": "20260506030000_restrict_authenticated_sensitive_functions.sql",
-          "timestamp": "20260506030000"
         }
       ]
     },
@@ -2011,11 +1847,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -2024,12 +1855,6 @@
           "permissions": "ALL",
           "migration": "20260423201000_centralize_pricing_in_complete_sale.sql",
           "timestamp": "20260423201000"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -2112,11 +1937,6 @@
           "message": "Function granted after being dropped"
         },
         {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
-        },
-        {
           "type": "multiple_grants_same_role",
           "severity": "medium",
           "role": "authenticated",
@@ -2141,12 +1961,6 @@
           "permissions": "ALL",
           "migration": "20260423224500_ledger_posting_engine_and_period_close.sql",
           "timestamp": "20260423224500"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ],
       "dropped_by": "20260423213000_ledger_and_daily_reconciliation.sql",
@@ -2292,11 +2106,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -2305,12 +2114,6 @@
           "permissions": "ALL",
           "migration": "20260423213000_ledger_and_daily_reconciliation.sql",
           "timestamp": "20260423213000"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -2338,11 +2141,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -2351,12 +2149,6 @@
           "permissions": "ALL",
           "migration": "20260423213000_ledger_and_daily_reconciliation.sql",
           "timestamp": "20260423213000"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -2384,11 +2176,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -2397,12 +2184,6 @@
           "permissions": "ALL",
           "migration": "20260423213000_ledger_and_daily_reconciliation.sql",
           "timestamp": "20260423213000"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -2562,11 +2343,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -2575,12 +2351,6 @@
           "permissions": "ALL",
           "migration": "20260423224500_ledger_posting_engine_and_period_close.sql",
           "timestamp": "20260423224500"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -2608,11 +2378,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -2621,12 +2386,6 @@
           "permissions": "ALL",
           "migration": "20260423224500_ledger_posting_engine_and_period_close.sql",
           "timestamp": "20260423224500"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -2654,11 +2413,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -2667,12 +2421,6 @@
           "permissions": "ALL",
           "migration": "20260423224500_ledger_posting_engine_and_period_close.sql",
           "timestamp": "20260423224500"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -2700,11 +2448,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -2713,18 +2456,6 @@
           "permissions": "ALL",
           "migration": "20260423224500_ledger_posting_engine_and_period_close.sql",
           "timestamp": "20260423224500"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
-        },
-        {
-          "role": "authenticated",
-          "permissions": "EXECUTE",
-          "migration": "20260506030000_restrict_authenticated_sensitive_functions.sql",
-          "timestamp": "20260506030000"
         }
       ]
     },
@@ -2752,11 +2483,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -2765,18 +2491,6 @@
           "permissions": "ALL",
           "migration": "20260423224500_ledger_posting_engine_and_period_close.sql",
           "timestamp": "20260423224500"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
-        },
-        {
-          "role": "authenticated",
-          "permissions": "EXECUTE",
-          "migration": "20260506030000_restrict_authenticated_sensitive_functions.sql",
-          "timestamp": "20260506030000"
         }
       ]
     },
@@ -2804,11 +2518,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -2817,18 +2526,6 @@
           "permissions": "ALL",
           "migration": "20260423224500_ledger_posting_engine_and_period_close.sql",
           "timestamp": "20260423224500"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
-        },
-        {
-          "role": "authenticated",
-          "permissions": "EXECUTE",
-          "migration": "20260506030000_restrict_authenticated_sensitive_functions.sql",
-          "timestamp": "20260506030000"
         }
       ]
     },
@@ -2841,6 +2538,11 @@
       "is_security_definer": true,
       "search_path": "explicit",
       "mutated_by": [
+        {
+          "type": "REPLACE",
+          "migration": "20260511030000_enrich_inventory_list.sql",
+          "timestamp": "20260511030000"
+        },
         {
           "type": "REPLACE",
           "migration": "20260512160000_fix_all_rpc_qty_references.sql",
@@ -2904,6 +2606,18 @@
         {
           "role": "authenticated",
           "permissions": "EXECUTE",
+          "migration": "20260511030000_enrich_inventory_list.sql",
+          "timestamp": "20260511030000"
+        },
+        {
+          "role": "service_role",
+          "permissions": "EXECUTE",
+          "migration": "20260511030000_enrich_inventory_list.sql",
+          "timestamp": "20260511030000"
+        },
+        {
+          "role": "authenticated",
+          "permissions": "EXECUTE",
           "migration": "20260512160000_fix_all_rpc_qty_references.sql",
           "timestamp": "20260512160000"
         }
@@ -2921,20 +2635,28 @@
           "message": "Function granted before creation or after deletion"
         },
         {
+          "type": "grant_after_drop",
+          "severity": "high",
+          "message": "Function granted after being dropped"
+        },
+        {
           "type": "multiple_grants_same_role",
           "severity": "medium",
           "role": "authenticated",
-          "count": 2
+          "count": 3
         }
       ],
-      "revoked_by": [
+      "mutated_by": [
         {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
+          "type": "ALTER",
+          "alteration": "OWNER TO postgres",
+          "migration": "20260511030000_enrich_inventory_list.sql",
+          "timestamp": "20260511030000"
         }
-      ]
+      ],
+      "dropped_by": "20260511030000_enrich_inventory_list.sql",
+      "dropped_timestamp": "20260511030000",
+      "revoked_by": []
     },
     "set_stock(uuid, uuid, integer, text, text)": {
       "signature": "set_stock(uuid, uuid, integer, text, text)",
@@ -2974,14 +2696,7 @@
           "count": 2
         }
       ],
-      "revoked_by": [
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
-        }
-      ]
+      "revoked_by": []
     },
     "get_stock_history_simple(uuid, uuid, integer)": {
       "signature": "get_stock_history_simple(uuid, uuid, integer)",
@@ -3007,21 +2722,9 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
-      "revoked_by": [
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
-        }
-      ]
+      "revoked_by": []
     },
     "get_sales_history(p_store_id uuid,\n  p_search_query text DEFAULT NULL,\n  p_start_date timestamptz DEFAULT NULL,\n  p_end_date timestamptz DEFAULT NULL,\n  p_limit integer DEFAULT 50,\n  p_offset integer DEFAULT 0)": {
       "signature": "get_sales_history(p_store_id uuid,\n  p_search_query text DEFAULT NULL,\n  p_start_date timestamptz DEFAULT NULL,\n  p_end_date timestamptz DEFAULT NULL,\n  p_limit integer DEFAULT 50,\n  p_offset integer DEFAULT 0)",
@@ -3103,6 +2806,11 @@
         {
           "type": "REPLACE",
           "migration": "20260512000000_customer_analytics_staff_performance_rpcs.sql",
+          "timestamp": "20260512000000"
+        },
+        {
+          "type": "REPLACE",
+          "migration": "20260512000000_customer_staff_analytics.sql",
           "timestamp": "20260512000000"
         }
       ],
@@ -3186,29 +2894,20 @@
           "message": "Function granted before creation or after deletion"
         },
         {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
-        },
-        {
           "type": "multiple_grants_same_role",
           "severity": "medium",
           "role": "authenticated",
           "count": 2
         }
       ],
+      "dropped_by": "20260506000004_repair_remaining_rpc_functions.sql",
+      "dropped_timestamp": "20260506000004",
       "revoked_by": [
         {
           "role": "PUBLIC",
           "permissions": "ALL",
           "migration": "20260506000004_repair_remaining_rpc_functions.sql",
           "timestamp": "20260506000004"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -3244,11 +2943,6 @@
           "message": "Function granted before creation or after deletion"
         },
         {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
-        },
-        {
           "type": "multiple_grants_same_role",
           "severity": "medium",
           "role": "authenticated",
@@ -3261,12 +2955,6 @@
           "permissions": "ALL",
           "migration": "20260506000004_repair_remaining_rpc_functions.sql",
           "timestamp": "20260506000004"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -3302,11 +2990,6 @@
           "message": "Function granted before creation or after deletion"
         },
         {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
-        },
-        {
           "type": "multiple_grants_same_role",
           "severity": "medium",
           "role": "authenticated",
@@ -3319,12 +3002,6 @@
           "permissions": "ALL",
           "migration": "20260506000004_repair_remaining_rpc_functions.sql",
           "timestamp": "20260506000004"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -3351,6 +3028,12 @@
           "permissions": "EXECUTE",
           "migration": "20260512000000_customer_analytics_staff_performance_rpcs.sql",
           "timestamp": "20260512000000"
+        },
+        {
+          "role": "authenticated",
+          "permissions": "EXECUTE",
+          "migration": "20260512000000_customer_staff_analytics.sql",
+          "timestamp": "20260512000000"
         }
       ],
       "conflicts": [
@@ -3369,9 +3052,11 @@
           "type": "multiple_grants_same_role",
           "severity": "medium",
           "role": "authenticated",
-          "count": 3
+          "count": 4
         }
       ],
+      "dropped_by": "20260512000000_customer_staff_analytics.sql",
+      "dropped_timestamp": "20260512000000",
       "revoked_by": [
         {
           "role": "PUBLIC",
@@ -3380,20 +3065,18 @@
           "timestamp": "20260506000004"
         },
         {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
-        },
-        {
           "role": "PUBLIC",
           "permissions": "ALL",
           "migration": "20260512000000_customer_analytics_staff_performance_rpcs.sql",
           "timestamp": "20260512000000"
+        },
+        {
+          "role": "PUBLIC",
+          "permissions": "ALL",
+          "migration": "20260512000000_customer_staff_analytics.sql",
+          "timestamp": "20260512000000"
         }
-      ],
-      "dropped_by": "20260512000000_customer_analytics_staff_performance_rpcs.sql",
-      "dropped_timestamp": "20260512000000"
+      ]
     },
     "get_receipt_config_simple(uuid)": {
       "signature": "get_receipt_config_simple(uuid)",
@@ -3427,11 +3110,6 @@
           "message": "Function granted before creation or after deletion"
         },
         {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
-        },
-        {
           "type": "multiple_grants_same_role",
           "severity": "medium",
           "role": "authenticated",
@@ -3444,12 +3122,6 @@
           "permissions": "ALL",
           "migration": "20260506000004_repair_remaining_rpc_functions.sql",
           "timestamp": "20260506000004"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -3485,11 +3157,6 @@
           "message": "Function granted before creation or after deletion"
         },
         {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
-        },
-        {
           "type": "multiple_grants_same_role",
           "severity": "medium",
           "role": "authenticated",
@@ -3502,12 +3169,6 @@
           "permissions": "ALL",
           "migration": "20260506000004_repair_remaining_rpc_functions.sql",
           "timestamp": "20260506000004"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -3632,20 +3293,7 @@
       "search_path": "explicit",
       "mutated_by": [],
       "granted_by": [],
-      "revoked_by": [
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
-        },
-        {
-          "role": "authenticated",
-          "permissions": "EXECUTE",
-          "migration": "20260506030000_restrict_authenticated_sensitive_functions.sql",
-          "timestamp": "20260506030000"
-        }
-      ],
+      "revoked_by": [],
       "missing": false,
       "conflicts": [],
       "risks": []
@@ -3739,11 +3387,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -3752,12 +3395,6 @@
           "permissions": "ALL",
           "migration": "20260423233000_ledger_posting_hardening.sql",
           "timestamp": "20260423233000"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -3830,21 +3467,9 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
-      "revoked_by": [
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
-        }
-      ]
+      "revoked_by": []
     },
     "import_historical_daily_sale(uuid, date, numeric, numeric)": {
       "signature": "import_historical_daily_sale(uuid, date, numeric, numeric)",
@@ -3870,21 +3495,9 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
-      "revoked_by": [
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
-        }
-      ]
+      "revoked_by": []
     },
     "check_ledger_batch_balance()": {
       "signature": "check_ledger_batch_balance()",
@@ -3896,14 +3509,7 @@
       "search_path": "implicit",
       "mutated_by": [],
       "granted_by": [],
-      "revoked_by": [
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
-        }
-      ],
+      "revoked_by": [],
       "missing": false,
       "conflicts": [],
       "risks": [
@@ -3922,7 +3528,13 @@
       "created_timestamp": "20260425110000",
       "is_security_definer": true,
       "search_path": "explicit",
-      "mutated_by": [],
+      "mutated_by": [
+        {
+          "type": "REPLACE",
+          "migration": "20260510140100_fix_pgcrypto_schema.sql",
+          "timestamp": "20260510140100"
+        }
+      ],
       "granted_by": [],
       "revoked_by": [],
       "missing": false,
@@ -3953,11 +3565,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ],
       "revoked_by": [
@@ -3966,12 +3573,6 @@
           "permissions": "ALL",
           "migration": "20260425110000_authenticate_staff_pin.sql",
           "timestamp": "20260425110000"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ]
     },
@@ -3991,20 +3592,7 @@
         }
       ],
       "granted_by": [],
-      "revoked_by": [
-        {
-          "role": "PUBLIC",
-          "permissions": "EXECUTE",
-          "migration": "20260506000005_security_hardening_revoke_anon_fix_search_path.sql",
-          "timestamp": "20260506000005"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
-        }
-      ],
+      "revoked_by": [],
       "missing": false,
       "conflicts": [],
       "risks": [
@@ -4439,6 +4027,162 @@
         }
       ]
     },
+    "record_purchase_v2(--   p_idempotency_key      TEXT,\n--   p_tenant_id            UUID,\n--   p_store_id             UUID,\n--   p_supplier_id          UUID,\n--   p_invoice_number       TEXT DEFAULT NULL,\n--   p_invoice_total        NUMERIC(15, 4)": {
+      "signature": "record_purchase_v2(--   p_idempotency_key      TEXT,\n--   p_tenant_id            UUID,\n--   p_store_id             UUID,\n--   p_supplier_id          UUID,\n--   p_invoice_number       TEXT DEFAULT NULL,\n--   p_invoice_total        NUMERIC(15, 4)",
+      "name": "record_purchase_v2",
+      "params": "--   p_idempotency_key      TEXT,\n--   p_tenant_id            UUID,\n--   p_store_id             UUID,\n--   p_supplier_id          UUID,\n--   p_invoice_number       TEXT DEFAULT NULL,\n--   p_invoice_total        NUMERIC(15, 4",
+      "created_by": "20260427010001_record_purchase_v2_rpc.sql",
+      "created_timestamp": "20260427010001",
+      "is_security_definer": false,
+      "search_path": "implicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": [
+        {
+          "type": "unsafe_search_path",
+          "severity": "medium",
+          "message": "Function created without SECURITY DEFINER or explicit search_path"
+        }
+      ]
+    },
+    "post_draft_purchase_receipt(p_receipt_id UUID)": {
+      "signature": "post_draft_purchase_receipt(p_receipt_id UUID)",
+      "name": "post_draft_purchase_receipt",
+      "params": "p_receipt_id UUID",
+      "created_by": "20260427010001_record_purchase_v2_rpc.sql",
+      "created_timestamp": "20260427010001",
+      "is_security_definer": false,
+      "search_path": "implicit",
+      "mutated_by": [
+        {
+          "type": "REPLACE",
+          "migration": "20260506000004_repair_remaining_rpc_functions.sql",
+          "timestamp": "20260506000004"
+        }
+      ],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": [
+        {
+          "type": "unsafe_search_path",
+          "severity": "medium",
+          "message": "Function created without SECURITY DEFINER or explicit search_path"
+        }
+      ]
+    },
+    "record_purchase_v2(TEXT, UUID, UUID, UUID, TEXT, NUMERIC, JSONB, NUMERIC, UUID, UUID, TEXT, TEXT)": {
+      "signature": "record_purchase_v2(TEXT, UUID, UUID, UUID, TEXT, NUMERIC, JSONB, NUMERIC, UUID, UUID, TEXT, TEXT)",
+      "name": "record_purchase_v2",
+      "params": "TEXT, UUID, UUID, UUID, TEXT, NUMERIC, JSONB, NUMERIC, UUID, UUID, TEXT, TEXT",
+      "missing": true,
+      "granted_by": [
+        {
+          "role": "authenticated",
+          "permissions": "EXECUTE",
+          "migration": "20260427010001_record_purchase_v2_rpc.sql",
+          "timestamp": "20260427010001"
+        },
+        {
+          "role": "authenticated",
+          "permissions": "EXECUTE",
+          "migration": "20260506000004_repair_remaining_rpc_functions.sql",
+          "timestamp": "20260506000004"
+        }
+      ],
+      "conflicts": [
+        {
+          "type": "orphan_grant",
+          "migration": "20260427010001_record_purchase_v2_rpc.sql"
+        }
+      ],
+      "risks": [
+        {
+          "type": "missing_creator",
+          "severity": "critical",
+          "message": "Function granted before creation or after deletion"
+        },
+        {
+          "type": "multiple_grants_same_role",
+          "severity": "medium",
+          "role": "authenticated",
+          "count": 2
+        }
+      ],
+      "revoked_by": [
+        {
+          "role": "PUBLIC",
+          "permissions": "ALL",
+          "migration": "20260427010001_record_purchase_v2_rpc.sql",
+          "timestamp": "20260427010001"
+        },
+        {
+          "role": "PUBLIC",
+          "permissions": "ALL",
+          "migration": "20260506000004_repair_remaining_rpc_functions.sql",
+          "timestamp": "20260506000004"
+        }
+      ],
+      "dropped_by": "20260506000004_repair_remaining_rpc_functions.sql",
+      "dropped_timestamp": "20260506000004"
+    },
+    "post_draft_purchase_receipt(UUID)": {
+      "signature": "post_draft_purchase_receipt(UUID)",
+      "name": "post_draft_purchase_receipt",
+      "params": "UUID",
+      "missing": true,
+      "granted_by": [
+        {
+          "role": "authenticated",
+          "permissions": "EXECUTE",
+          "migration": "20260427010001_record_purchase_v2_rpc.sql",
+          "timestamp": "20260427010001"
+        },
+        {
+          "role": "authenticated",
+          "permissions": "EXECUTE",
+          "migration": "20260506000004_repair_remaining_rpc_functions.sql",
+          "timestamp": "20260506000004"
+        }
+      ],
+      "conflicts": [
+        {
+          "type": "orphan_grant",
+          "migration": "20260427010001_record_purchase_v2_rpc.sql"
+        }
+      ],
+      "risks": [
+        {
+          "type": "missing_creator",
+          "severity": "critical",
+          "message": "Function granted before creation or after deletion"
+        },
+        {
+          "type": "multiple_grants_same_role",
+          "severity": "medium",
+          "role": "authenticated",
+          "count": 2
+        }
+      ],
+      "revoked_by": [
+        {
+          "role": "PUBLIC",
+          "permissions": "ALL",
+          "migration": "20260427010001_record_purchase_v2_rpc.sql",
+          "timestamp": "20260427010001"
+        },
+        {
+          "role": "PUBLIC",
+          "permissions": "ALL",
+          "migration": "20260506000004_repair_remaining_rpc_functions.sql",
+          "timestamp": "20260506000004"
+        }
+      ]
+    },
     "update_user_last_login()": {
       "signature": "update_user_last_login()",
       "name": "update_user_last_login",
@@ -4455,20 +4199,7 @@
         }
       ],
       "granted_by": [],
-      "revoked_by": [
-        {
-          "role": "PUBLIC",
-          "permissions": "EXECUTE",
-          "migration": "20260506000005_security_hardening_revoke_anon_fix_search_path.sql",
-          "timestamp": "20260506000005"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
-        }
-      ],
+      "revoked_by": [],
       "missing": false,
       "conflicts": [],
       "risks": []
@@ -4499,51 +4230,6 @@
           "message": "Function created without SECURITY DEFINER or explicit search_path"
         }
       ]
-    },
-    "get_stock_level_by_id(p_stock_level_id uuid)": {
-      "signature": "get_stock_level_by_id(p_stock_level_id uuid)",
-      "name": "get_stock_level_by_id",
-      "params": "p_stock_level_id uuid",
-      "created_by": "20260427080000_stock_ledger_table.sql",
-      "created_timestamp": "20260427080000",
-      "is_security_definer": true,
-      "search_path": "explicit",
-      "mutated_by": [],
-      "granted_by": [],
-      "revoked_by": [],
-      "missing": false,
-      "conflicts": [],
-      "risks": []
-    },
-    "get_stock_level_by_id(uuid)": {
-      "signature": "get_stock_level_by_id(uuid)",
-      "name": "get_stock_level_by_id",
-      "params": "uuid",
-      "missing": true,
-      "granted_by": [
-        {
-          "role": "authenticated",
-          "permissions": "EXECUTE",
-          "migration": "20260427080000_stock_ledger_table.sql",
-          "timestamp": "20260427080000"
-        }
-      ],
-      "conflicts": [
-        {
-          "type": "orphan_grant",
-          "migration": "20260427080000_stock_ledger_table.sql"
-        }
-      ],
-      "risks": [
-        {
-          "type": "missing_creator",
-          "severity": "critical",
-          "message": "Function granted before creation or after deletion"
-        }
-      ],
-      "dropped_by": "20260512090000_cleanup_overloads.sql",
-      "dropped_timestamp": "20260512090000",
-      "revoked_by": []
     },
     "deduct_stock(p_store_id uuid,\n  p_product_id uuid,\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb)": {
       "signature": "deduct_stock(p_store_id uuid,\n  p_product_id uuid,\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb)",
@@ -4609,11 +4295,6 @@
           "message": "Function granted before creation or after deletion"
         },
         {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
-        },
-        {
           "type": "multiple_grants_same_role",
           "severity": "medium",
           "role": "authenticated",
@@ -4632,16 +4313,10 @@
           "permissions": "ALL",
           "migration": "20260506000003_repair_stock_and_reminder_functions.sql",
           "timestamp": "20260506000003"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ],
-      "dropped_by": "20260512090000_cleanup_overloads.sql",
-      "dropped_timestamp": "20260512090000"
+      "dropped_by": "20260506000003_repair_stock_and_reminder_functions.sql",
+      "dropped_timestamp": "20260506000003"
     },
     "get_upcoming_reminders(p_store_id UUID,\n    p_include_completed BOOLEAN DEFAULT false)": {
       "signature": "get_upcoming_reminders(p_store_id UUID,\n    p_include_completed BOOLEAN DEFAULT false)",
@@ -5013,12 +4688,6 @@
         {
           "role": "authenticated",
           "permissions": "EXECUTE",
-          "migration": "20260510120000_fix_recursive_rls_policies.sql",
-          "timestamp": "20260510120000"
-        },
-        {
-          "role": "authenticated",
-          "permissions": "EXECUTE",
           "migration": "20260510130000_fix_remote_rls_policies_manual.sql",
           "timestamp": "20260510130000"
         }
@@ -5029,12 +4698,6 @@
           "permissions": "ALL",
           "migration": "20260506000004_repair_remaining_rpc_functions.sql",
           "timestamp": "20260506000004"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ],
       "missing": false,
@@ -5044,7 +4707,7 @@
           "type": "multiple_grants_same_role",
           "severity": "medium",
           "role": "authenticated",
-          "count": 5
+          "count": 4
         }
       ]
     },
@@ -5090,12 +4753,6 @@
         {
           "role": "authenticated",
           "permissions": "EXECUTE",
-          "migration": "20260510120000_fix_recursive_rls_policies.sql",
-          "timestamp": "20260510120000"
-        },
-        {
-          "role": "authenticated",
-          "permissions": "EXECUTE",
           "migration": "20260510130000_fix_remote_rls_policies_manual.sql",
           "timestamp": "20260510130000"
         }
@@ -5106,12 +4763,6 @@
           "permissions": "ALL",
           "migration": "20260506000004_repair_remaining_rpc_functions.sql",
           "timestamp": "20260506000004"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
         }
       ],
       "missing": false,
@@ -5121,7 +4772,7 @@
           "type": "multiple_grants_same_role",
           "severity": "medium",
           "role": "authenticated",
-          "count": 5
+          "count": 4
         }
       ]
     },
@@ -5270,14 +4921,6 @@
           "migration": "20260506000002_repair_missing_domain_functions.sql",
           "timestamp": "20260506000002"
         }
-      ],
-      "mutated_by": [
-        {
-          "type": "ALTER",
-          "alteration": "SET search_path = public, pg_temp",
-          "migration": "20260506000005_security_hardening_revoke_anon_fix_search_path.sql",
-          "timestamp": "20260506000005"
-        }
       ]
     },
     "get_expected_cash(UUID, UUID, UUID, DATE)": {
@@ -5384,54 +5027,8 @@
           "type": "REPLACE",
           "migration": "20260511125848_update_rpcs_for_inventory_movements.sql",
           "timestamp": "20260511125848"
-        },
-        {
-          "type": "REPLACE",
-          "migration": "20260511130244_harden_inventory_movements.sql",
-          "timestamp": "20260511130244"
-        },
-        {
-          "type": "REPLACE",
-          "migration": "20260511131100_serializable_rpcs.sql",
-          "timestamp": "20260511131100"
-        },
-        {
-          "type": "REPLACE",
-          "migration": "20260512100000_canonical_runtime_reconciliation.sql",
-          "timestamp": "20260512100000"
-        },
-        {
-          "type": "REPLACE",
-          "migration": "20260512120000_pillar2_governance_freeze.sql",
-          "timestamp": "20260512120000"
-        },
-        {
-          "type": "REPLACE",
-          "migration": "20260512130000_pillar3_isolation_restoration.sql",
-          "timestamp": "20260512130000"
         }
       ],
-      "granted_by": [],
-      "revoked_by": [],
-      "missing": false,
-      "conflicts": [],
-      "risks": [
-        {
-          "type": "unsafe_search_path",
-          "severity": "medium",
-          "message": "Function created without SECURITY DEFINER or explicit search_path"
-        }
-      ]
-    },
-    "post_draft_purchase_receipt(p_receipt_id UUID)": {
-      "signature": "post_draft_purchase_receipt(p_receipt_id UUID)",
-      "name": "post_draft_purchase_receipt",
-      "params": "p_receipt_id UUID",
-      "created_by": "20260506000004_repair_remaining_rpc_functions.sql",
-      "created_timestamp": "20260506000004",
-      "is_security_definer": false,
-      "search_path": "implicit",
-      "mutated_by": [],
       "granted_by": [],
       "revoked_by": [],
       "missing": false,
@@ -5468,95 +5065,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
-        }
-      ],
-      "revoked_by": [
-        {
-          "role": "PUBLIC",
-          "permissions": "ALL",
-          "migration": "20260506000004_repair_remaining_rpc_functions.sql",
-          "timestamp": "20260506000004"
-        },
-        {
-          "role": "anon",
-          "permissions": "EXECUTE",
-          "migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-          "timestamp": "20260506010000"
-        }
-      ]
-    },
-    "record_purchase_v2(TEXT, UUID, UUID, UUID, TEXT, NUMERIC, JSONB, NUMERIC, UUID, UUID, TEXT, TEXT)": {
-      "signature": "record_purchase_v2(TEXT, UUID, UUID, UUID, TEXT, NUMERIC, JSONB, NUMERIC, UUID, UUID, TEXT, TEXT)",
-      "name": "record_purchase_v2",
-      "params": "TEXT, UUID, UUID, UUID, TEXT, NUMERIC, JSONB, NUMERIC, UUID, UUID, TEXT, TEXT",
-      "missing": true,
-      "granted_by": [
-        {
-          "role": "authenticated",
-          "permissions": "EXECUTE",
-          "migration": "20260506000004_repair_remaining_rpc_functions.sql",
-          "timestamp": "20260506000004"
-        }
-      ],
-      "conflicts": [
-        {
-          "type": "orphan_grant",
-          "migration": "20260506000004_repair_remaining_rpc_functions.sql"
-        }
-      ],
-      "risks": [
-        {
-          "type": "missing_creator",
-          "severity": "critical",
-          "message": "Function granted before creation or after deletion"
-        }
-      ],
-      "revoked_by": [
-        {
-          "role": "PUBLIC",
-          "permissions": "ALL",
-          "migration": "20260506000004_repair_remaining_rpc_functions.sql",
-          "timestamp": "20260506000004"
-        }
-      ],
-      "mutated_by": [
-        {
-          "type": "ALTER",
-          "alteration": "SET search_path = public, pg_temp",
-          "migration": "20260506000005_security_hardening_revoke_anon_fix_search_path.sql",
-          "timestamp": "20260506000005"
-        }
-      ]
-    },
-    "post_draft_purchase_receipt(UUID)": {
-      "signature": "post_draft_purchase_receipt(UUID)",
-      "name": "post_draft_purchase_receipt",
-      "params": "UUID",
-      "missing": true,
-      "granted_by": [
-        {
-          "role": "authenticated",
-          "permissions": "EXECUTE",
-          "migration": "20260506000004_repair_remaining_rpc_functions.sql",
-          "timestamp": "20260506000004"
-        }
-      ],
-      "conflicts": [
-        {
-          "type": "orphan_grant",
-          "migration": "20260506000004_repair_remaining_rpc_functions.sql"
-        }
-      ],
-      "risks": [
-        {
-          "type": "missing_creator",
-          "severity": "critical",
-          "message": "Function granted before creation or after deletion"
         }
       ],
       "revoked_by": [
@@ -5568,12 +5076,12 @@
         }
       ]
     },
-    "prevent_inventory_movement_update()": {
-      "signature": "prevent_inventory_movement_update()",
-      "name": "prevent_inventory_movement_update",
+    "set_updated_at_timestamp()": {
+      "signature": "set_updated_at_timestamp()",
+      "name": "set_updated_at_timestamp",
       "params": "",
-      "created_by": "20260511125509_inventory_movements_ledger.sql",
-      "created_timestamp": "20260511125509",
+      "created_by": "20260506020000_fix_function_search_path_mutable.sql",
+      "created_timestamp": "20260506020000",
       "is_security_definer": false,
       "search_path": "implicit",
       "mutated_by": [],
@@ -5589,12 +5097,12 @@
         }
       ]
     },
-    "adjust_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE)": {
-      "signature": "adjust_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE)",
-      "name": "adjust_inventory_stock",
-      "params": "p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE",
-      "created_by": "20260511125509_inventory_movements_ledger.sql",
-      "created_timestamp": "20260511125509",
+    "check_rate_limit(p_key        text,\n  p_max        integer,\n  p_window_sec integer)": {
+      "signature": "check_rate_limit(p_key        text,\n  p_max        integer,\n  p_window_sec integer)",
+      "name": "check_rate_limit",
+      "params": "p_key        text,\n  p_max        integer,\n  p_window_sec integer",
+      "created_by": "20260511000000_rate_limits_table.sql",
+      "created_timestamp": "20260511000000",
       "is_security_definer": true,
       "search_path": "explicit",
       "mutated_by": [],
@@ -5604,33 +5112,12 @@
       "conflicts": [],
       "risks": []
     },
-    "set_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_new_quantity INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL)": {
-      "signature": "set_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_new_quantity INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL)",
-      "name": "set_inventory_stock",
-      "params": "p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_new_quantity INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL",
-      "created_by": "20260511125509_inventory_movements_ledger.sql",
-      "created_timestamp": "20260511125509",
-      "is_security_definer": true,
-      "search_path": "explicit",
-      "mutated_by": [
-        {
-          "type": "REPLACE",
-          "migration": "20260512100000_canonical_runtime_reconciliation.sql",
-          "timestamp": "20260512100000"
-        }
-      ],
-      "granted_by": [],
-      "revoked_by": [],
-      "missing": false,
-      "conflicts": [],
-      "risks": []
-    },
-    "get_inventory_movements(p_store_id UUID,\n    p_product_id UUID DEFAULT NULL,\n    p_movement_type movement_type DEFAULT NULL,\n    p_limit INTEGER DEFAULT 100,\n    p_offset INTEGER DEFAULT 0)": {
-      "signature": "get_inventory_movements(p_store_id UUID,\n    p_product_id UUID DEFAULT NULL,\n    p_movement_type movement_type DEFAULT NULL,\n    p_limit INTEGER DEFAULT 100,\n    p_offset INTEGER DEFAULT 0)",
-      "name": "get_inventory_movements",
-      "params": "p_store_id UUID,\n    p_product_id UUID DEFAULT NULL,\n    p_movement_type movement_type DEFAULT NULL,\n    p_limit INTEGER DEFAULT 100,\n    p_offset INTEGER DEFAULT 0",
-      "created_by": "20260511125700_get_inventory_movements_rpc.sql",
-      "created_timestamp": "20260511125700",
+    "cleanup_rate_limits()": {
+      "signature": "cleanup_rate_limits()",
+      "name": "cleanup_rate_limits",
+      "params": "",
+      "created_by": "20260511000000_rate_limits_table.sql",
+      "created_timestamp": "20260511000000",
       "is_security_definer": true,
       "search_path": "explicit",
       "mutated_by": [],
@@ -5640,139 +5127,26 @@
       "conflicts": [],
       "risks": []
     },
-    "adjust_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE,\n    p_operation_id UUID DEFAULT NULL)": {
-      "signature": "adjust_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE,\n    p_operation_id UUID DEFAULT NULL)",
-      "name": "adjust_inventory_stock",
-      "params": "p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE,\n    p_operation_id UUID DEFAULT NULL",
-      "created_by": "20260511130244_harden_inventory_movements.sql",
-      "created_timestamp": "20260511130244",
-      "is_security_definer": true,
-      "search_path": "explicit",
+    "handle_updated_at()": {
+      "signature": "handle_updated_at()",
+      "name": "handle_updated_at",
+      "params": "",
+      "created_by": "20260511040000_create_daily_sales_table.sql",
+      "created_timestamp": "20260511040000",
+      "is_security_definer": false,
+      "search_path": "implicit",
       "mutated_by": [],
       "granted_by": [],
       "revoked_by": [],
       "missing": false,
       "conflicts": [],
-      "risks": []
-    },
-    "set_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_new_quantity INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_operation_id UUID DEFAULT NULL)": {
-      "signature": "set_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_new_quantity INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_operation_id UUID DEFAULT NULL)",
-      "name": "set_inventory_stock",
-      "params": "p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_new_quantity INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_operation_id UUID DEFAULT NULL",
-      "created_by": "20260511130244_harden_inventory_movements.sql",
-      "created_timestamp": "20260511130244",
-      "is_security_definer": true,
-      "search_path": "explicit",
-      "mutated_by": [
+      "risks": [
         {
-          "type": "REPLACE",
-          "migration": "20260511131100_serializable_rpcs.sql",
-          "timestamp": "20260511131100"
-        },
-        {
-          "type": "REPLACE",
-          "migration": "20260512100000_canonical_runtime_reconciliation.sql",
-          "timestamp": "20260512100000"
+          "type": "unsafe_search_path",
+          "severity": "medium",
+          "message": "Function created without SECURITY DEFINER or explicit search_path"
         }
-      ],
-      "granted_by": [],
-      "revoked_by": [],
-      "missing": false,
-      "conflicts": [],
-      "risks": []
-    },
-    "deduct_stock(p_store_id uuid,\n  p_product_id uuid,\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb,\n  p_operation_id UUID DEFAULT NULL)": {
-      "signature": "deduct_stock(p_store_id uuid,\n  p_product_id uuid,\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb,\n  p_operation_id UUID DEFAULT NULL)",
-      "name": "deduct_stock",
-      "params": "p_store_id uuid,\n  p_product_id uuid,\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb,\n  p_operation_id UUID DEFAULT NULL",
-      "created_by": "20260511130244_harden_inventory_movements.sql",
-      "created_timestamp": "20260511130244",
-      "is_security_definer": true,
-      "search_path": "explicit",
-      "mutated_by": [],
-      "granted_by": [],
-      "revoked_by": [],
-      "missing": false,
-      "conflicts": [],
-      "risks": []
-    },
-    "approve_inventory_reconciliation(p_reconciliation_id UUID,\n    p_notes TEXT DEFAULT NULL)": {
-      "signature": "approve_inventory_reconciliation(p_reconciliation_id UUID,\n    p_notes TEXT DEFAULT NULL)",
-      "name": "approve_inventory_reconciliation",
-      "params": "p_reconciliation_id UUID,\n    p_notes TEXT DEFAULT NULL",
-      "created_by": "20260511130416_inventory_reconciliations.sql",
-      "created_timestamp": "20260511130416",
-      "is_security_definer": true,
-      "search_path": "explicit",
-      "mutated_by": [
-        {
-          "type": "REPLACE",
-          "migration": "20260511131100_serializable_rpcs.sql",
-          "timestamp": "20260511131100"
-        },
-        {
-          "type": "REPLACE",
-          "migration": "20260512100000_canonical_runtime_reconciliation.sql",
-          "timestamp": "20260512100000"
-        },
-        {
-          "type": "REPLACE",
-          "migration": "20260512120000_pillar2_governance_freeze.sql",
-          "timestamp": "20260512120000"
-        },
-        {
-          "type": "REPLACE",
-          "migration": "20260512130000_pillar3_isolation_restoration.sql",
-          "timestamp": "20260512130000"
-        }
-      ],
-      "granted_by": [],
-      "revoked_by": [],
-      "missing": false,
-      "conflicts": [],
-      "risks": []
-    },
-    "adjust_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE,\n    p_operation_id UUID DEFAULT NULL,\n    p_expected_quantity INTEGER DEFAULT NULL)": {
-      "signature": "adjust_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE,\n    p_operation_id UUID DEFAULT NULL,\n    p_expected_quantity INTEGER DEFAULT NULL)",
-      "name": "adjust_inventory_stock",
-      "params": "p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE,\n    p_operation_id UUID DEFAULT NULL,\n    p_expected_quantity INTEGER DEFAULT NULL",
-      "created_by": "20260511131100_serializable_rpcs.sql",
-      "created_timestamp": "20260511131100",
-      "is_security_definer": true,
-      "search_path": "explicit",
-      "mutated_by": [
-        {
-          "type": "REPLACE",
-          "migration": "20260512100000_canonical_runtime_reconciliation.sql",
-          "timestamp": "20260512100000"
-        }
-      ],
-      "granted_by": [],
-      "revoked_by": [],
-      "missing": false,
-      "conflicts": [],
-      "risks": []
-    },
-    "deduct_stock(p_store_id uuid,\n  p_product_id uuid,\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb,\n  p_operation_id UUID DEFAULT NULL,\n  p_expected_quantity INTEGER DEFAULT NULL)": {
-      "signature": "deduct_stock(p_store_id uuid,\n  p_product_id uuid,\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb,\n  p_operation_id UUID DEFAULT NULL,\n  p_expected_quantity INTEGER DEFAULT NULL)",
-      "name": "deduct_stock",
-      "params": "p_store_id uuid,\n  p_product_id uuid,\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb,\n  p_operation_id UUID DEFAULT NULL,\n  p_expected_quantity INTEGER DEFAULT NULL",
-      "created_by": "20260511131100_serializable_rpcs.sql",
-      "created_timestamp": "20260511131100",
-      "is_security_definer": true,
-      "search_path": "explicit",
-      "mutated_by": [
-        {
-          "type": "REPLACE",
-          "migration": "20260512100000_canonical_runtime_reconciliation.sql",
-          "timestamp": "20260512100000"
-        }
-      ],
-      "granted_by": [],
-      "revoked_by": [],
-      "missing": false,
-      "conflicts": [],
-      "risks": []
+      ]
     },
     "get_customer_analytics(p_store_id uuid,\n  p_limit    integer DEFAULT 50)": {
       "signature": "get_customer_analytics(p_store_id uuid,\n  p_limit    integer DEFAULT 50)",
@@ -5782,7 +5156,13 @@
       "created_timestamp": "20260512000000",
       "is_security_definer": true,
       "search_path": "explicit",
-      "mutated_by": [],
+      "mutated_by": [
+        {
+          "type": "REPLACE",
+          "migration": "20260512000000_customer_staff_analytics.sql",
+          "timestamp": "20260512000000"
+        }
+      ],
       "granted_by": [],
       "revoked_by": [],
       "missing": false,
@@ -5797,7 +5177,13 @@
       "created_timestamp": "20260512000000",
       "is_security_definer": true,
       "search_path": "explicit",
-      "mutated_by": [],
+      "mutated_by": [
+        {
+          "type": "REPLACE",
+          "migration": "20260512000000_customer_staff_analytics.sql",
+          "timestamp": "20260512000000"
+        }
+      ],
       "granted_by": [],
       "revoked_by": [],
       "missing": false,
@@ -5815,6 +5201,12 @@
           "permissions": "EXECUTE",
           "migration": "20260512000000_customer_analytics_staff_performance_rpcs.sql",
           "timestamp": "20260512000000"
+        },
+        {
+          "role": "authenticated",
+          "permissions": "EXECUTE",
+          "migration": "20260512000000_customer_staff_analytics.sql",
+          "timestamp": "20260512000000"
         }
       ],
       "conflicts": [
@@ -5828,6 +5220,12 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
+        },
+        {
+          "type": "multiple_grants_same_role",
+          "severity": "medium",
+          "role": "authenticated",
+          "count": 2
         }
       ],
       "revoked_by": [
@@ -5835,6 +5233,12 @@
           "role": "PUBLIC",
           "permissions": "ALL",
           "migration": "20260512000000_customer_analytics_staff_performance_rpcs.sql",
+          "timestamp": "20260512000000"
+        },
+        {
+          "role": "PUBLIC",
+          "permissions": "ALL",
+          "migration": "20260512000000_customer_staff_analytics.sql",
           "timestamp": "20260512000000"
         }
       ]
@@ -5850,6 +5254,12 @@
           "permissions": "EXECUTE",
           "migration": "20260512000000_customer_analytics_staff_performance_rpcs.sql",
           "timestamp": "20260512000000"
+        },
+        {
+          "role": "authenticated",
+          "permissions": "EXECUTE",
+          "migration": "20260512000000_customer_staff_analytics.sql",
+          "timestamp": "20260512000000"
         }
       ],
       "conflicts": [
@@ -5863,6 +5273,12 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
+        },
+        {
+          "type": "multiple_grants_same_role",
+          "severity": "medium",
+          "role": "authenticated",
+          "count": 2
         }
       ],
       "revoked_by": [
@@ -5871,98 +5287,14 @@
           "permissions": "ALL",
           "migration": "20260512000000_customer_analytics_staff_performance_rpcs.sql",
           "timestamp": "20260512000000"
+        },
+        {
+          "role": "PUBLIC",
+          "permissions": "ALL",
+          "migration": "20260512000000_customer_staff_analytics.sql",
+          "timestamp": "20260512000000"
         }
       ]
-    },
-    "adjust_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_item_id UUID, -- CANONICAL NAME\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE,\n    p_operation_id UUID DEFAULT NULL,\n    p_expected_quantity INTEGER DEFAULT NULL)": {
-      "signature": "adjust_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_item_id UUID, -- CANONICAL NAME\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE,\n    p_operation_id UUID DEFAULT NULL,\n    p_expected_quantity INTEGER DEFAULT NULL)",
-      "name": "adjust_inventory_stock",
-      "params": "p_tenant_id UUID,\n    p_store_id UUID,\n    p_item_id UUID, -- CANONICAL NAME\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE,\n    p_operation_id UUID DEFAULT NULL,\n    p_expected_quantity INTEGER DEFAULT NULL",
-      "created_by": "20260512120000_pillar2_governance_freeze.sql",
-      "created_timestamp": "20260512120000",
-      "is_security_definer": true,
-      "search_path": "explicit",
-      "mutated_by": [],
-      "granted_by": [],
-      "revoked_by": [],
-      "missing": false,
-      "conflicts": [],
-      "risks": []
-    },
-    "set_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_item_id UUID, -- CANONICAL NAME\n    p_new_quantity INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_operation_id UUID DEFAULT NULL)": {
-      "signature": "set_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_item_id UUID, -- CANONICAL NAME\n    p_new_quantity INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_operation_id UUID DEFAULT NULL)",
-      "name": "set_inventory_stock",
-      "params": "p_tenant_id UUID,\n    p_store_id UUID,\n    p_item_id UUID, -- CANONICAL NAME\n    p_new_quantity INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_operation_id UUID DEFAULT NULL",
-      "created_by": "20260512120000_pillar2_governance_freeze.sql",
-      "created_timestamp": "20260512120000",
-      "is_security_definer": true,
-      "search_path": "explicit",
-      "mutated_by": [],
-      "granted_by": [],
-      "revoked_by": [],
-      "missing": false,
-      "conflicts": [],
-      "risks": []
-    },
-    "deduct_stock(p_store_id uuid,\n  p_item_id uuid, -- CANONICAL NAME\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb,\n  p_operation_id UUID DEFAULT NULL,\n  p_expected_quantity INTEGER DEFAULT NULL)": {
-      "signature": "deduct_stock(p_store_id uuid,\n  p_item_id uuid, -- CANONICAL NAME\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb,\n  p_operation_id UUID DEFAULT NULL,\n  p_expected_quantity INTEGER DEFAULT NULL)",
-      "name": "deduct_stock",
-      "params": "p_store_id uuid,\n  p_item_id uuid, -- CANONICAL NAME\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb,\n  p_operation_id UUID DEFAULT NULL,\n  p_expected_quantity INTEGER DEFAULT NULL",
-      "created_by": "20260512120000_pillar2_governance_freeze.sql",
-      "created_timestamp": "20260512120000",
-      "is_security_definer": true,
-      "search_path": "explicit",
-      "mutated_by": [],
-      "granted_by": [],
-      "revoked_by": [],
-      "missing": false,
-      "conflicts": [],
-      "risks": []
-    },
-    "adjust_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_item_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE,\n    p_operation_id UUID DEFAULT NULL,\n    p_expected_quantity INTEGER DEFAULT NULL)": {
-      "signature": "adjust_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_item_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE,\n    p_operation_id UUID DEFAULT NULL,\n    p_expected_quantity INTEGER DEFAULT NULL)",
-      "name": "adjust_inventory_stock",
-      "params": "p_tenant_id UUID,\n    p_store_id UUID,\n    p_item_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE,\n    p_operation_id UUID DEFAULT NULL,\n    p_expected_quantity INTEGER DEFAULT NULL",
-      "created_by": "20260512130000_pillar3_isolation_restoration.sql",
-      "created_timestamp": "20260512130000",
-      "is_security_definer": true,
-      "search_path": "explicit",
-      "mutated_by": [],
-      "granted_by": [],
-      "revoked_by": [],
-      "missing": false,
-      "conflicts": [],
-      "risks": []
-    },
-    "set_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_item_id UUID,\n    p_new_quantity INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_operation_id UUID DEFAULT NULL)": {
-      "signature": "set_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_item_id UUID,\n    p_new_quantity INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_operation_id UUID DEFAULT NULL)",
-      "name": "set_inventory_stock",
-      "params": "p_tenant_id UUID,\n    p_store_id UUID,\n    p_item_id UUID,\n    p_new_quantity INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_operation_id UUID DEFAULT NULL",
-      "created_by": "20260512130000_pillar3_isolation_restoration.sql",
-      "created_timestamp": "20260512130000",
-      "is_security_definer": true,
-      "search_path": "explicit",
-      "mutated_by": [],
-      "granted_by": [],
-      "revoked_by": [],
-      "missing": false,
-      "conflicts": [],
-      "risks": []
-    },
-    "deduct_stock(p_store_id uuid,\n  p_item_id uuid,\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb,\n  p_operation_id UUID DEFAULT NULL,\n  p_expected_quantity INTEGER DEFAULT NULL)": {
-      "signature": "deduct_stock(p_store_id uuid,\n  p_item_id uuid,\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb,\n  p_operation_id UUID DEFAULT NULL,\n  p_expected_quantity INTEGER DEFAULT NULL)",
-      "name": "deduct_stock",
-      "params": "p_store_id uuid,\n  p_item_id uuid,\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb,\n  p_operation_id UUID DEFAULT NULL,\n  p_expected_quantity INTEGER DEFAULT NULL",
-      "created_by": "20260512130000_pillar3_isolation_restoration.sql",
-      "created_timestamp": "20260512130000",
-      "is_security_definer": true,
-      "search_path": "explicit",
-      "mutated_by": [],
-      "granted_by": [],
-      "revoked_by": [],
-      "missing": false,
-      "conflicts": [],
-      "risks": []
     },
     "is_admin_in_tenant(p_tenant_id uuid)": {
       "signature": "is_admin_in_tenant(p_tenant_id uuid)",
@@ -6015,7 +5347,13 @@
       "created_timestamp": "20260514000001",
       "is_security_definer": false,
       "search_path": "implicit",
-      "mutated_by": [],
+      "mutated_by": [
+        {
+          "type": "REPLACE",
+          "migration": "20260514000001_create_competitor_prices.sql",
+          "timestamp": "20260514000001"
+        }
+      ],
       "granted_by": [],
       "revoked_by": [],
       "missing": false,
@@ -6036,7 +5374,13 @@
       "created_timestamp": "20260514000001",
       "is_security_definer": false,
       "search_path": "implicit",
-      "mutated_by": [],
+      "mutated_by": [
+        {
+          "type": "REPLACE",
+          "migration": "20260514000001_create_competitor_prices.sql",
+          "timestamp": "20260514000001"
+        }
+      ],
       "granted_by": [],
       "revoked_by": [],
       "missing": false,
@@ -6057,7 +5401,13 @@
       "created_timestamp": "20260514000001",
       "is_security_definer": false,
       "search_path": "implicit",
-      "mutated_by": [],
+      "mutated_by": [
+        {
+          "type": "REPLACE",
+          "migration": "20260514000001_create_competitor_prices.sql",
+          "timestamp": "20260514000001"
+        }
+      ],
       "granted_by": [],
       "revoked_by": [],
       "missing": false,
@@ -6069,6 +5419,51 @@
           "message": "Function created without SECURITY DEFINER or explicit search_path"
         }
       ]
+    },
+    "increment_stock(p_store_id uuid,\n  p_product_id uuid,\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb)": {
+      "signature": "increment_stock(p_store_id uuid,\n  p_product_id uuid,\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb)",
+      "name": "increment_stock",
+      "params": "p_store_id uuid,\n  p_product_id uuid,\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb",
+      "created_by": "20260519100000_increment_stock_rpc.sql",
+      "created_timestamp": "20260519100000",
+      "is_security_definer": true,
+      "search_path": "explicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
+    },
+    "trigger_sync_alert_bridge()": {
+      "signature": "trigger_sync_alert_bridge()",
+      "name": "trigger_sync_alert_bridge",
+      "params": "",
+      "created_by": "20260519150000_sync_alert_bridge_trigger.sql",
+      "created_timestamp": "20260519150000",
+      "is_security_definer": true,
+      "search_path": "explicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
+    },
+    "trigger_stitch_orchestrator()": {
+      "signature": "trigger_stitch_orchestrator()",
+      "name": "trigger_stitch_orchestrator",
+      "params": "",
+      "created_by": "20260519160000_stitch_orchestrator_trigger.sql",
+      "created_timestamp": "20260519160000",
+      "is_security_definer": true,
+      "search_path": "explicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
     }
   },
   "conflicts": [
@@ -6487,8 +5882,15 @@
     },
     {
       "type": "orphan_grant",
-      "function": "get_stock_level_by_id(uuid)",
-      "grant_migration": "20260427080000_stock_ledger_table.sql",
+      "function": "record_purchase_v2(TEXT, UUID, UUID, UUID, TEXT, NUMERIC, JSONB, NUMERIC, UUID, UUID, TEXT, TEXT)",
+      "grant_migration": "20260427010001_record_purchase_v2_rpc.sql",
+      "role": "authenticated",
+      "severity": "high"
+    },
+    {
+      "type": "orphan_grant",
+      "function": "post_draft_purchase_receipt(UUID)",
+      "grant_migration": "20260427010001_record_purchase_v2_rpc.sql",
       "role": "authenticated",
       "severity": "high"
     },
@@ -6571,363 +5973,6 @@
     },
     {
       "type": "orphan_grant",
-      "function": "record_purchase_v2(TEXT, UUID, UUID, UUID, TEXT, NUMERIC, JSONB, NUMERIC, UUID, UUID, TEXT, TEXT)",
-      "grant_migration": "20260506000004_repair_remaining_rpc_functions.sql",
-      "role": "authenticated",
-      "severity": "high"
-    },
-    {
-      "type": "orphan_grant",
-      "function": "post_draft_purchase_receipt(UUID)",
-      "grant_migration": "20260506000004_repair_remaining_rpc_functions.sql",
-      "role": "authenticated",
-      "severity": "high"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "close_pos_session(UUID, NUMERIC)",
-      "revoke_migration": "20260506000005_security_hardening_revoke_anon_fix_search_path.sql",
-      "role": "PUBLIC",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "enqueue_sale_for_ledger_posting_from_sales()",
-      "revoke_migration": "20260506000005_security_hardening_revoke_anon_fix_search_path.sql",
-      "role": "PUBLIC",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "ensure_expense_ledger_accounts(UUID)",
-      "revoke_migration": "20260506000005_security_hardening_revoke_anon_fix_search_path.sql",
-      "role": "PUBLIC",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "get_inventory_list(UUID)",
-      "revoke_migration": "20260506000005_security_hardening_revoke_anon_fix_search_path.sql",
-      "role": "PUBLIC",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "get_or_create_ar_account(UUID)",
-      "revoke_migration": "20260506000005_security_hardening_revoke_anon_fix_search_path.sql",
-      "role": "PUBLIC",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "get_pos_categories(UUID)",
-      "revoke_migration": "20260506000005_security_hardening_revoke_anon_fix_search_path.sql",
-      "role": "PUBLIC",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "get_session_summary(UUID)",
-      "revoke_migration": "20260506000005_security_hardening_revoke_anon_fix_search_path.sql",
-      "role": "PUBLIC",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "get_stock_history_simple(UUID, UUID, INTEGER)",
-      "revoke_migration": "20260506000005_security_hardening_revoke_anon_fix_search_path.sql",
-      "role": "PUBLIC",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "import_historical_daily_sale(UUID, DATE, NUMERIC, NUMERIC)",
-      "revoke_migration": "20260506000005_security_hardening_revoke_anon_fix_search_path.sql",
-      "role": "PUBLIC",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "lookup_item_by_scan(TEXT, UUID)",
-      "revoke_migration": "20260506000005_security_hardening_revoke_anon_fix_search_path.sql",
-      "role": "PUBLIC",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "record_expense(UUID, DATE, TEXT, TEXT, NUMERIC, TEXT, TEXT)",
-      "revoke_migration": "20260506000005_security_hardening_revoke_anon_fix_search_path.sql",
-      "role": "PUBLIC",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "search_items_pos(UUID, TEXT, UUID, INTEGER, INTEGER)",
-      "revoke_migration": "20260506000005_security_hardening_revoke_anon_fix_search_path.sql",
-      "role": "PUBLIC",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "set_stock(UUID, UUID, INTEGER, TEXT, TEXT)",
-      "revoke_migration": "20260506000005_security_hardening_revoke_anon_fix_search_path.sql",
-      "role": "PUBLIC",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "validate_sale_intent(JSONB)",
-      "revoke_migration": "20260506000005_security_hardening_revoke_anon_fix_search_path.sql",
-      "role": "PUBLIC",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "record_sale(text, uuid, uuid, jsonb, jsonb, text)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "record_purchase(text, uuid, uuid, uuid, uuid, jsonb, text)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "record_purchase_v2(text, uuid, uuid, uuid, text, numeric, jsonb, numeric, uuid, uuid, text, text)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "post_draft_purchase_receipt(uuid)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "record_customer_payment(text, uuid, uuid, uuid, numeric, uuid, text, text)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "add_followup_note(uuid, uuid, uuid, text, date)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "mark_followup_resolved(uuid)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "log_customer_reminder(uuid, uuid, uuid, text)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "get_or_create_ar_account(uuid)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "close_pos_session(uuid, numeric)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "issue_pos_override_token(uuid, text, jsonb, integer)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "record_cash_closing(text, uuid, uuid, uuid, numeric, date, text)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "get_expected_cash(uuid, uuid, uuid, date)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "process_ledger_posting_batch(text, integer, uuid)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "claim_ledger_posting_jobs(text, integer, uuid)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "register_ledger_worker(text)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "deactivate_ledger_worker(text)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "heartbeat_ledger_worker(text)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "ensure_expense_ledger_accounts(uuid)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "enqueue_sale_for_ledger_posting(uuid, uuid, integer)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "enqueue_sale_for_ledger_posting_from_sales()",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "create_reminder(uuid, uuid, text, text, date, text, uuid)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "update_reminder(uuid, text, text, date, text, boolean)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "delete_reminder(uuid)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "get_upcoming_reminders(uuid, boolean)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "check_idempotency(text, uuid)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "get_receivables_aging(uuid, uuid, text)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "get_session_summary(uuid)",
-      "revoke_migration": "20260506010000_revoke_anon_security_definer_execute.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "register_ledger_worker(text)",
-      "revoke_migration": "20260506030000_restrict_authenticated_sensitive_functions.sql",
-      "role": "authenticated",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "deactivate_ledger_worker(text)",
-      "revoke_migration": "20260506030000_restrict_authenticated_sensitive_functions.sql",
-      "role": "authenticated",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "issue_pos_override_token(uuid, text, jsonb, integer)",
-      "revoke_migration": "20260506030000_restrict_authenticated_sensitive_functions.sql",
-      "role": "authenticated",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "get_pos_categories(UUID)",
-      "revoke_migration": "20260506040000_revoke_anon_on_pos_functions.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "lookup_item_by_scan(TEXT, UUID)",
-      "revoke_migration": "20260506040000_revoke_anon_on_pos_functions.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "search_items_pos(UUID, TEXT, UUID, INTEGER, INTEGER)",
-      "revoke_migration": "20260506040000_revoke_anon_on_pos_functions.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_revoke",
-      "function": "validate_sale_intent(JSONB)",
-      "revoke_migration": "20260506040000_revoke_anon_on_pos_functions.sql",
-      "role": "anon",
-      "severity": "medium"
-    },
-    {
-      "type": "orphan_grant",
       "function": "get_customer_analytics(uuid, integer)",
       "grant_migration": "20260512000000_customer_analytics_staff_performance_rpcs.sql",
       "role": "authenticated",
@@ -6986,11 +6031,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7001,11 +6041,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7048,11 +6083,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7063,11 +6093,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7078,11 +6103,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7093,11 +6113,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7108,11 +6123,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7123,11 +6133,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7138,11 +6143,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7153,11 +6153,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7168,11 +6163,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7229,6 +6219,12 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
+        },
+        {
+          "type": "multiple_grants_same_role",
+          "severity": "medium",
+          "role": "authenticated",
+          "count": 2
         }
       ]
     },
@@ -7285,11 +6281,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7310,11 +6301,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7325,11 +6311,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7350,11 +6331,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7370,11 +6346,6 @@
           "type": "grant_after_drop",
           "severity": "high",
           "message": "Function granted after being dropped"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         },
         {
           "type": "multiple_grants_same_role",
@@ -7401,11 +6372,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7416,11 +6382,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7431,11 +6392,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7446,11 +6402,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7461,11 +6412,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7476,11 +6422,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7491,11 +6432,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7506,11 +6442,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7521,11 +6452,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7538,10 +6464,15 @@
           "message": "Function granted before creation or after deletion"
         },
         {
+          "type": "grant_after_drop",
+          "severity": "high",
+          "message": "Function granted after being dropped"
+        },
+        {
           "type": "multiple_grants_same_role",
           "severity": "medium",
           "role": "authenticated",
-          "count": 2
+          "count": 3
         }
       ]
     },
@@ -7568,11 +6499,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7583,11 +6509,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         },
         {
           "type": "multiple_grants_same_role",
@@ -7606,11 +6527,6 @@
           "message": "Function granted before creation or after deletion"
         },
         {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
-        },
-        {
           "type": "multiple_grants_same_role",
           "severity": "medium",
           "role": "authenticated",
@@ -7625,11 +6541,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         },
         {
           "type": "multiple_grants_same_role",
@@ -7651,7 +6562,7 @@
           "type": "multiple_grants_same_role",
           "severity": "medium",
           "role": "authenticated",
-          "count": 3
+          "count": 4
         }
       ]
     },
@@ -7662,11 +6573,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         },
         {
           "type": "multiple_grants_same_role",
@@ -7683,11 +6589,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         },
         {
           "type": "multiple_grants_same_role",
@@ -7714,11 +6615,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7729,11 +6625,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7744,11 +6635,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7759,11 +6645,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         }
       ]
     },
@@ -7818,12 +6699,34 @@
       ]
     },
     {
-      "signature": "get_stock_level_by_id(uuid)",
+      "signature": "record_purchase_v2(TEXT, UUID, UUID, UUID, TEXT, NUMERIC, JSONB, NUMERIC, UUID, UUID, TEXT, TEXT)",
       "risks": [
         {
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
+        },
+        {
+          "type": "multiple_grants_same_role",
+          "severity": "medium",
+          "role": "authenticated",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "signature": "post_draft_purchase_receipt(UUID)",
+      "risks": [
+        {
+          "type": "missing_creator",
+          "severity": "critical",
+          "message": "Function granted before creation or after deletion"
+        },
+        {
+          "type": "multiple_grants_same_role",
+          "severity": "medium",
+          "role": "authenticated",
+          "count": 2
         }
       ]
     },
@@ -7834,11 +6737,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
         },
         {
           "type": "multiple_grants_same_role",
@@ -8009,31 +6907,6 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
-        },
-        {
-          "type": "final_state_revoked",
-          "severity": "low",
-          "message": "Function permissions revoked at end of replay"
-        }
-      ]
-    },
-    {
-      "signature": "record_purchase_v2(TEXT, UUID, UUID, UUID, TEXT, NUMERIC, JSONB, NUMERIC, UUID, UUID, TEXT, TEXT)",
-      "risks": [
-        {
-          "type": "missing_creator",
-          "severity": "critical",
-          "message": "Function granted before creation or after deletion"
-        }
-      ]
-    },
-    {
-      "signature": "post_draft_purchase_receipt(UUID)",
-      "risks": [
-        {
-          "type": "missing_creator",
-          "severity": "critical",
-          "message": "Function granted before creation or after deletion"
         }
       ]
     },
@@ -8044,6 +6917,12 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
+        },
+        {
+          "type": "multiple_grants_same_role",
+          "severity": "medium",
+          "role": "authenticated",
+          "count": 2
         }
       ]
     },
@@ -8054,6 +6933,12 @@
           "type": "missing_creator",
           "severity": "critical",
           "message": "Function granted before creation or after deletion"
+        },
+        {
+          "type": "multiple_grants_same_role",
+          "severity": "medium",
+          "role": "authenticated",
+          "count": 2
         }
       ]
     },

@@ -14,6 +14,7 @@ export interface MetricCardProps {
   /** optional badge text displayed next to the value */
   badge?: string;
   className?: string;
+  chart?: React.ReactNode;
 }
 
 const COLOR_MAP: Record<string, { icon: string; value: string; badge: string }> = {
@@ -37,6 +38,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
   variant: _variant, // accepted but ignored — deprecated
   badge,
   className,
+  chart,
 }) => {
   const colors = COLOR_MAP[color] || COLOR_MAP.primary;
 
@@ -80,13 +82,16 @@ export const MetricCard: React.FC<MetricCardProps> = ({
 
       <div>
         <p className="text-xs font-medium text-text-muted uppercase tracking-wider mb-1">{title}</p>
-        <div className="flex items-baseline gap-2">
-          <span className={clsx('text-2xl font-bold font-mono', colors.value)}>{value}</span>
-          {badge && (
-            <span className={clsx('text-xs font-semibold px-2 py-0.5 rounded-full', colors.badge)}>
-              {badge}
-            </span>
-          )}
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-baseline gap-2">
+            <span className={clsx('text-2xl font-bold font-mono', colors.value)}>{value}</span>
+            {badge && (
+              <span className={clsx('text-xs font-semibold px-2 py-0.5 rounded-full', colors.badge)}>
+                {badge}
+              </span>
+            )}
+          </div>
+          {chart && <div className="flex-shrink-0">{chart}</div>}
         </div>
       </div>
     </div>

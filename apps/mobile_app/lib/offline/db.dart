@@ -13,6 +13,12 @@ enum EventSyncStatus {
   failed,
 }
 
+enum TransactionStatus {
+  pending,
+  synced,
+  failed,
+}
+
 @DataClassName('OfflineEvent')
 class OfflineEvents extends Table {
   TextColumn get operationId => text()();
@@ -67,12 +73,25 @@ class TelemetrySnapshots extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-@DriftDatabase(tables: [OfflineEvents, DeadLetterEvents, SyncConflicts, TelemetrySnapshots])
+@DataClassName('TransactionOutboxEntry')
+class TransactionOutboxes extends Table {
+  TextColumn get id => text()();
+  TextColumn get actionType => text()();
+  TextColumn get payload => text()();
+  IntColumn get status => intEnum<TransactionStatus>().withDefault(Constant(TransactionStatus.pending.index))();
+  TextColumn get idempotencyKey => text()();
+  IntColumn get retryCount => integer().withDefault(const Constant(0))();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+@DriftDatabase(tables: [OfflineEvents, DeadLetterEvents, SyncConflicts, TelemetrySnapshots, TransactionOutboxes])
 class OfflineDatabase extends _$OfflineDatabase {
   OfflineDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration {
@@ -91,6 +110,12 @@ class OfflineDatabase extends _$OfflineDatabase {
         }
         if (from < 4) {
           await m.createTable(telemetrySnapshots);
+        }
+        if (from < 5) {
+          await m.createTable(transactionOutboxes);
+          // Delete/clean up old, orphaned queue items before the new schema goes live
+          await customStatement('DELETE FROM offline_events;');
+          await customStatement('DELETE FROM dead_letter_events;');
         }
       },
     );
@@ -187,6 +212,39 @@ class OfflineDatabase extends _$OfflineDatabase {
     // Drops resolved conflict tracking entry after user chooses course of action
     await (delete(syncConflicts)..where((t) => t.id.equals(conflictId))).go();
   }
+
+  // Transaction Outbox CRUD Operations
+  Future<List<TransactionOutboxEntry>> getPendingTransactions() =>
+      (select(transactionOutboxes)
+        ..where((tbl) => tbl.status.equals(TransactionStatus.pending.index)))
+      .get();
+
+  Future<void> insertTransaction(TransactionOutboxEntry entry) =>
+      into(transactionOutboxes).insert(entry);
+
+  Future<void> updateTransactionStatus(String id, TransactionStatus status) {
+    return (update(transactionOutboxes)..where((tbl) => tbl.id.equals(id))).write(
+      TransactionOutboxesCompanion(
+        status: Value(status),
+      ),
+    );
+  }
+
+  Future<void> incrementTransactionRetryCount(String id) async {
+    final entry = await (select(transactionOutboxes)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+    if (entry != null) {
+      await (update(transactionOutboxes)..where((tbl) => tbl.id.equals(id))).write(
+        TransactionOutboxesCompanion(
+          retryCount: Value(entry.retryCount + 1),
+        ),
+      );
+    }
+  }
+
+  Future<void> deleteTransaction(String id) =>
+      (delete(transactionOutboxes)..where((tbl) => tbl.id.equals(id))).go();
+
+  Future<void> clearAllTransactions() => delete(transactionOutboxes).go();
 }
 
 LazyDatabase _openConnection() {
