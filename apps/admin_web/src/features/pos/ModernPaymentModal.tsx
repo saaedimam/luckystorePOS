@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, {} from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, 
@@ -24,7 +24,7 @@ interface PaymentModalProps {
   splitPayments: Array<{ id: string; accountId: string; amount: number }>;
   splitMethod: string | null;
   splitAmount: string;
-  paymentMethods: any[];
+  paymentMethods: unknown[];
   paidTotal: number;
   changeAmount: number;
   remainingAmount: number;

@@ -7,7 +7,7 @@ export function OAuthConsentPage() {
   const [searchParams] = useSearchParams();
   const authorizationId = searchParams.get('authorization_id');
 
-  const [authDetails, setAuthDetails] = useState<any>(null);
+  const [authDetails, setAuthDetails] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +21,7 @@ export function OAuthConsentPage() {
       }
 
       try {
-        // @ts-ignore - Supabase types might not be updated in the environment yet
+        // @ts-expect-error - Supabase types might not be updated in the environment yet
         const { data, error } = await supabase.auth.oauth.getAuthorizationDetails(authorizationId);
 
         if (error) {
@@ -29,7 +29,7 @@ export function OAuthConsentPage() {
         } else {
           setAuthDetails(data);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         setError(err.message || 'Failed to retrieve authorization details.');
       } finally {
         setLoading(false);
@@ -44,17 +44,17 @@ export function OAuthConsentPage() {
     setActionLoading(true);
 
     try {
-      // @ts-ignore
+      // @ts-expect-error - method not yet in supabase types
       const { data, error } = await supabase.auth.oauth.approveAuthorization(authorizationId);
 
       if (error) {
         setError(error.message);
         setActionLoading(false);
       } else {
-        // @ts-ignore - redirect_to property based on Supabase auth OAuth flow
+        // @ts-expect-error - redirect_to property based on Supabase auth OAuth flow
         window.location.href = data.redirect_to;
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err.message || 'An error occurred during approval.');
       setActionLoading(false);
     }
@@ -65,17 +65,17 @@ export function OAuthConsentPage() {
     setActionLoading(true);
 
     try {
-      // @ts-ignore
+      // @ts-expect-error - method not yet in supabase types
       const { data, error } = await supabase.auth.oauth.denyAuthorization(authorizationId);
 
       if (error) {
         setError(error.message);
         setActionLoading(false);
       } else {
-        // @ts-ignore - redirect_to property based on Supabase auth OAuth flow
+        // @ts-expect-error - redirect_to property based on Supabase auth OAuth flow
         window.location.href = data.redirect_to;
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err.message || 'An error occurred during denial.');
       setActionLoading(false);
     }

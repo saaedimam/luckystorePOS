@@ -93,13 +93,15 @@ CREATE TABLE IF NOT EXISTS public.credit_ledger (
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.expenses (
     id              uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id       uuid        NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
+    tenant_id       uuid        REFERENCES public.tenants(id) ON DELETE CASCADE,
     category        text        NOT NULL,
     amount          numeric(12,2) NOT NULL,
     note            text,
     created_by      uuid        REFERENCES public.users(id),
     created_at      timestamptz DEFAULT now()
 );
+
+ALTER TABLE public.expenses ADD COLUMN IF NOT EXISTS tenant_id uuid REFERENCES public.tenants(id) ON DELETE CASCADE;
 
 -- ---------------------------------------------------------------------------
 -- 8) Inventory Adjustments Table

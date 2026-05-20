@@ -2,14 +2,14 @@ import React from 'react';
 import { UseFormReturn, FormProvider, useFormContext, Controller, RegisterOptions } from 'react-hook-form';
 import { clsx } from 'clsx';
 
-interface FormProps<TFieldValues extends Record<string, any> = Record<string, any>> 
+interface FormProps<TFieldValues extends Record<string, unknown> = Record<string, unknown>> 
   extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit'> {
-  form: UseFormReturn<TFieldValues, any, any>;
+  form: UseFormReturn<TFieldValues, unknown, unknown>;
   onSubmit: (values: TFieldValues) => void | Promise<void>;
   className?: string;
 }
 
-export function Form<TFieldValues extends Record<string, any>>({
+export function Form<TFieldValues extends Record<string, unknown>>({
   form,
   onSubmit,
   children,
@@ -35,7 +35,7 @@ interface FormFieldProps {
   description?: string;
   className?: string;
   rules?: RegisterOptions;
-  render: (props: { field: any, fieldState: any, formState: any }) => React.ReactNode;
+  render: (props: { field: unknown, fieldState: unknown, formState: unknown }) => React.ReactNode;
 }
 
 export function FormField({
@@ -74,7 +74,7 @@ export function FormField({
   );
 }
 
-export function FormSection({ title, description, children, className }: any) {
+export function FormSection({ title, description, children, className }: Record<string, unknown>) {
   return (
     <div className={clsx("flex flex-col gap-4 border-b border-border-default pb-6 mb-6 last:border-0 last:pb-0 last:mb-0", className)}>
       {(title || description) && (
@@ -90,7 +90,7 @@ export function FormSection({ title, description, children, className }: any) {
   );
 }
 
-export function FormActions({ children, className }: any) {
+export function FormActions({ children, className }: Record<string, unknown>) {
   return (
     <div className={clsx("flex items-center justify-end gap-3 pt-4 mt-6 border-t border-border-default", className)}>
       {children}

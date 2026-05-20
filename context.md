@@ -4,6 +4,8 @@
 
 **Current phase**: Pre-production Operational Validation. The codebase contains an immutable inventory ledger, deterministic replay infrastructure, offline-sync engine, reconciliation workflows, telemetry aggregation, and distributed eval infrastructure. This is **NOT** a prototype.
 
+> [!CAUTION]
+> **Security Incident (2026-05-20):** A previous agent (`agy`, Process ID: 22992) accidentally leaked the `SUPABASE_SERVICE_ROLE_KEY` and the `STAGING_DATABASE_URL` (including the database password `RJbgX9JwcVNFv0q9`) into the terminal buffer while running `replay:certify`. These credentials should be considered compromised and must be rotated immediately in the Supabase Dashboard.
 ---
 
 ## 🏗️ Architectural Overview
@@ -581,4 +583,19 @@ The POS admin web dashboard (`DashboardPage.tsx` / `ManagerPartnerView.tsx`) has
 
 ---
 
-*Last updated: 2026-05-19T23:55+06:00 — Stability & Parity lifecycle sync: production Vercel URL, routing contract, .vercelignore surface, Cashier-First Antigravity Dashboard temporal feed & CmdK palette architecture.*
+## 🚧 Known Issues & Technical Debt
+
+### 1. Strict Mode ESLint Suppressions
+To establish a stable build baseline for the Deterministic Replay Certification, strict TypeScript and React Hooks ESLint rules were globally suppressed in `apps/admin_web/eslint.config.js`. 
+- **Current State**: `npm run check` passes, but masks ~243 underlying problems.
+- **Affected Rules**: `@typescript-eslint/no-explicit-any`, `prefer-const`, `react-hooks/immutability`, and unused variables.
+- **Next Step**: Progressively re-enable these rules and strongly type data mapping layers (e.g., `mappers.ts`, `table-query.ts`, `zodResolver.ts`).
+
+### 2. Google Stitch MCP Integration (Offline)
+The Google Stitch MCP server integration (which powers the automated Google Sheets logging and Gmail alerts for inventory drops) is currently **offline**.
+- **Cause**: The `gcloud` Application Default Credentials (`mslutfunnaharniha@gmail.com`) lacked `compute.googleapis.com` API permissions on the target quota project (`poscursor-mcp-1775185186`).
+- **Resolution Status**: The user has intentionally run `gcloud auth revoke --all` to wipe the invalid credentials from the local environment. Re-authentication with the correct service account and quota project is required before the MCP server can be restored.
+
+---
+
+*Last updated: 2026-05-20T05:46+06:00 — Stability & Parity lifecycle sync: production Vercel URL, routing contract, .vercelignore surface, Cashier-First Antigravity Dashboard temporal feed & CmdK palette architecture.*

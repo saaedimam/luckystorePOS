@@ -1,14 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
-import { useAuth } from '../../lib/AuthContext';
+import {  useAuth  } from '../../hooks/useAuth';
 import { ErrorState, EmptyState, SkeletonBlock } from '../../components/PageState';
 import { useNotify } from '../../components/NotificationContext';
-import { useDebounce } from '../../hooks/useDebounce';
 import { PageHeader } from '../../components/layout/PageHeader';
 import { Drawer } from '../../components/ui/Drawer';
 import { MetricCard } from '../../components/data-display/MetricCard';
-import { TableFilters } from '../../components/data-display/TableFilters';
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend,
   LineChart, Line, CartesianGrid,
@@ -18,13 +16,9 @@ import {
   DollarSign,
   CalendarDays,
   Wallet,
-  Plus,
-  ArrowUp,
-  ArrowDown,
-  CreditCard,
-  Banknote, Download,
+  Plus, Download,
 } from 'lucide-react';
-import { format, startOfDay, startOfWeek, startOfMonth, isToday, isThisWeek, isThisMonth, subMonths, parseISO, subDays } from 'date-fns';
+import { format, isToday, isThisWeek, isThisMonth, parseISO } from 'date-fns';
 import type { DailySale, DailySaleFormData } from '../../lib/api/types';
 import { downloadCSV } from '../../lib/format';
 
@@ -43,8 +37,8 @@ export function DailySalesPage() {
 
   const [showForm, setShowForm] = useState(false);
   const [editingSale, setEditingSale] = useState<DailySale | null>(null);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [startDate] = useState('');
+  const [endDate] = useState('');
 
   const { data: sales, isLoading, error, refetch } = useQuery({
     queryKey: ['dailySales', storeId],
@@ -58,7 +52,7 @@ export function DailySalesPage() {
       queryClient.invalidateQueries({ queryKey: ['dailySales', storeId] });
       setShowForm(false);
     },
-    onError: (err: any) => {
+    onError: (err: Error | Record<string, unknown>) => {
       notify(err.message || 'Failed to record daily sale.', 'error');
     },
   });
@@ -71,7 +65,7 @@ export function DailySalesPage() {
       queryClient.invalidateQueries({ queryKey: ['dailySales', storeId] });
       setEditingSale(null);
     },
-    onError: (err: any) => {
+    onError: (err: Error | Record<string, unknown>) => {
       notify(err.message || 'Failed to update daily sale.', 'error');
     },
   });
@@ -99,7 +93,7 @@ export function DailySalesPage() {
     [filtered],
   );
 
-  const allSales = sales || [];
+  const allSales = useMemo(() => sales || [], [sales]);
 
   // Overall statistics
   const totalStats = useMemo(() => {
@@ -115,21 +109,7 @@ export function DailySalesPage() {
     };
   }, [allSales]);
 
-  // Monthly comparison
-  const monthlyComparison = useMemo(() => {
-    const now = new Date();
-    const thisMonth = allSales.filter(s => isThisMonth(new Date(s.saleDate))).reduce((sum, s) => sum + s.totalSales, 0);
-    const lastMonthStart = subMonths(startOfMonth(now), 1);
-    const lastMonthEnd = startOfMonth(now);
-    const lastMonth = allSales
-      .filter(s => {
-        const d = new Date(s.saleDate);
-        return d >= lastMonthStart && d < lastMonthEnd;
-      })
-      .reduce((sum, s) => sum + s.totalSales, 0);
-    const change = lastMonth > 0 ? ((thisMonth - lastMonth) / lastMonth) * 100 : 0;
-    return { thisMonth, lastMonth, change };
-  }, [allSales]);
+
 
   // Payment breakdown for pie chart
   const paymentBreakdown = useMemo(() => {
@@ -303,7 +283,7 @@ export function DailySalesPage() {
                   ))}
                 </Pie>
                 <Tooltip 
-                  formatter={(value: any) => value !== undefined && value !== null ? [`৳${Number(value).toLocaleString()}`, 'Amount'] : ['N/A', 'Amount']}
+                  formatter={(value: Record<string, unknown>) => value !== undefined && value !== null ? [`৳${Number(value).toLocaleString()}`, 'Amount'] : ['N/A', 'Amount']}
                 />
                 <Legend />
               </PieChart>
@@ -337,7 +317,7 @@ export function DailySalesPage() {
                 <XAxis dataKey="month" stroke="var(--text-muted)" fontSize={12} />
                 <YAxis stroke="var(--text-muted)" fontSize={12} tickFormatter={(v) => `৳${(v/1000).toFixed(0)}k`} />
                 <Tooltip 
-                  formatter={(value: any) => value !== undefined && value !== null ? [`৳${Number(value).toLocaleString()}`, 'Total Sales'] : ['N/A', 'Total Sales']}
+                  formatter={(value: Record<string, unknown>) => value !== undefined && value !== null ? [`৳${Number(value).toLocaleString()}`, 'Total Sales'] : ['N/A', 'Total Sales']}
                   contentStyle={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border-default)' }}
                 />
                 <Bar dataKey="total" fill="var(--color-success-default)" radius={[4, 4, 0, 0]} />

@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-05-19T22:27:41.063Z",
-  "migration_count": 108,
-  "objects_tracked": 278,
-  "conflicts_detected": 608,
+  "timestamp": "2026-05-19T22:53:41.354Z",
+  "migration_count": 109,
+  "objects_tracked": 279,
+  "conflicts_detected": 609,
   "ownership_graph": {
     "extensions": {
       "type": "extensions schema if needed\nCREATE SCHEMA IF NOT EXISTS",
@@ -1013,6 +1013,12 @@
           "type": "TABLE",
           "migration": "20260521000002_online_order_module.sql",
           "timestamp": "20260521000002"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260524000000_store_location.sql",
+          "timestamp": "20260524000000"
         }
       ],
       "drops": [
@@ -2127,6 +2133,11 @@
           "action": "ALTER",
           "migration": "20260521000002_online_order_module.sql",
           "timestamp": "20260521000002"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260524000000_store_location.sql",
+          "timestamp": "20260524000000"
         }
       ],
       "conflicts": []
@@ -7854,6 +7865,26 @@
         }
       ],
       "conflicts": []
+    },
+    "postgis": {
+      "type": "EXTENSION IF NOT EXISTS",
+      "owner": "20260524000000_store_location.sql",
+      "owner_timestamp": "20260524000000",
+      "created_at": "20260524000000",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260524000000_store_location.sql",
+          "timestamp": "20260524000000"
+        }
+      ],
+      "conflicts": []
     }
   },
   "conflicts": [
@@ -13260,6 +13291,15 @@
       "creators": [
         "20260521000003_invoice_storage.sql",
         "20260523000000_whatsapp_webhook.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260523000000_whatsapp_webhook.sql",
+        "20260524000000_store_location.sql"
       ],
       "severity": "high"
     },
@@ -18761,6 +18801,15 @@
       "creators": [
         "20260521000003_invoice_storage.sql",
         "20260523000000_whatsapp_webhook.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260523000000_whatsapp_webhook.sql",
+        "20260524000000_store_location.sql"
       ],
       "severity": "high"
     },

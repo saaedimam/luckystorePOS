@@ -5,6 +5,7 @@ import { useCart } from '@/store/useCart';
 import { supabase } from '@/lib/supabase';
 import { X, MapPin, Phone, User, CheckCircle2, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import clsx from 'clsx';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const { items, total, clearCart } = useCart();
   const [step, setStep] = useState<'form' | 'success'>('form');
   const [loading, setLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'COD' | 'bKash' | 'Card'>('COD');
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -42,7 +44,8 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           delivery_address: formData.address,
           total_amount: total(),
           status: 'pending',
-          payment_method: 'COD',
+          payment_method: paymentMethod,
+          payment_status: paymentMethod === 'COD' ? 'pending' : 'awaiting_payment',
         })
         .select()
         .single();
@@ -63,7 +66,28 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
 
       if (itemsError) throw itemsError;
 
-      // 4. Trigger WhatsApp Redirection
+      // 4. Handle Payment Redirect if not COD
+      if (paymentMethod !== 'COD') {
+        const functionName = paymentMethod === 'bKash' ? 'create-bkash-checkout' : 'create-card-checkout';
+        const { data: paymentData, error: paymentError } = await supabase.functions.invoke(functionName, {
+          body: { 
+            amount: total(), 
+            order_id: order.id,
+            success_url: `${window.location.origin}/order/${order.id}?payment=success`,
+            fail_url: `${window.location.origin}/order/${order.id}?payment=fail`,
+            cancel_url: `${window.location.origin}/order/${order.id}?payment=cancel`,
+          }
+        });
+
+        if (paymentError) throw paymentError;
+
+        if (paymentData.bkashURL || paymentData.redirect_url) {
+          window.location.href = paymentData.bkashURL || paymentData.redirect_url;
+          return;
+        }
+      }
+
+      // 5. Trigger WhatsApp Redirection (for COD or as fallback)
       const message = encodeURIComponent(
         `*NEW ORDER: #${order.id.substring(0, 8)}*\n\n` +
         `*Customer:* ${formData.name}\n` +
@@ -155,6 +179,32 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       value={formData.address}
                       onChange={e => setFormData({...formData, address: e.target.value})}
                     />
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-text-muted px-2">Payment Method</h4>
+                  <div className="grid grid-cols-3 gap-3">
+                    {[
+                      { id: 'COD', label: 'Cash', icon: '৳' },
+                      { id: 'bKash', label: 'bKash', icon: 'b' },
+                      { id: 'Card', label: 'Card', icon: '💳' },
+                    ].map((method) => (
+                      <button
+                        key={method.id}
+                        type="button"
+                        onClick={() => setPaymentMethod(method.id as any)}
+                        className={clsx(
+                          "p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2",
+                          paymentMethod === method.id 
+                            ? "border-primary-default bg-primary-subtle/30 text-primary-default" 
+                            : "border-border-default hover:border-text-muted text-text-muted"
+                        )}
+                      >
+                        <span className="text-xl font-black">{method.icon}</span>
+                        <span className="text-[10px] font-bold uppercase">{method.label}</span>
+                      </button>
+                    ))}
                   </div>
                 </div>
 

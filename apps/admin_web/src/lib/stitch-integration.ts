@@ -26,7 +26,7 @@ export async function computeInventorySnapshot(
     throw error;
   }
 
-  const snapshot = (data || []).map((item: any) => ({
+  const snapshot = (data || []).map((item: { item_id: string; item_name: string; sku?: string; current_qty: number; min_qty?: number; reorder_qty?: number }) => ({
     item_id: item.item_id,
     item_name: item.item_name,
     sku: item.sku || 'N/A',

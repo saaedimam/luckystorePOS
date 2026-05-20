@@ -31,11 +31,14 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@supabase/supabase-js": "^2.103.3"
+    "@supabase/supabase-js": "^2.103.3",
+    "react-hot-toast": "^2.6.0"
   },
   "devDependencies": {
     "@types/node": "^25.7.0",
+    "@types/pg": "^8.20.0",
     "dotenv": "^17.4.2",
+    "pg": "^8.21.0",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"
   }

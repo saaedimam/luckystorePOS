@@ -26,8 +26,9 @@ export const salesService = {
     });
 
     if (error) throw error;
-    if (!data || !data.sale) throw new Error('Sale not found');
-    return data as SaleDetailsResponse;
+    const responseData = data as unknown as SaleDetailsResponse;
+    if (!responseData || !responseData.sale) throw new Error('Sale not found');
+    return responseData;
   },
 
   async voidSale(saleId: string, reason: string, idempotencyKey: string) {
@@ -51,6 +52,7 @@ export const salesService = {
         invoice_pdf_url: pdfUrl,
         invoice_sent_via: 'whatsapp',
         invoice_sent_at: new Date().toISOString(),
+        // @ts-expect-error - These columns exist in the DB but the generated types are out of sync
       })
       .eq('id', saleId);
 

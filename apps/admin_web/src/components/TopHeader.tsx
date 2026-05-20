@@ -1,4 +1,4 @@
-import { Search, Command, Bell, Moon, Sun, Menu, PanelLeftClose, Globe } from 'lucide-react';
+import { Search, Command, Bell, Moon, Sun, Menu, PanelLeftClose } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -9,7 +9,7 @@ interface TopHeaderProps {
 }
 
 export function TopHeader({ onToggleSidebar, sidebarHidden, onSearchFocus }: TopHeaderProps) {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [isDark, setIsDark] = useState(() => {
     const saved = localStorage.getItem('theme');

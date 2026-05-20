@@ -1,6 +1,5 @@
 import React from 'react';
 import { ColumnDef } from './types';
-import { SkeletonBlock } from '../PageState'; // we'll use existing SkeletonBlock or standard tailwind pulse
 
 interface DataTableSkeletonProps<T> {
   columns: ColumnDef<T>[];

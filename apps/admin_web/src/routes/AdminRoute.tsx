@@ -1,18 +1,17 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../lib/AuthContext';
+import {  useAuth  } from '../hooks/useAuth';
 import { Loader } from '../components/ui/Loader';
 
 export function AdminRoute({ children }: { children: React.ReactNode }) {
-  const { session, user, loading } = useAuth();
+  const { session, loading } = useAuth();
 
   if (loading) {
     return <Loader fullScreen size="lg" />;
   }
 
   if (!session) {
-    window.location.href = '/';
-    return null;
+    return <Navigate to="/" replace />;
   }
 
   // Assuming role check happens here (e.g. session.user.user_metadata.role === 'admin')

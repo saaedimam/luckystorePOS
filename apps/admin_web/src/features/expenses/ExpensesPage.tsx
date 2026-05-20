@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
-import { useAuth } from '../../lib/AuthContext';
+import {  useAuth  } from '../../hooks/useAuth';
 import { SkeletonBlock } from '../../components/PageState';
 import { ErrorState } from '../../components/ui/ErrorState';
 import { EmptyState } from '../../components/ui/EmptyState';
@@ -16,7 +16,7 @@ import { TableFilters } from '../../components/data-display/TableFilters';
 import { useForm } from 'react-hook-form';
 import { Form, FormInput, FormSelect, PriceInput, FormActions } from '../../components/forms';
 import {
-  PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend,
+  PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import {
   Receipt,
@@ -30,7 +30,6 @@ import {
   ArrowDown,
   Building2,
   CreditCard,
-  Download,
 } from 'lucide-react';
 import { format, isToday, isThisWeek, isThisMonth, subMonths, startOfMonth, parseISO } from 'date-fns';
 
@@ -66,19 +65,19 @@ export function ExpensesPage() {
       queryClient.invalidateQueries({ queryKey: ['expenses', storeId] });
       setShowForm(false);
     },
-    onError: (err: any) => {
+    onError: (err: Error | Record<string, unknown>) => {
       notify(err.message || 'Failed to record expense.', 'error');
     },
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, updates }: { id: string; updates: any }) => api.expenses.update(id, updates),
+    mutationFn: ({ id, updates }: { id: string; updates: unknown }) => api.expenses.update(id, updates),
     onSuccess: () => {
       notify('Expense updated successfully.', 'success');
       queryClient.invalidateQueries({ queryKey: ['expenses', storeId] });
       setEditingExpense(null);
     },
-    onError: (err: any) => {
+    onError: (err: Error | Record<string, unknown>) => {
       notify(err.message || 'Failed to update expense.', 'error');
     },
   });
@@ -90,7 +89,7 @@ export function ExpensesPage() {
       queryClient.invalidateQueries({ queryKey: ['expenses', storeId] });
       setDeletingExpenseId(null);
     },
-    onError: (err: any) => {
+    onError: (err: Error | Record<string, unknown>) => {
       notify(err.message || 'Failed to delete expense.', 'error');
     },
   });
@@ -128,7 +127,7 @@ export function ExpensesPage() {
   );
 
   // Dashboard statistics
-  const allExpenses = expenses || [];
+  const allExpenses = useMemo(() => expenses || [], [expenses]);
 
   // Total statistics
   const totalStats = useMemo(() => {
@@ -224,11 +223,6 @@ export function ExpensesPage() {
   }, [allExpenses]);
 
   // Highest expense category
-  const highestCategory = useMemo(() => {
-    if (categoryBreakdown.length === 0) return null;
-    return categoryBreakdown[0];
-  }, [categoryBreakdown]);
-
   // Top 10 highest single expenses
   const topExpenses = useMemo(() => {
     return [...allExpenses]
@@ -597,13 +591,13 @@ function AddExpenseDrawer({
   isPending,
 }: {
   isOpen: boolean;
-  onSubmit: (form: any) => void;
+  onSubmit: (form: Record<string, unknown>) => void;
   onClose: () => void;
   isPending: boolean;
 }) {
   const today = format(new Date(), 'yyyy-MM-dd');
 
-  const form = useForm<any>({
+  const form = useForm<unknown>({
     defaultValues: {
       expenseDate: today,
       vendorName: '',
@@ -614,7 +608,7 @@ function AddExpenseDrawer({
     }
   });
 
-  const handleSubmit = (data: any) => {
+  const handleSubmit = (data: Record<string, unknown>) => {
     onSubmit(data);
   };
 
@@ -679,11 +673,11 @@ function EditExpenseDrawer({
 }: {
   expense: Expense | null;
   isOpen: boolean;
-  onSubmit: (id: string, updates: any) => void;
+  onSubmit: (id: string, updates: Record<string, unknown>) => void;
   onClose: () => void;
   isPending: boolean;
 }) {
-  const form = useForm<any>({
+  const form = useForm<unknown>({
     values: expense ? {
       expenseDate: expense.expenseDate,
       vendorName: expense.vendorName,
@@ -696,7 +690,7 @@ function EditExpenseDrawer({
 
   if (!expense) return null;
 
-  const handleSubmit = (data: any) => {
+  const handleSubmit = (data: Record<string, unknown>) => {
     onSubmit(expense.id, data);
   };
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Plus, CreditCard } from 'lucide-react';
+import { X, Plus } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 
@@ -26,14 +26,14 @@ export function AddPaymentMethodModal({ isOpen, storeId, onClose }: AddPaymentMe
   const [error, setError] = useState<string | null>(null);
 
   const createMutation = useMutation({
-    mutationFn: (method: any) => api.settings.addPaymentMethod(storeId, method),
+    mutationFn: (method: Record<string, unknown>) => api.settings.addPaymentMethod(storeId, method),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['settings-payments'] });
       setFormData({ name: '', type: 'cash', isActive: true });
       setError(null);
       onClose();
     },
-    onError: (err: any) => {
+    onError: (err: Error | Record<string, unknown>) => {
       setError(err.message || 'Failed to add payment method');
     },
   });

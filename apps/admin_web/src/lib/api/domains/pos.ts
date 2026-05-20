@@ -74,7 +74,7 @@ export const pos = {
     discount: number;
     operationId: string;
     offlineCreatedAt?: string;
-  }): Promise<any> => {
+  }): Promise<unknown> => {
     debugLog('Completing sale V2', payload);
     const { data, error } = await supabase.rpc('complete_sale_v2', {
       p_store_id: payload.storeId,

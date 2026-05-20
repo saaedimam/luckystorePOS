@@ -66,7 +66,7 @@ export function useSyncSales() {
       markAsSyncing(nextSale.id);
       syncMutation.mutate(nextSale);
     }
-  }, [isOnline, queue, syncMutation.isPending, markAsSyncing, syncMutation.mutate]);
+  }, [isOnline, queue, syncMutation, markAsSyncing]);
 
   return {
     isSyncing: syncMutation.isPending,

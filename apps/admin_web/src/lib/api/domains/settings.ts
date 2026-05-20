@@ -44,6 +44,7 @@ export const settings = {
         name: user.fullName,
         role: user.role,
         pos_pin: user.pin,
+        email: user.email,
       }])
       .select()
       .single();
@@ -56,7 +57,7 @@ export const settings = {
       .insert([{
         store_id: storeId,
         name: method.name,
-        type: method.type,
+        type: method.type as 'other' | 'cash' | 'mobile_banking' | 'card',
         is_active: method.isActive,
       }])
       .select()

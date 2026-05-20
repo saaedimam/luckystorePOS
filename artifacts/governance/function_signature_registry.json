@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-05-19T22:27:40.956Z",
-  "migration_count": 108,
-  "functions_tracked": 193,
+  "timestamp": "2026-05-19T22:53:41.239Z",
+  "migration_count": 109,
+  "functions_tracked": 194,
   "missing_functions": 75,
   "conflicts_detected": 75,
   "registry": {
@@ -5543,6 +5543,27 @@
       "params": "",
       "created_by": "20260523000000_whatsapp_webhook.sql",
       "created_timestamp": "20260523000000",
+      "is_security_definer": false,
+      "search_path": "implicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": [
+        {
+          "type": "unsafe_search_path",
+          "severity": "medium",
+          "message": "Function created without SECURITY DEFINER or explicit search_path"
+        }
+      ]
+    },
+    "is_within_delivery_range(p_store_id uuid,\n    p_customer_lat numeric,\n    p_customer_lng numeric)": {
+      "signature": "is_within_delivery_range(p_store_id uuid,\n    p_customer_lat numeric,\n    p_customer_lng numeric)",
+      "name": "is_within_delivery_range",
+      "params": "p_store_id uuid,\n    p_customer_lat numeric,\n    p_customer_lng numeric",
+      "created_by": "20260524000000_store_location.sql",
+      "created_timestamp": "20260524000000",
       "is_security_definer": false,
       "search_path": "implicit",
       "mutated_by": [],

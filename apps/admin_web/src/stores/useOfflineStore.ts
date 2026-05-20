@@ -8,7 +8,7 @@ import { indexedDBStorage } from '@/lib/offline-storage';
  */
 export interface OfflineSale {
   id: string; // The unique operation_id
-  payload: any;
+  payload: unknown;
   status: 'pending' | 'syncing' | 'failed';
   retryCount: number;
   lastError?: string;

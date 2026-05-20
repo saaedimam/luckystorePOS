@@ -1,17 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../lib/api';
-import { useAuth } from '../../lib/AuthContext';
-import { SkeletonBlock } from '../../components/PageState';
+import {  useAuth  } from '../../hooks/useAuth';
 import { useRealtimeSubscription } from '../../hooks/useRealtime';
-import { Search, ScanLine, AlertCircle, X, RefreshCw, ShoppingCart, ChevronUp } from 'lucide-react';
+import { ShoppingCart, RefreshCw, X, AlertCircle, ScanLine, ChevronUp } from 'lucide-react';
 import { clsx } from 'clsx';
-import type { PosProduct } from '../../lib/api/types';
 import { ReceiptPreview } from './ReceiptPreview';
 import { TouchCart } from './components/TouchCart';
 import { ModernPaymentModal } from './ModernPaymentModal';
 import { useCartStore } from '../../stores/useCartStore';
-import { useOfflineStore } from '../../stores/useOfflineStore';
 import { useSyncSales } from '../../hooks/useSyncSales';
 import { usePosScanner } from './usePosScanner';
 import { usePosSale } from './usePosSale';
@@ -100,7 +97,7 @@ export function QuickPosPage() {
 
   // Sale hook
   const sale = usePosSale(
-    cart.items as any,
+    cart.items as unknown,
     cart.getTotal(),
     cart.getTotal(), // Subtotal is same as total for now in simplified store
     0, // cartDiscount
@@ -117,10 +114,10 @@ export function QuickPosPage() {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // Clear error on payment modal close
-  useEffect(() => {
-    if (!sale.showPaymentModal) setError(null);
-  }, [sale.showPaymentModal]);
+  // Clear error when payment modal closes
+  if (!sale.showPaymentModal && error !== null) {
+    setError(null);
+  }
 
   return (
     <div className={clsx('pos-container', showMobileCart && 'pos-container--sheet-open')}>
@@ -158,28 +155,29 @@ export function QuickPosPage() {
           {/* Action Bar */}
           <div className="pos-action-bar">
             <div className="flex flex-col">
-              <h1 className="text-2xl font-black tracking-tight">Lucky Store POS</h1>
+              <h1 className="text-hero tracking-tight text-text-primary">POS Terminal</h1>
               {pendingCount > 0 && (
-                <div className="flex items-center gap-2 text-[10px] font-bold text-sky-400 uppercase tracking-widest bg-sky-400/10 px-2 py-0.5 rounded-full w-fit">
-                  <div className="w-1.5 h-1.5 bg-sky-400 rounded-full animate-pulse" />
+                <Badge variant="info" className="mt-1">
                   {pendingCount} syncing
-                </div>
+                </Badge>
               )}
             </div>
             <div className="pos-action-buttons">
-              <div className="pos-search">
-                <Search className="search-icon" />
-                <input
-                  type="text"
+              <div className="flex-1 max-w-sm">
+                <Input
                   placeholder="Search items..."
-                  className="search-input"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full"
                 />
               </div>
-              <button className="button-primary" onClick={() => scanner.setIsScanning(!scanner.isScanning)}>
-                <ScanLine size={16} /> Scan Code
-              </button>
+              <Button 
+                variant={scanner.isScanning ? "danger" : "primary"}
+                onClick={() => scanner.setIsScanning(!scanner.isScanning)}
+              >
+                <ScanLine size={18} className="mr-2" /> 
+                {scanner.isScanning ? "Stop Scan" : "Barcode Scan"}
+              </Button>
             </div>
           </div>
 
@@ -225,46 +223,25 @@ export function QuickPosPage() {
           <div className="pos-grid">
             {prodLoading ? (
               Array(8).fill(0).map((_, i) => (
-                <div key={i} className="product-card" aria-busy="true">
-                  <div className="product-avatar">
-                    <SkeletonBlock className="w-full h-full" />
-                  </div>
-                  <div className="product-info">
-                    <SkeletonBlock className="w-4/5 h-5 mb-2" />
-                    <SkeletonBlock className="w-2/5 h-4 mb-2" />
-                    <SkeletonBlock className="w-[30%] h-[18px]" />
-                  </div>
-                  <SkeletonBlock className="w-full h-9 mt-2" />
-                </div>
+                <Card key={i} className="animate-pulse">
+                  <div className="w-full h-40 bg-background-subtle mb-4 rounded-lg" />
+                  <div className="h-4 bg-background-subtle rounded w-3/4 mb-2" />
+                  <div className="h-4 bg-background-subtle rounded w-1/2" />
+                </Card>
               ))
             ) : prodError ? (
-              <div className="card" style={{
-                padding: 'var(--space-12)',
-                gridColumn: '1 / -1',
-                textAlign: 'center',
-                color: 'var(--color-danger)'
-              }}>
-                <AlertCircle size={48} style={{ marginBottom: 'var(--space-4)', opacity: 0.2 }} />
-                <p>Error loading products. Please try again.</p>
-                <button
-                  className="button-primary"
-                  onClick={() => window.location.reload()}
-                  style={{ marginTop: 'var(--space-4)' }}
-                >
-                  <RefreshCw size={16} style={{ marginRight: 'var(--space-2)' }} />
-                  Retry
-                </button>
-              </div>
+              <Card className="col-span-full py-12 text-center text-danger border-dashed">
+                <AlertCircle size={48} className="mx-auto mb-4 opacity-20" />
+                <p className="font-bold">Error loading products</p>
+                <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
+                  <RefreshCw size={16} className="mr-2" /> Retry
+                </Button>
+              </Card>
             ) : products.length === 0 ? (
-              <div className="card" style={{
-                padding: 'var(--space-12)',
-                gridColumn: '1 / -1',
-                textAlign: 'center',
-                color: 'var(--text-muted)'
-              }}>
-                <AlertCircle size={48} style={{ marginBottom: 'var(--space-4)', opacity: 0.2 }} />
-                <p>No products found.</p>
-              </div>
+              <Card className="col-span-full py-12 text-center text-text-muted border-dashed">
+                <AlertCircle size={48} className="mx-auto mb-4 opacity-10" />
+                <p className="font-bold uppercase tracking-widest">No products found</p>
+              </Card>
             ) : (
               products.map((product) => (
                 <ProductCard

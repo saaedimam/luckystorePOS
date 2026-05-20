@@ -76,10 +76,12 @@ export function DataTable<T extends object>({
                 onClick={() => onRowClick?.(row)}
               >
                 {columns.map((col, colIdx) => {
-                  const value =
-                    typeof col.accessor === 'function'
-                      ? col.accessor(row)
-                      : (row as any)[col.accessor as string];
+                  let value;
+                  if (typeof col.accessor === 'function') {
+                    value = col.accessor(row);
+                  } else {
+                    value = row[col.accessor];
+                  }
                   const cellContent = col.render ? col.render(value, row) : (value as React.ReactNode);
                   return (
                     <td

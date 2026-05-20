@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 import { FormField } from './FormCore';
 import { clsx } from 'clsx';
 import { RegisterOptions } from 'react-hook-form';
-import { ScanBarcode, DollarSign, Package, Hash } from 'lucide-react';
+import { ScanBarcode, Package, Hash } from 'lucide-react';
 
 interface BaseRetailInputProps {
   name: string;

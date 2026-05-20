@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../../lib/supabase';
 import { PurchaseEntryData } from '../../schemas/purchase.schema';
-import { useAuth } from '../../lib/AuthContext';
+import {  useAuth  } from '../../hooks/useAuth';
 import { withSerializableRetry } from '../../lib/api/withSerializableRetry';
 
 export function useCreatePurchase() {

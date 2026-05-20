@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { LayoutDashboard, ShoppingCart, Package, Warehouse, PlusCircle, Wallet, Users, PhoneCall, Settings, LogOut, Monitor, Receipt, Bell, BarChart3, ShoppingBag, TrendingDown } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
-import { useAuth } from '../lib/AuthContext';
+import {  useAuth  } from '../hooks/useAuth';
 import '../styles/layout.css';
 
 interface NavItem {
@@ -69,7 +69,6 @@ interface SidebarProps {
 }
 
 export function Sidebar({ hidden = false, onClose }: SidebarProps) {
-  const { t } = useTranslation();
   const { signOut } = useAuth();
   const navGroups = useNavGroups();
 

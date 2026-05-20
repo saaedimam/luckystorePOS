@@ -36,7 +36,7 @@ export async function fetchCompetitorPrices(
 
   if (error) throw error;
 
-  return (data || []).map((row: any) => ({
+  return (data || []).map((row: Record<string, unknown>) => ({
     id: row.id,
     item_id: row.item_id,
     item_name: row.items?.name,
@@ -113,6 +113,6 @@ export async function fetchCompetitorNames(storeId: string): Promise<string[]> {
 
   if (error) throw error;
 
-  const names = [...new Set((data || []).map((d: any) => d.competitor_name))] as string[];
+  const names = [...new Set((data || []).map((d: Record<string, unknown>) => d.competitor_name))] as string[];
   return names;
 }

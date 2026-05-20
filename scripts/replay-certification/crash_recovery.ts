@@ -1,6 +1,6 @@
 // scripts/replay-certification/crash_recovery.ts
 import { ReplayOp } from './replay_runner';
-import { executeHybridReplay, TestContext } from './certify';
+import { executeHybridReplay, TestContext, bootstrap } from './certify';
 import { db } from './db';
 
 export async function testCrashRecovery(testIds: TestContext) {
@@ -11,19 +11,16 @@ export async function testCrashRecovery(testIds: TestContext) {
     rpc: 'deduct_stock',
     params: {
       p_store_id: testIds.storeId,
-      p_item_id: testIds.itemId,
+      p_product_id: testIds.itemId,
       p_quantity: 1,
-      p_operation_id: opId
+      p_operation_id: opId,
+      p_expected_quantity: null,
+      p_metadata: null
     }
   };
 
   // Re-seed to a clean slate
-  await db.execute(`
-    ALTER TABLE inventory_movements DISABLE TRIGGER enforce_append_only;
-    DELETE FROM inventory_movements WHERE tenant_id = '${testIds.tenantId}';
-    UPDATE stock_levels SET qty_on_hand = 1000 WHERE store_id = '${testIds.storeId}' AND item_id = '${testIds.itemId}';
-    ALTER TABLE inventory_movements ENABLE TRIGGER enforce_append_only;
-  `);
+  await bootstrap();
 
   // Simulate a crash sequence:
   // Apply operation, then simulate the client re-sending after a reconnect/crash

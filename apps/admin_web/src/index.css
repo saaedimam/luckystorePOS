@@ -3,19 +3,20 @@
 @tailwind utilities;
 
 :root {
-  --primary: #0EA5E9;
-  --primary-dark: #0284C7;
-  --success: #10B981;
-  --danger: #EF4444;
-  --warning: #F59E0B;
+  /* Use design tokens instead of hardcoded values */
+  --primary: var(--color-primary-default);
+  --primary-dark: var(--color-primary-hover);
+  --success: var(--color-success-default);
+  --danger: var(--color-danger-default);
+  --warning: var(--color-warning-default);
   
-  --bg-main: #0F172A;
-  --bg-card: #1E293B;
-  --bg-accent: #334155;
+  --bg-main: var(--color-background-default);
+  --bg-card: var(--color-surface-default);
+  --bg-accent: var(--color-background-subtle);
   
-  --text-main: #F8FAFC;
-  --text-muted: #94A3B8;
-  --border-color: rgba(255, 255, 255, 0.1);
+  --text-main: var(--color-text-primary);
+  --text-muted: var(--color-text-secondary);
+  --border-color: var(--color-border-default);
 }
 
 @layer base {

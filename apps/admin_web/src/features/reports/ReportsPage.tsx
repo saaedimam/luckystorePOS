@@ -14,9 +14,7 @@ import type {
   StockValuationItem,
   TopSellingItem,
   SlowMovingItem,
-  DailyMovementItem,
-  CustomerAnalyticsItem,
-  StaffPerformanceItem,
+  DailyMovementItem
 } from '../../lib/api/types';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line,
@@ -302,8 +300,8 @@ export const ReportsPage: React.FC = () => {
 // =========================================================================
 // Sales Report Content
 // =========================================================================
-function SalesReportContent({ data, prevData }: { data: any; prevData?: any }) {
-  const maxDaily = Math.max(...data.dailySales.map((d: any) => d.revenue), 1);
+function SalesReportContent({ data, prevData }: { data: Record<string, unknown>; prevData?: Record<string, unknown> }) {
+  const maxDaily = Math.max(...data.dailySales.map((d: Record<string, unknown>) => d.revenue), 1);
 
   const revChange = prevData && prevData.totalRevenue > 0
     ? ((data.totalRevenue - prevData.totalRevenue) / prevData.totalRevenue) * 100
@@ -319,7 +317,7 @@ function SalesReportContent({ data, prevData }: { data: any; prevData?: any }) {
         <button
           className="button-outline gap-2 text-sm"
           onClick={() => downloadCSV(
-            data.dailySales.map((d: any) => ({ date: d.date, revenue: d.revenue, count: d.count })),
+            data.dailySales.map((d: Record<string, unknown>) => ({ date: d.date, revenue: d.revenue, count: d.count })),
             `sales-report-${data.dailySales[0]?.date ?? 'report'}.csv`
           )}
         >
@@ -351,7 +349,7 @@ function SalesReportContent({ data, prevData }: { data: any; prevData?: any }) {
       <div className="space-y-3">
         <h3 className="font-semibold text-lg">Daily Revenue Trend</h3>
         <div className="flex items-end justify-between h-48 gap-2">
-          {data.dailySales.map((day: any, idx: number) => {
+          {data.dailySales.map((day: Record<string, unknown>, idx: number) => {
             const height = maxDaily > 0 ? (day.revenue / maxDaily) * 100 : 0;
             return (
               <div key={idx} className="flex flex-col items-center flex-1 gap-1">
@@ -376,7 +374,7 @@ function SalesReportContent({ data, prevData }: { data: any; prevData?: any }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-border-color">
-            {data.topProducts.map((product: any, idx: number) => (
+            {data.topProducts.map((product: Record<string, unknown>, idx: number) => (
               <tr key={idx} className="hover:bg-gray-50">
                 <td className="px-4 py-3 font-medium">{product.name}</td>
                 <td className="px-4 py-3 text-right">{product.quantity}</td>
@@ -396,7 +394,7 @@ function SalesReportContent({ data, prevData }: { data: any; prevData?: any }) {
 // =========================================================================
 // Inventory Report Content
 // =========================================================================
-function InventoryReportContent({ data }: { data: any }) {
+function InventoryReportContent({ data }: { data: Record<string, unknown> }) {
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -404,7 +402,7 @@ function InventoryReportContent({ data }: { data: any }) {
         <button
           className="button-outline gap-2 text-sm"
           onClick={() => downloadCSV(
-            data.inventory.map((item: any) => ({ name: item.name, sku: item.sku || '', qty: item.qty, cost: item.cost, totalValue: item.totalValue })),
+            data.inventory.map((item: Record<string, unknown>) => ({ name: item.name, sku: item.sku || '', qty: item.qty, cost: item.cost, totalValue: item.totalValue })),
             `inventory-value-${new Date().toISOString().split('T')[0]}.csv`
           )}
         >
@@ -433,7 +431,7 @@ function InventoryReportContent({ data }: { data: any }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-border-color">
-              {data.inventory.map((item: any, idx: number) => (
+              {data.inventory.map((item: Record<string, unknown>, idx: number) => (
                 <tr key={idx} className="hover:bg-gray-50">
                   <td className="px-4 py-3 font-medium">{item.name}</td>
                   <td className="px-4 py-3 text-text-muted">{item.sku || '-'}</td>
@@ -460,7 +458,7 @@ function InventoryReportContent({ data }: { data: any }) {
 // =========================================================================
 // Profit & Loss Report Content
 // =========================================================================
-function ProfitReportContent({ data }: { data: any }) {
+function ProfitReportContent({ data }: { data: Record<string, unknown> }) {
   const isProfit = data.netProfit >= 0;
 
   return (
@@ -614,7 +612,7 @@ function StockValuationContent({ data }: { data: StockValuationItem[] | null }) 
           <BarChart data={data.slice(0, 15)} layout="vertical">
             <XAxis type="number" tickFormatter={(v) => `৳${(v / 1000).toFixed(0)}k`} />
             <YAxis type="category" dataKey="item_name" width={120} tick={{ fontSize: 11 }} />
-            <Tooltip formatter={(value: any) => [`৳${Number(value).toLocaleString()}`, '']} />
+            <Tooltip formatter={(value: Record<string, unknown>) => [`৳${Number(value).toLocaleString()}`, '']} />
             <Bar dataKey="total_value" fill="var(--color-success-default)" radius={[0, 4, 4, 0]} name="Retail Value" />
           </BarChart>
         </ResponsiveContainer>
@@ -673,7 +671,7 @@ function TopSellersContent({ data }: { data: TopSellingItem[] | null }) {
           <BarChart data={data.slice(0, 15)}>
             <XAxis dataKey="item_name" tick={{ fontSize: 10 }} angle={-45} textAnchor="end" height={80} />
             <YAxis tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
-            <Tooltip formatter={(value: any) => [`৳${Number(value).toLocaleString()}`, '']} />
+            <Tooltip formatter={(value: Record<string, unknown>) => [`৳${Number(value).toLocaleString()}`, '']} />
             <Bar dataKey="total_revenue" fill="var(--color-success-default)" radius={[4, 4, 0, 0]} name="Revenue" />
           </BarChart>
         </ResponsiveContainer>
@@ -733,7 +731,7 @@ function SlowMoversContent({ data }: { data: SlowMovingItem[] | null }) {
           <BarChart data={data.slice(0, 15)}>
             <XAxis dataKey="item_name" tick={{ fontSize: 10 }} angle={-45} textAnchor="end" height={80} />
             <YAxis tickFormatter={(v) => `৳${(v / 1000).toFixed(0)}k`} />
-            <Tooltip formatter={(value: any) => [`৳${Number(value).toLocaleString()}`, 'Cost']} />
+            <Tooltip formatter={(value: Record<string, unknown>) => [`৳${Number(value).toLocaleString()}`, 'Cost']} />
             <Bar dataKey="total_cost" fill="var(--color-danger-default)" radius={[4, 4, 0, 0]} name="Cost Value" />
           </BarChart>
         </ResponsiveContainer>
@@ -830,14 +828,14 @@ function MovementTrendContent({ data }: { data: DailyMovementItem[] | null }) {
 // =========================================================================
 // Customer Analytics Content
 // =========================================================================
-function CustomerAnalyticsContent({ data }: { data: any[] }) {
+function CustomerAnalyticsContent({ data }: { data: Record<string, unknown>[] }) {
   if (!data || data.length === 0) return <EmptyState icon={<Users size={32} />} title="No customer data" description="Customer purchases will appear here once they make transactions." />;
 
   const totalCustomers = data.length;
-  const totalSpent = data.reduce((s: number, c: any) => s + Number(c.total_spent), 0);
+  const totalSpent = data.reduce((s: number, c: Record<string, unknown>) => s + Number(c.total_spent), 0);
   const avgLTV = totalCustomers > 0 ? totalSpent / totalCustomers : 0;
   const avgFrequency = totalCustomers > 0
-    ? data.reduce((s: number, c: any) => s + Number(c.purchase_count), 0) / totalCustomers
+    ? data.reduce((s: number, c: Record<string, unknown>) => s + Number(c.purchase_count), 0) / totalCustomers
     : 0;
 
   const spendBuckets = [
@@ -847,7 +845,7 @@ function CustomerAnalyticsContent({ data }: { data: any[] }) {
     { range: '10k-25k', min: 10000, max: 25000, count: 0 },
     { range: '25k+', min: 25000, max: Infinity, count: 0 },
   ];
-  data.forEach((c: any) => {
+  data.forEach((c: Record<string, unknown>) => {
     for (const bucket of spendBuckets) {
       if (Number(c.total_spent) >= bucket.min && Number(c.total_spent) < bucket.max) {
         bucket.count++;
@@ -862,7 +860,7 @@ function CustomerAnalyticsContent({ data }: { data: any[] }) {
         <h2 className="font-semibold text-lg">Customer Analytics</h2>
         <button
           className="button-outline gap-2 text-sm"
-          onClick={() => downloadCSV(data.map((c: any) => ({
+          onClick={() => downloadCSV(data.map((c: Record<string, unknown>) => ({
             name: c.customer_name,
             phone: c.phone || '',
             totalSpent: c.total_spent,
@@ -889,7 +887,7 @@ function CustomerAnalyticsContent({ data }: { data: any[] }) {
           <BarChart data={spendBuckets}>
             <XAxis dataKey="range" tick={{ fontSize: 12 }} />
             <YAxis allowDecimals={false} />
-            <Tooltip formatter={(value: any) => [value, 'Customers']} />
+            <Tooltip formatter={(value: Record<string, unknown>) => [value, 'Customers']} />
             <Bar dataKey="count" fill="var(--color-primary-default)" radius={[4, 4, 0, 0]} name="Customers" />
           </BarChart>
         </ResponsiveContainer>
@@ -909,7 +907,7 @@ function CustomerAnalyticsContent({ data }: { data: any[] }) {
             </tr>
           </thead>
           <tbody className="divide-y">
-            {data.slice(0, 25).map((c: any, idx: number) => (
+            {data.slice(0, 25).map((c: Record<string, unknown>, idx: number) => (
               <tr key={idx} className="hover:bg-gray-50">
                 <td className="px-3 py-2 font-medium">{c.customer_name}</td>
                 <td className="px-3 py-2 text-text-muted">{c.phone || '-'}</td>
@@ -931,11 +929,11 @@ function CustomerAnalyticsContent({ data }: { data: any[] }) {
 // =========================================================================
 // Staff Performance Content
 // =========================================================================
-function StaffPerformanceContent({ data }: { data: any[] }) {
+function StaffPerformanceContent({ data }: { data: Record<string, unknown>[] }) {
   if (!data || data.length === 0) return <EmptyState icon={<UserCheck size={32} />} title="No staff data" description="Staff performance will appear once sales are recorded by cashiers." />;
 
-  const totalRevenue = data.reduce((s: number, st: any) => s + Number(st.total_revenue), 0);
-  const totalSales = data.reduce((s: number, st: any) => s + Number(st.total_sales), 0);
+  const totalRevenue = data.reduce((s: number, st: Record<string, unknown>) => s + Number(st.total_revenue), 0);
+  const totalSales = data.reduce((s: number, st: Record<string, unknown>) => s + Number(st.total_sales), 0);
   const avgTicket = totalSales > 0 ? totalRevenue / totalSales : 0;
 
   return (
@@ -944,7 +942,7 @@ function StaffPerformanceContent({ data }: { data: any[] }) {
         <h2 className="font-semibold text-lg">Staff Performance (30 days)</h2>
         <button
           className="button-outline gap-2 text-sm"
-          onClick={() => downloadCSV(data.map((st: any) => ({
+          onClick={() => downloadCSV(data.map((st: Record<string, unknown>) => ({
             name: st.staff_name,
             role: st.role,
             totalSales: st.total_sales,
@@ -972,7 +970,7 @@ function StaffPerformanceContent({ data }: { data: any[] }) {
           <BarChart data={data.slice(0, 15)}>
             <XAxis dataKey="staff_name" tick={{ fontSize: 10 }} angle={-45} textAnchor="end" height={80} />
             <YAxis tickFormatter={(v) => `৳${(v / 1000).toFixed(0)}k`} />
-            <Tooltip formatter={(value: any) => [`৳${Number(value).toLocaleString()}`, '']} />
+            <Tooltip formatter={(value: Record<string, unknown>) => [`৳${Number(value).toLocaleString()}`, '']} />
             <Bar dataKey="total_revenue" fill="var(--color-primary-default)" radius={[4, 4, 0, 0]} name="Revenue" />
           </BarChart>
         </ResponsiveContainer>
@@ -994,7 +992,7 @@ function StaffPerformanceContent({ data }: { data: any[] }) {
             </tr>
           </thead>
           <tbody className="divide-y">
-            {data.map((st: any, idx: number) => (
+            {data.map((st: Record<string, unknown>, idx: number) => (
               <tr key={idx} className="hover:bg-gray-50">
                 <td className="px-3 py-2 font-medium">{st.staff_name}</td>
                 <td className="px-3 py-2">

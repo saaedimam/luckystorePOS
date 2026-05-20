@@ -7,15 +7,16 @@ export async function withSerializableRetry<T>(
   while (true) {
     try {
       return await operation();
-    } catch (error: any) {
+    } catch (error: unknown) {
       attempt++;
       
       // PostgreSQL serialization_failure code is '40001'
       // Supabase/PostgREST usually surfaces this in error.code
+      const err = error as { code?: string; message?: string };
       const isSerializationFailure = 
-        error?.code === '40001' || 
-        error?.message?.includes('serialization_failure') ||
-        error?.message?.includes('could not serialize access');
+        err?.code === '40001' || 
+        err?.message?.includes('serialization failure') ||
+        err?.message?.includes('could not serialize access');
         
       if (!isSerializationFailure || attempt > maxRetries) {
         throw error;

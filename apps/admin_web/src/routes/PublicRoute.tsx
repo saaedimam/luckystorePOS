@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../lib/AuthContext';
+import {  useAuth  } from '../hooks/useAuth';
 import { Loader } from '../components/ui/Loader';
 
 export function PublicRoute({ children }: { children: React.ReactNode }) {

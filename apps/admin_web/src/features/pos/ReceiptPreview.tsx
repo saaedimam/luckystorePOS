@@ -1,7 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 import { Printer, X, MessageCircle, Loader2 } from 'lucide-react';
 import type { CartItem } from '../../lib/api/types';
-import { generateInvoicePdfBlob } from '../../utils/PdfGenerator';
 import { supabase } from '../../lib/supabase';
 import { salesService } from '../../services/sales/salesService';
 

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { InventoryAdjustmentData } from '../../schemas/inventory.schema';
-import { useAuth } from '../../lib/AuthContext';
+import {  useAuth  } from '../../hooks/useAuth';
 
 export function useUpdateInventory() {
   const { storeId, tenantId } = useAuth();

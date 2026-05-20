@@ -7,10 +7,8 @@ import { ProtectedRoute } from '../routes/ProtectedRoute';
 import { ErrorBoundary } from './ErrorBoundary';
 import { OAuthConsentPage } from '../features/oauth/OAuthConsentPage';
 import { LoginPage } from '../features/auth/LoginPage';
-import { NotificationProvider } from '../components/Notification';
-import { OfflineIndicator } from '../components/OfflineIndicator';
 import { InstallPrompt } from '../components/InstallPrompt';
-import { AuthProvider } from '../lib/AuthContext';
+import {  AuthProvider  } from '../lib/AuthProvider';
 import { useSyncSales } from '../hooks/useSyncSales';
 import { OfflineBanner } from '../components/ui/OfflineBanner';
 import { ToastProvider } from '../components/ui/ToastProvider';
@@ -30,8 +28,6 @@ const LazyReportsPage = React.lazy(() => import('../features/reports/ReportsPage
 const LazyQuickPosPage = React.lazy(() => import('../features/pos/QuickPosPage').then(m => ({ default: m.QuickPosPage })));
 const LazyRemindersPage = React.lazy(() => import('../features/reminders/RemindersPage').then(m => ({ default: m.RemindersPage })));
 const LazyExpensesPage = React.lazy(() => import('../features/expenses/ExpensesPage').then(m => ({ default: m.ExpensesPage })));
-const LazyDailySalesPage = React.lazy(() => import('../features/sales/DailySalesPage').then(m => ({ default: m.DailySalesPage })));
-const LazyCompetitorPricesPage = React.lazy(() => import('../features/competitorPrices/CompetitorPricesPage').then(m => ({ default: m.CompetitorPricesPage })));
 const LazyOnlineOrdersPage = React.lazy(() => import('../features/online-orders/OnlineOrdersPage'));
 
 function SuspenseFallback() {

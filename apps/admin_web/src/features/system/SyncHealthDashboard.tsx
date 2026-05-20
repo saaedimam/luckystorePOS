@@ -3,7 +3,7 @@ import { PageContainer } from '../../layouts/PageContainer';
 import { PageHeader } from '../../components/layout/PageHeader';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
-import { Activity, Database, AlertTriangle, Cpu, Server, Clock, TrendingUp } from 'lucide-react';
+import { Activity, Database, AlertTriangle, Cpu, Clock, TrendingUp } from 'lucide-react';
 
 // Simplified visual mock builders as requested by constraints
 export function SyncHealthDashboard() {

@@ -6,7 +6,7 @@ import { Button } from '../../components/ui/Button';
 import { Edit2, Package, TrendingUp, Trash2 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
-import { useAuth } from '../../lib/AuthContext';
+import {  useAuth  } from '../../hooks/useAuth';
 import { SkeletonBlock } from '../../components/PageState';
 import { Badge } from '../../components/ui/Badge';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
@@ -15,7 +15,7 @@ import { useNotify } from '../../components/NotificationContext';
 interface ProductDetailDrawerProps {
   productId: string | null;
   onClose: () => void;
-  onEdit: (product: any) => void;
+  onEdit: (product: Record<string, unknown>) => void;
 }
 
 export function ProductDetailDrawer({ productId, onClose, onEdit }: ProductDetailDrawerProps) {
@@ -44,7 +44,7 @@ export function ProductDetailDrawer({ productId, onClose, onEdit }: ProductDetai
       notify('Product deactivated', 'success');
       onClose();
     },
-    onError: (err: any) => notify(err.message || 'Failed to deactivate product', 'error'),
+    onError: (err: Error | Record<string, unknown>) => notify(err.message || 'Failed to deactivate product', 'error'),
   });
 
   if (!productId) return null;
@@ -124,7 +124,7 @@ export function ProductDetailDrawer({ productId, onClose, onEdit }: ProductDetai
                       <td colSpan={3} className="p-3 text-center text-text-muted">Loading history...</td>
                     </tr>
                   ) : stockHistory && stockHistory.length > 0 ? (
-                    stockHistory.map((log: any) => (
+                    stockHistory.map((log: Record<string, unknown>) => (
                       <tr key={log.id} className="border-b border-border-light text-sm">
                         <td className="p-3">{new Date(log.created_at).toLocaleDateString()}</td>
                         <td className="p-3 font-medium">

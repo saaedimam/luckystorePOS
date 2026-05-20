@@ -3,11 +3,10 @@ import { ColumnDef } from '../../components/datatable';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Edit2 } from 'lucide-react';
-import { formatCurrency } from '../../lib/format';
 
 export const getProductColumns = (
-  onEdit: (row: any) => void
-): ColumnDef<any>[] => [
+  onEdit: (row: Record<string, unknown>) => void
+): ColumnDef<unknown>[] => [
   {
     id: 'name',
     header: 'Product',

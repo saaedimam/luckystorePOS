@@ -9,7 +9,7 @@ export interface TableState {
   sort: SortState | null;
   page: number;
   pageSize: number;
-  filters: Record<string, any>;
+  filters: Record<string, unknown>;
   selectedRows: string[];
   columnVisibility: Record<string, boolean>;
   viewPreference: ViewPreference;
@@ -64,7 +64,7 @@ export function usePersistedTableState({ tableId, defaultState = {} }: UsePersis
     if (searchParams.has('filters')) {
       try {
         combined.filters = JSON.parse(searchParams.get('filters') || '{}');
-      } catch (e) {
+      } catch {
         // ignore
       }
     }
@@ -102,7 +102,7 @@ export function usePersistedTableState({ tableId, defaultState = {} }: UsePersis
     else params.delete('filters');
     
     setSearchParams(params, { replace: true });
-  }, [state, tableId, setSearchParams]);
+  }, [state, tableId, searchParams, setSearchParams]);
 
   // Specific updaters
   const setSearch = useCallback((search: string) => {
@@ -117,11 +117,11 @@ export function usePersistedTableState({ tableId, defaultState = {} }: UsePersis
     setState(prev => ({ ...prev, page }));
   }, []);
 
-  const setFilters = useCallback((filters: Record<string, any>) => {
+  const setFilters = useCallback((filters: Record<string, unknown>) => {
     setState(prev => ({ ...prev, filters, page: 1 }));
   }, []);
 
-  const setFilter = useCallback((key: string, value: any) => {
+  const setFilter = useCallback((key: string, value: Record<string, unknown>) => {
     setState(prev => {
       const newFilters = { ...prev.filters };
       if (value === undefined || value === null || value === '') {

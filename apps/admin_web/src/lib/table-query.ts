@@ -5,12 +5,17 @@ export interface QueryOptions<T> {
   search?: string;
   searchFields?: (keyof T | string)[]; 
   sort?: SortState | null;
-  filters?: Record<string, any>;
+  filters?: Record<string, unknown>;
 }
 
-function getNestedValue(obj: any, path: string) {
+function getNestedValue(obj: unknown, path: string) {
   if (!obj || !path) return undefined;
-  return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+  return path.split('.').reduce((acc: unknown, part: string) => {
+    if (acc && typeof acc === 'object') {
+      return (acc as Record<string, unknown>)[part];
+    }
+    return undefined;
+  }, obj);
 }
 
 export function processTableData<T>(options: QueryOptions<T>): T[] {
@@ -57,8 +62,8 @@ export function processTableData<T>(options: QueryOptions<T>): T[] {
   if (options.sort) {
     const { id, desc } = options.sort;
     result.sort((a, b) => {
-      let valA = getNestedValue(a, id);
-      let valB = getNestedValue(b, id);
+      const valA = getNestedValue(a, id);
+      const valB = getNestedValue(b, id);
 
       if (valA === valB) return 0;
       if (valA === undefined || valA === null) return desc ? -1 : 1;
@@ -77,7 +82,7 @@ export function processTableData<T>(options: QueryOptions<T>): T[] {
       }
       
       // Date fallback
-      if (valA instanceof Date && valB instanceof Date) {
+      if (typeof valA === 'object' && valA instanceof Date && typeof valB === 'object' && valB instanceof Date) {
         return desc ? valB.getTime() - valA.getTime() : valA.getTime() - valB.getTime();
       }
       

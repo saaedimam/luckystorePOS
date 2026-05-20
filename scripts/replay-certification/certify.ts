@@ -16,7 +16,7 @@ export interface TestContext {
   itemId: string;
 }
 
-async function bootstrap(): Promise<TestContext> {
+export async function bootstrap(): Promise<TestContext> {
   console.log('[REPLAY-CERT] Bootstrapping deterministic test environment...');
   
   const tenantId = '00000000-0000-0000-0000-000000000000';
@@ -33,7 +33,8 @@ async function bootstrap(): Promise<TestContext> {
       'has_stock_level_qty_on_hand', EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'stock_levels' AND column_name = 'qty_on_hand')
     );
   `);
-  const meta = JSON.parse(tableCheck.rows[0].json_build_object);
+  const rawMeta = tableCheck.rows[0].json_build_object;
+  const meta = typeof rawMeta === 'string' ? JSON.parse(rawMeta) : rawMeta;
 
   // 1. TDR (Tear Down & Reset)
   const teardownQueries: string[] = [];
@@ -99,7 +100,7 @@ export async function executeHybridReplay(
       storeId: op.params.p_store_id,
       cashierId: '00000000-0000-0000-0000-000000000000',
       lines: [{
-        itemId: op.params.p_item_id,
+        itemId: op.params.p_product_id || op.params.p_item_id,
         quantity: op.params.p_quantity
       }]
     };
@@ -119,7 +120,8 @@ export async function executeHybridReplay(
       'has_stock_level_qty_on_hand', EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'stock_levels' AND column_name = 'qty_on_hand')
     );
   `);
-  const meta = JSON.parse(metaCheck.rows[0].json_build_object);
+  const rawMeta2 = metaCheck.rows[0].json_build_object;
+  const meta = typeof rawMeta2 === 'string' ? JSON.parse(rawMeta2) : rawMeta2;
 
   const qtyCol = meta.has_stock_level_qty_on_hand ? 'qty_on_hand' : 'qty';
   const dbStockRes = await db.query(`
@@ -131,9 +133,9 @@ export async function executeHybridReplay(
   let dbLedgerRes;
   if (meta.has_stock_ledger) {
     dbLedgerRes = await db.query(`
-      SELECT (metadata->>'operation_id')::uuid AS operation_id
+      SELECT movement_id AS operation_id
       FROM stock_ledger
-      WHERE product_id = '${testIds.itemId}' AND metadata->>'operation_id' IS NOT NULL
+      WHERE product_id = '${testIds.itemId}' AND movement_id IS NOT NULL
     `);
   } else {
     dbLedgerRes = await db.query(`

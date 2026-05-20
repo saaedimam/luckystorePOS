@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-05-19T22:27:41.012Z",
-  "migration_count": 108,
+  "timestamp": "2026-05-19T22:53:41.299Z",
+  "migration_count": 109,
   "dependency_graph": {
     "20260301000000_baseline_core_tables.sql": {
       "sequence": 0,
@@ -3651,6 +3651,23 @@
       },
       "unsafe_assumptions": [],
       "risks": []
+    },
+    "20260524000000_store_location.sql": {
+      "sequence": 108,
+      "timestamp": "20260524000000",
+      "category": "uncategorized",
+      "dependencies": {
+        "objects": [
+          "stores"
+        ],
+        "migrations": [
+          "20260426213606_retail_profit_control_foundation.sql"
+        ],
+        "satisfied": true,
+        "unsatisfied_objects": []
+      },
+      "unsafe_assumptions": [],
+      "risks": []
     }
   },
   "object_owners": {
@@ -3926,7 +3943,8 @@
     "delivery_zones": "20260521000002_online_order_module.sql",
     "handle_online_order_stock_reservation": "20260521000002_online_order_module.sql",
     "handle_sale_deletion_cleanup": "20260521000003_invoice_storage.sql",
-    "trigger_whatsapp_notification": "20260523000000_whatsapp_webhook.sql"
+    "trigger_whatsapp_notification": "20260523000000_whatsapp_webhook.sql",
+    "is_within_delivery_range": "20260524000000_store_location.sql"
   },
   "unsafe_migrations": {
     "20260301000000_baseline_core_tables.sql": {

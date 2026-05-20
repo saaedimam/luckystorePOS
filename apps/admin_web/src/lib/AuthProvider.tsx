@@ -1,38 +1,13 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { supabase } from '../lib/supabase';
+import { AuthContext, type AdminUser, type AuthContextValue } from '../hooks/useAuth';
+import { useEffect, useState, type ReactNode } from 'react';
+import { supabase } from './supabase';
 import type { Session } from '@supabase/supabase-js';
 
-// ── Types ──────────────────────────────────────────────────────────────────────
 
-interface AdminUser {
-  id: string;
-  authId: string;
-  tenantId: string;
-  storeId: string;
-  role: string;
-  name: string | null;
-}
-
-interface AuthContextValue {
-  session: Session | null;
-  user: AdminUser | null;
-  /** Supabase tenant UUID resolved from the `users` table — never null once loaded */
-  tenantId: string;
-  /** Supabase store UUID resolved from the `users` table */
-  storeId: string;
-  loading: boolean;
-  signOut: () => Promise<void>;
-}
 
 // ── Context ────────────────────────────────────────────────────────────────────
 
-const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function useAuth(): AuthContextValue {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
-  return ctx;
-}
 
 // ── Provider ───────────────────────────────────────────────────────────────────
 

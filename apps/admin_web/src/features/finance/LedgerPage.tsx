@@ -4,13 +4,13 @@ import type { Party, LedgerEntry } from '../../types/finance';
 import { format } from 'date-fns';
 import type { LucideIcon } from 'lucide-react';
 import { Plus } from 'lucide-react';
-import { SkeletonBlock, SkeletonCard } from '../../components/PageState';
+import { SkeletonCard } from '../../components/PageState';
 import { ErrorState } from '../../components/ui/ErrorState';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { PageHeader } from '../../layouts/PageHeader';
 import { PageContainer } from '../../layouts/PageContainer';
 import { Drawer } from '../../components/ui/Drawer';
-import { useAuth } from '../../lib/AuthContext';
+import {  useAuth  } from '../../hooks/useAuth';
 import { useNotify } from '../../components/NotificationContext';
 
 interface LedgerPageConfig {
@@ -78,6 +78,7 @@ export const LedgerPage: React.FC<LedgerPageConfig> = ({
   }, [partyType]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchParties();
   }, [fetchParties]);
 

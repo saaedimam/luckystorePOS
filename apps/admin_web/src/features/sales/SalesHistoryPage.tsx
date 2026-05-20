@@ -1,18 +1,18 @@
-import { useState, useMemo, useRef, useEffect } from 'react';
+"use no memo";
+import { useState, useRef, useEffect } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useSalesHistory, useSaleDetails, useVoidSale } from '../../hooks/useSales';
-import { useAuth } from '../../lib/AuthContext';
+import {  useAuth  } from '../../hooks/useAuth';
 import { PageContainer } from '../../layouts/PageContainer';
 import { SkeletonBlock } from '../../components/PageState';
 import { ErrorState } from '../../components/ui/ErrorState';
 import { EmptyState } from '../../components/ui/EmptyState';
-import { Loader } from '../../components/ui/Loader';
 import { PageHeader } from '../../components/layout/PageHeader';
 import { MetricCard } from '../../components/data-display/MetricCard';
 import { TableFilters } from '../../components/data-display/TableFilters';
 import { XCircle, ChevronRight, Receipt, CreditCard, X, Download, DollarSign, AlertTriangle, TrendingUp } from 'lucide-react';
 import { clsx } from 'clsx';
-import { format, startOfDay, startOfWeek, startOfMonth, endOfDay, endOfWeek, endOfMonth, subDays } from 'date-fns';
+import { format, startOfDay, startOfWeek, startOfMonth, endOfDay, endOfWeek, endOfMonth } from 'date-fns';
 import { useNotify } from '../../components/NotificationContext';
 import { useDebounce } from '../../hooks/useDebounce';
 
@@ -87,6 +87,18 @@ export function SalesHistoryPage() {
     endDate
   );
 
+  const totalPages = Math.ceil((sales?.length ?? 0) / pageSize);
+  const paginatedSales = sales?.slice((currentPage - 1) * pageSize, currentPage * pageSize) ?? [];
+
+  const salesScrollRef = useRef<HTMLDivElement>(null);
+
+  const salesVirtualizer = useVirtualizer({
+    count: paginatedSales.length,
+    getScrollElement: () => salesScrollRef.current,
+    estimateSize: () => ROW_HEIGHT,
+    overscan: 5,
+  });
+
   if (error) {
     return (
       <PageContainer className="sales-history-container">
@@ -107,18 +119,6 @@ export function SalesHistoryPage() {
   const totalRevenue = completedSales.reduce((sum: number, s: { total_amount: number }) => sum + Number(s.total_amount || 0), 0);
   const avgTicket = completedSales.length ? totalRevenue / completedSales.length : 0;
   const voidCount = voidedSales.length;
-
-  const totalPages = Math.ceil((sales?.length ?? 0) / pageSize);
-  const paginatedSales = sales?.slice((currentPage - 1) * pageSize, currentPage * pageSize) ?? [];
-
-  const salesScrollRef = useRef<HTMLDivElement>(null);
-
-  const salesVirtualizer = useVirtualizer({
-    count: paginatedSales.length,
-    getScrollElement: () => salesScrollRef.current,
-    estimateSize: () => ROW_HEIGHT,
-    overscan: 5,
-  });
 
   const handleDateRangeChange = (range: DateRange) => {
     setDateRange(range);
@@ -384,7 +384,7 @@ function SaleDetailsDrawer({ saleId, onClose }: { saleId: string | null, onClose
 
   const handleVoid = () => {
     voidMutation.mutate({ saleId: saleId!, reason: voidReason, idempotencyKey }, {
-      onSuccess: (res: any) => {
+      onSuccess: (res: Record<string, unknown>) => {
         if (res.is_duplicate) {
           notify('This sale was already voided.', 'error');
         } else {
@@ -392,7 +392,7 @@ function SaleDetailsDrawer({ saleId, onClose }: { saleId: string | null, onClose
         }
         onClose();
       },
-      onError: (err: any) => {
+      onError: (err: Error | Record<string, unknown>) => {
         notify(err.message || 'Failed to void sale. Please try again.', 'error');
       }
     });

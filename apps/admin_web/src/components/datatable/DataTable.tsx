@@ -181,9 +181,14 @@ export function DataTable<T extends object>({
 
                     {/* Data Cells */}
                     {columns.map((col, colIdx) => {
-                      const value = typeof col.accessor === 'function' 
-                        ? col.accessor(row) 
-                        : col.accessor ? (row as any)[col.accessor as string] : undefined;
+                      let value;
+                      if (typeof col.accessor === 'function') {
+                        value = col.accessor(row);
+                      } else if (col.accessor) {
+                        value = row[col.accessor];
+                      } else {
+                        value = undefined;
+                      }
                         
                       const cellContent = col.render ? col.render(value, row, rowIdx) : (value as React.ReactNode);
 
@@ -249,9 +254,14 @@ export function DataTable<T extends object>({
 
                   {/* Mobile Card Cells */}
                   {columns.map((col, colIdx) => {
-                    const value = typeof col.accessor === 'function' 
-                      ? col.accessor(row) 
-                      : col.accessor ? (row as any)[col.accessor as string] : undefined;
+                    let value;
+                    if (typeof col.accessor === 'function') {
+                      value = col.accessor(row);
+                    } else if (col.accessor) {
+                      value = row[col.accessor];
+                    } else {
+                      value = undefined;
+                    }
                       
                     const cellContent = col.render ? col.render(value, row, rowIdx) : (value as React.ReactNode);
                     const headerLabel = typeof col.header === 'function' ? col.header({ column: col }) : col.header;

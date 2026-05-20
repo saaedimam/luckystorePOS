@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// ============================================================================
-// IMPORTANT ACTION REQUIRED
 // ============================================================================
 // To generate the true types, run the following command on your local machine
 // (where Docker is accessible) inside the project root:
@@ -19,19 +16,19 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      [key: string]: any
+      [key: string]: unknown
     }
     Views: {
-      [key: string]: any
+      [key: string]: unknown
     }
     Functions: {
-      [key: string]: any
+      [key: string]: unknown
     }
     Enums: {
-      [key: string]: any
+      [key: string]: unknown
     }
     CompositeTypes: {
-      [key: string]: any
+      [key: string]: unknown
     }
   }
 }

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { TrendingUp, Plus, Trash2, ExternalLink, AlertTriangle } from 'lucide-react';
-import { useAuth } from '../../lib/AuthContext';
+import {  useAuth  } from '../../hooks/useAuth';
 import { useNotify } from '../../components/NotificationContext';
 import { DataTable, Column } from '../../components/data-display/DataTable';
 import {

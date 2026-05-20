@@ -15,7 +15,7 @@ export const dailySales = {
     const { data, error } = await query;
     if (error) throw error;
 
-    return (data ?? []).map((row: any) => ({
+    return (data ?? []).map((row: Record<string, unknown>) => ({
       id: row.id,
       storeId: row.store_id,
       saleDate: row.sale_date,

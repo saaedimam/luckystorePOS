@@ -8,7 +8,8 @@ export async function assertInvariants(db: Database) {
       'has_stock_level_qty_on_hand', EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'stock_levels' AND column_name = 'qty_on_hand')
     );
   `);
-  const meta = JSON.parse(metaCheck.rows[0].json_build_object);
+  const rawMeta = metaCheck.rows[0].json_build_object;
+  const meta = typeof rawMeta === 'string' ? JSON.parse(rawMeta) : rawMeta;
 
   const qtyCol = meta.has_stock_level_qty_on_hand ? 'qty_on_hand' : 'qty';
   const negativeStock = await db.query(`
@@ -25,11 +26,11 @@ export async function assertInvariants(db: Database) {
   let duplicateOps;
   if (meta.has_stock_ledger) {
     duplicateOps = await db.query(`
-      SELECT (metadata->>'operation_id')::uuid AS operation_id, COUNT(*)
+      SELECT movement_id AS operation_id, COUNT(*)
       FROM stock_ledger
-      WHERE metadata->>'operation_id' IS NOT NULL
+      WHERE movement_id IS NOT NULL
         AND transaction_type = 'sale_deduction'
-      GROUP BY (metadata->>'operation_id')::uuid
+      GROUP BY movement_id
       HAVING COUNT(*) > 1
     `);
   } else {

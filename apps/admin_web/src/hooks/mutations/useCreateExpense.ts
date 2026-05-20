@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../../lib/supabase';
 import { ExpenseData } from '../../schemas/expense.schema';
-import { useAuth } from '../../lib/AuthContext';
+import {  useAuth  } from '../../hooks/useAuth';
 
 export function useCreateExpense() {
   const { storeId, tenantId } = useAuth();

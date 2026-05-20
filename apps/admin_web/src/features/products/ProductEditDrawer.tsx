@@ -1,17 +1,16 @@
-import { useEffect } from 'react';
 import { Save } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '../../lib/zodResolver';
 import { productSchema, ProductData } from '../../schemas/product.schema';
 import { useUpdateProduct } from '../../hooks/mutations/useProductMutations';
-import { Form, FormInput, FormSelect, PriceInput, BarcodeInput, FormCheckbox, FormActions } from '../../components/forms';
+import { Form, FormInput, FormSelect, PriceInput, BarcodeInput, FormCheckbox } from '../../components/forms';
 import { Drawer } from '../../components/ui/Drawer';
 import { useUnsavedChangesGuard } from '../../hooks/useUnsavedChangesGuard';
 import { Button } from '../../components/ui/Button';
 
 interface ProductEditDrawerProps {
-  product: any | null;
-  categories: any[] | undefined;
+  product: unknown | null;
+  categories: unknown[] | undefined;
   onClose: () => void;
 }
 

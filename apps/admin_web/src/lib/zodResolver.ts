@@ -14,7 +14,7 @@ export const zodResolver = <T extends z.ZodTypeAny>(
     } catch (e) {
       if (e instanceof z.ZodError) {
         const errors = e.issues.reduce(
-          (acc: Record<string, any>, currentError: any) => {
+          (acc: Record<string, { type: string, message: string }>, currentError: z.ZodIssue) => {
             const key = currentError.path.join('.');
             // only keep the first error per path
             if (!acc[key]) {
@@ -34,5 +34,5 @@ export const zodResolver = <T extends z.ZodTypeAny>(
       }
       throw e;
     }
-  }) as any;
+  }) as unknown as Resolver<z.infer<T> & FieldValues>;
 };

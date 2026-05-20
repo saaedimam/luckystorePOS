@@ -1,6 +1,6 @@
 // scripts/replay-certification/convergence_test.ts
 import { ReplayOp } from './replay_runner';
-import { executeHybridReplay, TestContext } from './certify';
+import { executeHybridReplay, TestContext, bootstrap } from './certify';
 import { db } from './db';
 
 export async function testConvergence(testIds: TestContext) {
@@ -10,9 +10,11 @@ export async function testConvergence(testIds: TestContext) {
     rpc: 'deduct_stock',
     params: {
       p_store_id: testIds.storeId,
-      p_item_id: testIds.itemId,
+      p_product_id: testIds.itemId,
       p_quantity: qty,
-      p_operation_id: id
+      p_operation_id: id,
+      p_expected_quantity: null,
+      p_metadata: null
     }
   });
 
@@ -28,12 +30,7 @@ export async function testConvergence(testIds: TestContext) {
 
   for (const trace of traces) {
     // Re-seed before each permutation trace to guarantee a clean slate
-    await db.execute(`
-      ALTER TABLE inventory_movements DISABLE TRIGGER enforce_append_only;
-      DELETE FROM inventory_movements WHERE tenant_id = '${testIds.tenantId}';
-      UPDATE stock_levels SET qty_on_hand = 1000 WHERE store_id = '${testIds.storeId}' AND item_id = '${testIds.itemId}';
-      ALTER TABLE inventory_movements ENABLE TRIGGER enforce_append_only;
-    `);
+    await bootstrap();
 
     await executeHybridReplay(testIds, trace, 1000);
   }

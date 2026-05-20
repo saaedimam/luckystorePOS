@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Trash2, Send, Search, Package } from 'lucide-react';
 import { SkeletonBlock } from '../../components/PageState';
@@ -8,11 +8,12 @@ import { PageContainer } from '../../layouts/PageContainer';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useNotify } from '../../components/NotificationContext';
 import { clsx } from 'clsx';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, useWatch } from 'react-hook-form';
 import { zodResolver } from '../../lib/zodResolver';
 import { purchaseEntrySchema, PurchaseEntryData } from '../../schemas/purchase.schema';
 import { useCreatePurchase } from '../../hooks/mutations/useCreatePurchase';
 import { useUnsavedChangesGuard } from '../../hooks/useUnsavedChangesGuard';
+import { useQuery } from '@tanstack/react-query';
 
 type Supplier = {
   id: string;
@@ -50,39 +51,34 @@ export const PurchaseEntryPage: React.FC = () => {
   useUnsavedChangesGuard(form.formState.isDirty);
 
   // Supplier Search State
-  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [supplierSearch, setSupplierSearch] = useState('');
   const [showSupplierDropdown, setShowSupplierDropdown] = useState(false);
-  const [suppliersLoading, setSuppliersLoading] = useState(true);
 
   // Item Search State
   const [itemSearch, setItemSearch] = useState('');
   const debouncedItemSearch = useDebounce(itemSearch, 300);
-  const [itemResults, setItemResults] = useState<Item[]>([]);
   const [showItemDropdown, setShowItemDropdown] = useState(false);
   const [quickQty, setQuickQty] = useState(1);
   const [quickCost, setQuickCost] = useState('');
 
   // Calculations
-  const lines = form.watch('lines');
-  const amountPaid = form.watch('amountPaid');
+  const lines = useWatch({ control: form.control, name: 'lines' }) || [];
+  const amountPaid = useWatch({ control: form.control, name: 'amountPaid' }) || 0;
   const totalCost = lines.reduce((sum, l) => sum + l.quantity * l.unitCost, 0);
   const payable = Math.max(0, totalCost - amountPaid);
 
-  useEffect(() => {
-    loadSuppliers();
-  }, []);
-
-  const loadSuppliers = async () => {
-    setSuppliersLoading(true);
-    const { data, error } = await supabase
-      .from('parties')
-      .select('id, name, phone')
-      .eq('type', 'supplier')
-      .order('name');
-    if (!error && data) setSuppliers(data as Supplier[]);
-    setSuppliersLoading(false);
-  };
+  const { data: suppliers = [], isLoading: suppliersLoading } = useQuery({
+    queryKey: ['suppliers'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('parties')
+        .select('id, name, phone')
+        .eq('type', 'supplier')
+        .order('name');
+      if (error) throw error;
+      return data as Supplier[];
+    }
+  });
 
   const filteredSuppliers = supplierSearch.length < 2
     ? suppliers
@@ -97,21 +93,20 @@ export const PurchaseEntryPage: React.FC = () => {
     setShowSupplierDropdown(false);
   };
 
-  useEffect(() => {
-    if (debouncedItemSearch.length < 2) {
-      setItemResults([]);
-      return;
-    }
-    const fetchItems = async () => {
+  const { data: itemResults = [] } = useQuery({
+    queryKey: ['items-search', debouncedItemSearch],
+    queryFn: async () => {
+      if (debouncedItemSearch.length < 2) return [];
       const { data, error } = await supabase
         .from('items')
         .select('id, name, sku, barcode, price')
         .or(`name.ilike.%${debouncedItemSearch}%,sku.ilike.%${debouncedItemSearch}%,barcode.ilike.%${debouncedItemSearch}%`)
         .limit(8);
-      if (!error && data) setItemResults(data as Item[]);
-    };
-    fetchItems();
-  }, [debouncedItemSearch]);
+      if (error) throw error;
+      return data as Item[];
+    },
+    enabled: debouncedItemSearch.length >= 2
+  });
 
   const addItem = (item: Item) => {
     const cost = quickCost ? parseFloat(quickCost) : item.price;
@@ -132,7 +127,6 @@ export const PurchaseEntryPage: React.FC = () => {
     }
 
     setItemSearch('');
-    setItemResults([]);
     setQuickQty(1);
     setQuickCost('');
   };
@@ -144,7 +138,7 @@ export const PurchaseEntryPage: React.FC = () => {
         form.reset();
         setSupplierSearch('');
       },
-      onError: (err: any) => {
+      onError: (err: Error | Record<string, unknown>) => {
         notify(err.message || 'Submission failed', 'error');
       }
     });

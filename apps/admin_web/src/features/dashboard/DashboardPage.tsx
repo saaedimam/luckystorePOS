@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useAuth } from '../../lib/AuthContext';
+import {  useAuth  } from '../../hooks/useAuth';
 import { SkeletonBlock } from '../../components/PageState';
 import { ErrorState } from '../../components/ui/ErrorState';
 import { PageContainer } from '../../layouts/PageContainer';
@@ -38,7 +38,7 @@ export function DashboardPage() {
   }, [density]);
 
   // Track dismissed predictive stockout projections
-  const [dismissedProjections, setDismissedProjections] = useState<string[]>(() => {
+  const [dismissedProjections] = useState<string[]>(() => {
     try {
       return JSON.parse(localStorage.getItem('luckystore_dismissed_projections') || '[]');
     } catch {

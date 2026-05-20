@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { X, Search } from 'lucide-react';
-import { useAuth } from '../../lib/AuthContext';
+import {  useAuth  } from '../../hooks/useAuth';
 import { useNotify } from '../../components/NotificationContext';
 import { addCompetitorPrice, fetchCompetitorNames } from '../../lib/api/domains/competitorPrices';
 import { supabase } from '../../lib/supabase';

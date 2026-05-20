@@ -8,15 +8,20 @@ export interface BadgeProps {
 }
 
 export const Badge: React.FC<BadgeProps> = ({ variant = 'neutral', children, className }) => {
-  const bg = {
-    success: 'bg-emerald-100 text-emerald-800 border border-emerald-200',
-    warning: 'bg-amber-100 text-amber-800 border border-amber-200',
-    danger: 'bg-red-100 text-red-800 border border-red-200',
-    info: 'bg-blue-100 text-blue-800 border border-blue-200',
-    neutral: 'bg-gray-100 text-gray-800 border border-gray-200',
+  const variantStyles = {
+    success: 'bg-success-subtle text-success-dark border-success-dark/10',
+    warning: 'bg-warning-subtle text-warning-dark border-warning-dark/10',
+    danger: 'bg-danger-subtle text-danger-dark border-danger-dark/10',
+    info: 'bg-info-subtle text-info-on border-info-on/10',
+    neutral: 'bg-background-subtle text-text-secondary border-border-default',
   }[variant];
+
   return (
-    <span className={clsx('inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium', bg, className)}>
+    <span className={clsx(
+      'inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider border', 
+      variantStyles, 
+      className
+    )}>
       {children}
     </span>
   );

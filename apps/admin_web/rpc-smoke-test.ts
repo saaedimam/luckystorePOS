@@ -51,7 +51,8 @@ async function runSmokeTest() {
 
   // 2. Retrieve the latest sale record to resolve a valid sale_id
   console.log('🔍 Querying latest sale to resolve sale_id...');
-  const { data: latestSale, error: saleError } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { data: latestSale, error: _saleError } = await supabase
     .from('sales')
     .select('id')
     .eq('store_id', storeId)

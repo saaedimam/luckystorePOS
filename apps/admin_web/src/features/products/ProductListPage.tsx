@@ -5,14 +5,13 @@ import { ErrorState } from '../../components/ui/ErrorState';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { PageContainer } from '../../layouts/PageContainer';
 import { Card } from '../../components/ui/Card';
-import { Plus, Edit2, Package } from 'lucide-react';
+import { Plus, Package } from 'lucide-react';
 import { ProductEditDrawer } from './ProductEditDrawer';
 import { ProductAddModal } from './ProductAddModal';
 import { useRealtimeSubscription } from '../../hooks/useRealtime';
 import { useDebounce } from '../../hooks/useDebounce';
 import { PageHeader } from '../../components/layout/PageHeader';
 import { Button } from '../../components/ui/Button';
-import { Badge } from '../../components/ui/Badge';
 import { ProductDetailDrawer } from './ProductDetailDrawer';
 import { DataTable, DataTableToolbar } from '../../components/datatable';
 import { getProductColumns } from './columns';
@@ -37,7 +36,7 @@ export function ProductListPage() {
   const debouncedSearch = useDebounce(tableState.search, 300);
   const categoryFilter = tableState.filters['category_id'] || '';
 
-  const [editingProduct, setEditingProduct] = useState<any | null>(null);
+  const [editingProduct, setEditingProduct] = useState<unknown | null>(null);
   const [viewingProductId, setViewingProductId] = useState<string | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
@@ -107,7 +106,7 @@ export function ProductListPage() {
                   onChange={e => setFilter('category_id', e.target.value)}
                 >
                   <option value="">All Categories</option>
-                  {categories?.map((c: any) => (
+                  {categories?.map((c: Record<string, unknown>) => (
                     <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
                 </select>

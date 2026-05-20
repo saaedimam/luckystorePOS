@@ -3,7 +3,6 @@ import {
   Search,
   Terminal,
   Activity,
-  ChevronRight,
   RefreshCw,
   ShoppingBag,
   Sliders,
@@ -14,12 +13,13 @@ import {
   Clock,
   Sparkles
 } from 'lucide-react';
-import { PageContainer } from '../../layouts/PageContainer';
-import { LowStockItem, DayGroup } from '../../hooks/useDashboardMetrics';
-import { DashboardAnalytics } from './DashboardAnalytics';
-import { Sparkline } from '../../components/ui/Sparkline';
-import { format, parseISO, subDays } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import clsx from 'clsx';
+import { Card } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
+
+import { Badge } from '../../components/ui/Badge';
+import { PageContainer } from '../../layouts/PageContainer';
 
 export interface UserType {
   name: string | null;
@@ -71,7 +71,7 @@ export interface MetricsType {
   todayCashTotal: number;
   salesTrend?: 'up' | 'down' | null;
   sparklineData: number[];
-  salesVsExpenses: any[];
+  salesVsExpenses: unknown[];
 }
 
 export interface ManagerPartnerViewProps {
@@ -141,18 +141,15 @@ export const ManagerPartnerView: React.FC<ManagerPartnerViewProps> = ({
             <span className="text-[10px] font-bold tracking-[0.08em] text-text-muted uppercase">
               {stats?.store_name || 'MAIN BRANCH'}
             </span>
-            <span className={clsx(
-              'px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wide border flex items-center gap-1',
-              userRole === 'partner' && 'bg-primary-subtle text-primary border-primary/20',
-              userRole === 'manager' && 'bg-info-subtle text-info border-info/20',
-              userRole === 'cashier' && 'bg-success-subtle text-success border-success/20',
-              userRole === 'viewer' && 'bg-background-subtle text-text-muted border-border-default'
-            )}>
+            <Badge 
+              variant={userRole === 'partner' ? 'warning' : userRole === 'manager' ? 'info' : userRole === 'cashier' ? 'success' : 'neutral'}
+              className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wide flex items-center gap-1"
+            >
               <Shield size={10} />
               {userRole}
-            </span>
+            </Badge>
           </div>
-          <h1 className={clsx('font-bold tracking-tight text-text-primary mt-1', isCompact ? 'text-2xl' : 'text-3.5xl')}>
+          <h1 className={clsx('font-black tracking-tight text-text-primary mt-1', isCompact ? 'text-heading' : 'text-hero')}>
             Welcome, {user?.name || stats?.user?.name || 'Mohammed'}
           </h1>
           <p className="text-xs sm:text-sm text-text-secondary mt-1">
@@ -161,39 +158,39 @@ export const ManagerPartnerView: React.FC<ManagerPartnerViewProps> = ({
         </div>
 
         <div className="flex gap-2 items-center">
-          <button
+          <Button
+            variant="tertiary"
+            size="sm"
             onClick={() => setDensity((d) => (d === 'compact' ? 'comfortable' : 'compact'))}
-            className="flex items-center gap-1.5 text-xs font-semibold text-text-secondary bg-surface-default hover:bg-background-subtle border border-border-default rounded-md px-3 py-2 transition-all active:scale-95 shadow-sm"
           >
-            <Sliders size={13} className="text-text-muted" />
-            <span className="capitalize text-primary-default font-extrabold">{density}</span>
-          </button>
+            <Sliders size={13} className="mr-2 text-text-muted" />
+            <span className="capitalize text-primary font-black">{density}</span>
+          </Button>
 
-          <div
-            className={clsx(
-              'flex items-center gap-1 text-[10px] font-bold border rounded-md px-2.5 py-2 select-none shadow-sm',
-              isOnline
-                ? 'bg-success-subtle/30 text-success border-success/20'
-                : 'bg-warning-subtle/30 text-warning border-warning/20'
-            )}
+          <Badge
+            variant={isOnline ? 'success' : 'warning'}
+            className="flex items-center gap-1.5 px-3 py-2 shadow-sm rounded-md"
           >
             {isOnline ? <Wifi size={13} /> : <WifiOff size={13} />}
             <span className="hidden md:inline">{isOnline ? 'ONLINE' : 'OFFLINE'}</span>
-          </div>
+          </Badge>
 
-          <button
+          <Button
+            variant="tertiary"
+            size="sm"
             onClick={() => setShowCmdK(true)}
-            className="flex items-center gap-2 text-xs font-medium text-text-secondary bg-surface-default hover:bg-background-subtle border border-border-default rounded-md px-3 py-2 transition-all active:scale-95 shadow-sm"
           >
-            <Terminal size={13} className="text-text-muted" />
+            <Terminal size={13} className="mr-2 text-text-muted" />
             <kbd className="hidden sm:inline-block bg-background-subtle text-text-muted px-1.5 py-0.5 rounded border border-border-default font-mono text-[9px]">⌘K</kbd>
-          </button>
-          <button
+          </Button>
+          
+          <Button
+            variant="tertiary"
+            size="sm"
             onClick={refetchAll}
-            className="p-2 border border-border-default rounded-md bg-surface-default text-text-secondary hover:bg-background-subtle transition-all active:scale-95"
           >
             <RefreshCw size={13} />
-          </button>
+          </Button>
         </div>
       </header>
 
@@ -205,7 +202,7 @@ export const ManagerPartnerView: React.FC<ManagerPartnerViewProps> = ({
           { label: 'All-Time Expenses', value: metrics.totalExpensesAllTime, sub: 'Stock & Operational Costs', color: 'text-danger', locked: userRole === 'cashier' },
           { label: 'Net Profit/Loss', value: metrics.netPosition, sub: 'Revenue - All Expenses', color: metrics.netPosition >= 0 ? 'text-success' : 'text-danger', locked: userRole === 'cashier' }
         ].map((item, idx) => (
-          <div key={idx} className="bg-surface-default/40 backdrop-blur-md border border-border-default rounded-xl p-5 shadow-sm hover:border-primary-default/30 transition-all group">
+          <Card key={idx} className="group hover:border-primary/30 transition-all border-border-default/50">
             <span className="text-[10px] font-bold tracking-[0.08em] text-text-muted uppercase flex items-center gap-1.5 mb-2">
               {item.label}
               {item.locked && <Lock size={10} className="text-text-muted" />}
@@ -226,7 +223,7 @@ export const ManagerPartnerView: React.FC<ManagerPartnerViewProps> = ({
             <p className="text-[10px] text-text-secondary mt-1.5 font-medium group-hover:text-text-primary transition-colors">
               {item.sub}
             </p>
-          </div>
+          </Card>
         ))}
       </section>
 
@@ -244,21 +241,17 @@ export const ManagerPartnerView: React.FC<ManagerPartnerViewProps> = ({
       {/* 4. Filterable Unified Temporal Ledger Feed */}
       <main className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-surface-default/60 backdrop-blur-sm border border-border-default p-5 rounded-xl shadow-sm space-y-4">
+          <Card className="p-5 space-y-4 bg-surface-default/60">
             <span className="text-[10px] font-bold tracking-[0.04em] text-text-muted uppercase block font-mono">
               Filter Operations Feed
             </span>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" size={14} />
-              <input
-                ref={searchInputRef}
-                type="text"
-                placeholder="Search transactions..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-background-subtle border border-border-default rounded-lg px-8 py-2 text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary-default/20 transition-all"
-              />
-            </div>
+            <Input
+              ref={searchInputRef}
+              placeholder="Search transactions..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="text-xs"
+            />
             <div className="text-xs space-y-3 border-t border-border-default pt-4">
               <div className="flex justify-between font-semibold">
                 <span className="text-text-secondary">Feed Row Count:</span>
@@ -266,10 +259,10 @@ export const ManagerPartnerView: React.FC<ManagerPartnerViewProps> = ({
               </div>
               <div className="flex justify-between font-semibold">
                 <span className="text-text-secondary">Critical SKU Alerts:</span>
-                <span className="text-danger font-mono font-bold">{metrics.criticalProcurementItems.length}</span>
+                <Badge variant="danger" className="font-mono">{metrics.criticalProcurementItems.length}</Badge>
               </div>
             </div>
-          </div>
+          </Card>
         </div>
 
         <div className="lg:col-span-2 space-y-8">
@@ -291,11 +284,12 @@ export const ManagerPartnerView: React.FC<ManagerPartnerViewProps> = ({
                   if (isDismissed) return null;
 
                   return (
-                    <div
+                    <Card
                       key={flatItem.id}
+                      padding="sm"
                       className={clsx(
-                        'border bg-surface-default/40 backdrop-blur-sm hover:bg-background-subtle rounded-xl p-4 transition-all flex items-start gap-4 relative group shadow-sm',
-                        isStockoutAlert ? 'border-warning-default/40 bg-warning-subtle/5' : 'border-border-default'
+                        'flex items-start gap-4 relative group hover:border-primary/40',
+                        isStockoutAlert && 'border-warning/40 bg-warning/5'
                       )}
                     >
                       <div className="shrink-0">
@@ -327,16 +321,16 @@ export const ManagerPartnerView: React.FC<ManagerPartnerViewProps> = ({
                           </span>
                         )}
                         {flatItem.type === 'stock_alert' && (
-                          <button
+                          <Button
+                            size="sm"
                             onClick={() => handleQuickRestock(flatItem.itemId || '', flatItem.sku || '', flatItem.itemName || '')}
                             disabled={pendingRestocks[flatItem.itemId || '']}
-                            className="text-[10px] font-bold bg-primary text-primary-on px-2 py-1 rounded-md"
                           >
                             Order
-                          </button>
+                          </Button>
                         )}
                       </div>
-                    </div>
+                    </Card>
                   );
                 })}
               </div>
@@ -347,16 +341,16 @@ export const ManagerPartnerView: React.FC<ManagerPartnerViewProps> = ({
 
       {/* 5. Timeline Scrubber */}
       {metrics.groupedFeed.length > 1 && (
-        <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-surface-default/80 backdrop-blur-md border border-border-default rounded-full px-6 py-3 shadow-xl z-40 flex items-center gap-4">
+        <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-surface/80 backdrop-blur-md border border-border-default rounded-full px-6 py-2 shadow-xl z-40 flex items-center gap-4">
           <span className="text-[9px] font-black uppercase tracking-widest text-text-muted border-r border-border-default pr-4 flex items-center gap-2 font-mono">
-            <Clock size={12} className="text-primary-default" /> Timeline
+            <Clock size={12} className="text-primary" /> Timeline
           </span>
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
             {metrics.groupedFeed.map((group) => (
               <button
                 key={group.dateStr}
                 onClick={() => document.getElementById(`date-${group.dateStr}`)?.scrollIntoView({ behavior: 'smooth' })}
-                className="text-[10px] font-bold text-text-secondary hover:text-primary-default px-3 py-1 transition-all"
+                className="text-[10px] font-bold text-text-secondary hover:text-primary px-3 py-1 transition-all whitespace-nowrap"
               >
                 {group.dateStr === format(new Date(), 'yyyy-MM-dd') ? 'Today' : format(parseISO(group.dateStr), 'dd MMM')}
               </button>
@@ -368,17 +362,16 @@ export const ManagerPartnerView: React.FC<ManagerPartnerViewProps> = ({
       {/* 6. CmdK Modal */}
       {showCmdK && (
         <div className="fixed inset-0 bg-surface-overlay backdrop-blur-md z-[100] flex items-center justify-center p-4" onClick={() => setShowCmdK(false)}>
-          <div className="w-full max-w-md bg-surface-default/95 backdrop-blur-lg border border-border-default rounded-2xl shadow-2xl overflow-hidden scale-in-animation" onClick={e => e.stopPropagation()}>
-            <div className="relative border-b border-border-default p-4">
-              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-text-muted" size={18} />
-              <input
+          <Card className="w-full max-w-md bg-surface/95 backdrop-blur-lg border-primary/20 shadow-2xl overflow-hidden animate-fade-in" onClick={e => e.stopPropagation()}>
+            <div className="relative border-b border-border-default p-4 bg-background-subtle">
+              <Search className="absolute left-7 top-1/2 -translate-y-1/2 text-text-muted" size={18} />
+              <Input
                 ref={cmdSearchInputRef}
                 autoFocus
-                type="text"
                 placeholder="Type a command..."
                 value={cmdSearch}
                 onChange={e => setCmdSearch(e.target.value)}
-                className="w-full bg-transparent pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none font-bold"
+                className="pl-10 border-none bg-transparent shadow-none focus:ring-0 text-base font-bold"
               />
             </div>
             <div className="p-2 max-h-[300px] overflow-y-auto">
@@ -394,9 +387,9 @@ export const ManagerPartnerView: React.FC<ManagerPartnerViewProps> = ({
             </div>
             <div className="bg-background-subtle p-3 text-[9px] text-text-muted font-mono flex justify-between border-t border-border-default">
               <span>ESC to close</span>
-              <span>LUCKYSTORE v2.0</span>
+              <span>LUCKYSTORE v2.1</span>
             </div>
-          </div>
+          </Card>
         </div>
       )}
     </PageContainer>

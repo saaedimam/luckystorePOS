@@ -29,7 +29,7 @@ export const ProcurementService = {
       }
 
       // Step 2: Validate existing stock levels before incrementing
-      const { data: stockLevel, error: stockError } = await supabase
+      const { error: stockError } = await supabase
         .from('stock_levels')
         .select('qty')
         .eq('store_id', storeId)
@@ -57,7 +57,7 @@ export const ProcurementService = {
         newQuantity: data.new_quantity,
         message: `Successfully added ${quantity}x ${product.name}`
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       return { success: false, message: err.message || 'Unknown error during procurement' }
     }
   },
@@ -102,7 +102,7 @@ export const ProcurementService = {
         newQuantity: data.new_quantity,
         message: `Successfully deducted ${quantity}x ${product.name}`
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       return { success: false, message: err.message || 'Unknown error during deduction' }
     }
   },
@@ -164,7 +164,7 @@ export const ProcurementService = {
         success: true,
         message: `Stockout acknowledged for ${product.name} (ID: ${transactionId})`
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       return { success: false, message: err.message || 'Unknown error during acknowledgement' }
     }
   }

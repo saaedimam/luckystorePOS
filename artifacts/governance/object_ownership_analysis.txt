@@ -1,8 +1,8 @@
 Object Ownership Analysis
-Generated: 2026-05-19T22:27:41.063Z
-Migrations: 108
-Objects Tracked: 278
-Conflicts: 608
+Generated: 2026-05-19T22:53:41.354Z
+Migrations: 109
+Objects Tracked: 279
+Conflicts: 609
 
 CANONICAL OWNERSHIP
 ==================
@@ -28,7 +28,7 @@ RPC Functions (0)
 
 Security Functions (0)
 
-HIGH-RISK CONFLICTS (607)
+HIGH-RISK CONFLICTS (608)
 ====================
 [duplicate_creator] public
 [duplicate_creator] public
@@ -633,6 +633,7 @@ HIGH-RISK CONFLICTS (607)
 [duplicate_creator] public
 [duplicate_creator] public
 [duplicate_creator] authenticated
+[duplicate_creator] public
 [duplicate_creator] public
 [duplicate_creator] public
 [replacement_without_owner] 20260506000003_repair_stock_and_reminder_functions.sql

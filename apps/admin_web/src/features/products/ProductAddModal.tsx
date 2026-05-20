@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '../../lib/zodResolver';
@@ -10,7 +9,7 @@ import { Button } from '../../components/ui/Button';
 
 interface ProductAddModalProps {
   isOpen: boolean;
-  categories: any[] | undefined;
+  categories: unknown[] | undefined;
   onClose: () => void;
 }
 

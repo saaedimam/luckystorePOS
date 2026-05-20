@@ -56,7 +56,7 @@ export const generateInvoicePdfBlob = (data: PdfInvoiceData): Blob => {
   });
 
   // Totals
-  const finalY = (doc as any).lastAutoTable.finalY + 10;
+  const finalY = ((doc as unknown) as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
   const rightColumnX = pageWidth - 20;
 
   doc.setFontSize(10);

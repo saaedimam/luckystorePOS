@@ -10,15 +10,12 @@ import {
   PieChart,
   Pie,
   Cell,
-  BarChart,
-  Bar,
-  Legend
 } from 'recharts';
 import { TrendingUp, ShoppingCart, Package, CreditCard } from 'lucide-react';
 import clsx from 'clsx';
 
 interface DashboardAnalyticsProps {
-  salesVsExpenses: any[];
+  salesVsExpenses: unknown[];
   paymentBreakdown: {
     cash: number;
     bkash: number;

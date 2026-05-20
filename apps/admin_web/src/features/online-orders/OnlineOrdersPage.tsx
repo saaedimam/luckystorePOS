@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { 
   ShoppingBag, 
@@ -8,7 +9,6 @@ import {
   XCircle, 
   Phone, 
   MapPin, 
-  ChevronRight,
   RefreshCcw,
   AlertCircle
 } from 'lucide-react';
@@ -25,28 +25,23 @@ interface OnlineOrder {
 }
 
 export default function OnlineOrdersPage() {
-  const [orders, setOrders] = useState<OnlineOrder[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [selectedOrder, setSelectedOrder] = useState<OnlineOrder | null>(null);
 
-  const fetchOrders = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('online_orders')
-      .select('*')
-      .order('created_at', { ascending: false });
-    
-    if (error) {
-      console.error('Error fetching online orders:', error);
-    } else {
-      setOrders(data || []);
+  const { data: orders = [], isLoading: loading, refetch: fetchOrders } = useQuery({
+    queryKey: ['online-orders'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('online_orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data as OnlineOrder[];
     }
-    setLoading(false);
-  };
+  });
 
   useEffect(() => {
-    fetchOrders();
-
     const subscription = supabase
       .channel('online-orders-queue')
       .on('postgres_changes', { 
@@ -54,14 +49,14 @@ export default function OnlineOrdersPage() {
         schema: 'public', 
         table: 'online_orders' 
       }, () => {
-        fetchOrders();
+        queryClient.invalidateQueries({ queryKey: ['online-orders'] });
       })
       .subscribe();
 
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [queryClient]);
 
   const updateStatus = async (orderId: string, status: string) => {
     const { error } = await supabase
@@ -103,7 +98,7 @@ export default function OnlineOrdersPage() {
           </p>
         </div>
         <button 
-          onClick={fetchOrders}
+          onClick={() => fetchOrders()}
           className="p-3 hover:bg-background-subtle rounded-full transition-all text-text-secondary active:rotate-180 duration-500"
         >
           <RefreshCcw size={20} />
@@ -253,6 +248,6 @@ function Package({ size }: { size: number }) {
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m7.5 4.27 9 5.15"></path><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path><path d="m3.27 6.96 8.73 5.04 8.73-5.04"></path><path d="M12 22.08V12"></path></svg>;
 }
 
-function clsx(...classes: any[]) {
+function clsx(...classes: unknown[]) {
   return classes.filter(Boolean).join(' ');
 }

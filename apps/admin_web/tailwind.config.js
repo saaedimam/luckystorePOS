@@ -65,9 +65,31 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['HindSiliguri', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'Hind Siliguri', 'system-ui', 'sans-serif'],
         primary: 'var(--font-family-primary)',
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+      },
+      fontSize: {
+        'hero': ['var(--font-hero-size)', {
+          lineHeight: 'var(--font-hero-line-height)',
+          fontWeight: 'var(--font-hero-weight)',
+        }],
+        'heading': ['var(--font-heading-size)', {
+          lineHeight: 'var(--font-heading-line-height)',
+          fontWeight: 'var(--font-heading-weight)',
+        }],
+        'subheading': ['var(--font-subheading-size)', {
+          lineHeight: 'var(--font-subheading-line-height)',
+          fontWeight: 'var(--font-subheading-weight)',
+        }],
+        'body': ['var(--font-body-size)', {
+          lineHeight: 'var(--font-body-line-height)',
+          fontWeight: 'var(--font-body-weight)',
+        }],
+        'caption': ['var(--font-caption-size)', {
+          lineHeight: 'var(--font-caption-line-height)',
+          fontWeight: 'var(--font-caption-weight)',
+        }],
       },
       boxShadow: {
         'level-1': 'var(--elevation-1)',

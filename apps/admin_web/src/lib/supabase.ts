@@ -1,25 +1,21 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './database.types';
 
-const supabaseUrl = (import.meta as any).env.VITE_SUPABASE_URL;
-const supabaseAnonKey = (import.meta as any).env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = (import.meta as unknown as { env: { VITE_SUPABASE_URL: string } }).env.VITE_SUPABASE_URL;
+const supabaseAnonKey = (import.meta as unknown as { env: { VITE_SUPABASE_ANON_KEY: string } }).env.VITE_SUPABASE_ANON_KEY;
 
 let _client: ReturnType<typeof createClient<Database>> | null = null;
 
 function getClient() {
   if (!_client) {
-    if (!supabaseUrl || !supabaseAnonKey) {
-      console.warn('Supabase environment variables are missing. API calls will fail.');
-    }
-    _client = createClient<Database>(supabaseUrl || '', supabaseAnonKey || '');
+    _client = createClient<Database>(supabaseUrl, supabaseAnonKey);
   }
   return _client;
 }
 
-// Proxy preserves the same import API while deferring client creation to first access.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const supabase = new Proxy({} as any, {
-  get(_, prop) {
-    return (getClient() as any)[prop];
-  },
+// Export a proxy so we can use `supabase.from` without initializing immediately
+export const supabase = new Proxy({} as unknown as ReturnType<typeof createClient<Database>>, {
+  get: (target, prop) => {
+    return (getClient() as unknown as Record<string | symbol, unknown>)[prop];
+  }
 });

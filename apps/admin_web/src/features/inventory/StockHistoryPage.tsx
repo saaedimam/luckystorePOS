@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../lib/api';
-import { useAuth } from '../../lib/AuthContext';
+import {  useAuth  } from '../../hooks/useAuth';
 import { ErrorState } from '../../components/PageState';
 import { ArrowLeft, Filter } from 'lucide-react';
 import { Link } from 'react-router-dom';

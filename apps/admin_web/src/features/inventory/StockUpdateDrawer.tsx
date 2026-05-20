@@ -9,7 +9,7 @@ import { Form, FormSelect, StockAdjustmentInput } from '../../components/forms';
 import { useUnsavedChangesGuard } from '../../hooks/useUnsavedChangesGuard';
 
 interface StockUpdateDrawerProps {
-  product: any | null;
+  product: unknown | null;
   onClose: () => void;
 }
 
@@ -47,7 +47,7 @@ export function StockUpdateDrawer({ product, onClose }: StockUpdateDrawerProps) 
 
   const handleSubmit = (data: InventoryAdjustmentData) => {
     updateMutation.mutate({ data, mode }, {
-      onSuccess: (res: any) => {
+      onSuccess: (res: Record<string, unknown>) => {
         if (res?.is_duplicate) {
           notify('This update was already processed.', 'info');
         } else {
@@ -56,7 +56,7 @@ export function StockUpdateDrawer({ product, onClose }: StockUpdateDrawerProps) 
         form.reset();
         onClose();
       },
-      onError: (err: any) => {
+      onError: (err: Error | Record<string, unknown>) => {
         notify(err.message || 'Failed to update stock. Please try again.', 'error');
       }
     });

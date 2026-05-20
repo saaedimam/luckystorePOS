@@ -1,12 +1,11 @@
 import { useState, useMemo } from 'react';
 import { useInventoryList } from '../../hooks/useInventory';
-import { useAuth } from '../../lib/AuthContext';
+import {  useAuth  } from '../../hooks/useAuth';
 import { PageContainer } from '../../layouts/PageContainer';
 import { ErrorState } from '../../components/ui/ErrorState';
-import { Search, RefreshCw, History, Download } from 'lucide-react';
+import { RefreshCw, History, Download } from 'lucide-react';
 import { StockUpdateDrawer } from './StockUpdateDrawer';
 import { Link } from 'react-router-dom';
-import { formatDistanceToNow } from 'date-fns';
 import { useDebounce } from '../../hooks/useDebounce';
 import { PageHeader } from '../../components/layout/PageHeader';
 import { Button } from '../../components/ui/Button';
@@ -15,9 +14,6 @@ import { getInventoryColumns } from './columns';
 import { usePersistedTableState } from '../../hooks/usePersistedTableState';
 import { processTableData } from '../../lib/table-query';
 import { Card } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
-import { MetricCard } from '../../components/data-display/MetricCard';
-import { CategoryThumbnailGrid } from '../products/CategoryThumbnailGrid';
 import { downloadCSV } from '../../lib/format';
 
 import { InventoryListRow } from '../../types/rpc';
