@@ -31,6 +31,7 @@ CREATE OR REPLACE FUNCTION public.reserve_online_stock()
 RETURNS TRIGGER 
 LANGUAGE plpgsql
 SECURITY DEFINER
+SET search_path = public
 AS $$
 BEGIN
   -- Update the products table reservation counter
@@ -62,6 +63,7 @@ CREATE OR REPLACE FUNCTION public.release_online_stock()
 RETURNS TRIGGER 
 LANGUAGE plpgsql
 SECURITY DEFINER
+SET search_path = public
 AS $$
 DECLARE
   v_item record;

@@ -93,3 +93,86 @@ VALUES (
     '00000000-0000-0000-0000-00000000000a',
     '00000000-0000-0000-0000-000000000001'
 ) ON CONFLICT (id) DO NOTHING;
+
+-- 6. Create Seeded Admin User (admin@luckystore.com / TempPassword123!)
+INSERT INTO auth.users (
+    instance_id,
+    id,
+    aud,
+    role,
+    email,
+    encrypted_password,
+    email_confirmed_at,
+    recovery_sent_at,
+    last_sign_in_at,
+    raw_app_meta_data,
+    raw_user_meta_data,
+    created_at,
+    updated_at,
+    confirmation_token,
+    email_change,
+    email_change_token_new,
+    recovery_token
+)
+VALUES (
+    '00000000-0000-0000-0000-000000000000',
+    '00000000-0000-0000-0000-000000000002',
+    'authenticated',
+    'authenticated',
+    'admin@luckystore.com',
+    crypt('TempPassword123!', gen_salt('bf')),
+    now(),
+    now(),
+    now(),
+    '{"provider":"email","providers":["email"]}',
+    '{"name":"Lucky Store Admin"}',
+    now(),
+    now(),
+    '',
+    '',
+    '',
+    ''
+) ON CONFLICT (id) DO NOTHING;
+
+-- 7. Create Identity for admin@luckystore.com
+INSERT INTO auth.identities (
+    id,
+    user_id,
+    identity_data,
+    provider,
+    provider_id,
+    last_sign_in_at,
+    created_at,
+    updated_at
+)
+VALUES (
+    '00000000-0000-0000-0000-000000000002',
+    '00000000-0000-0000-0000-000000000002',
+    format('{"sub":"%s","email":"%s"}', '00000000-0000-0000-0000-000000000002', 'admin@luckystore.com')::jsonb,
+    'email',
+    '00000000-0000-0000-0000-000000000002',
+    now(),
+    now(),
+    now()
+) ON CONFLICT (id) DO NOTHING;
+
+-- 8. Create Public User Profile for admin@luckystore.com
+INSERT INTO public.users (
+    id,
+    auth_id,
+    email,
+    name,
+    role,
+    store_id,
+    tenant_id
+)
+VALUES (
+    '00000000-0000-0000-0000-000000000003',
+    '00000000-0000-0000-0000-000000000002',
+    'admin@luckystore.com',
+    'Lucky Store Admin',
+    'admin',
+    '00000000-0000-0000-0000-00000000000a',
+    '00000000-0000-0000-0000-000000000001'
+) ON CONFLICT (id) DO NOTHING;
+

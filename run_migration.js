@@ -2,8 +2,9 @@ const { Client } = require('pg');
 const fs = require('fs');
 
 async function run() {
+  const password = process.env.SUPABASE_DB_PASSWORD || 'qejwux-peQjyc-7hyxpi';
   const client = new Client({
-    connectionString: 'postgresql://postgres.hvmyxyccfnkrbxqbhlnm:RJbgX9JwcVNFv0q9@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres',
+    connectionString: `postgresql://postgres.hvmyxyccfnkrbxqbhlnm:${password}@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres`,
     ssl: { rejectUnauthorized: false }
   });
   
