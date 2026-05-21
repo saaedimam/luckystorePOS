@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <rect width="100" height="100" fill="#DBEAFE"/>
+  <rect x="40" y="15" width="20" height="60" rx="3" fill="#3B82F6"/>
+  <rect x="38" y="10" width="24" height="10" rx="2" fill="#2563EB"/>
+  <text x="50" y="55" text-anchor="middle" font-size="7" fill="white" font-weight="bold">PASTE</text>
+</svg>

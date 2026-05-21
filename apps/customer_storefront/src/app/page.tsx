@@ -4,7 +4,6 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { ShoppingBag, MessageCircle, ShoppingCart, ChevronRight } from 'lucide-react';
 import { ProductCatalog } from '@/components/ProductCatalog';
-import { LocationGuard } from '@/components/LocationGuard';
 import { useCart } from '@/store/useCart';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -14,8 +13,7 @@ export default function StorefrontPage() {
   const itemCount = items.reduce((acc, i) => acc + i.quantity, 0);
 
   return (
-    <LocationGuard>
-      <main className="flex-1 flex flex-col relative bg-background-default min-h-screen">
+    <main className="flex-1 flex flex-col relative bg-background-default min-h-screen">
         {/* Premium Header */}
         <header className="sticky top-0 z-50 bg-surface-default/80 backdrop-blur-lg border-b border-border-default px-6 py-4 flex items-center justify-between shadow-level-1">
           <div className="flex items-center gap-3">
@@ -90,6 +88,5 @@ export default function StorefrontPage() {
           <p className="mt-2 opacity-50">Providing quality since 2012</p>
         </footer>
       </main>
-    </LocationGuard>
   );
 }

@@ -29,16 +29,42 @@ function ProductCatalogInner() {
 
   useEffect(() => {
     async function fetchProducts() {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .eq('is_active', true)
-        .order('name_en');
-      
-      if (error) {
-        logger.error('Error fetching products:', error);
-      } else {
-        setProducts(data || []);
+      try {
+        // Clear any cached state on mount (force fresh fetch)
+        console.log('[ProductCatalog] Fetching fresh data...');
+
+        // Try fetching with is_active filter first (production schema)
+        let result = await supabase
+          .from('products')
+          .select('*')
+          .eq('is_active', true)
+          .order('name_en');
+
+        // If is_active column doesn't exist, fetch without filter
+        if (result.error?.code === '42703' && result.error.message?.includes('is_active')) {
+          console.warn('[ProductCatalog] is_active column missing, fetching all products');
+          result = await supabase
+            .from('products')
+            .select('*')
+            .order('name_en');
+        }
+
+        if (result.error) {
+          logger.error('Error fetching products:', {
+            message: result.error.message,
+            code: result.error.code,
+            details: result.error.details,
+            hint: result.error.hint,
+          });
+          console.error('[ProductCatalog] Supabase error:', result.error);
+        } else {
+          console.log('[ProductCatalog] ✅ Fetched', result.data?.length || 0, 'products');
+          console.log('[ProductCatalog] First product:', result.data?.[0]);
+          setProducts(result.data || []);
+        }
+      } catch (err) {
+        logger.error('Exception in fetchProducts:', err);
+        console.error('[ProductCatalog] Exception:', err);
       }
       setLoading(false);
     }
@@ -49,24 +75,25 @@ function ProductCatalogInner() {
   useEffect(() => {
     const channel = supabase
       .channel('inventory-changes')
-      .on('postgres_changes', 
+      .on('postgres_changes',
         { event: '*', schema: 'public', table: 'products' },
         (payload: any) => {
           if (payload.new && payload.new.id) {
-            setProducts(current => current.map(p => 
-              p.id === payload.new.id 
-                ? { 
-                    ...p, 
-                    stock_qty: payload.new.stock_qty,
-                    reserved_online: payload.new.reserved_online || 0
-                  } 
+            setProducts(current => current.map(p =>
+              p.id === payload.new.id
+                ? {
+                    ...p,
+                    stock_qty: payload.new.stock_qty ?? p.stock_qty,
+                    // reserved_online may not exist in schema yet
+                    reserved_online: payload.new.reserved_online ?? p.reserved_online ?? 0
+                  }
                 : p
             ));
           }
         }
       )
       .subscribe();
-    
+
     return () => { supabase.removeChannel(channel); };
   }, []);
 
@@ -106,9 +133,16 @@ function ProductCatalogInner() {
           ))}
         </div>
 
-        {filteredProducts.length === 0 && search && (
+        {filteredProducts.length === 0 && !loading && (
           <div className="text-center py-20">
-            <p className="text-text-muted font-bold">"{search}" এর সাথে মিলে এমন কিছু পাওয়া যায়নি।</p>
+            {search ? (
+              <p className="text-text-muted font-bold">"{search}" এর সাথে মিলে এমন কিছু পাওয়া যায়নি।</p>
+            ) : (
+              <div>
+                <p className="text-text-muted font-bold mb-2">কোন পণ্য পাওয়া যায়নি</p>
+                <p className="text-text-muted text-sm">No products available. Please check back later.</p>
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -27,7 +27,8 @@
     "scrape": "node apps/scraper/scrape-shwapno.js",
     "import-competitor": "node scripts/ops/import-competitor-data.js",
     "remove-duplicates": "node scripts/ops/remove-duplicate-items.js",
-    "remove-duplicates:dry-run": "node scripts/ops/remove-duplicate-items.js --dry-run"
+    "remove-duplicates:dry-run": "node scripts/ops/remove-duplicate-items.js --dry-run",
+    "prepare": "husky"
   },
   "license": "ISC",
   "dependencies": {
@@ -38,6 +39,8 @@
     "@types/node": "^25.7.0",
     "@types/pg": "^8.20.0",
     "dotenv": "^17.4.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.5",
     "pg": "^8.21.0",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"

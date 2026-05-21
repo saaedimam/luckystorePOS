@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Supabase Connection Test</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+  <h1>Supabase Connection Test</h1>
+  <div id="status">Loading...</div>
+  <pre id="result"></pre>
+
+  <script>
+    const SUPABASE_URL = 'https://hvmyxyccfnkrbxqbhlnm.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2bXl4eWNjZm5rcmJ4cWJobG5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNzEwMjMsImV4cCI6MjA4OTk0NzAyM30.8_H6GaToDmslFcjitqaPyJd_N-bUaIPUC2tnC1_pwfI';
+
+    async function testConnection() {
+      const status = document.getElementById('status');
+      const result = document.getElementById('result');
+
+      try {
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log('Supabase client created');
+
+        // Try to fetch products
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('is_active', true)
+          .order('name_en');
+
+        if (error) {
+          status.innerHTML = '<span style="color: red;">Error</span>';
+          result.textContent = JSON.stringify(error, null, 2);
+          console.error('Supabase error:', error);
+        } else {
+          status.innerHTML = '<span style="color: green;">Success! Found ' + data.length + ' products</span>';
+          result.textContent = JSON.stringify(data, null, 2);
+          console.log('Products:', data);
+        }
+      } catch (err) {
+        status.innerHTML = '<span style="color: red;">Exception</span>';
+        result.textContent = err.message;
+        console.error('Exception:', err);
+      }
+    }
+
+    testConnection();
+  </script>
+</body>
+</html>
