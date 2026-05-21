@@ -232,3 +232,15 @@ artifacts/governance/environment-fingerprint.json
 artifacts/governance/staging-fingerprint.json
 .vercel
 .env*.local
+
+# AI workspace (never commit outputs/sessions)
+.ai/outputs/
+.ai/memory/sessions/
+.ai/memory/checkpoints/
+.env.ai
+.vibe-session.log
+*.log
+
+# Governance Artifacts
+artifacts/governance/*.json
+artifacts/governance/*.txt
