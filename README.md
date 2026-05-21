@@ -1,97 +1,66 @@
 <div align="center">
 
-<img src="./docs/screenshots/admin_dashboard_loaded.png" alt="Lucky Store POS Admin Dashboard" width="100%">
+<img src="docs/assets/logo.png" alt="Lucky Store POS" width="200">
+
+# Lucky Store POS
+
+A free, open-source Point of Sale system built for retail shops in Bangladesh
+
+bKash Payments • Offline-First • Bangla Interface • Bluetooth Label Printing • 
+Real-Time Inventory • AI Price Monitoring
+
+[![🚀 Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-adminweb--blond.vercel.app-000000?style=for-the-badge&logo=vercel)](https://adminweb-blond.vercel.app/)
+[![⬇️ Download APK](https://img.shields.io/badge/⬇️%20Download%20APK-Latest%20Release-32CD32?style=for-the-badge&logo=github)](https://github.com/saaedimam/luckystorePOS/releases)
 
 </div>
 
 <p align="center">
+  <img src="https://img.shields.io/github/actions/workflow/status/saaedimam/luckystorePOS/ci.yml?style=flat-square&logo=github&label=CI" alt="Build">
   <img src="https://img.shields.io/badge/version-1.0.0-32CD32?style=flat-square" alt="Version">
-  &nbsp;
-  <img src="https://img.shields.io/badge/license-Apache--2.0-32CD32?style=flat-square&logo=apache&logoColor=white" alt="License">
-  &nbsp;
-  <img src="https://img.shields.io/badge/platform-Android%20%7C%20Web%2FPWA-6C757D?style=flat-square&logo=android&logoColor=white" alt="Platform">
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Flutter-3.29.3-02569B?style=flat-square&logo=flutter&logoColor=white" alt="Flutter">
-  &nbsp;
-  <img src="https://img.shields.io/badge/React-19-20232A?style=flat-square&logo=react&logoColor=61DAFB" alt="React">
-  &nbsp;
-  <img src="https://img.shields.io/badge/TypeScript-6.0-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript">
-  &nbsp;
-  <img src="https://img.shields.io/badge/Supabase-Production-3ECF8E?style=flat-square&logo=supabase&logoColor=white" alt="Supabase">
-  &nbsp;
-  <img src="https://img.shields.io/badge/PRs-welcome-32CD32?style=flat-square" alt="PRs Welcome">
-</p>
-
----
-
-<p align="center">
-  <strong>A free, open-source Point of Sale system built for retail shops in Bangladesh</strong><br>
-  <em>bKash Payments | Offline-First | Bangla Interface | Bluetooth Label Printing | Real-Time Inventory | AI Price Monitoring</em>
-</p>
-
-<p align="center">
-  <a href="https://adminweb-blond.vercel.app/">
-    <img src="https://img.shields.io/badge/🚀%20Live%20Admin%20Demo-adminweb--blond.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Admin Demo" height="50">
-  </a>
-  &nbsp;
-  <a href="https://github.com/saaedimam/luckystorePOS/releases">
-    <img src="https://img.shields.io/badge/⬇️%20Download%20APK-Latest%20Release-32CD32?style=for-the-badge&logo=github&logoColor=white" alt="Download Latest Release" height="50">
-  </a>
-</p>
-
----
-
-## 📋 Quick Navigation
-
-<p align="center">
-
-[Why Lucky Store?](#-why-lucky-store-pos) ·
-[Screenshots](#-screenshots) ·
-[Features](#-features) ·
-[Tech Stack](#-tech-stack) ·
-[Quick Start](#-quick-start) ·
-[Deployment](#-deployment) ·
-[Contributing](#-contributing)
-
+  <img src="https://img.shields.io/badge/platform-Android%20%7C%20Web%2FPWA-6C757D?style=flat-square&logo=android" alt="Platform">
+  <img src="https://img.shields.io/badge/Flutter-3.29.3-02569B?style=flat-square&logo=flutter" alt="Flutter">
+  <img src="https://img.shields.io/badge/React-19-20232A?style=flat-square&logo=react" alt="React">
+  <img src="https://img.shields.io/badge/TypeScript-6.0-3178C6?style=flat-square&logo=typescript" alt="TypeScript">
+  <img src="https://img.shields.io/badge/license-Apache--2.0-32CD32?style=flat-square&logo=apache" alt="License">
 </p>
 
 ---
 
 ## 🤔 Why Lucky Store POS?
 
-**Lucky Store POS is purpose-built for the reality of Bangladeshi retail:** intermittent internet, bKash dominance, thermal label culture, and the need for both Bangla and English at the counter.
+Lucky Store POS is purpose-built for the reality of Bangladeshi retail: intermittent 
+internet, bKash dominance, thermal label culture, and the need for both Bangla and English 
+at the counter.
 
 | Feature | **Lucky Store POS** | Traditional POS | Cloud-Only POS |
 |:--------|:-------------------|:----------------|:---------------|
-| **Offline Mode** | Full offline with Drift SQLite; auto-syncs when back online | Paper-based fallback only | Stops working completely |
-| **bKash Payments** | Native bKash checkout built into the POS flow | Manual reconciliation | Not available |
-| **SSLCommerz Cards** | Integrated card + mobile banking gateway | Separate terminal required | May support, generic |
-| **Bluetooth Label Printing** | MHT-P29L TSPL, Code128 barcodes, 40x30mm labels | Manual price tagging | Not supported |
-| **Bangla Interface** | English + Bangla with HindSiliguri font throughout | English-only | English-only |
-| **Competitor Price Monitoring** | AI-powered scraping of Shwapno, Chaldal, AamaderBazar | Not available | Not available |
-| **Multi-Tenant Security** | Supabase RLS with tenant isolation per store | Basic auth only | Basic auth only |
-| **Deployment** | Docker one-command, Vercel free tier, APK sideload | Complex server setup | Vendor lock-in |
-| **Cost** | Free & Open Source (Apache 2.0) | License fees + hardware | Monthly SaaS fees |
-| **Realtime Inventory** | Supabase realtime subscriptions; low-stock alerts | End-of-day manual counts | Polling-based only |
+| **Offline Mode** | Full offline with Drift SQLite; auto-syncs | Paper fallback only | Stops working |
+| **bKash Payments** | Native bKash checkout built-in | Manual reconciliation | Not available |
+| **SSLCommerz Cards** | Integrated card + mobile banking | Separate terminal | Generic support |
+| **Bluetooth Label Printing** | MHT-P29L TSPL, Code128, 40x30mm | Manual price tagging | Not supported |
+| **Bangla Interface** | English + Bangla with HindSiliguri | English-only | English-only |
+| **Competitor Price Monitoring** | AI-powered scraping | Not available | Not available |
+| **Multi-Tenant Security** | Supabase RLS with tenant isolation | Basic auth | Basic auth |
+| **Deployment** | Docker one-command, Vercel free, APK sideload | Complex server | Vendor lock-in |
+| **Cost** | Free & Open Source | License fees + hardware | Monthly SaaS |
 
 ---
 
 ## 📸 Screenshots
 
-### 💻 Admin Dashboard (React + Vite)
-
 <div align="center">
 
-![Admin Dashboard](docs/screenshots/admin_dashboard_loaded.png)
-*Live sales analytics, revenue trends & key business metrics — verified against production Supabase staging database*
+<img src="docs/screenshots/admin_dashboard_loaded.png" alt="Admin Dashboard" width="90%">
+<br>
+<em>Admin Dashboard — Live sales analytics & business metrics</em>
+
+<br><br>
+
+<img src="docs/screenshots/mobile_pos.png" alt="Mobile POS" width="300">
+<br>
+<em>Mobile POS — Offline-first Flutter app with barcode scanning</em>
 
 </div>
-
-### 📱 Mobile App (Flutter) — Coming Soon
-
-> Mobile screenshots are being captured. Download the [APK from GitHub Releases](https://github.com/saaedimam/luckystorePOS/releases) to see the Flutter POS app in action.
 
 ---
 
@@ -101,15 +70,15 @@
 
 | Sales Management | Barcode Scanning | Offline Mode |
 |:----------------:|:---------------:|:------------:|
-| Cash, bKash, Card & Credit payments | Camera-based (Code128, EAN-13, QR) | Drift SQLite with background sync |
+| Cash, bKash, Card & Credit | Camera-based (Code128, EAN-13, QR) | Drift SQLite with background sync |
 
 | Inventory Tracking | Label Printing | Localization |
 |:------------------:|:-------------:|:------------:|
-| Real-time stock + low-stock alerts | MHT-P29L Bluetooth, TSPL, 40×30mm labels | English + Bangla (HindSiliguri font) |
+| Real-time stock + low-stock alerts | MHT-P29L Bluetooth, TSPL, 40×30mm | English + Bangla (HindSiliguri) |
 
 | PIN-Based Auth | Manager Dashboard | Store Operations |
 |:-------------:|:-----------------:|:----------------:|
-| Staff PIN via Supabase RPC | Close review, risk analytics, session summaries | Open/close shifts, cash reconciliation |
+| Staff PIN via Supabase RPC | Close review, risk analytics | Open/close shifts, cash reconciliation |
 
 <details>
 <summary><strong>🔍 Offline-First Architecture</strong></summary>
@@ -120,7 +89,8 @@
 - **Background sync** via WorkManager + flutter_background_service
 - **Conflict resolution** with idempotency keys and server-authoritative override
 - **Feature toggle:** `ENABLE_OFFLINE_MODE=true`
-- See: [Conflict Resolution Policy](docs/conflict_resolution_policy.md)
+
+See: [Conflict Resolution Policy](docs/conflict_resolution_policy.md)
 
 </details>
 
@@ -147,7 +117,6 @@
 - Code128 barcode generation via `barcode_widget`
 - 40×30mm labels with MRP strikethrough pricing
 - Bulk printing from CSV files
-- Print retry queue for reliability
 
 </details>
 
@@ -169,15 +138,15 @@
 
 | Analytics Dashboard | POS Checkout | Product Management |
 |:------------------:|:-----------:|:-----------------:|
-| Sales trends, Recharts charts, low-stock alerts | Cart checkout, barcode lookup, receipt preview | Category thumbnails, grid/list toggle, image upload |
+| Sales trends, Recharts, low-stock alerts | Cart checkout, barcode lookup, receipt preview | Category thumbnails, grid/list, image upload |
 
 | Inventory Control | Finance Ledgers | Collections |
 |:-----------------:|:--------------:|:-----------:|
-| Real-time stock, adjust/history, status badges | Supplier payables + Customer receivables with aging | Overdue follow-ups, payment tracking |
+| Real-time stock, adjust/history | Supplier payables + Customer receivables with aging | Overdue follow-ups, payment tracking |
 
 | Purchase Management | Expense Tracking | PWA Support |
 |:------------------:|:--------------:|:-----------:|
-| Purchase entry, receiving, history | Pie/bar charts, 6 categories, 4 payment types | Installable on any device, offline caching |
+| Purchase entry, receiving, history | Pie/bar charts, 6 categories, 4 payment types | Installable, offline caching |
 
 <details>
 <summary><strong>🔍 Dashboard & Analytics</strong></summary>
@@ -199,9 +168,10 @@
 
 - **Supplier Ledger** — payables, aging summary, transaction history
 - **Customer Ledger** — receivables, credit history, balance tracking
-- **Collections Workspace** — overdue customer list with days-overdue, promise-to-pay dates, quick actions (call/SMS/note/payment)
-- **Expense Tracking** — pie + bar charts (Recharts), 6 categories (Stock Purchase, Capital Expenditure, Utility, Transport, Salary, Partners Take, Other), 4 payment types
-- **Daily Sales** — end-of-day manual entry with line+bar charts, period comparisons
+- **Collections Workspace** — overdue customer list with days-overdue, 
+  promise-to-pay dates, quick actions (call/SMS/note/payment)
+- **Expense Tracking** — pie + bar charts (Recharts), 6 categories, 4 payment types
+- **Daily Sales** — end-of-day manual entry with line+bar charts
 
 </details>
 
@@ -226,7 +196,7 @@
 | Database tables | 50+ |
 | SQL migrations | 80+ |
 | Stored procedures (RPCs) | 80+ |
-| Edge functions (Deno) | 8 |
+| Edge functions (Deno) | 17 |
 | RLS policies | Tenant-isolated on every table |
 
 <details>
@@ -240,10 +210,17 @@
 | `adjust-stock` | Stock adjustment with configurable CORS |
 | `import-inventory` | CSV/XLSX import with auto-barcode (EAN-13), image upload, batch/expiry tracking, audit trail |
 | `create-card-checkout` | SSLCommerz card checkout session initiation |
+| `create-bkash-checkout` | bKash payment processing |
 | `payment-ipn` | SSLCommerz Instant Payment Notification validator |
 | `payment-return-success` | SSLCommerz success callback handler |
 | `payment-return-fail` | SSLCommerz failure callback handler |
 | `payment-return-cancel` | SSLCommerz cancellation callback handler |
+| `notify-order` | Order notifications via multiple channels |
+| `send-invoice` | Invoice delivery automation |
+| `send-whatsapp-message` | WhatsApp messaging integration |
+| `whatsapp-order-notify` | WhatsApp order alerts |
+| `stitch-orchestrator` | Data stitching and orchestration |
+| `sync-alert-bridge` | Sync alerting and monitoring |
 
 </details>
 
@@ -254,11 +231,11 @@
 
 - **Tenant-Isolated Row-Level Security** — every table has RLS policies isolating data per store
 - **Multi-tenant** — single Supabase project serves unlimited stores
-- **PIN-based staff auth** via `authenticate_staff_pin` RPC (separate from admin email/password)
+- **PIN-based staff auth** via `authenticate_staff_pin` RPC
 - **Service role key** used only in edge functions; anon key for client operations
-- **Rate limiting** via database-backed `rate_limits` table + `check_rate_limit` RPC
-- **Input validation** on all edge functions (UUID format, positive numbers, max amounts)
-- See: [RLS Security Model](docs/RLS_SECURITY_MODEL.md)
+- **Rate limiting** via database-backed `rate_limits` table
+
+See: [RLS Security Model](docs/RLS_SECURITY_MODEL.md)
 
 </details>
 
@@ -286,13 +263,13 @@
 
 - **Puppeteer-based scraping** of major Bangladeshi retailers:
   - **Shwapno** — Bangladesh's largest retail chain
-  - **Chaldal** — leading online grocery (per-category: biscuits, chocolates, beverages, noodles, etc.)
+  - **Chaldal** — leading online grocery (per-category: biscuits, chocolates, beverages, etc.)
   - **AamaderBazar** — competitive pricing data
   - **Unilever Bangladesh** — brand-level pricing
 - **AI product mapping** via string-similarity algorithms
 - **Price comparison generation** for reporting and competitive analysis
-- Data stored in Supabase for reporting and competitive analysis
-- Run: `cd apps/scraper && npm run update-prices`
+
+Run: `cd apps/scraper && npm run update-prices`
 
 </details>
 
@@ -300,20 +277,55 @@
 
 ## 🛠 Tech Stack
 
-### Mobile App
-**Flutter 3.29.3** · Dart ≥3.7.2 · Provider · Drift (SQLite) · supabase_flutter · flutter_blue_plus · mobile_scanner · fl_chart · workmanager · flutter_background_service · flutter_dotenv · google_fonts · intl · barcode_widget · esc_pos_utils_plus · pdf · printing · csv · excel · webview_flutter
+### Mobile
 
-### Admin Web
-**React 19** · Vite 8 · TypeScript 6.0 (strict) · Tailwind CSS 3.4 · React Router 7 · TanStack Query 5 · TanStack Virtual 3 · Recharts 3 · React Hook Form 7 · Zod 4 · Lucide React · date-fns · clsx
+![Flutter](https://img.shields.io/badge/Flutter-3.29.3-02569B?style=flat-square&logo=flutter)
+![Dart](https://img.shields.io/badge/Dart-≥3.7.2-00B4AB?style=flat-square&logo=dart)
+![Provider](https://img.shields.io/badge/Provider-State%20Mgmt-FF5722?style=flat-square)
+![Drift](https://img.shields.io/badge/Drift-SQLite%20ORM-3ECF8E?style=flat-square)
+![Supabase Flutter](https://img.shields.io/badge/supabase_flutter-Auth%2FDB-3ECF8E?style=flat-square&logo=supabase)
+![Bluetooth](https://img.shields.io/badge/flutter_blue_plus-Bluetooth-0082FC?style=flat-square&logo=bluetooth)
+![Scanner](https://img.shields.io/badge/mobile_scanner-Barcode-FF9800?style=flat-square)
+![Charts](https://img.shields.io/badge/fl_chart-DataViz-2196F3?style=flat-square)
+![Background](https://img.shields.io/badge/workmanager-Scheduling-4CAF50?style=flat-square)
+![Fonts](https://img.shields.io/badge/google_fonts-Typography-4285F4?style=flat-square)
+![Barcode](https://img.shields.io/badge/barcode_widget-Generation-9C27B0?style=flat-square)
+![PDF](https://img.shields.io/badge/pdf-Reports-F44336?style=flat-square)
+![Excel](https://img.shields.io/badge/excel-Data%20Export-217346?style=flat-square)
+
+### Web
+
+![React](https://img.shields.io/badge/React-19-20232A?style=flat-square&logo=react)
+![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite)
+![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?style=flat-square&logo=typescript)
+![Tailwind](https://img.shields.io/badge/Tailwind-3.4-06B6D4?style=flat-square&logo=tailwindcss)
+![Router](https://img.shields.io/badge/React%20Router-7-CA4245?style=flat-square&logo=reactrouter)
+![Query](https://img.shields.io/badge/TanStack%20Query-5-FF4154?style=flat-square)
+![Virtual](https://img.shields.io/badge/TanStack%20Virtual-3-FF4154?style=flat-square)
+![Recharts](https://img.shields.io/badge/Recharts-3-22B5BF?style=flat-square)
+![Forms](https://img.shields.io/badge/React%20Hook%20Form-7-EC5990?style=flat-square)
+![Zod](https://img.shields.io/badge/Zod-4-3E67B1?style=flat-square)
+![Lucide](https://img.shields.io/badge/Lucide-Icons-F56565?style=flat-square)
 
 ### Backend
-**Supabase** · PostgreSQL 17 · Deno Edge Functions · Row-Level Security · Realtime Subscriptions · Storage
+
+![Supabase](https://img.shields.io/badge/Supabase-Production-3ECF8E?style=flat-square&logo=supabase)
+![Postgres](https://img.shields.io/badge/PostgreSQL-17-4169E1?style=flat-square&logo=postgresql)
+![Deno](https://img.shields.io/badge/Deno-Edge%20Functions-000000?style=flat-square&logo=deno)
+![RLS](https://img.shields.io/badge/RLS-Security-4CAF50?style=flat-square)
+![Realtime](https://img.shields.io/badge/Realtime-Subscriptions-FF9800?style=flat-square)
 
 ### DevOps
-**Docker** (multi-stage Node 22 + Nginx 1.27 Alpine) · GitHub Actions (Flutter analyze/test/build + admin TS check/build) · Vercel (landing page + admin hosting)
+
+![Docker](https://img.shields.io/badge/Docker-Multi--stage-2496ED?style=flat-square&logo=docker)
+![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-2088FF?style=flat-square&logo=githubactions)
+![Vercel](https://img.shields.io/badge/Vercel-Hosting-000000?style=flat-square&logo=vercel)
 
 ### Scraper
-**Node.js** · Puppeteer · string-similarity · xlsx
+
+![Node.js](https://img.shields.io/badge/Node.js-Runtime-339933?style=flat-square&logo=nodedotjs)
+![Puppeteer](https://img.shields.io/badge/Puppeteer-Scraping-40B5A4?style=flat-square)
+![XLSX](https://img.shields.io/badge/xlsx-Data%20Processing-217346?style=flat-square)
 
 ---
 
@@ -321,8 +333,8 @@
 
 ### Prerequisites
 
-| Tool | Minimum Version | Check |
-|:-----|:---------------|:------|
+| Tool | Minimum Version | Check Command |
+|:-----|:---------------|:--------------|
 | Flutter SDK | ≥ 3.29.3 | `flutter --version` |
 | Node.js | ≥ 20.0.0 | `node --version` |
 | npm | ≥ 10.0.0 | `npm --version` |
@@ -356,7 +368,8 @@ npm run dev                  # Opens at http://localhost:5173/admin/
 docker compose up -d         # Admin web at http://localhost:8080
 ```
 
-> **Tip:** For a full local developer setup guide including Docker configuration, seed credentials, and local vs. remote Supabase mode, see the **[Developer Runbook](docs/DEVELOPER.md)**.
+> **Tip:** For a full local developer setup guide including Docker configuration, 
+> seed credentials, and local vs. remote Supabase mode, see the **[Developer Runbook](docs/DEVELOPER.md)**.
 
 ---
 
@@ -365,24 +378,40 @@ docker compose up -d         # Admin web at http://localhost:8080
 ```
 luckystorePOS/
 ├── apps/
-│   ├── mobile_app/          # Flutter POS app
 │   ├── admin_web/           # React + Vite admin dashboard
-│   └── scraper/             # Puppeteer competitor price scraper
+│   ├── customer_storefront/ # Next.js customer storefront
+│   ├── mobile_app/          # Flutter POS app
+│   ├── scraper/             # Puppeteer price scraper
+│   └── store/               # Store management app
 ├── supabase/
+│   ├── functions/           # 17 Deno edge functions
 │   ├── migrations/          # 80+ SQL migration files
-│   ├── functions/           # 8 Deno edge functions
-│   └── config.toml          # Supabase local configuration
-├── landing-page/            # Static HTML marketing page (Vercel)
-├── docs/                    # Documentation files
-│   ├── DEVELOPER.md         # Local dev runbook & troubleshooting
-│   ├── RLS_SECURITY_MODEL.md
-│   ├── OFFLINE_SYNC_IMPLEMENTATION.md
-│   └── screenshots/         # App screenshots
-├── scripts/                 # Build, deploy, DB, seed, and ops scripts
-├── data/                    # Inventory CSVs and static data assets
-├── docker-compose.yml       # One-command Docker deployment
-├── vercel.json              # Vercel routing & build config
-└── LICENSE                  # Apache 2.0
+│   └── config.toml          # Local configuration
+├── .ai/                     # AI command center
+│   ├── AI_TASKS.md          # Task queue
+│   ├── llm_config.json      # Model routing
+│   ├── .vibe-config.json     # Vibe coding rules
+│   ├── prompts/             # Reusable AI prompts
+│   ├── antigravity/         # IDE integration docs
+│   └── memory/              # Session backups
+├── .vibe/                   # Vibe coding workspace
+│   ├── current/             # Active session
+│   └── history/             # Archived sessions
+├── .antigravity/            # IDE configuration
+├── .agents/                 # AI agent configuration
+├── .gemini/                 # Gemini token optimizer
+├── .hermes/                 # Antigravity memory hub
+├── scripts/                 # Build, deploy, governance, safety
+│   └── dev/                 # AI helper, sync, checkpoint, vibe-start
+├── infra/                   # Migration replay infrastructure
+├── artifacts/               # Build certification & lineage
+├── docs/                    # Documentation
+│   ├── architecture/        # System docs
+│   ├── runbooks/            # Operational guides
+│   └── vibe-guides/         # React/Flutter/Supabase patterns
+├── data/                    # Inventory CSVs & assets
+├── landing/                 # Marketing page
+└── [root config files]
 ```
 
 ---
@@ -451,17 +480,19 @@ Set required secrets on each edge function:
 | [RLS Security Model](docs/RLS_SECURITY_MODEL.md) | Row-level security architecture |
 | [Offline Sync Implementation](docs/OFFLINE_SYNC_IMPLEMENTATION.md) | Offline-first sync design |
 | [Conflict Resolution Policy](docs/conflict_resolution_policy.md) | Offline sync conflict handling |
-| [Branch Strategy](docs/root-docs/BRANCH_STRATEGY.md) | Git workflow |
+| [Branch Strategy](docs/BRANCH_STRATEGY.md) | Git workflow |
 
 ---
 
 ## 💬 Community & Support
 
-- **Email:** luckystore.1947@gmail.com
-- **Phone:** 01731944544
-- **Address:** 665 Percival Hill Road, Emdad Park, Chawkbazar, Chittagong, Bangladesh
-- **Issues:** [GitHub Issues](https://github.com/saaedimam/luckystorePOS/issues) — bug reports & feature requests
-- **Discussions:** [GitHub Discussions](https://github.com/saaedimam/luckystorePOS/discussions)
+| Channel | Contact |
+|:--------|:--------|
+| 📧 Email | luckystore.1947@gmail.com |
+| 📞 Phone | 01731944544 |
+| 🐛 Issues | [GitHub Issues](https://github.com/saaedimam/luckystorePOS/issues) |
+| 💬 Discussions | [GitHub Discussions](https://github.com/saaedimam/luckystorePOS/discussions) |
+| 📍 Address | 665 Percival Hill Road, Emdad Park, Chawkbazar, Chittagong, Bangladesh |
 
 ---
 
@@ -470,12 +501,17 @@ Set required secrets on each edge function:
 We welcome contributions!
 
 1. Fork this repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'feat: Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
+2. Create a feature branch: `git checkout -b feature/AmazingFeature`
+3. Commit your changes using conventional commits:
+   ```bash
+   git commit -m 'feat(pos): add split payment support'
+   git commit -m 'fix(rls): tighten tenant isolation'
+   git commit -m 'docs(readme): update deployment guide'
+   ```
+4. Push to the branch: `git push origin feature/AmazingFeature`
 5. Open a Pull Request
 
-**Commit format:** `type(scope): message` — e.g. `feat(pos): add split payment support`, `fix(rls): tighten tenant isolation`
+**Commit format:** `type(scope): message`
 
 ---
 
@@ -489,7 +525,8 @@ This project is licensed under the [Apache License 2.0](LICENSE).
 
 <p align="center">
   <a href="https://www.star-history.com/#saaedimam/luckystorePOS&Date" target="_blank">
-    <img src="https://api.star-history.com/svg?repos=saaedimam/luckystorePOS&type=Date" alt="Star History" width="600">
+    <img src="https://api.star-history.com/svg?repos=saaedimam/luckystorePOS&type=Date" 
+         alt="Star History" width="600">
   </a>
 </p>
 
@@ -497,7 +534,8 @@ This project is licensed under the [Apache License 2.0](LICENSE).
 
 <p align="center">
   <a href="https://github.com/saaedimam/luckystorePOS/graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=saaedimam/luckystorePOS&max=100" alt="Contributors" />
+    <img src="https://contrib.rocks/image?repo=saaedimam/luckystorePOS&max=100" 
+         alt="Contributors" />
   </a>
 </p>
 
@@ -505,6 +543,7 @@ This project is licensed under the [Apache License 2.0](LICENSE).
 
 **If you find this useful, give us a star ⭐**
 
-[Report Bug](https://github.com/saaedimam/luckystorePOS/issues) · [Request Feature](https://github.com/saaedimam/luckystorePOS/issues)
+[Report Bug](https://github.com/saaedimam/luckystorePOS/issues) · 
+[Request Feature](https://github.com/saaedimam/luckystorePOS/issues)
 
 </div>

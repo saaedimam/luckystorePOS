@@ -1,85 +1,156 @@
-# AGENTS.md
-## Project
-Lucky Store POS monorepo with a Vite admin app, Supabase backend, Flutter mobile app, and operational validation toolchain.
+# AGENTS.md: LuckyStorePOS Agent Configuration
 
-## System Maturity
-**Current Phase**: Pre-production Operational Validation
-The system contains: immutable inventory ledger, deterministic replay infrastructure, offline sync, reconciliation workflows, telemetry aggregation, and distributed eval infrastructure. This is NOT a prototype environment.
+## Agent Configuration
 
-## Runtime Topology
-- **Correct Workflow**: Local Admin Web / Flutter App -> **REAL Supabase STAGING Project**.
-- **Deprecated**: Local Supabase Docker stack for validation (validation must occur against staging).
-- **Local Frontend**: Expected on `3000` or `5173`.
-- **Flutter Setup**: Physical device, Bluetooth enabled, printer paired, pointing to staging.
+| Platform | Config Location | Key Settings |
+|----------|-----------------|--------------|
+| **Antigravity IDE** | `.antigravity/config.json` | Model routing, inline commands |
+| Ollama Cloud | `.ai/llm_config.json` | Free models: gemma3, qwen3-coder |
+| Gemini | `.ai/llm_config.json` | Paid models: 2.5 Flash, 2.5 Pro |
+| OpenClaw | `~/.openclaw/workspace/` | AGENTS.md, SOUL.md, TOOLS.md |
 
-## Hard Safety Rules
-### Security
-- NEVER edit `.env`, `.env.local`, production credentials, or real API keys.
-- NEVER expose `SUPABASE_SERVICE_ROLE_KEY` to Vite, Flutter, or any frontend/mobile code.
-- NEVER commit access tokens, database passwords, or secrets.
+| Hook Type | Trigger | Handler | Purpose |
+|-----------|---------|---------|---------|
+| UserPromptSubmit | Every prompt | `activator.sh` | Learning reminder |
+| PostToolUse | Bash commands | `error-detector.sh` | Error capture |
+| PreCompact | Context full | `measure.py compact-capture` | Checkpoint |
+| SessionEnd | Session close | `measure.py collect` | Usage stats |
 
-### Commands
-- NEVER run `supabase db reset`, `supabase db push`, `supabase migration repair`, or `supabase migration up` against real environments without explicit human approval.
-- NEVER push directly to `main`.
-- NEVER force-push.
-- Work only in current branch/worktree.
+## Context Management
 
-### Architecture & Ledger
-- NEVER bypass RPC inventory mutations or directly modify `stock_levels`.
-- NEVER remove append-only ledger guarantees.
-- NEVER weaken RLS protections.
-- NEVER remove idempotency protections or `operation_id` replay protections.
-- PRESERVE `SERIALIZABLE` transaction guarantees.
+| Layer | Tokens | Refresh Strategy |
+|-------|--------|------------------|
+| System | ~15,000 | Fixed per message |
+| CLAUDE.md | ~2,000-5,000 | Manual update |
+| MEMORY.md | ~1,500-3,000 | Auto-load project |
+| Session Context | Variable | Compaction at 50-70% |
 
-## Reusable Agent Execution Prompt
-You are operating inside the LuckyStorePOS distributed retail infrastructure.
-
-### Required Architecture Rules
-- **Frontend**: Rendering, orchestration, interaction.
-- **Hooks**: Optimistic state, query management, mutations.
-- **Service**: Supabase interaction, RPC execution, transport handling.
-- **Database**: Consistency, invariants, ledger correctness, concurrency control.
-
-### Priority Order
-1. Data correctness
-2. Ledger safety
-3. Replay determinism
-4. Environment safety
-5. Operational simplicity
-6. UX speed
-7. Feature velocity
-
-*Never optimize developer convenience over operational correctness.*
-
-## Required Output Format
-**Before changes**:
-- Explain the implementation plan.
-- Identify affected invariants.
-- Identify operational risks.
-- Identify migration risks.
-
-**After changes**:
-- Summarize changed files.
-- Summarize operational impact.
-- Summarize rollback strategy.
-- Summarize verification performed.
-
-## Verification Workflow
-Run verification AFTER EVERY CHANGE relevant to the platform:
-
-### Web
-```bash
-npm run typecheck
-npm run build
+```mermaid
+graph TD
+    A[Session Start] --> B{CLAUDE.md exists?}
+    B -->|Yes| C[Load ~4.5K tokens]
+    B -->|No| D[Minimal context]
+    C --> E{MEMORY.md?}
+    E -->|Yes| F[Load ~2K tokens]
+    E -->|No| G[Continue]
+    F --> H[First Message]
+    G --> H
+    
+    I[Context Full] --> J{/compact?}
+    J -->|Yes| K[PreCompact Hook]
+    K --> L[Capture Checkpoint]
+    L --> M[Compaction]
+    M --> N[SessionStart Restore]
 ```
 
-### Flutter
-```bash
-flutter analyze
+## Skill Registry
+
+| Skill | Version | Trigger | Handler | Assets |
+|-------|---------|---------|---------|--------|
+| Self-Improving Agent | 3.0.21 | agent:bootstrap | hooks/openclaw/handler.ts | ERRORS.md, LEARNINGS.md, FEATURE_REQUESTS.md |
+| Token Optimizer | 2.x | SessionEnd, PreCompact | scripts/measure.py | dashboard.html, checkpoints/ |
+
+```mermaid
+classDiagram
+    class Skill {
+        +name
+        +description
+        +version
+        +ownerId
+    }
+    class SelfImprovingAgent {
+        +logError()
+        +logLearning()
+        +promoteToMemory()
+    }
+    class TokenOptimizer {
+        +measure()
+        +compare()
+        +setupSmartCompact()
+        +dashboard()
+    }
+    
+    Skill <|-- SelfImprovingAgent
+    Skill <|-- TokenOptimizer
 ```
 
-### Distributed Safety
-Run distributed evals when replay logic, inventory logic, reconciliation, or offline logic changes.
-- `npm run check` (combined suite)
+| Registry File | Format | Update |
+|---------------|--------|--------|
+| `.skills_store_lock.json` | JSON | Auto on install |
+| `_meta.json` | YAML frontmatter | Manual |
 
-Report commands run and results transparently.
+## Model Mapping
+
+| Task | Provider | Model | Cost | Config Source |
+|------|----------|-------|------|---------------|
+| Quick chat | Ollama Cloud | gemma3:4b | **FREE** | `llm_config.json` |
+| Code generation | Ollama Cloud | qwen3-coder:480b | **FREE** | `llm_config.json` |
+| Code review | Ollama Cloud | kimi-k2.5 | **FREE** | `llm_config.json` |
+| Deep thinking | Ollama Cloud | kimi-k2-thinking | **FREE** | `llm_config.json` |
+| sequential_thought_generation | Gemini | 2.5 Flash | $0.075/1K | `llm_config.json` |
+| research_query | Gemini | 2.5 Flash | $0.075/1K | `llm_config.json` |
+| prd_generation | Gemini | 2.5 Flash | $0.075/1K | `llm_config.json` |
+| task_decomposition | Gemini | 2.5 Flash | $0.075/1K | `llm_config.json` |
+| agent_coordination | Gemini | 2.5 Flash | $0.075/1K | `llm_config.json` |
+| synthesis | Gemini | 2.5 Pro | $0.15/1K | `llm_config.json` |
+| verification | Gemini | 2.5 Flash | $0.075/1K | `llm_config.json` |
+
+```mermaid
+sequenceDiagram
+    participant Agent as Sub-agent
+    participant Router as LLM Router
+    participant Ollama as Ollama Cloud
+    participant Gemini as Gemini Flash
+    
+    Agent->>Router: Request with task_type
+    alt Free Task (Code/Review)
+        Router->>Ollama: Route to Ollama
+        Ollama-->>Agent: Response (FREE)
+    else Paid Task (Architecture/Analysis)
+        Router->>Gemini: Route to Gemini
+        Gemini-->>Agent: Response ($)
+    end
+```
+
+## Cost Control
+
+| Strategy | Implementation | Impact |
+|----------|----------------|--------|
+| Model Tiers | Ollama Cloud (FREE) → Gemini Flash → Gemini Pro | Ollama free, Gemini paid |
+| Batching | 1-500 vectors per request | API efficiency |
+| Caching | Read-cache structural digests | Reduces re-reads |
+| Compaction | Smart checkpoint restore | Context recovery |
+| Prefer Free | Use Ollama for 90% of tasks | ~$0-10/month target |
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| Context overhead | <20K tokens | `measure.py report` |
+| Skill tokens | <100 each | Frontmatter only |
+| MCP tools | <3K deferred | ToolSearch enabled |
+| Savings | 5-25% | Before/after compare |
+
+## Memory Hub
+
+| Category | Location | Access Pattern |
+|----------|----------|----------------|
+| Forensics | `.hermes/memory-hub/forensics/` | Audit read |
+| Governance | `.hermes/memory-hub/governance/` | Classification |
+| Repairs | `.hermes/memory-hub/repairs/` | Execution log |
+| Lineage | `.hermes/memory-hub/lineage/` | Mutation track |
+| Replay | `.hermes/memory-hub/replay/` | Determinism |
+
+```mermaid
+graph TD
+    A[Agent Session] --> B{Outcome}
+    B -->|Error| C[ERRORS.md]
+    B -->|Learning| D[LEARNINGS.md]
+    B -->|Feature| E[FEATURE_REQUESTS.md]
+    C --> F{Promote?}
+    D --> F
+    E --> F
+    F -->|Yes| G[CLAUDE.md]
+    F -->|No| H[Archive]
+```
+
+---
+*Agent Config Version: 2026.05.21*

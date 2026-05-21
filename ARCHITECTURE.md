@@ -1,176 +1,364 @@
-# ARCHITECTURE.md: luckystorePOS Comprehensive Enterprise Blueprint
+# ARCHITECTURE.md: LuckyStorePOS Enterprise Blueprint
 
-## 1. 🏗️ Architectural Overview & Design Philosophy
-luckystorePOS is a high-availability, multi-tenant distributed retail operating network engineered specifically for the extreme infrastructure constraints of Bangladeshi corner-store retail spaces. The system guarantees absolute transactional integrity, real-time edge processing, and multi-tenant ledger isolation across intermittently connected environments.
+## System Architecture
 
-       +─────────────────────────────────────────────────────────+
-       |                  CLOUD STATE LAYER                      |
-       |                   Supabase (Postgres)                   |
-       |    [RPC Mutations] [Stock Ledger] [RLS Enforcement]     |
-       +───────────────────────────┬─────────────────────────────+
-                                   │
-                    ▲              │ Asynchronous FIFO Sync
-      Edge Pull /   │              │ (BackgroundSyncService)
-   Stitch Trigger   │              ▼
-                                   │
-        +─────────────────────────────────────────────────────────+
-        |                   LOCAL STATE LAYER                     |
-        |        Web (Zustand + React Query + IndexedDB)          |
-        |        Mobile (Riverpod + Hive + BLE Printer)           |
-        +─────────────────────────────────────────────────────────+
-
-### Core Architecture Pillars
-*   **Offline-First Sync Engine:** The system uses IndexedDB (Web) and Hive (Mobile) as primary storage. All mutations are queued in a persistent Outbox and synced via React Query (Web) or Riverpod-driven sync services (Mobile) when connectivity is restored.
-*   **Immutable Double-Entry Ledger System:** State is never modified or overwritten using typical CRUD operations. Every change in physical item volumes triggers a physical database append operation.
- Current real-time stock levels are structurally derived on-demand or compiled down to deterministic materialized views. This design ensures that every transactional modification can be audited reliably.
-*   **Distributed Replay Determinism & Verification:** To guarantee state convergence across disconnected client runtimes, the backend employs a strict schema validation policy and an offline-to-online script execution matrix. Every migration must execute through a containerized Postgres runner to verify that real-world operations can be safely replayed.
-*   **Stitch-Orchestrated Core Operations:** Non-critical path services (such as competitor price updates, data scraping transformations, or secondary analytics pipelines) are entirely decoupled from core transactional loops via asynchronous triggers. This pattern limits blockages inside critical POS customer checkouts.
-
----
-
-## 2. 📁 Exhaustive Repository Directory Tree
-```text
-.
-├── .agents/                                 # Agent-specific orchestration blueprints and context definitions
-├── .gemini/                                 # Dedicated AI memory vectors, automation profiles, and skill manifests
-├── .github/                                 # CI/CD pipeline infrastructure blueprints
-│   └── workflows/
-│       └── migration-replay.yml            # CI runner validating schema execution and rollback parity
-├── _plans/                                  # Multi-stage strategic engineering execution blueprints
-│   ├── claudeplan                           # Milestone tracing documents for asynchronous architecture
-│   └── kimik2plan                           # Active tracking protocols for system-wide performance targets
-├── apps/                                    # Top-level standalone application deployment targets
-│   ├── admin_web/                           # Enterprise Dashboard web application
-│   │   ├── src/
-│   │   │   ├── components/                 # Atomic UI building blocks
-│   │   │   ├── features/                   # Domain-focused feature slices (Sellers, Inventory, Metrics)
-│   │   │   └── lib/                         # Local core wrappers around external SDKs
-│   │   ├── package.json
-│   │   └── vercel.json                     # Standalone monorepo reverse-proxy and rewrite router rules
-│   ├── mobile_app/                          # High-performance distributed Flutter POS application
-│   │   ├── lib/
-│   │   │   ├── config/                     # Environment schemas and static feature configurations
-│   │   │   ├── features/
-│   │   │   │   └── inventory/               # On-device barcode mechanics and scanner logic
-│   │   │   ├── offline/                    # On-device replication engines
-│   │   │   │   ├── background_sync_service.dart  # Online outbox draining orchestration engine
-│   │   │   │   └── db.dart                  # Drift-backed SQLite local relational data mapping
-│   │   │   └── shared/
-│   │   │       └── services/
-│   │   │           └── startup_guard_service.dart # Hard block bootstrap engine validating local environments
-│   │   ├── test/
-│   │   │   ├── offline/
-│   │   │   │   ├── empirical_replay_test.dart    # Evaluates state resilience across connection failures
-│   │   │   │   └── outbox_test.dart         # Validates FIFO queuing and DLQ fallback logic
-│   │   │   └── widget_test.dart
-│   │   └── pubspec.yaml                     # Dependencies mapping background tasks and local database mechanics
-│   └── scraper/                             # Node.js competitor data harvesting and ingestion utility
-│       ├── src/
-│       │   ├── index.ts                     # Pipeline Entry point
-│       │   └── procurement.ts               # Core parsing mechanics mapping merchant catalog trees
-│       └── package.json
-├── artifacts/                               # Hard tracking historical state artifacts
-│   ├── baseline.json                        # Frozen cryptographically secure schema signature blueprint
-│   └── snapshots/                           # DB definitions mapped to verify migration immutability
-├── data/                                    # Ingested offline static databases and structural raw profiles
-├── docker/                                  # Isolated runtime engine containers
-├── docs/                                    # Authoritative product specifications and compliance protocols
-│   └── architecture/                        # Deep-dive sub-module design requirements
-│       ├── api-conventions.md               # RPC signaling definitions and HTTP header guidelines
-│       ├── auth.md                          # Multi-tenant context and cryptographic state tracking
-│       ├── database.md                      # Core physical tables layout policy
-│       ├── domain-events.md                 # System-wide event signaling contract documentation
-│       ├── inventory-ledger.md              # Explicit balance validation constraints
-│       ├── migration-policy.md              # Guidelines for zero-downtime structural database refactoring
-│       ├── offline-sync.md                  # Protocol specifications for local outbox state changes
-│       ├── rpc-contracts.md                 # Remote procedure call parameters and execution models
-│       └── ui-system.md                     # Constraints regarding client interface patterns
-├── evals/                                   # High-concurrency simulation suites testing data correctness
-├── infra/                                   # Hard containerized testing setups for continuous integration pipelines
-├── lib/                                     # Shared multi-platform architectural features
-├── scripts/                                 # Engineering governance maintenance script systems
-│   ├── governance/                          # Verifies structural drift across environments
-│   ├── ops/                                 # Remote backup tools and emergency cluster maintenance keys
-│   └── replay-certification/                # Replays live database transactions to certify accuracy
-└── supabase/                                # Relational master cloud layer configuration
-    ├── functions/                           # Edge Computing Deno 2 Serverless runtime units
-    ├── migrations/                          # Imputable relational database evolution lineage (97+ sequential files)
-    │   ├── 20260519160000_stitch_orchestration.sql
-    │   └── 20260519215146_quarterly_ledger_partition.sql
-    ├── rpc/                                 # Thread-safe database stored procedures
-    ├── views/                               # Aggregation projections representing point-in-time states
-    ├── config.toml                          # Central orchestration configuration profile
-    └── seed.sql                             # Deterministic local simulation mock data setup
+```mermaid
+graph TD
+    A[UI Layer<br/>React 19 + Vite 8] --> B[State Layer<br/>Zustand 5 + TanStack Query 5]
+    B --> C[Service Layer<br/>API Domain Modules]
+    C --> D[Infrastructure Layer<br/>Supabase Client]
+    D --> E[(Postgres 17<br/>RPC + RLS)]
+    B -.-> F[IndexedDB<br/>Offline Queue]
+    F -.-> G[Background Sync<br/>useSyncSales]
+    G -.-> D
 ```
 
----
+| Layer | Technology | Responsibility | Key Files |
+|-------|-----------|----------------|-----------|
+| UI | React 19, Vite 8 | Rendering, interaction | `apps/admin_web/src/` |
+| State | Zustand 5, TanStack Query 5 | Optimistic updates, caching | `hooks/`, `stores/` |
+| Service | TypeScript 6 | API abstraction, mappers | `lib/api/domains/` |
+| Infrastructure | Supabase JS | Transport, auth, storage | `lib/supabase.ts` |
+| Database | Postgres 17 | Persistence, constraints, RPC | `supabase/migrations/` |
 
-## 3. 🔍 Deep-Dive Component Breakdown
-
-| Component/Directory | Technical Responsibility & Boundaries | Upstream/Downstream Dependencies |
-| :--- | :--- | :--- |
-| `apps/mobile_app` | Captures offline transactions; manages persistent Drift queue; handles state updates independent of cloud connectivity. | Upstream: `lib/features` (Shared Models) / Downstream: `supabase/rpc` (Cloud Sync) |
-| `apps/admin_web` | Aggregates and renders analytical dashboards; enforces store policy configs; manages supply-chain reporting. | Upstream: `supabase/` (Views & Analytical Queries) |
-| `supabase/` | Standardizes cloud state storage; enforces multi-tenant RLS policies; updates core append-only ledger tables. | Upstream: `apps/mobile_app` (Sync Streams) / Downstream: `apps/admin_web` (Subscriptions) |
-| `docs/architecture` | Specifies operational requirements; outlines structural limits; defines interface contracts. | Upstream: None (Single Source of Truth) / Downstream: All feature branches |
-| `scripts/replay-certification` | Runs automated simulations in isolated environments to confirm migration validity. | Upstream: `supabase/migrations` / Downstream: `infra/` (Testing Runtimes) |
-| `apps/scraper` | Collects competitor catalogs/prices; formats structural lists for backend ingestion. | Downstream: `supabase/functions` (Data Hydration) |
-
----
-
-## 4. 🔄 Core Data & State Synchronization Flow
-**Atomic Stock Deduction (`stock_deduce`) Lifecycle**
+## Data Flow
 
 ```mermaid
 sequenceDiagram
-    autonumber
-    participant UI as Flutter UI Component
-    participant DB as Local Drift (SQLite)
-    participant Outbox as TransactionOutbox Queue
-    participant Sync as BackgroundSyncService
-    participant RPC as Supabase Edge RPC Layer
-    participant Ledger as Stock Ledger (Postgres)
+    participant User
+    participant UI as POS UI
+    participant Store as Zustand Store
+    participant Mut as TanStack Mutation
+    participant API as API Domain
+    participant RPC as Supabase RPC
+    participant DB as Postgres
 
-    UI->>DB: executeLocalDeduction(productId, qty)
-    Note over DB: Atomically reduces local stock<br/>to maintain responsive UI state.
-    DB-->>UI: Update UI View Successfully
-    
-    UI->>Outbox: appendMutationToQueue(DEDUCT_STOCK, payload)
-    Note over Outbox: Mutation payload is serialized<br/>and locked into persistent storage.
-    
-    Activate Sync
-    Sync->>Sync: checkConnectivity() [Network Connected]
-    
-    loop Sequential Outbox Processing (FIFO Order)
-        Sync->>Outbox: fetchNextPendingTransaction()
-        Outbox-->>Sync: Return Outbox item (id, payload)
-        
-        Sync->>RPC: invokeRpcWithTrackingId(stock_deduce, payload)
-        Activate RPC
-        
-        Note over RPC: Runs inside PostgreSQL<br/>SERIALIZABLE Transaction Isolation.
-        RPC->>Ledger: INSERT INTO stock_ledger (id, action, quantity)
-        
-        alt Ledger Constraints Succeeded
-            Ledger-->>RPC: Acknowledge Append (201 Created)
-            RPC-->>Sync: Return TransactionSuccessResponse(200 OK)
-            Sync->>Outbox: deleteTransactionRecord(id)
-        else Database Conflict or Isolation Failure (409/503)
-            Ledger-->>RPC: Serialization Failure / Invariant Violated
-            RPC-->>Sync: Return ErrorResponse (Retry Eligible)
-            Note over Sync: Increments retry counter.<br/>If counter >= 5, moves to Dead-Letter Queue (DLQ).
-        end
-        Deactivate RPC
-    end
-    Deactivate Sync
+    User->>UI: Scan barcode
+    UI->>Store: addToCart(product)
+    User->>UI: Click checkout
+    UI->>Mut: usePosSale.mutate()
+    Mut->>API: api.pos.createSale()
+    API->>RPC: record_sale(payload)
+    RPC->>DB: INSERT stock_ledger
+    DB-->>RPC: Acknowledge
+    RPC-->>API: SaleResult
+    API-->>Mut: SaleResult
+    Mut-->>Store: invalidateQueries()
+    Store-->>UI: Cart cleared, receipt shown
 ```
 
+| Flow | Path | Latency Target |
+|------|------|----------------|
+| Online Sale | UI → Store → API → RPC → DB | <500ms |
+| Offline Sale | UI → Store → IndexedDB | <50ms |
+| Sync Drain | IndexedDB → API → RPC → DB | Batch 10/s |
+
+## Ports & Adapters
+
+```mermaid
+classDiagram
+    class ProductRepository {
+        <<interface>>
+        +list()
+        +create()
+        +update()
+        +remove()
+    }
+    class POSOperations {
+        <<interface>>
+        +createSale()
+        +lookupByScan()
+    }
+    class InventoryRepository {
+        <<interface>>
+        +getList()
+        +getLowStock()
+    }
+    class SalesRepository {
+        <<interface>>
+        +getHistory()
+        +voidSale()
+    }
+    class SupabaseAdapter {
+        +rpc()
+        +from()
+    }
+    class IndexedDBAdapter {
+        +set()
+        +get()
+    }
+
+    ProductRepository <|.. lib_api_domains_products
+    POSOperations <|.. lib_api_domains_pos
+    InventoryRepository <|.. inventoryService
+    SalesRepository <|.. lib_api_domains_sales
+    SupabaseAdapter <|.. lib_supabase
+    IndexedDBAdapter <|.. lib_offline_storage
+```
+
+| Port | Implementation | Location |
+|------|---------------|----------|
+| ProductRepository | products.list/create/update/remove | `lib/api/domains/products.ts` |
+| POSOperations | pos.createSale/lookupByScan | `lib/api/domains/pos.ts` |
+| InventoryRepository | inventoryService.getList/getLowStock | `services/inventory/inventoryService.ts` |
+| SalesRepository | sales.getHistory/voidSale | `lib/api/domains/sales.ts` |
+| DatabasePort | Supabase Client | `lib/supabase.ts` |
+| StoragePort | IndexedDB | `lib/offline-storage.ts` |
+| AuthPort | Supabase Auth | `lib/AuthProvider.tsx` |
+| SyncPort | Background Sync | `hooks/useSyncSales.ts` |
+
+## Offline Strategy
+
+```mermaid
+sequenceDiagram
+    participant UI as POS UI
+    participant Store as useOfflineStore
+    participant Queue as IndexedDB Queue
+    participant Sync as useSyncSales
+    participant Net as Network Check
+    participant RPC as Supabase RPC
+
+    UI->>Store: saveSale(saleData)
+    Store->>Queue: enqueue(operation_id, payload)
+    Note over Queue: Stored with retry counter = 0
+
+    Sync->>Net: checkConnectivity()
+    alt Online
+        Net-->>Sync: Connected
+        loop FIFO Processing
+            Sync->>Queue: fetchNextPending()
+            Queue-->>Sync: Return item
+            Sync->>RPC: invokeRpc(record_sale)
+            alt Success
+                RPC-->>Sync: 200 OK
+                Sync->>Queue: deleteTransaction()
+            else Fail (409/503)
+                RPC-->>Sync: Error
+                Note over Sync: retry_counter++
+                alt retry >= 5
+                    Sync->>Queue: moveToDLQ()
+                end
+            end
+        end
+    else Offline
+        Net-->>Sync: Disconnected
+        Note over Sync: Wait for next connectivity check
+    end
+```
+
+| Component | Technology | Purpose | File |
+|-----------|-----------|---------|------|
+| Offline Store | IndexedDB (idb-keyval) | Queue persistence | `lib/offline-storage.ts` |
+| Sync Hook | TanStack Query + Network API | Background sync orchestration | `hooks/useSyncSales.ts` |
+| Outbox | IndexedDB table | Transaction queue with metadata | `lib/offline-storage.ts` |
+| DLQ | IndexedDB table | Dead letter for failed retries | `lib/offline-storage.ts` |
+
+## MCP Skills Architecture
+
+```mermaid
+graph TD
+    A[Claude Code Session] --> B{Hook Trigger}
+    B -->|agent:bootstrap| C[Self-Improving Agent]
+    B -->|SessionEnd| D[Token Optimizer]
+    B -->|PreCompact| D
+    C --> E[ERRORS.md<br/>LEARNINGS.md<br/>FEATURE_REQUESTS.md]
+    D --> F[measure.py<br/>Dashboard<br/>Checkpoints]
+    E --> G{Promote?}
+    G -->|Yes| H[CLAUDE.md<br/>AGENTS.md]
+    G -->|No| I[Archive]
+```
+
+| Skill | Trigger | Handler | Output |
+|-------|---------|---------|--------|
+| Self-Improving Agent | agent:bootstrap | `hooks/openclaw/handler.ts` | Learning logs |
+| Token Optimizer | SessionEnd, PreCompact | `scripts/measure.py` | Usage stats, checkpoints |
+
+## LLM Routing
+
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant IDE as Antigravity IDE
+    participant Router as llm_config.json
+    participant Ollama as Ollama Cloud
+    participant Gemini as Gemini Flash/Pro
+
+    Dev->>IDE: // @ai gen: Create component
+    IDE->>Router: Route by task type
+    alt Code Task
+        Router->>Ollama: Route to Ollama (FREE)
+        Ollama-->>IDE: Response (qwen3-coder)
+    else Architecture Task
+        Router->>Gemini: Route to Gemini ($)
+        Gemini-->>IDE: Response (2.5 Flash)
+    else Complex Analysis
+        Router->>Gemini: Route to Gemini ($$)
+        Gemini-->>IDE: Response (2.5 Pro)
+    end
+    IDE->>Dev: Insert generated code
+```
+
+| Task Type | Provider | Model | Cost | Config Source |
+|-----------|----------|-------|------|---------------|
+| Quick questions | Ollama Cloud | gemma3:4b | **FREE** | `llm_config.json` |
+| Code generation | Ollama Cloud | qwen3-coder:480b | **FREE** | `llm_config.json` |
+| Code review | Ollama Cloud | kimi-k2.5 | **FREE** | `llm_config.json` |
+| Deep thinking | Ollama Cloud | kimi-k2-thinking | **FREE** | `llm_config.json` |
+| Architecture | Gemini | 2.5 Flash | Low ($0.075/1K) | `llm_config.json` |
+| Research | Gemini | 2.5 Flash | Low ($0.075/1K) | `llm_config.json` |
+| Complex analysis | Gemini | 2.5 Pro | Medium ($0.15/1K) | `llm_config.json` |
+| Synthesis | Gemini | 2.5 Flash | Low ($0.075/1K) | `llm_config.json` |
+
+## Vector Storage (Antigravity)
+
+```mermaid
+graph TD
+    A[Agent Session] --> B{Outcome Type}
+    B -->|Error| C[ERRORS.md]
+    B -->|Learning| D[LEARNINGS.md]
+    B -->|Feature| E[FEATURE_REQUESTS.md]
+    C --> F[.hermes/memory-hub/forensics/]
+    D --> G[.hermes/memory-hub/governance/]
+    E --> H[.hermes/memory-hub/lineage/]
+    F --> I{Promote?}
+    G --> I
+    H --> I
+    I -->|Yes| J[CLAUDE.md]
+    I -->|No| K[Archive]
+```
+
+| Storage | Type | Status | Capacity |
+|---------|------|--------|----------|
+| File-based | Markdown + YAML frontmatter | Active | Unlimited |
+| Supabase Vector | float32 arrays | Disabled | 10 buckets, 5 indexes |
+
+## Token Lifecycle
+
+```mermaid
+graph TD
+    A[Message Send] --> B[Core System ~15K]
+    B --> C[MCP Tools Variable]
+    C --> D[Skills ~5.4K]
+    D --> E[User Config ~6.5K]
+    E --> F[Reminders ~3K]
+    G[Smart Compact] --> H[PreCompact Capture]
+    H --> I[Checkpoint]
+    I --> J[SessionStart Restore]
+    K[Read Cache] --> L{Redundant?}
+    L -->|Yes| M[Block/Warn]
+    L -->|No| N[Allow Read]
+```
+
+| Phase | Tokens | Optimization |
+|-------|--------|--------------|
+| Fixed Floor | ~15,000 | Built-in tools |
+| MCP (ToolSearch) | ~1,250-3,170 | Deferred loading |
+| Skills | ~100 per skill | Frontmatter only |
+| CLAUDE.md | ~2,000-5,000 | Target: ~4,500 |
+| MEMORY.md | ~1,500-3,000 | 200-line cap |
+
+## Business Domain
+| Flow | Steps | Key Files |
+|------|-------|-----------|
+| POS Checkout | Scan → Cart → Payment → Receipt | `features/pos/`, `lib/api/domains/pos.ts` |
+| Inventory Mgmt | Stock in → Adjust → Alert → Reconcile | `services/inventory/`, `hooks/useInventory` |
+| Sales Reporting | Record → Aggregate → Void → Audit | `lib/api/domains/sales.ts` |
+
+## Mobile Architecture
+| Concern | Implementation | File |
+|---------|---------------|------|
+| State mgmt | Riverpod | `apps/mobile_app/lib/` |
+| Offline storage | SQLite + Supabase local | `apps/mobile_app/lib/offline/` |
+| Hardware | Barcode scanner, receipt printer | `apps/mobile_app/lib/hardware/` |
+| Sync | Outbox pattern, background sync | `hooks/useSyncSales.ts` |
+
+## Database Layer
+| Component | Purpose | File |
+|-----------|---------|------|
+| Core tables | products, sales, inventory, stores | `supabase/migrations/` |
+| RPCs | record_sale, complete_sale_v2, get_inventory_list | `supabase/migrations/` |
+| RLS | Row-level security per store | `supabase/migrations/` |
+| Triggers | inventory auto-update on sale | `supabase/migrations/` |
+
+## Edge Functions
+| Function | Trigger | Purpose | File |
+|----------|---------|---------|------|
+| whatsapp-order-notify | HTTP | Order notifications | `supabase/functions/whatsapp-order-notify/` |
+| create-bkash-checkout | HTTP | Payment processing | `supabase/functions/create-bkash-checkout/` |
+
+## Scraper Subsystem
+| Component | Role | File |
+|-----------|------|------|
+| AI Mapper | Gemini product categorization | `apps/scraper/ai-mapper.js` |
+| Scheduler | Daily runs | `.github/workflows/scraper-daily.yml` |
+| Output | Product data ingestion | `apps/scraper/` |
+
+## Storefront
+| Concern | Implementation | File |
+|---------|---------------|------|
+| Framework | Next.js 16 | `apps/customer_storefront/` |
+| Styling | Tailwind v4 | `apps/customer_storefront/postcss.config.mjs` |
+| Shared code | Feature slices | `apps/customer_storefront/src/app/` |
+| Deploy | Vercel | `vercel.json` |
+
 ---
+*Architecture Version: 2026.05.22*
 
-## 5. 🛠️ Strict Monorepo Governance & Scaling Rules
+## AI Infrastructure Architecture
 
-1.  **Ledger Immutability (Non-Negotiable)**: You are forbidden from performing `UPDATE` or `DELETE` on any ledger-linked table (e.g., `stock_ledger`, `inventory_movements`, `ledger_audit_logs`). If an error is introduced during operational entries, it must be corrected by creating a matching, offset entry that maintains the ledger balance trail.
-2.  **Non-Deterministic Pre-Commit Check**: No schema modification (supabase/migrations/*.sql) can be merged into the production branch without first passing the `scripts/replay-certification/` execution pipeline. Migrations that rely on dynamic server variables, local timestamps, or non-deterministic GUID values will fail verification checks.
-3.  **Isolation of Client UI States**: Application interface configurations inside `apps/mobile_app` and `apps/admin_web` must remain separated from the underlying state engine. Interfacing layers are required to communicate via independent service boundaries (e.g., `InventoryService`). They must not make direct relational calls to the local system database tables.
-4.  **Mandatory Idempotency Tokens**: Every mutation entry recorded by the local engine into `TransactionOutbox` must contain a unique tracking ID (`operation_id`). The receiving remote database layer validates this ID to prevent processing duplicated transactions in the event of unexpected network drops during the sync loop.
-5.  **Documentation Contract**: Before submitting any pull request that updates database schemas or communication structures, developers must ensure the changes mirror the specifications outlined in the `docs/architecture/` directory. If a change breaks an interface pattern defined in `rpc-contracts.md` or `offline-sync.md`, the documentation must be updated in the same PR.
+```mermaid
+graph TD
+    A[Antigravity IDE] --> B[.ai/]
+    A --> C[.antigravity/]
+    A --> D[.vibe/]
+    B --> E[AI_TASKS.md<br/>llm_config.json]
+    C --> F[IDE Config<br/>Model Routing]
+    D --> G[Session Context<br/>Vibe Coding]
+    E --> H[Ollama Cloud<br/>Gemini]
+    F --> H
+    G --> H
+```
+
+| Component | Location | Purpose | Status |
+|-----------|----------|---------|--------|
+| AI Config | `.ai/` | Task queue, routing, prompts | ✅ Active |
+| IDE Integration | `.antigravity/` | IDE settings, commands | ✅ Active |
+| Vibe Coding | `.vibe/` | Session context, workflow | ✅ Active |
+| Patterns | `docs/vibe-guides/` | React/Flutter/Supabase patterns | ✅ Active |
+| Skills | `.agents/skills/`, `.gemini/skills/` | Token optimization | ✅ Active |
+| Memory | `.hermes/memory-hub/` | Forensics, governance | ✅ Active |
+| Scripts | `scripts/dev/` | AI helper, sync, checkpoint | ✅ Active |
+
+### Model Providers
+
+| Provider | Endpoint | Models | Cost |
+|----------|----------|--------|------|
+| **Ollama Cloud** | `ollama.com/api` | gemma3, qwen3-coder, kimi-k2 | **FREE** |
+| **Gemini** | `generativelanguage.googleapis.com` | 2.5 Flash, 2.5 Pro | Pay-as-you-go |
+
+### Daily Workflow
+
+1. **Start session**: `./scripts/dev/vibe-start.sh task-name`
+2. **Load context**: Antigravity auto-loads `.ai/AI_TASKS.md`, `.vibe/current/context.md`
+3. **Code with AI**: Use `// @ai gen: ...` inline commands
+4. **Checkpoint**: `./scripts/dev/ai-checkpoint.sh`
+
+## Governance & Safety
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| Replay Certification | `scripts/replay-certification/` | Migration determinism |
+| Safety Scripts | `scripts/safety/` | Runtime guardrails |
+| Governance | `scripts/governance/` | Policy enforcement |
+| Artifacts | `artifacts/` | Build certification, quarantine |
+| Infra Replay | `infra/migration-replay/` | Isolated testing |
+
+## Testing Matrix
+
+| Type | Location | Framework | Coverage |
+|------|----------|-----------|----------|
+| Integration | `test/integration/` | Vitest | 0% |
+| Load | `test/load/` | Custom | 0% |
+| Unit | `test/unit/` | Vitest | 0.5% |
+| Offline | `apps/mobile_app/test/offline/` | flutter_test | Partial |
+| Performance | `apps/mobile_app/test/performance/` | flutter_test | Partial |
