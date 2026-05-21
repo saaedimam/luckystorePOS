@@ -38,7 +38,7 @@ export function AddPriceModal({ isOpen, onClose }: AddPriceModalProps) {
     enabled: !!storeId && isOpen,
   });
 
-  const { data: searchResults } = useQuery({
+  const { data: searchResults } = useQuery<Product[]>({
     queryKey: ['productSearch', searchQuery.trim()],
     queryFn: async () => {
       const trimmed = searchQuery.trim();
@@ -46,10 +46,14 @@ export function AddPriceModal({ isOpen, onClose }: AddPriceModalProps) {
       const { data } = await supabase
         .from('items')
         .select('id, name, sku, price')
-        .eq('store_id', storeId)
         .ilike('name', `%${trimmed}%`)
         .limit(10);
-      return data || [];
+      return (data || []).map(item => ({
+        id: item.id,
+        name: item.name,
+        sku: item.sku || '',
+        price: typeof item.price === 'number' ? item.price : Number(item.price || 0)
+      }));
     },
     enabled: searchQuery.trim().length >= 2 && showProductSearch,
   });
@@ -103,7 +107,7 @@ export function AddPriceModal({ isOpen, onClose }: AddPriceModalProps) {
     }
     
     addMutation.mutate({
-      item_id: selectedProduct.id,
+      product_id: selectedProduct.id,
       competitor_name: competitorName.trim(),
       competitor_price: parseFloat(competitorPrice),
       competitor_url: competitorUrl.trim() || undefined,
@@ -155,7 +159,12 @@ export function AddPriceModal({ isOpen, onClose }: AddPriceModalProps) {
                         key={product.id}
                         type="button"
                         className="search-result-item"
-                        onClick={() => selectProduct(product)}
+                        onClick={() => selectProduct({
+                          id: product.id,
+                          name: product.name,
+                          sku: product.sku || '',
+                          price: Number(product.price || 0)
+                        })}
                       >
                         <span className="product-name">{product.name}</span>
                         {product.sku && <span className="product-sku">{product.sku}</span>}

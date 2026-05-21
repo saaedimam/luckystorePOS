@@ -1,5 +1,8 @@
 import { supabase } from '../../supabase';
 import type { Expense, ExpenseFormData, RecordExpenseResult, ExpenseCategory, ExpensePaymentType } from '../types';
+import type { Database } from '../../database.types';
+
+type ExpenseRow = Database['public']['Tables']['expenses']['Row'];
 
 export const expenses = {
   list: async (storeId: string, filters?: { startDate?: string; endDate?: string; category?: string; paymentType?: string }): Promise<Expense[]> => {
@@ -17,7 +20,7 @@ export const expenses = {
     const { data, error } = await query;
     if (error) throw error;
 
-    return (data ?? []).map((row: Record<string, unknown>) => ({
+    return (data ?? []).map((row: ExpenseRow) => ({
       id: row.id,
       storeId: row.store_id,
       expenseDate: row.expense_date,
@@ -43,7 +46,7 @@ export const expenses = {
       p_category: form.category,
     });
     if (error) throw error;
-    return data as RecordExpenseResult;
+    return data as unknown as RecordExpenseResult;
   },
   update: async (expenseId: string, updates: { expenseDate?: string; vendorName?: string; description?: string; amount?: number; paymentType?: string; category?: string }) => {
     const { data, error } = await supabase
@@ -60,7 +63,7 @@ export const expenses = {
       .select()
       .single();
     if (error) throw error;
-    return data;
+    return data as unknown as RecordExpenseResult;
   },
   remove: async (expenseId: string) => {
     const { error } = await supabase

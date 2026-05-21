@@ -23,10 +23,10 @@ export const reminders = {
       p_tenant_id: params.tenantId,
       p_store_id: params.storeId,
       p_title: params.title,
-      p_description: params.description ?? null,
+      p_description: params.description || '',
       p_reminder_date: params.reminderDate,
       p_reminder_type: params.reminderType,
-      p_created_by: params.createdBy ?? null,
+      p_created_by: params.createdBy ?? undefined,
     });
     if (error) throw error;
     return mapReminder(data);
@@ -41,11 +41,11 @@ export const reminders = {
   }) => {
     const { data, error } = await supabase.rpc('update_reminder', {
       p_reminder_id: params.reminderId,
-      p_title: params.title ?? null,
-      p_description: params.description ?? null,
-      p_reminder_date: params.reminderDate ?? null,
-      p_reminder_type: params.reminderType ?? null,
-      p_is_completed: params.isCompleted ?? null,
+      p_title: params.title ?? undefined,
+      p_description: params.description ?? undefined,
+      p_reminder_date: params.reminderDate ?? undefined,
+      p_reminder_type: params.reminderType ?? undefined,
+      p_is_completed: params.isCompleted ?? undefined,
     });
     if (error) throw error;
     return mapReminder(data);

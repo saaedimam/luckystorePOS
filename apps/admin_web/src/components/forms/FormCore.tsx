@@ -1,25 +1,30 @@
 import React from 'react';
-import { UseFormReturn, FormProvider, useFormContext, Controller, RegisterOptions } from 'react-hook-form';
+import { UseFormReturn, FormProvider, useFormContext, Controller, RegisterOptions, FieldValues, ControllerRenderProps, ControllerFieldState, UseFormStateReturn, SubmitHandler } from 'react-hook-form';
 import { clsx } from 'clsx';
 
-interface FormProps<TFieldValues extends Record<string, unknown> = Record<string, unknown>> 
-  extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit'> {
-  form: UseFormReturn<TFieldValues, unknown, unknown>;
+interface FormProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TTransformedValues extends FieldValues = TFieldValues,
+> extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit'> {
+  form: UseFormReturn<TFieldValues, unknown, TTransformedValues>;
   onSubmit: (values: TFieldValues) => void | Promise<void>;
   className?: string;
 }
 
-export function Form<TFieldValues extends Record<string, unknown>>({
+export function Form<
+  TFieldValues extends FieldValues,
+  TTransformedValues extends FieldValues = TFieldValues,
+>({
   form,
   onSubmit,
   children,
   className,
   ...props
-}: FormProps<TFieldValues>) {
+}: FormProps<TFieldValues, TTransformedValues>) {
   return (
     <FormProvider {...form}>
       <form 
-        onSubmit={form.handleSubmit(onSubmit)} 
+        onSubmit={form.handleSubmit(onSubmit as unknown as SubmitHandler<TTransformedValues>)} 
         className={clsx("space-y-6", className)}
         {...props}
       >
@@ -35,7 +40,11 @@ interface FormFieldProps {
   description?: string;
   className?: string;
   rules?: RegisterOptions;
-  render: (props: { field: unknown, fieldState: unknown, formState: unknown }) => React.ReactNode;
+  render: (props: { 
+    field: ControllerRenderProps<FieldValues, string>, 
+    fieldState: ControllerFieldState, 
+    formState: UseFormStateReturn<FieldValues> 
+  }) => React.ReactNode;
 }
 
 export function FormField({
@@ -74,7 +83,12 @@ export function FormField({
   );
 }
 
-export function FormSection({ title, description, children, className }: Record<string, unknown>) {
+export function FormSection({ title, description, children, className }: { 
+  title?: string; 
+  description?: string; 
+  children?: React.ReactNode; 
+  className?: string; 
+}) {
   return (
     <div className={clsx("flex flex-col gap-4 border-b border-border-default pb-6 mb-6 last:border-0 last:pb-0 last:mb-0", className)}>
       {(title || description) && (
@@ -90,7 +104,10 @@ export function FormSection({ title, description, children, className }: Record<
   );
 }
 
-export function FormActions({ children, className }: Record<string, unknown>) {
+export function FormActions({ children, className }: { 
+  children?: React.ReactNode; 
+  className?: string; 
+}) {
   return (
     <div className={clsx("flex items-center justify-end gap-3 pt-4 mt-6 border-t border-border-default", className)}>
       {children}

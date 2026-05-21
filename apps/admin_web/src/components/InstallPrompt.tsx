@@ -53,69 +53,28 @@ export function InstallPrompt() {
 
   return (
     <div
-      style={{
-        position: 'fixed',
-        bottom: '80px',
-        right: '24px',
-        zIndex: 9997,
-        backgroundColor: 'white',
-        borderRadius: 'var(--radius-lg)',
-        boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
-        padding: 'var(--space-4) var(--space-5)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 'var(--space-3)',
-        maxWidth: '320px',
-      }}
+      className="fixed bottom-20 right-6 z-[9997] bg-surface rounded-lg shadow-level-3 p-4 pr-5 flex items-center gap-3 max-w-[320px] border border-border-default transition-all"
     >
       <div
-        style={{
-          width: 40,
-          height: 40,
-          borderRadius: 'var(--radius-md)',
-          backgroundColor: '#863bff',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-        }}
+        className="w-10 h-10 rounded-md bg-primary flex items-center justify-center shrink-0"
       >
-        <Download size={20} color="white" />
+        <Download size={20} className="text-primary-on" />
       </div>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontWeight: 700, fontSize: '14px' }}>Install LuckyPOS</div>
-        <div style={{ fontSize: '12px', color: '#666', marginTop: 2 }}>
+      <div className="flex-1 min-w-0">
+        <div className="font-bold text-sm text-text-primary">Install LuckyPOS</div>
+        <div className="text-xs text-text-secondary mt-0.5">
           Add to home screen for fast access
         </div>
       </div>
       <button
         onClick={handleInstall}
-        style={{
-          padding: '6px 14px',
-          backgroundColor: '#863bff',
-          color: 'white',
-          border: 'none',
-          borderRadius: 'var(--radius-md)',
-          fontSize: '13px',
-          fontWeight: 600,
-          cursor: 'pointer',
-          whiteSpace: 'nowrap',
-        }}
+        className="px-3.5 py-1.5 bg-primary hover:bg-primary-hover text-primary-on rounded-md text-xs font-bold transition-colors shadow-sm"
       >
         Install
       </button>
       <button
         onClick={handleDismiss}
-        style={{
-          position: 'absolute',
-          top: 4,
-          right: 4,
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          color: '#999',
-          padding: 4,
-        }}
+        className="absolute top-1 right-1 p-1 text-text-muted hover:text-text-secondary transition-colors"
       >
         <X size={14} />
       </button>

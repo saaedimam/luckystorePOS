@@ -23,9 +23,10 @@ export function useCreatePurchase() {
           p_tenant_id: tenantId,
           p_store_id: storeId,
           p_supplier_id: data.supplierId,
-          p_invoice_number: data.invoiceNumber || null,
+          p_invoice_number: data.invoiceNumber || undefined,
           p_amount_paid: data.amountPaid,
-          p_items_json: itemsJson,
+          p_items: itemsJson,
+          p_idempotency_key: crypto.randomUUID(),
         });
         if (resErr) throw resErr;
         return resData;

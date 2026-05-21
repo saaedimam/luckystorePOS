@@ -1,5 +1,6 @@
 import { supabase } from '../../supabase';
 import type { ProductCreateInput, ProductUpdateInput } from '../types';
+import type { Database } from '../../database.types';
 
 export const products = {
   list: async () => {
@@ -17,17 +18,17 @@ export const products = {
     return data;
   },
   create: async (product: ProductCreateInput) => {
-    const { data, error } = await supabase.from('items').insert([product]).select().single();
+    const { data, error } = await supabase.from('items').insert(product as unknown as Database['public']['Tables']['items']['Insert']).select().single();
     if (error) throw error;
     return data;
   },
   update: async (id: string, updates: ProductUpdateInput) => {
-    const { data, error } = await supabase.from('items').update(updates).eq('id', id).select().single();
+    const { data, error } = await supabase.from('items').update(updates as unknown as Database['public']['Tables']['items']['Update']).eq('id', id).select().single();
     if (error) throw error;
     return data;
   },
   remove: async (id: string) => {
-    const { data, error } = await supabase.from('items').update({ is_active: false }).eq('id', id).select().single();
+    const { data, error } = await supabase.from('items').update({ active: false }).eq('id', id).select().single();
     if (error) throw error;
     return data;
   },

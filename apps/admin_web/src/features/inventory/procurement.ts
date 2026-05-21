@@ -6,6 +6,28 @@ export interface ProcurementResult {
   newQuantity?: number
 }
 
+interface SimpleProduct {
+  id: string
+  name: string
+  store_id: string
+}
+
+interface LedgerRecord {
+  id: string
+}
+
+interface StockRpcResult {
+  new_quantity?: number
+  error?: {
+    message: string
+  }
+}
+
+const rpcCall = supabase.rpc as unknown as (
+  name: string,
+  args: Record<string, unknown>
+) => Promise<{ data: unknown; error: { message: string } | null }>
+
 export const ProcurementService = {
   /**
    * Add stock (procurement/bulk scan) securely via increment_stock RPC.
@@ -20,7 +42,6 @@ export const ProcurementService = {
       const { data: product, error: fetchError } = await supabase
         .from('items')
         .select('id, name')
-        .eq('store_id', storeId)
         .or(`sku.eq.${skuOrBarcode},barcode.eq.${skuOrBarcode}`)
         .single()
 
@@ -41,7 +62,7 @@ export const ProcurementService = {
       }
 
       // Step 3: Call increment_stock RPC (transactional)
-      const { data, error } = await supabase.rpc('increment_stock', {
+      const { data, error } = await rpcCall('increment_stock', {
         p_store_id: storeId,
         p_product_id: product.id,
         p_quantity: quantity,
@@ -52,13 +73,15 @@ export const ProcurementService = {
         return { success: false, message: `Failed to add stock: ${error.message}` }
       }
 
+      const result = data as StockRpcResult
+
       return { 
         success: true, 
-        newQuantity: data.new_quantity,
+        newQuantity: result?.new_quantity,
         message: `Successfully added ${quantity}x ${product.name}`
       }
     } catch (err: unknown) {
-      return { success: false, message: err.message || 'Unknown error during procurement' }
+      return { success: false, message: err instanceof Error ? err.message : 'Unknown error during procurement' }
     }
   },
   
@@ -74,7 +97,6 @@ export const ProcurementService = {
       const { data: product, error: fetchError } = await supabase
         .from('items')
         .select('id, name')
-        .eq('store_id', storeId)
         .or(`sku.eq.${skuOrBarcode},barcode.eq.${skuOrBarcode}`)
         .single()
 
@@ -82,7 +104,7 @@ export const ProcurementService = {
         return { success: false, message: `Product not found for scan code: ${skuOrBarcode}` }
       }
 
-      const { data, error } = await supabase.rpc('deduct_stock', {
+      const { data, error } = await rpcCall('deduct_stock', {
         p_store_id: storeId,
         p_product_id: product.id,
         p_quantity: quantity,
@@ -93,17 +115,19 @@ export const ProcurementService = {
         return { success: false, message: `Failed to deduct stock: ${error.message}` }
       }
 
-      if (data.error) {
-         return { success: false, message: data.error.message }
+      const result = data as StockRpcResult
+
+      if (result?.error) {
+         return { success: false, message: result.error.message }
       }
 
       return { 
         success: true, 
-        newQuantity: data.new_quantity,
+        newQuantity: result?.new_quantity,
         message: `Successfully deducted ${quantity}x ${product.name}`
       }
     } catch (err: unknown) {
-      return { success: false, message: err.message || 'Unknown error during deduction' }
+      return { success: false, message: err instanceof Error ? err.message : 'Unknown error during deduction' }
     }
   },
 
@@ -116,7 +140,7 @@ export const ProcurementService = {
       // Step 1: Find the product and its associated store context to satisfy multi-tenancy rules
       const { data: product, error: fetchError } = await supabase
         .from('items')
-        .select('id, store_id, name')
+        .select('id, name')
         .eq('sku', sku)
         .single()
 
@@ -124,12 +148,24 @@ export const ProcurementService = {
         return { success: false, message: `Product not found for SKU: ${sku}` }
       }
 
+      const simpleProduct = product as SimpleProduct
+
+      // Query stock_levels to find associated store_id
+      const { data: stockLevel } = await supabase
+        .from('stock_levels')
+        .select('store_id')
+        .eq('item_id', simpleProduct.id)
+        .limit(1)
+        .maybeSingle()
+
+      const storeId = stockLevel?.store_id || 'default-store-id'
+
       // Step 2: Retrieve the latest transaction_id from the stock_ledger to serve as the idempotency key
       const { data: ledger, error: ledgerError } = await supabase
         .from('stock_ledger')
         .select('id')
-        .eq('product_id', product.id)
-        .eq('store_id', product.store_id)
+        .eq('product_id', simpleProduct.id)
+        .eq('store_id', storeId)
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle()
@@ -138,20 +174,20 @@ export const ProcurementService = {
         return { success: false, message: `Failed to retrieve stock ledger: ${ledgerError.message}` }
       }
 
-      const transactionId = ledger?.id || `ack-fallback-${product.id}`
+      const transactionId = (ledger as LedgerRecord | null)?.id || `ack-fallback-${simpleProduct.id}`
 
       // Step 3: Check if this alert has already been acknowledged
       const idempotencyKey = `stitch-ack:${transactionId}`
       const alreadyAcked = localStorage.getItem(idempotencyKey)
       if (alreadyAcked) {
-        return { success: true, message: `Stockout alert for ${product.name} already acknowledged.` }
+        return { success: true, message: `Stockout alert for ${simpleProduct.name} already acknowledged.` }
       }
 
       // Step 4: Simulate/Invoke the Stitch Sheets API call
       const stitchPayload = {
         action: 'sheets.updateRow',
         idempotencyKey: transactionId,
-        storeId: product.store_id,
+        storeId: simpleProduct.store_id,
         sku: sku,
         status: 'ACKNOWLEDGED',
         acknowledgedAt: new Date().toISOString()
@@ -162,10 +198,11 @@ export const ProcurementService = {
 
       return {
         success: true,
-        message: `Stockout acknowledged for ${product.name} (ID: ${transactionId})`
+        message: `Stockout acknowledged for ${simpleProduct.name} (ID: ${transactionId})`
       }
     } catch (err: unknown) {
-      return { success: false, message: err.message || 'Unknown error during acknowledgement' }
+      return { success: false, message: err instanceof Error ? err.message : 'Unknown error during acknowledgement' }
     }
   }
 }
+

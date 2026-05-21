@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { api } from '../../lib/api';
 import { createDebugLogger } from '../../lib/debug';
-import type { CartItem } from '../../lib/api/types';
+import type { CartItem, PaymentMethodRow } from '../../lib/api/types';
 
 const debugLog = createDebugLogger('QuickPosPage');
 
@@ -56,7 +56,7 @@ export function usePosSale(
   cartDiscount: number,
   storeId: string | undefined,
   tenantId: string | undefined,
-  paymentMethods: unknown[],
+  paymentMethods: PaymentMethodRow[],
   clearCart: () => void,
   onError: (msg: string) => void,
 ): UsePosSaleReturn {
@@ -158,7 +158,7 @@ export function usePosSale(
         }));
         paidTotalInner = splitPayments.reduce((sum, p) => sum + p.amount, 0);
         paymentMethodLabel = splitPayments.map(p => {
-          const m = paymentMethods.find((m: Record<string, unknown>) => m.id === p.accountId);
+          const m = paymentMethods.find((m: PaymentMethodRow) => m.id === p.accountId);
           return m ? m.name : 'Unknown';
         }).join(' + ');
       } else {
@@ -168,7 +168,7 @@ export function usePosSale(
           party_id: null,
         }];
         paidTotalInner = parseFloat(paymentAmount);
-        paymentMethodLabel = paymentMethods.find((m: Record<string, unknown>) => m.id === selectedPaymentMethod)?.name || 'Cash';
+        paymentMethodLabel = paymentMethods.find((m: PaymentMethodRow) => m.id === selectedPaymentMethod)?.name || 'Cash';
       }
 
       const saleData = {
@@ -211,7 +211,7 @@ export function usePosSale(
       }
     } catch (err: unknown) {
       console.error('[QuickPosPage] Checkout error:', err);
-      onError(err.message || 'Sale failed. Please try again.');
+      onError(err instanceof Error ? err.message : 'Sale failed. Please try again.');
     } finally {
       setIsProcessing(false);
     }

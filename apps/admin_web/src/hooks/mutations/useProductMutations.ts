@@ -12,7 +12,7 @@ function toProductPayload(data: Partial<ProductData>): ProductUpdateInput {
   if (data.price !== undefined) payload.price = data.price;
   if (data.cost !== undefined) payload.cost = data.cost;
   if (data.categoryId !== undefined) payload.category_id = data.categoryId || null;
-  if (data.isActive !== undefined) payload.is_active = data.isActive;
+  if (data.isActive !== undefined) payload.active = data.isActive;
 
   return payload;
 }

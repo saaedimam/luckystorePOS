@@ -15,7 +15,7 @@ function getClient() {
 
 // Export a proxy so we can use `supabase.from` without initializing immediately
 export const supabase = new Proxy({} as unknown as ReturnType<typeof createClient<Database>>, {
-  get: (target, prop) => {
+  get: (_target, prop) => {
     return (getClient() as unknown as Record<string | symbol, unknown>)[prop];
   }
 });

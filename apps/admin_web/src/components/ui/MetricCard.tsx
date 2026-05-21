@@ -13,7 +13,6 @@ export interface MetricCardProps {
   badge?: string;
   className?: string;
   chart?: React.ReactNode;
-  glass?: boolean;
 }
 
 const COLOR_MAP = {
@@ -35,12 +34,9 @@ export const MetricCard: React.FC<MetricCardProps> = ({
   badge,
   className,
   chart,
-  glass = true,
 }) => {
   return (
     <Card 
-      glass={glass} 
-      hover 
       padding="none" 
       className={cn("overflow-hidden group", className)}
     >

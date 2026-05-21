@@ -1,4 +1,3 @@
-import React from 'react';
 import { PageContainer } from '../../layouts/PageContainer';
 import { PageHeader } from '../../components/layout/PageHeader';
 import { Card } from '../../components/ui/Card';

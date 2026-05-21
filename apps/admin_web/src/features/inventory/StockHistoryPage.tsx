@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import {  useAuth  } from '../../hooks/useAuth';
@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { PageHeader } from '../../components/layout/PageHeader';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
-import { InventoryMovementTimeline, InventoryMovement } from './InventoryMovementTimeline';
+import { InventoryMovementTimeline, type InventoryMovement } from './InventoryMovementTimeline';
 
 const MOVEMENT_TYPES = [
   { value: 'all', label: 'All Movements' },
@@ -25,10 +25,32 @@ export function StockHistoryPage() {
   const { storeId } = useAuth();
   const [movementType, setMovementType] = useState('all');
 
-  const { data: history, isLoading, error } = useQuery<InventoryMovement[]>({
-    queryKey: ['inventory-history', storeId, movementType],
-    queryFn: () => api.inventory.history(storeId, undefined, movementType === 'all' ? undefined : movementType),
+  const { data: rawHistory, isLoading, error } = useQuery({
+    queryKey: ['inventory-history', storeId],
+    queryFn: () => api.inventory.history(storeId),
   });
+
+  const history = (rawHistory || [])
+    .map((m): InventoryMovement => {
+      const metaObj = (m.meta && typeof m.meta === 'object' && !Array.isArray(m.meta)) ? m.meta as Record<string, unknown> : {};
+      return {
+        id: m.id,
+        item_id: m.item_id,
+        product_name: m.item_name,
+        product_sku: String(metaObj.sku || ''),
+        movement_type: m.reason as InventoryMovement['movement_type'],
+        quantity_delta: m.delta,
+        reference_type: String(metaObj.reference_type || ''),
+        reference_id: String(metaObj.reference_id || ''),
+        previous_quantity: Number(metaObj.previous_qty || 0),
+        new_quantity: Number(metaObj.new_qty || 0),
+        notes: m.notes,
+        created_at: m.created_at,
+        created_by: m.performed_by,
+        performer_name: m.performer_name,
+      };
+    })
+    .filter(m => movementType === 'all' || m.movement_type === movementType);
 
   if (error) {
     return (

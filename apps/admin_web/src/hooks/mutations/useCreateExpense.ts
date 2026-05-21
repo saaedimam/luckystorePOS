@@ -16,11 +16,12 @@ export function useCreateExpense() {
         .insert({
           tenant_id: tenantId,
           store_id: storeId,
-          category_id: data.categoryId,
+          category: data.categoryId, // Map categoryId to category string
           amount: data.amount,
           description: data.description,
-          date: data.date,
-          payment_method: data.paymentMethod,
+          expense_date: data.date,
+          payment_type: data.paymentMethod,
+          vendor_name: 'General', // Default vendor name if not in schema
         })
         .select()
         .single();

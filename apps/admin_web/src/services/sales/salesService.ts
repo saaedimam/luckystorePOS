@@ -52,7 +52,6 @@ export const salesService = {
         invoice_pdf_url: pdfUrl,
         invoice_sent_via: 'whatsapp',
         invoice_sent_at: new Date().toISOString(),
-        // @ts-expect-error - These columns exist in the DB but the generated types are out of sync
       })
       .eq('id', saleId);
 

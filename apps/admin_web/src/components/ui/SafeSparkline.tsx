@@ -11,10 +11,10 @@ export const SafeSparkline: React.FC<SafeSparklineProps> = ({
   data, 
   width = 80, 
   height = 24, 
-  color = '#94a3b8' 
+  color = 'currentColor' 
 }) => {
   if (!data || data.length === 0) {
-    return <div style={{ width, height }} className="flex items-center justify-center"><div className="w-full h-px bg-slate-200 dark:bg-slate-700" /></div>;
+    return <div style={{ width, height }} className="flex items-center justify-center"><div className="w-full h-px bg-border-subtle dark:bg-border-default" /></div>;
   }
 
   const min = Math.min(...data);

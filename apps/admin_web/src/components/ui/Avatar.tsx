@@ -26,7 +26,7 @@ export const Avatar: React.FC<AvatarProps> = ({ name, image, size = 'md', classN
   return (
     <div
       className={clsx(
-        'flex items-center justify-center rounded-full bg-gray-200 text-gray-800 overflow-hidden',
+        'flex items-center justify-center rounded-full bg-background-default dark:bg-background-subtle text-text-primary border border-border-default overflow-hidden',
         sizeClasses,
         className
       )}

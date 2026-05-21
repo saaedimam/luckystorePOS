@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../hooks/useAuth';
 import { LogIn, ShoppingBag } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
@@ -13,12 +14,26 @@ export function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const { session, loading: authLoading } = useAuth();
   const from = location.state?.from?.pathname || '/';
+
+  // If already logged in, redirect immediately to dashboard
+  useEffect(() => {
+    if (!authLoading && session) {
+      navigate(from, { replace: true });
+    }
+  }, [session, authLoading, navigate, from]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    if (!email.trim() || !password) {
+      setError("Email and password are required.");
+      setLoading(false);
+      return;
+    }
 
     const { error: authError } = await supabase.auth.signInWithPassword({
       email: email.trim(),
@@ -26,6 +41,7 @@ export function LoginPage() {
     });
 
     if (authError) {
+      console.error("Login failed:", authError.message);
       setError(authError.message);
       setLoading(false);
     } else {

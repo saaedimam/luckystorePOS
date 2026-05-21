@@ -477,6 +477,57 @@ export type Database = {
           },
         ]
       }
+      customers: {
+        Row: {
+          balance: number
+          created_at: string
+          credit_limit: number
+          id: string
+          name: string
+          phone_whatsapp: string | null
+          store_id: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          credit_limit?: number
+          id?: string
+          name: string
+          phone_whatsapp?: string | null
+          store_id: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          credit_limit?: number
+          id?: string
+          name?: string
+          phone_whatsapp?: string | null
+          store_id?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customers_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customers_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       daily_sales: {
         Row: {
           bkash_amount: number | null
@@ -580,6 +631,7 @@ export type Database = {
           ledger_batch_id: string | null
           payment_type: string
           store_id: string
+          tenant_id: string
           updated_at: string
           vendor_name: string
         }
@@ -594,6 +646,7 @@ export type Database = {
           ledger_batch_id?: string | null
           payment_type: string
           store_id: string
+          tenant_id: string
           updated_at?: string
           vendor_name: string
         }
@@ -608,6 +661,7 @@ export type Database = {
           ledger_batch_id?: string | null
           payment_type?: string
           store_id?: string
+          tenant_id?: string
           updated_at?: string
           vendor_name?: string
         }
@@ -631,6 +685,13 @@ export type Database = {
             columns: ["store_id"]
             isOneToOne: false
             referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
         ]
@@ -2208,9 +2269,14 @@ export type Database = {
           change_due: number | null
           client_transaction_id: string | null
           created_at: string | null
+          customer_id: string | null
+          customer_whatsapp: string | null
           discount_amount: number | null
           fulfilled_subtotal: number | null
           id: string
+          invoice_pdf_url: string | null
+          invoice_sent_at: string | null
+          invoice_sent_via: string | null
           ledger_batch_id: string | null
           notes: string | null
           payment_meta: Json | null
@@ -2235,9 +2301,14 @@ export type Database = {
           change_due?: number | null
           client_transaction_id?: string | null
           created_at?: string | null
+          customer_id?: string | null
+          customer_whatsapp?: string | null
           discount_amount?: number | null
           fulfilled_subtotal?: number | null
           id?: string
+          invoice_pdf_url?: string | null
+          invoice_sent_at?: string | null
+          invoice_sent_via?: string | null
           ledger_batch_id?: string | null
           notes?: string | null
           payment_meta?: Json | null
@@ -2262,9 +2333,14 @@ export type Database = {
           change_due?: number | null
           client_transaction_id?: string | null
           created_at?: string | null
+          customer_id?: string | null
+          customer_whatsapp?: string | null
           discount_amount?: number | null
           fulfilled_subtotal?: number | null
           id?: string
+          invoice_pdf_url?: string | null
+          invoice_sent_at?: string | null
+          invoice_sent_via?: string | null
           ledger_batch_id?: string | null
           notes?: string | null
           payment_meta?: Json | null
@@ -2285,6 +2361,13 @@ export type Database = {
             columns: ["cashier_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
             referencedColumns: ["id"]
           },
           {
@@ -3111,6 +3194,17 @@ export type Database = {
         }
         Returns: Json
       }
+      get_price_alerts: {
+        Args: { p_store_id: string; p_threshold: number }
+        Returns: {
+          competitors: Json
+          market_avg_price: number
+          our_price: number
+          price_gap_percent: number
+          product_id: string
+          product_name: string
+        }[]
+      }
       get_new_receipt: { Args: { store: string }; Returns: string }
       get_offline_sync_status: {
         Args: { p_order_ids: string[] }
@@ -3478,6 +3572,39 @@ export type Database = {
           p_tenant_id: string
         }
         Returns: Json
+      }
+      record_sale: {
+        Args: {
+          p_idempotency_key: string
+          p_items: string
+          p_notes: string | null
+          p_payments: string
+          p_store_id: string
+          p_tenant_id: string
+        }
+        Returns: {
+          batch_id: string
+          status: string
+          total_revenue: number
+        }
+      }
+      complete_sale_v2: {
+        Args: {
+          p_cashier_id: string
+          p_customer_id: string | null
+          p_discount: number
+          p_items: Json
+          p_offline_created_at: string
+          p_operation_id: string
+          p_payments: Json
+          p_store_id: string
+          p_total: number
+        }
+        Returns: {
+          batch_id: string
+          sale_id: string
+          status: string
+        }
       }
       register_ledger_worker: {
         Args: { p_worker_id: string }

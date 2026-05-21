@@ -8,9 +8,11 @@ import { Drawer } from '../../components/ui/Drawer';
 import { useUnsavedChangesGuard } from '../../hooks/useUnsavedChangesGuard';
 import { Button } from '../../components/ui/Button';
 
+import { ProductRow, Category } from '../../lib/api/types';
+
 interface ProductEditDrawerProps {
-  product: unknown | null;
-  categories: unknown[] | undefined;
+  product: ProductRow | null;
+  categories: Category[] | undefined;
   onClose: () => void;
 }
 
@@ -21,13 +23,13 @@ export function ProductEditDrawer({ product, categories, onClose }: ProductEditD
     resolver: zodResolver(productSchema),
     values: product ? {
       name: product.name,
-      price: product.price,
+      price: product.price ?? 0,
       cost: product.cost || 0,
       sku: product.sku || '',
       barcode: product.barcode || '',
       categoryId: product.category_id || '',
-      isActive: product.is_active ?? true,
-      minStockLevel: product.minStockLevel || 5,
+      isActive: product.active ?? true,
+      minStockLevel: product.min_stock_level || 5,
     } : undefined
   });
 
@@ -46,7 +48,7 @@ export function ProductEditDrawer({ product, categories, onClose }: ProductEditD
 
   return (
     <Drawer isOpen={!!product} onClose={onClose} title="Edit Product" className="w-[450px]">
-      <Form form={form} onSubmit={handleSubmit} className="flex flex-col gap-4 h-full">
+      <Form<ProductData> form={form} onSubmit={handleSubmit} className="flex flex-col gap-4 h-full">
         <FormInput 
           name="name"
           label="Product Name"
@@ -87,7 +89,7 @@ export function ProductEditDrawer({ product, categories, onClose }: ProductEditD
         <FormSelect
           name="categoryId"
           label="Category"
-          options={categories?.map(c => ({ label: c.name, value: c.id })) || []}
+          options={categories?.map((c) => ({ label: c.name, value: c.id })) || []}
         />
 
         <div className="mt-2">

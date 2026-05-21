@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   AreaChart,
   Area,
@@ -26,7 +25,11 @@ interface DashboardAnalyticsProps {
   isCompact?: boolean;
 }
 
-const COLORS = ['#10b981', '#ec4899', '#f59e0b']; // success, pink (bkash), warning
+const COLORS = [
+  'var(--color-success-default)',
+  'var(--color-danger-default)',
+  'var(--color-warning-default)'
+]; // success, danger/pink (bkash), warning
 
 export function DashboardAnalytics({
   salesVsExpenses,
@@ -57,7 +60,7 @@ export function DashboardAnalytics({
             <span className="text-2xl font-black text-text-primary tracking-tighter">
               ৳{totalRevenue.toLocaleString()}
             </span>
-            <div className="text-[10px] font-bold text-success uppercase tracking-widest">Total 14d Net</div>
+            <div className="text-[10px] font-bold text-success-dark dark:text-success uppercase tracking-widest">Total 14d Net</div>
           </div>
         </div>
 
@@ -66,20 +69,20 @@ export function DashboardAnalytics({
             <AreaChart data={salesVsExpenses}>
               <defs>
                 <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                  <stop offset="5%" stopColor="var(--color-success-default)" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="var(--color-success-default)" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="colorExpenses" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#ef4444" stopOpacity={0.2} />
-                  <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                  <stop offset="5%" stopColor="var(--color-danger-default)" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="var(--color-danger-default)" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border-default)" opacity={0.3} />
               <XAxis 
                 dataKey="label" 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fontSize: 10, fill: '#64748b', fontWeight: 600 }}
+                tick={{ fontSize: 10, fill: 'var(--color-text-secondary)', fontWeight: 600 }}
                 dy={10}
               />
               <YAxis 
@@ -87,17 +90,18 @@ export function DashboardAnalytics({
               />
               <Tooltip 
                 contentStyle={{ 
-                  backgroundColor: 'rgba(255, 255, 255, 0.9)', 
+                  backgroundColor: 'var(--color-surface-default)', 
                   borderRadius: '12px', 
-                  border: '1px solid rgba(0,0,0,0.05)',
-                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                  fontSize: '12px'
+                  border: '1px solid var(--color-border-default)',
+                  boxShadow: 'var(--elevation-2)',
+                  fontSize: '12px',
+                  color: 'var(--color-text-primary)'
                 }}
               />
               <Area 
                 type="monotone" 
                 dataKey="sales" 
-                stroke="#10b981" 
+                stroke="var(--color-success-default)" 
                 strokeWidth={3}
                 fillOpacity={1} 
                 fill="url(#colorSales)" 
@@ -106,7 +110,7 @@ export function DashboardAnalytics({
               <Area 
                 type="monotone" 
                 dataKey="expenses" 
-                stroke="#ef4444" 
+                stroke="var(--color-danger-default)" 
                 strokeWidth={2}
                 strokeDasharray="5 5"
                 fillOpacity={1} 
@@ -123,7 +127,7 @@ export function DashboardAnalytics({
         {/* Payment Mix (Glassmorphic) */}
         <div className="bg-surface-default/40 backdrop-blur-md border border-border-default rounded-xl p-5 shadow-sm">
           <h3 className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-4 flex items-center gap-2">
-            <CreditCard size={14} className="text-pink-500" />
+            <CreditCard size={14} className="text-secondary" />
             Payment Mix
           </h3>
           <div className="h-[140px] w-full relative">

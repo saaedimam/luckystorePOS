@@ -15,21 +15,21 @@ export const SyncTelemetryBar: React.FC<SyncTelemetryBarProps> = ({
 }) => {
   const config = {
     synced: {
-      dotClass: 'bg-emerald-500 animate-pulse',
-      textClass: 'text-emerald-700 dark:text-emerald-400',
-      bgClass: 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200/60 dark:border-emerald-900/30',
+      dotClass: 'bg-success animate-pulse',
+      textClass: 'text-success-dark dark:text-success',
+      bgClass: 'bg-success/10 border-success/20',
       label: 'Connected',
     },
     certifying: {
-      dotClass: 'bg-amber-500 animate-spin rounded-sm',
-      textClass: 'text-amber-700 dark:text-amber-400',
-      bgClass: 'bg-amber-50/50 dark:bg-amber-950/20 border-amber-200/60 dark:border-amber-900/30',
+      dotClass: 'bg-warning animate-spin rounded-sm',
+      textClass: 'text-warning-dark dark:text-warning',
+      bgClass: 'bg-warning/10 border-warning/20',
       label: `Certifying [${pendingMutationCount}]`,
     },
     offline: {
-      dotClass: 'bg-slate-400',
-      textClass: 'text-slate-600 dark:text-slate-400',
-      bgClass: 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800',
+      dotClass: 'bg-text-muted',
+      textClass: 'text-text-secondary dark:text-text-muted',
+      bgClass: 'bg-background-subtle border-border-default',
       label: 'Offline Queue Active',
     },
   };
@@ -42,8 +42,8 @@ export const SyncTelemetryBar: React.FC<SyncTelemetryBarProps> = ({
         <span className={`w-2 h-2 rounded-full ${current.dotClass}`} />
         <span className={`font-semibold ${current.textClass}`}>{current.label}</span>
       </div>
-      <div className="text-slate-400 dark:text-slate-500 text-[10px] select-none uppercase tracking-wider">
-        Node: <span className="text-slate-600 dark:text-slate-300">{tenantNodeId.substring(0, 8)}</span>
+      <div className="text-text-muted text-[10px] select-none uppercase tracking-wider">
+        Node: <span className="text-text-secondary">{tenantNodeId.substring(0, 8)}</span>
       </div>
     </div>
   );

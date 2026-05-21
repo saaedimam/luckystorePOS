@@ -138,8 +138,8 @@ export const PurchaseEntryPage: React.FC = () => {
         form.reset();
         setSupplierSearch('');
       },
-      onError: (err: Error | Record<string, unknown>) => {
-        notify(err.message || 'Submission failed', 'error');
+      onError: (err: unknown) => {
+        notify(err instanceof Error ? err.message : 'Submission failed', 'error');
       }
     });
   };

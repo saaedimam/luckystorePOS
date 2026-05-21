@@ -1,8 +1,7 @@
-import React from 'react';
 import { ShoppingCart, Trash2, Minus, Plus, CreditCard, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCartStore } from '@/stores/useCartStore';
-import { Button } from '../../ui/Button';
+import { Button } from '../../../components/ui/Button';
 
 /**
  * TouchCart: A premium, touch-optimized cart component for the POS.

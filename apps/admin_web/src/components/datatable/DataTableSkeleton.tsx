@@ -1,4 +1,3 @@
-import React from 'react';
 import { ColumnDef } from './types';
 
 interface DataTableSkeletonProps<T> {

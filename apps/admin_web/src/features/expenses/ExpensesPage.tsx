@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import {  useAuth  } from '../../hooks/useAuth';
@@ -33,7 +33,14 @@ import {
 } from 'lucide-react';
 import { format, isToday, isThisWeek, isThisMonth, subMonths, startOfMonth, parseISO } from 'date-fns';
 
-const CHART_COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
+const CHART_COLORS = [
+  'var(--color-info-default)',
+  'var(--color-success-default)',
+  'var(--color-warning-default)',
+  'var(--color-danger-default)',
+  'var(--color-primary-default)',
+  'var(--color-secondary-default)'
+];
 import {
   EXPENSE_CATEGORIES,
   EXPENSE_PAYMENT_TYPES,
@@ -65,20 +72,20 @@ export function ExpensesPage() {
       queryClient.invalidateQueries({ queryKey: ['expenses', storeId] });
       setShowForm(false);
     },
-    onError: (err: Error | Record<string, unknown>) => {
-      notify(err.message || 'Failed to record expense.', 'error');
+    onError: (err: unknown) => {
+      notify(err instanceof Error ? err.message : 'Failed to record expense.', 'error');
     },
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, updates }: { id: string; updates: unknown }) => api.expenses.update(id, updates),
+    mutationFn: ({ id, updates }: { id: string; updates: Partial<ExpenseFormData> }) => api.expenses.update(id, updates),
     onSuccess: () => {
       notify('Expense updated successfully.', 'success');
       queryClient.invalidateQueries({ queryKey: ['expenses', storeId] });
       setEditingExpense(null);
     },
-    onError: (err: Error | Record<string, unknown>) => {
-      notify(err.message || 'Failed to update expense.', 'error');
+    onError: (err: unknown) => {
+      notify(err instanceof Error ? err.message : 'Failed to update expense.', 'error');
     },
   });
 
@@ -89,8 +96,8 @@ export function ExpensesPage() {
       queryClient.invalidateQueries({ queryKey: ['expenses', storeId] });
       setDeletingExpenseId(null);
     },
-    onError: (err: Error | Record<string, unknown>) => {
-      notify(err.message || 'Failed to delete expense.', 'error');
+    onError: (err: unknown) => {
+      notify(err instanceof Error ? err.message : 'Failed to delete expense.', 'error');
     },
   });
 
@@ -261,9 +268,9 @@ export function ExpensesPage() {
       />
 
       <div className="dashboard-grid mt-6 mb-6">
-        <MetricCard title="Today" value={`৳${todayTotal.toLocaleString('en-BD', { minimumFractionDigits: 2 })}`} icon={<CalendarDays size={20} className="text-emerald-600" />} color="success" variant="light" />
-        <MetricCard title="This Week" value={`৳${weekTotal.toLocaleString('en-BD', { minimumFractionDigits: 2 })}`} icon={<TrendingUp size={20} className="text-emerald-600" />} color="success" variant="light" />
-        <MetricCard title="This Month" value={`৳${monthTotal.toLocaleString('en-BD', { minimumFractionDigits: 2 })}`} icon={<Wallet size={20} className="text-emerald-600" />} color="success" variant="light" />
+        <MetricCard title="Today" value={`৳${todayTotal.toLocaleString('en-BD', { minimumFractionDigits: 2 })}`} icon={<CalendarDays size={20} className="text-success-dark dark:text-success" />} color="success" variant="light" />
+        <MetricCard title="This Week" value={`৳${weekTotal.toLocaleString('en-BD', { minimumFractionDigits: 2 })}`} icon={<TrendingUp size={20} className="text-success-dark dark:text-success" />} color="success" variant="light" />
+        <MetricCard title="This Month" value={`৳${monthTotal.toLocaleString('en-BD', { minimumFractionDigits: 2 })}`} icon={<Wallet size={20} className="text-success-dark dark:text-success" />} color="success" variant="light" />
       </div>
 
       {/* Expense Dashboard */}
@@ -591,13 +598,13 @@ function AddExpenseDrawer({
   isPending,
 }: {
   isOpen: boolean;
-  onSubmit: (form: Record<string, unknown>) => void;
+  onSubmit: (form: ExpenseFormData) => void;
   onClose: () => void;
   isPending: boolean;
 }) {
   const today = format(new Date(), 'yyyy-MM-dd');
 
-  const form = useForm<unknown>({
+  const form = useForm<ExpenseFormData>({
     defaultValues: {
       expenseDate: today,
       vendorName: '',
@@ -608,7 +615,7 @@ function AddExpenseDrawer({
     }
   });
 
-  const handleSubmit = (data: Record<string, unknown>) => {
+  const handleSubmit = (data: ExpenseFormData) => {
     onSubmit(data);
   };
 
@@ -677,7 +684,7 @@ function EditExpenseDrawer({
   onClose: () => void;
   isPending: boolean;
 }) {
-  const form = useForm<unknown>({
+  const form = useForm<ExpenseFormData>({
     values: expense ? {
       expenseDate: expense.expenseDate,
       vendorName: expense.vendorName,
@@ -690,8 +697,8 @@ function EditExpenseDrawer({
 
   if (!expense) return null;
 
-  const handleSubmit = (data: Record<string, unknown>) => {
-    onSubmit(expense.id, data);
+  const handleSubmit = (data: ExpenseFormData) => {
+    onSubmit(expense.id, data as unknown as Record<string, unknown>);
   };
 
   return (

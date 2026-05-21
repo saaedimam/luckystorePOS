@@ -21,9 +21,12 @@ interface CategoryThumbnailGridProps {
 function getCategoryDisplay(name: string): { icon: string; color: string } {
   const hash = name.toLowerCase().trim();
   const palette = [
-    '#4F46E5', '#0D9488', '#E8B84B', '#EF4444',
-    '#3B82F6', '#8B5CF6', '#F97316', '#10B981',
-    '#EC4899', '#6366F1', '#14B8A6', '#F59E0B',
+    'var(--color-primary-default)',
+    'var(--color-secondary-default)',
+    'var(--color-info-default)',
+    'var(--color-success-default)',
+    'var(--color-danger-default)',
+    'var(--color-warning-default)',
   ];
   let h = 0;
   for (let i = 0; i < hash.length; i++) h = ((h << 5) - h) + hash.charCodeAt(i);
@@ -80,15 +83,15 @@ export const CategoryThumbnailGrid: React.FC<CategoryThumbnailGridProps> = ({
             'flex-shrink-0 flex flex-col items-center justify-center gap-2',
             'w-24 h-28 rounded-xl border-2 transition-all duration-200',
             selectedId === null || selectedId === undefined
-              ? 'border-primary bg-primary/10 shadow-level-2 scale-105'
-              : 'border-border-default bg-surface hover:border-primary/40 hover:shadow-level-1'
+              ? 'border-primary bg-primary-subtle shadow-level-2 scale-105'
+              : 'border-border-default bg-surface-default hover:border-primary/40 hover:shadow-level-1'
           )}
         >
           <div
             className={clsx(
               'w-12 h-12 rounded-full flex items-center justify-center text-2xl',
               selectedId === null || selectedId === undefined
-                ? 'bg-primary text-primary-on'
+                ? 'bg-primary-default text-primary-on'
                 : 'bg-background-subtle text-text-secondary'
             )}
           >
@@ -97,7 +100,7 @@ export const CategoryThumbnailGrid: React.FC<CategoryThumbnailGridProps> = ({
           <span
             className={clsx(
               'text-xs font-semibold text-center leading-tight px-1',
-              selectedId === null || selectedId === undefined ? 'text-primary' : 'text-text-secondary'
+              selectedId === null || selectedId === undefined ? 'text-primary-default' : 'text-text-secondary'
             )}
           >
             All
@@ -112,8 +115,8 @@ export const CategoryThumbnailGrid: React.FC<CategoryThumbnailGridProps> = ({
               'flex-shrink-0 flex flex-col items-center justify-center gap-2',
               'w-24 h-28 rounded-xl border-2 transition-all duration-200',
               selectedId === cat.id
-                ? 'border-primary bg-primary/10 shadow-level-2 scale-105'
-                : 'border-border-default bg-surface hover:border-primary/40 hover:shadow-level-1'
+                ? 'border-primary bg-primary-subtle shadow-level-2 scale-105'
+                : 'border-border-default bg-surface-default hover:border-primary/40 hover:shadow-level-1'
             )}
           >
             {cat.imageUrl ? (
@@ -126,7 +129,7 @@ export const CategoryThumbnailGrid: React.FC<CategoryThumbnailGridProps> = ({
             ) : (
               <div
                 className="w-12 h-12 rounded-full flex items-center justify-center text-2xl"
-                style={{ backgroundColor: cat.color + '20', color: cat.color }}
+                style={{ backgroundColor: `color-mix(in srgb, ${cat.color} 15%, transparent)`, color: cat.color }}
               >
                 {cat.icon}
               </div>
@@ -134,7 +137,7 @@ export const CategoryThumbnailGrid: React.FC<CategoryThumbnailGridProps> = ({
             <span
               className={clsx(
                 'text-xs font-semibold text-center leading-tight px-1 truncate w-full',
-                selectedId === cat.id ? 'text-primary' : 'text-text-secondary'
+                selectedId === cat.id ? 'text-primary-default' : 'text-text-secondary'
               )}
             >
               {cat.name}

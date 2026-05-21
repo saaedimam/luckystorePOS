@@ -3,11 +3,19 @@ import { useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { Shield, AppWindow, Check, X, Loader2, Info } from 'lucide-react';
 
+interface OAuthDetails {
+  client: {
+    name: string;
+  };
+  redirect_uri: string;
+  scopes?: string[];
+}
+
 export function OAuthConsentPage() {
   const [searchParams] = useSearchParams();
   const authorizationId = searchParams.get('authorization_id');
 
-  const [authDetails, setAuthDetails] = useState<unknown>(null);
+  const [authDetails, setAuthDetails] = useState<OAuthDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,16 +29,15 @@ export function OAuthConsentPage() {
       }
 
       try {
-        // @ts-expect-error - Supabase types might not be updated in the environment yet
         const { data, error } = await supabase.auth.oauth.getAuthorizationDetails(authorizationId);
 
         if (error) {
           setError(error.message);
         } else {
-          setAuthDetails(data);
+          setAuthDetails(data as unknown as OAuthDetails);
         }
       } catch (err: unknown) {
-        setError(err.message || 'Failed to retrieve authorization details.');
+        setError(err instanceof Error ? err.message : 'Failed to retrieve authorization details.');
       } finally {
         setLoading(false);
       }
@@ -44,7 +51,6 @@ export function OAuthConsentPage() {
     setActionLoading(true);
 
     try {
-      // @ts-expect-error - method not yet in supabase types
       const { data, error } = await supabase.auth.oauth.approveAuthorization(authorizationId);
 
       if (error) {
@@ -55,7 +61,7 @@ export function OAuthConsentPage() {
         window.location.href = data.redirect_to;
       }
     } catch (err: unknown) {
-      setError(err.message || 'An error occurred during approval.');
+      setError(err instanceof Error ? err.message : 'An error occurred during approval.');
       setActionLoading(false);
     }
   }
@@ -65,7 +71,6 @@ export function OAuthConsentPage() {
     setActionLoading(true);
 
     try {
-      // @ts-expect-error - method not yet in supabase types
       const { data, error } = await supabase.auth.oauth.denyAuthorization(authorizationId);
 
       if (error) {
@@ -76,7 +81,7 @@ export function OAuthConsentPage() {
         window.location.href = data.redirect_to;
       }
     } catch (err: unknown) {
-      setError(err.message || 'An error occurred during denial.');
+      setError(err instanceof Error ? err.message : 'An error occurred during denial.');
       setActionLoading(false);
     }
   }

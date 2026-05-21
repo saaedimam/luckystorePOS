@@ -40,7 +40,7 @@ export function usePosScanner(
           setScanValue('');
         }
       } catch (err: unknown) {
-        onError(`Scan error: ${err.message}`);
+        onError(`Scan error: ${err instanceof Error ? err.message : String(err)}`);
         setScanValue('');
       }
     }
@@ -77,7 +77,7 @@ export function usePosScanner(
             onError(`Item not found: ${value}`);
           }
         } catch (err: unknown) {
-          onError(`Scan error: ${err.message}`);
+          onError(`Scan error: ${err instanceof Error ? err.message : String(err)}`);
         }
         return;
       }

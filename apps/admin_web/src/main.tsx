@@ -8,10 +8,13 @@ import './styles/tokens.css'
 import './styles/base.css'
 import './styles/layout.css'
 import './styles/components.css'
+import { QueryProvider } from './app/QueryProvider' // Import QueryProvider
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById('app-root')!).render(
   <React.StrictMode>
-    <App />
+    <QueryProvider> {/* Wrap App with QueryProvider */}
+      <App />
+    </QueryProvider>
   </React.StrictMode>,
 )
 

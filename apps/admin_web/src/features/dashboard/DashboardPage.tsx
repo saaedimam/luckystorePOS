@@ -11,8 +11,9 @@ import clsx from 'clsx';
 
 // Services & Hooks
 import { useDashboardData } from '../../hooks/useDashboardData';
-import { useDashboardMetrics } from '../../hooks/useDashboardMetrics';
+import { useDashboardMetrics, LowStockItem, DailySaleItem, ExpenseItem, RecentSaleItem, DayGroup } from '../../hooks/useDashboardMetrics';
 import { ProcurementService } from '../inventory/procurement';
+import { StatsType, MetricsType } from './ManagerPartnerView';
 import { useVoiceCommand } from '../../hooks/useVoiceCommand';
 import { VoiceInput } from '../../components/cashier/VoiceInput';
 import { SaleSurface } from '../../components/cashier/SaleSurface';
@@ -114,11 +115,11 @@ export function DashboardPage() {
     refetchAll,
   } = useDashboardData(storeId);
 
-  const stats = statsQuery.data;
-  const lowStock = useMemo(() => lowStockQuery.data || [], [lowStockQuery.data]);
-  const dailySales = dailySalesQuery.data || [];
-  const expenses = expensesQuery.data || [];
-  const recentSales = recentSalesQuery.data || [];
+  const stats = statsQuery.data as StatsType | undefined;
+  const lowStock = useMemo(() => (lowStockQuery.data as LowStockItem[]) || [], [lowStockQuery.data]);
+  const dailySales = (dailySalesQuery.data as DailySaleItem[]) || [];
+  const expenses = (expensesQuery.data as ExpenseItem[]) || [];
+  const recentSales = (recentSalesQuery.data as RecentSaleItem[]) || [];
 
   // Unified metrics pre-computation with active User Role
   const metrics = useDashboardMetrics(
@@ -789,9 +790,9 @@ export function DashboardPage() {
         setCmdSearch={setCmdSearch}
         cmdSearchInputRef={cmdSearchInputRef}
         refetchAll={refetchAll}
-        metrics={metrics}
+        metrics={metrics as unknown as MetricsType}
         dismissedProjections={dismissedProjections}
-        filteredFeed={filteredFeed}
+        filteredFeed={filteredFeed as DayGroup[]}
         handleQuickRestock={handleQuickRestock}
         pendingRestocks={pendingRestocks}
         searchTerm={searchTerm}

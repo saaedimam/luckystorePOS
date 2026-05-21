@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { Json } from '@/lib/database.types';
 import { useOfflineStore, OfflineSale } from '@/stores/useOfflineStore';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import { useEffect } from 'react';
@@ -16,14 +17,23 @@ export function useSyncSales() {
 
   const syncMutation = useMutation({
     mutationFn: async (sale: OfflineSale) => {
+      const payload = sale.payload as {
+        storeId: string;
+        cashierId: string;
+        customerId?: string | null;
+        items: unknown[];
+        payments: unknown[];
+        total: number;
+        discount: number;
+      };
       const { error } = await supabase.rpc('complete_sale_v2', {
-        p_store_id: sale.payload.storeId,
-        p_cashier_id: sale.payload.cashierId,
-        p_customer_id: sale.payload.customerId,
-        p_items: sale.payload.items,
-        p_payments: sale.payload.payments,
-        p_total: sale.payload.total,
-        p_discount: sale.payload.discount,
+        p_store_id: payload.storeId,
+        p_cashier_id: payload.cashierId,
+        p_customer_id: payload.customerId ?? null,
+        p_items: payload.items as unknown as Json,
+        p_payments: payload.payments as unknown as Json,
+        p_total: payload.total,
+        p_discount: payload.discount,
         p_offline_created_at: sale.createdAt,
         p_operation_id: sale.id,
       });

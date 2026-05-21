@@ -82,8 +82,8 @@
 .receipt-paper {
   width: 100%;
   max-width: 280px;
-  background: #fff;
-  border: 1px solid var(--border-color);
+  background: var(--color-surface-default);
+  border: 1px solid var(--color-border-default);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-sm);
   font-family: 'Courier New', Courier, monospace;
@@ -92,7 +92,7 @@
 .receipt-content {
   padding: var(--space-4);
   text-align: center;
-  color: #111;
+  color: var(--color-text-primary);
   font-size: 13px;
   line-height: 1.4;
 }
@@ -107,36 +107,36 @@
 
 .receipt-header-msg {
   font-size: 12px;
-  color: #555;
+  color: var(--color-text-secondary);
   margin-bottom: var(--space-2);
   font-style: italic;
 }
 
 .receipt-footer-msg {
   font-size: 12px;
-  color: #555;
+  color: var(--color-text-secondary);
   margin-bottom: var(--space-2);
   font-style: italic;
 }
 
 .receipt-date {
   font-size: 12px;
-  color: #555;
+  color: var(--color-text-secondary);
   margin-bottom: var(--space-1);
 }
 
 .receipt-sale-id {
   font-size: 12px;
-  color: #555;
+  color: var(--color-text-secondary);
 }
 
 .receipt-divider {
-  border-top: 2px solid #111;
+  border-top: 2px solid var(--color-border-strong);
   margin: var(--space-3) 0;
 }
 
 .receipt-divider--dashed {
-  border-top: 1px dashed #888;
+  border-top: 1px dashed var(--color-border-default);
 }
 
 .receipt-items {
@@ -160,12 +160,12 @@
   display: flex;
   justify-content: space-between;
   font-size: 12px;
-  color: #555;
+  color: var(--color-text-secondary);
 }
 
 .receipt-item-total {
   font-weight: 600;
-  color: #111;
+  color: var(--color-text-primary);
 }
 
 .receipt-totals {
@@ -216,8 +216,8 @@
     left: 0;
     right: 0;
     z-index: 40;
-    background: var(--color-primary);
-    color: #000;
+    background: var(--color-primary-default);
+    color: var(--color-primary-on);
     font-weight: 700;
     font-size: var(--font-size-base);
     padding: var(--space-4) var(--space-6);
@@ -234,8 +234,8 @@
   }
 
   .mobile-cart-badge {
-    background: #000;
-    color: var(--color-primary);
+    background: var(--color-primary-on);
+    color: var(--color-primary-default);
     border-radius: 9999px;
     min-width: 24px;
     height: 24px;

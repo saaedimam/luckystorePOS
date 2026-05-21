@@ -55,7 +55,7 @@ export function CompetitorPricesPage() {
   const alertProductIds = new Set(alerts?.map((a: PriceAlert) => a.product_id) || []);
 
   const filteredPrices = showAlertsOnly
-    ? prices?.filter((p: CompetitorPrice) => alertProductIds.has(p.item_id))
+    ? prices?.filter((p: CompetitorPrice) => alertProductIds.has(p.product_id))
     : prices;
 
   const columns: Column<CompetitorPrice>[] = [
@@ -65,7 +65,7 @@ export function CompetitorPricesPage() {
         <div className="competitor-product-cell">
           <span className="font-medium">{row.item_name || 'Unknown'}</span>
           {row.sku && <span className="text-muted text-xs">{row.sku}</span>}
-          {alertProductIds.has(row.item_id) && (
+          {alertProductIds.has(row.product_id) && (
             <span className="alert-badge">
               <AlertTriangle size={12} />
               Price Alert

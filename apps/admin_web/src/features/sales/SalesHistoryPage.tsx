@@ -92,6 +92,7 @@ export function SalesHistoryPage() {
 
   const salesScrollRef = useRef<HTMLDivElement>(null);
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const salesVirtualizer = useVirtualizer({
     count: paginatedSales.length,
     getScrollElement: () => salesScrollRef.current,
@@ -384,16 +385,17 @@ function SaleDetailsDrawer({ saleId, onClose }: { saleId: string | null, onClose
 
   const handleVoid = () => {
     voidMutation.mutate({ saleId: saleId!, reason: voidReason, idempotencyKey }, {
-      onSuccess: (res: Record<string, unknown>) => {
-        if (res.is_duplicate) {
+      onSuccess: (res: unknown) => {
+        const result = res as { is_duplicate?: boolean } | null;
+        if (result?.is_duplicate) {
           notify('This sale was already voided.', 'error');
         } else {
           notify('Sale voided successfully. Stock has been restored.', 'success');
         }
         onClose();
       },
-      onError: (err: Error | Record<string, unknown>) => {
-        notify(err.message || 'Failed to void sale. Please try again.', 'error');
+      onError: (err: unknown) => {
+        notify(err instanceof Error ? err.message : 'Failed to void sale. Please try again.', 'error');
       }
     });
   };

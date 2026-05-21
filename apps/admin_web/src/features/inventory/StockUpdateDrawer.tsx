@@ -8,10 +8,9 @@ import { useUpdateInventory } from '../../hooks/mutations/useUpdateInventory';
 import { Form, FormSelect, StockAdjustmentInput } from '../../components/forms';
 import { useUnsavedChangesGuard } from '../../hooks/useUnsavedChangesGuard';
 
-interface StockUpdateDrawerProps {
-  product: unknown | null;
-  onClose: () => void;
-}
+import { useNotify } from '../../components/NotificationContext';
+import type { ProductRow } from '../../lib/api/types';
+import type { InventoryListRow } from '../../types/rpc';
 
 const reasons = [
   { value: 'received', label: 'Purchase' },
@@ -22,7 +21,10 @@ const reasons = [
   { value: 'other', label: 'Manual fix' },
 ];
 
-import { useNotify } from '../../components/NotificationContext';
+interface StockUpdateDrawerProps {
+  product: ProductRow | InventoryListRow | null;
+  onClose: () => void;
+}
 
 export function StockUpdateDrawer({ product, onClose }: StockUpdateDrawerProps) {
   const { notify } = useNotify();
@@ -47,8 +49,9 @@ export function StockUpdateDrawer({ product, onClose }: StockUpdateDrawerProps) 
 
   const handleSubmit = (data: InventoryAdjustmentData) => {
     updateMutation.mutate({ data, mode }, {
-      onSuccess: (res: Record<string, unknown>) => {
-        if (res?.is_duplicate) {
+      onSuccess: (res: unknown) => {
+        const result = res as { is_duplicate?: boolean } | null | undefined;
+        if (result?.is_duplicate) {
           notify('This update was already processed.', 'info');
         } else {
           notify('Stock updated successfully.', 'success');
@@ -56,8 +59,8 @@ export function StockUpdateDrawer({ product, onClose }: StockUpdateDrawerProps) 
         form.reset();
         onClose();
       },
-      onError: (err: Error | Record<string, unknown>) => {
-        notify(err.message || 'Failed to update stock. Please try again.', 'error');
+      onError: (err: unknown) => {
+        notify(err instanceof Error ? err.message : 'Failed to update stock. Please try again.', 'error');
       }
     });
   };

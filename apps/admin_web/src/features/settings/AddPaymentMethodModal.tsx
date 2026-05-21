@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { X, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
+import { Modal } from '../../components/ui/Modal';
+import { clsx } from 'clsx';
 
 const PAYMENT_TYPES = [
   { value: 'cash', label: 'Cash' },
@@ -26,19 +28,17 @@ export function AddPaymentMethodModal({ isOpen, storeId, onClose }: AddPaymentMe
   const [error, setError] = useState<string | null>(null);
 
   const createMutation = useMutation({
-    mutationFn: (method: Record<string, unknown>) => api.settings.addPaymentMethod(storeId, method),
+    mutationFn: (method: { name: string; type: string; isActive: boolean }) => api.settings.addPaymentMethod(storeId, method),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['settings-payments'] });
       setFormData({ name: '', type: 'cash', isActive: true });
       setError(null);
       onClose();
     },
-    onError: (err: Error | Record<string, unknown>) => {
-      setError(err.message || 'Failed to add payment method');
+    onError: (err: unknown) => {
+      setError(err instanceof Error ? err.message : 'Failed to add payment method');
     },
   });
-
-  if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,202 +51,77 @@ export function AddPaymentMethodModal({ isOpen, storeId, onClose }: AddPaymentMe
   };
 
   return (
-    <div
-      className="modal-overlay"
-      onClick={onClose}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: 'rgba(0,0,0,0.4)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000,
-        backdropFilter: 'blur(2px)',
-      }}
-    >
-      <div
-        className="modal-content card"
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          width: '100%',
-          maxWidth: '420px',
-          backgroundColor: 'var(--bg-card)',
-          maxHeight: '90vh',
-          display: 'flex',
-          flexDirection: 'column',
-          padding: 'var(--space-6)',
-          borderRadius: 'var(--radius-lg)',
-          boxShadow: 'var(--shadow-lg)',
-        }}
-      >
-        <header
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 'var(--space-6)',
-          }}
-        >
-          <h2 style={{ fontSize: 'var(--font-size-xl)', fontWeight: '700' }}>Add Payment Method</h2>
-          <button onClick={onClose} style={{ color: 'var(--text-muted)' }}>
-            <X size={24} />
-          </button>
-        </header>
+    <Modal isOpen={isOpen} onClose={onClose} title="Add Payment Method">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div className="form-group">
+          <label className="block text-sm font-semibold text-text-secondary mb-1">
+            Name
+          </label>
+          <input
+            type="text"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            required
+            placeholder="e.g. Nagad"
+            className="w-full p-3 border border-border-default rounded-md bg-background-subtle text-text-primary outline-none focus:border-primary-default"
+          />
+        </div>
 
-        <form
-          onSubmit={handleSubmit}
-          style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}
-        >
-          <div className="form-group">
-            <label
-              style={{
-                display: 'block',
-                fontSize: 'var(--font-size-sm)',
-                fontWeight: '600',
-                marginBottom: 'var(--space-1)',
-              }}
-            >
-              Name
-            </label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              required
-              placeholder="e.g. Nagad"
-              style={{
-                width: '100%',
-                padding: 'var(--space-3)',
-                borderRadius: 'var(--radius-md)',
-                border: '1px solid var(--border-color)',
-                backgroundColor: 'var(--input-bg)',
-                color: 'var(--text-main)',
-              }}
+        <div className="form-group">
+          <label className="block text-sm font-semibold text-text-secondary mb-1">
+            Type
+          </label>
+          <select
+            value={formData.type}
+            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+            className="w-full p-3 border border-border-default rounded-md bg-background-subtle text-text-primary outline-none focus:border-primary-default"
+          >
+            {PAYMENT_TYPES.map((pt) => (
+              <option key={pt.value} value={pt.value}>
+                {pt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex items-center justify-between py-3">
+          <label className="text-sm font-semibold text-text-secondary">
+            Active
+          </label>
+          <button
+            type="button"
+            onClick={() => setFormData({ ...formData, isActive: !formData.isActive })}
+            className={clsx(
+              'w-11 h-6 rounded-full relative transition-colors border-none cursor-pointer',
+              formData.isActive ? 'bg-success' : 'bg-border'
+            )}
+          >
+            <span
+              className={clsx(
+                'absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all',
+                formData.isActive ? 'left-[22px]' : 'left-0.5'
+              )}
             />
-          </div>
+          </button>
+        </div>
 
-          <div className="form-group">
-            <label
-              style={{
-                display: 'block',
-                fontSize: 'var(--font-size-sm)',
-                fontWeight: '600',
-                marginBottom: 'var(--space-1)',
-              }}
-            >
-              Type
-            </label>
-            <select
-              value={formData.type}
-              onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-              style={{
-                width: '100%',
-                padding: 'var(--space-3)',
-                borderRadius: 'var(--radius-md)',
-                border: '1px solid var(--border-color)',
-                backgroundColor: 'var(--input-bg)',
-                color: 'var(--text-main)',
-              }}
-            >
-              {PAYMENT_TYPES.map((pt) => (
-                <option key={pt.value} value={pt.value}>
-                  {pt.label}
-                </option>
-              ))}
-            </select>
+        {error && (
+          <div className="p-3 bg-danger/10 border border-danger/25 text-danger rounded-md text-sm font-medium">
+            {error}
           </div>
+        )}
 
-          <div
-            className="form-group"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: 'var(--space-3) 0',
-            }}
+        <div className="mt-2 pt-4 border-t border-border-default">
+          <button
+            type="submit"
+            disabled={createMutation.isPending}
+            className="button-primary w-full flex items-center justify-center gap-2 font-semibold"
+            style={{ opacity: createMutation.isPending ? 0.7 : 1 }}
           >
-            <label
-              style={{
-                fontSize: 'var(--font-size-sm)',
-                fontWeight: '600',
-              }}
-            >
-              Active
-            </label>
-            <button
-              type="button"
-              onClick={() => setFormData({ ...formData, isActive: !formData.isActive })}
-              style={{
-                width: '44px',
-                height: '24px',
-                borderRadius: '12px',
-                backgroundColor: formData.isActive ? 'var(--color-success)' : 'var(--border-color)',
-                position: 'relative',
-                transition: 'background-color var(--transition-fast)',
-                border: 'none',
-                cursor: 'pointer',
-              }}
-            >
-              <span
-                style={{
-                  position: 'absolute',
-                  top: '2px',
-                  left: formData.isActive ? '22px' : '2px',
-                  width: '20px',
-                  height: '20px',
-                  borderRadius: '50%',
-                  backgroundColor: 'white',
-                  transition: 'left var(--transition-fast)',
-                }}
-              />
-            </button>
-          </div>
-
-          {error && (
-            <div
-              style={{
-                padding: 'var(--space-3)',
-                borderRadius: 'var(--radius-md)',
-                backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                color: 'var(--color-danger)',
-                fontSize: 'var(--font-size-sm)',
-                fontWeight: '500',
-              }}
-            >
-              {error}
-            </div>
-          )}
-
-          <div
-            style={{
-              marginTop: 'var(--space-2)',
-              paddingTop: 'var(--space-4)',
-              borderTop: '1px solid var(--border-color)',
-            }}
-          >
-            <button
-              type="submit"
-              disabled={createMutation.isPending}
-              style={{
-                width: '100%',
-                backgroundColor: 'var(--color-primary)',
-                color: '#000',
-                padding: 'var(--space-3)',
-                borderRadius: 'var(--radius-md)',
-                fontWeight: '600',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 'var(--space-2)',
-                opacity: createMutation.isPending ? 0.7 : 1,
-              }}
-            >
-              <Plus size={18} /> {createMutation.isPending ? 'Adding...' : 'Add Payment Method'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+            <Plus size={18} /> {createMutation.isPending ? 'Adding...' : 'Add Payment Method'}
+          </button>
+        </div>
+      </form>
+    </Modal>
   );
 }

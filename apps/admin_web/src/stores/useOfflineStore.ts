@@ -2,13 +2,23 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { indexedDBStorage } from '@/lib/offline-storage';
 
+export interface PosSalePayload {
+  storeId: string;
+  cashierId: string;
+  customerId?: string;
+  items: Array<{ product_id: string; qty: number; unit_price: number; discount?: number }>;
+  payments: Array<{ method: string; amount: number; reference?: string }>;
+  total: number;
+  discount: number;
+}
+
 /**
  * OfflineSale represents a transaction waiting to be synced.
  * Includes tracking for idempotency (operation_id) and retry logic.
  */
 export interface OfflineSale {
   id: string; // The unique operation_id
-  payload: unknown;
+  payload: PosSalePayload;
   status: 'pending' | 'syncing' | 'failed';
   retryCount: number;
   lastError?: string;

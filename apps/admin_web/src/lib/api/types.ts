@@ -152,7 +152,7 @@ export interface ProductCreateInput {
   price: number;
   cost?: number;
   category_id?: string | null;
-  is_active?: boolean;
+  active?: boolean;
 }
 
 export type ProductUpdateInput = Partial<ProductCreateInput>;
@@ -241,6 +241,18 @@ export interface DailyMovementItem {
   net_delta: number;
 }
 
+export interface InventoryTransaction {
+  id: string;
+  storeId: string;
+  productId: string;
+  transactionType: "IN" | "OUT" | "ADJUST" | "TRANSFER";
+  quantity: number;
+  referenceId?: string;
+  notes?: string;
+  performedBy?: string;
+  createdAt: string;
+}
+
 // =============================================================================
 // Customer & Staff Analytics Types
 // =============================================================================
@@ -275,7 +287,7 @@ export interface StaffPerformanceItem {
 
 export interface CompetitorPrice {
   id: string;
-  item_id: string;
+  product_id: string;
   item_name?: string;  // joined from items
   sku?: string;        // joined from items
   competitor_name: string;
@@ -296,7 +308,7 @@ export interface PriceAlert {
 }
 
 export interface CompetitorPriceFormData {
-  item_id: string;
+  product_id: string;
   competitor_name: string;
   competitor_price: number;
   competitor_url?: string;
@@ -308,3 +320,34 @@ export type CompetitorPriceFilters = {
   dateFrom?: string;
   dateTo?: string;
 };
+
+export interface Category {
+  id: string;
+  name: string;
+}
+
+export interface ProductRow {
+  id: string;
+  name: string;
+  sku: string | null;
+  barcode: string | null;
+  price: number | null;
+  cost: number | null;
+  category_id?: string | null;
+  stock?: number | null;
+  min_stock_level?: number | null;
+  active: boolean | null;
+  image_url: string | null;
+  categories: { name: string } | null;
+}
+
+export interface PaymentMethodRow {
+  id: string;
+  name: string;
+  type: 'cash' | 'bkash' | 'credit' | 'card' | 'wallet' | string;
+  is_active: boolean;
+  store_id: string;
+  created_at: string;
+  sort_order: number;
+}
+

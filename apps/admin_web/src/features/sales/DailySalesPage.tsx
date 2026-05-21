@@ -52,8 +52,8 @@ export function DailySalesPage() {
       queryClient.invalidateQueries({ queryKey: ['dailySales', storeId] });
       setShowForm(false);
     },
-    onError: (err: Error | Record<string, unknown>) => {
-      notify(err.message || 'Failed to record daily sale.', 'error');
+    onError: (err: unknown) => {
+      notify(err instanceof Error ? err.message : 'Failed to record daily sale.', 'error');
     },
   });
 
@@ -65,8 +65,8 @@ export function DailySalesPage() {
       queryClient.invalidateQueries({ queryKey: ['dailySales', storeId] });
       setEditingSale(null);
     },
-    onError: (err: Error | Record<string, unknown>) => {
-      notify(err.message || 'Failed to update daily sale.', 'error');
+    onError: (err: unknown) => {
+      notify(err instanceof Error ? err.message : 'Failed to update daily sale.', 'error');
     },
   });
 
@@ -283,7 +283,7 @@ export function DailySalesPage() {
                   ))}
                 </Pie>
                 <Tooltip 
-                  formatter={(value: Record<string, unknown>) => value !== undefined && value !== null ? [`৳${Number(value).toLocaleString()}`, 'Amount'] : ['N/A', 'Amount']}
+                  formatter={(value: unknown) => value !== undefined && value !== null ? [`৳${Number(value).toLocaleString()}`, 'Amount'] : ['N/A', 'Amount']}
                 />
                 <Legend />
               </PieChart>
@@ -317,7 +317,7 @@ export function DailySalesPage() {
                 <XAxis dataKey="month" stroke="var(--text-muted)" fontSize={12} />
                 <YAxis stroke="var(--text-muted)" fontSize={12} tickFormatter={(v) => `৳${(v/1000).toFixed(0)}k`} />
                 <Tooltip 
-                  formatter={(value: Record<string, unknown>) => value !== undefined && value !== null ? [`৳${Number(value).toLocaleString()}`, 'Total Sales'] : ['N/A', 'Total Sales']}
+                  formatter={(value: unknown) => value !== undefined && value !== null ? [`৳${Number(value).toLocaleString()}`, 'Total Sales'] : ['N/A', 'Total Sales']}
                   contentStyle={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border-default)' }}
                 />
                 <Bar dataKey="total" fill="var(--color-success-default)" radius={[4, 4, 0, 0]} />

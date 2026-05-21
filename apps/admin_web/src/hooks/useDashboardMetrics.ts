@@ -77,18 +77,18 @@ export interface DayGroup {
 }
 
 export interface DailySaleItem {
-  cash_amount?: number | string;
-  bkash_amount?: number | string;
-  credit_amount?: number | string;
-  daily_expense?: number | string;
-  stock_purchase?: number | string;
-  total_sales?: number | string;
+  cash_amount?: number | string | null;
+  bkash_amount?: number | string | null;
+  credit_amount?: number | string | null;
+  daily_expense?: number | string | null;
+  stock_purchase?: number | string | null;
+  total_sales?: number | string | null;
   sale_date: string;
 }
 
 export interface ExpenseItem {
   id: string;
-  amount: number | string;
+  amount: number | string | null;
   category: string;
   description: string | null;
   expense_date: string;
@@ -99,14 +99,14 @@ export interface LowStockItem {
   item_id: string;
   item_name: string;
   sku: string | null;
-  current_qty: number | string;
-  min_qty?: number | string;
+  current_qty: number | string | null;
+  min_qty?: number | string | null;
 }
 
 export interface RecentSaleItem {
   id?: string;
   sale_number?: string;
-  total_amount?: number | string;
+  total_amount?: number | string | null;
   status?: string;
   cashier_name?: string;
   created_at?: string;

@@ -121,7 +121,7 @@ export function usePersistedTableState({ tableId, defaultState = {} }: UsePersis
     setState(prev => ({ ...prev, filters, page: 1 }));
   }, []);
 
-  const setFilter = useCallback((key: string, value: Record<string, unknown>) => {
+  const setFilter = useCallback((key: string, value: unknown) => {
     setState(prev => {
       const newFilters = { ...prev.filters };
       if (value === undefined || value === null || value === '') {

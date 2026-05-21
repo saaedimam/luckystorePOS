@@ -1,4 +1,5 @@
 import { supabase } from '../../supabase';
+import type { Database } from '../../database.types';
 
 type InventoryValueRow = {
   id: string;
@@ -26,46 +27,46 @@ export const reports = {
     const { data: saleItems, error: itemsError } = await supabase
       .from('sale_items')
       .select('qty, price, item_id')
-      .in('sale_id', sales?.map((s: Record<string, unknown>) => s.id) || []);
+      .in('sale_id', sales?.map((s) => s.id) || []);
 
     if (itemsError) throw itemsError;
 
     // Resolve item names
-    const itemIds = [...new Set(saleItems?.map((i: Record<string, unknown>) => i.item_id) || [])];
+    const itemIds = (saleItems?.map((i) => i.item_id).filter((id): id is string => !!id) || []);
     const { data: itemNames } = await supabase
       .from('items')
       .select('id, name')
       .in('id', itemIds);
 
-    const nameMap = new Map<unknown, unknown>(itemNames?.map((i: Record<string, unknown>) => [i.id, i.name]) || []);
+    const nameMap = new Map<string, string>((itemNames || []).map((i) => [i.id, i.name]));
 
     // Aggregate top products by quantity
-    const productMap = new Map<unknown, unknown>();
-    saleItems?.forEach((item: Record<string, unknown>) => {
-      const name = nameMap.get(item.item_id) || 'Unknown';
+    const productMap = new Map<string, { name: string; quantity: number; revenue: number }>();
+    saleItems?.forEach((item) => {
+      const name = nameMap.get(item.item_id as string) || 'Unknown';
       const existing = productMap.get(name) || { name, quantity: 0, revenue: 0 };
-      existing.quantity += item.qty || 0;
-      existing.revenue += (item.qty || 0) * (item.price || 0);
+      existing.quantity += Number(item.qty || 0);
+      existing.revenue += Number(item.qty || 0) * Number(item.price || 0);
       productMap.set(name, existing);
     });
 
     const topProducts = Array.from(productMap.values())
-      .sort((a: Record<string, unknown>, b: Record<string, unknown>) => b.quantity - a.quantity)
+      .sort((a, b) => b.quantity - a.quantity)
       .slice(0, 10);
 
     // Group sales by day
-    const dailyMap = new Map();
-    sales?.forEach((sale: Record<string, unknown>) => {
-      const day = sale.created_at.split('T')[0];
+    const dailyMap = new Map<string, { date: string; revenue: number; count: number }>();
+    sales?.forEach((sale) => {
+      const day = (sale.created_at as string).split('T')[0];
       const existing = dailyMap.get(day) || { date: day, revenue: 0, count: 0 };
-      existing.revenue += sale.total_amount || 0;
+      existing.revenue += Number(sale.total_amount || 0);
       existing.count += 1;
       dailyMap.set(day, existing);
     });
 
-    const dailySales = Array.from(dailyMap.values()).sort((a: Record<string, unknown>, b: Record<string, unknown>) => a.date.localeCompare(b.date));
+    const dailySales = Array.from(dailyMap.values()).sort((a, b) => a.date.localeCompare(b.date));
 
-    const totalRevenue = sales?.reduce((sum: number, s: Record<string, unknown>) => sum + (s.total_amount || 0), 0) || 0;
+    const totalRevenue = sales?.reduce((sum: number, s) => sum + Number(s.total_amount || 0), 0) || 0;
     const transactionCount = sales?.length || 0;
     const avgTicket = transactionCount > 0 ? totalRevenue / transactionCount : 0;
 
@@ -85,18 +86,19 @@ export const reports = {
     let lowStockCount = 0;
     let outOfStockCount = 0;
 
-    const inventory: InventoryValueRow[] = stockValuation?.map((item: Record<string, unknown>) => {
-      const qtyOnHand = item.qty_on_hand || 0;
-      totalValue += item.total_value || 0;
+    const valuationData = (stockValuation || []) as Database['public']['Functions']['get_stock_valuation']['Returns'];
+    const inventory: InventoryValueRow[] = valuationData.map((item) => {
+      const qtyOnHand = Number(item.qty_on_hand || 0);
+      totalValue += Number(item.total_value || 0);
       if (qtyOnHand === 0) outOfStockCount++;
       else if (qtyOnHand <= 5) lowStockCount++;
       return {
-        id: item.item_id,
-        name: item.item_name,
-        sku: item.sku,
+        id: String(item.item_id),
+        name: String(item.item_name),
+        sku: item.sku ? String(item.sku) : null,
         qty_on_hand: qtyOnHand,
-        cost: item.unit_cost || 0,
-        totalValue: item.total_value || 0,
+        cost: Number(item.unit_cost || 0),
+        totalValue: Number(item.total_value || 0),
       };
     }) || [];
 
@@ -117,17 +119,17 @@ export const reports = {
 
     if (salesError) throw salesError;
 
-    const grossRevenue = sales?.reduce((sum: number, s: Record<string, unknown>) => sum + (s.total_amount || 0), 0) || 0;
+    const grossRevenue = sales?.reduce((sum: number, s) => sum + Number(s.total_amount || 0), 0) || 0;
 
     // Get COGS from sale_items
     const { data: saleItems, error: itemsError } = await supabase
       .from('sale_items')
       .select('qty, cost')
-      .in('sale_id', sales?.map((s: Record<string, unknown>) => s.id) || []);
+      .in('sale_id', sales?.map((s) => s.id) || []);
 
     if (itemsError) throw itemsError;
 
-    const cogs = saleItems?.reduce((sum: number, item: Record<string, unknown>) => sum + ((item.qty || 0) * (item.cost || 0)), 0) || 0;
+    const cogs = saleItems?.reduce((sum: number, item) => sum + (Number(item.qty || 0) * Number(item.cost || 0)), 0) || 0;
 
     // Get expenses
     const { data: expenses, error: expError } = await supabase
@@ -139,7 +141,7 @@ export const reports = {
 
     if (expError) throw expError;
 
-    const totalExpenses = expenses?.reduce((sum: number, e: Record<string, unknown>) => sum + (e.amount || 0), 0) || 0;
+    const totalExpenses = expenses?.reduce((sum: number, e) => sum + Number(e.amount || 0), 0) || 0;
     const grossProfit = grossRevenue - cogs;
     const netProfit = grossProfit - totalExpenses;
 

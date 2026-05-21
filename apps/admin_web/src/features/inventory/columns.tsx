@@ -1,4 +1,3 @@
-import React from 'react';
 import { ColumnDef } from '../../components/datatable';
 import { InventoryListRow } from '../../types/rpc';
 import { Badge } from '../../components/ui/Badge';

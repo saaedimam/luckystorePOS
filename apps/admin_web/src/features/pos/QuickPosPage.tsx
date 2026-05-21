@@ -12,7 +12,12 @@ import { useCartStore } from '../../stores/useCartStore';
 import { useSyncSales } from '../../hooks/useSyncSales';
 import { usePosScanner } from './usePosScanner';
 import { usePosSale } from './usePosSale';
+import type { CartItem } from '../../lib/api/types';
 import { ProductCard } from '../../components/product/ProductCard';
+import { Badge } from '../../components/ui/Badge';
+import { Input } from '../../components/ui/Input';
+import { Button } from '../../components/ui/Button';
+import { Card } from '../../components/ui/Card';
 
 import './receipt.css';
 
@@ -97,7 +102,7 @@ export function QuickPosPage() {
 
   // Sale hook
   const sale = usePosSale(
-    cart.items as unknown,
+    cart.items as unknown as CartItem[],
     cart.getTotal(),
     cart.getTotal(), // Subtotal is same as total for now in simplified store
     0, // cartDiscount
@@ -183,37 +188,27 @@ export function QuickPosPage() {
 
           {/* Scanner Input */}
           {scanner.isScanning && (
-            <div className="card" style={{ padding: 'var(--space-4)', marginBottom: 'var(--space-4)' }}>
+            <div className="p-4 mb-4 bg-surface-default border border-border-default rounded-lg">
               <input
                 type="text"
                 placeholder="Scan barcode or SKU... (Press Enter)"
-                className="search-input"
+                className="search-input w-full"
                 value={scanner.scanValue}
                 onChange={(e) => scanner.setScanValue(e.target.value)}
                 onKeyDown={scanner.handleScanKeyDown}
                 autoFocus
-                style={{ width: '100%' }}
               />
             </div>
           )}
 
           {/* Error Display */}
           {error && !sale.showPaymentModal && (
-            <div className="card" style={{
-              padding: 'var(--space-4)',
-              marginBottom: 'var(--space-4)',
-              backgroundColor: 'rgba(239, 68, 68, 0.1)',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-              color: 'var(--color-danger)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--space-2)'
-            }}>
+            <div className="p-4 mb-4 bg-danger/10 border border-danger/25 text-danger rounded-lg flex items-center gap-2">
               <AlertCircle size={18} />
               <span>{error}</span>
               <button
                 onClick={() => setError(null)}
-                style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer' }}
+                className="ml-auto bg-transparent border-none cursor-pointer text-danger hover:opacity-85"
               >
                 <X size={16} />
               </button>

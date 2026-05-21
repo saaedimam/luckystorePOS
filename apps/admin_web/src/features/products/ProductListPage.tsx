@@ -17,6 +17,7 @@ import { DataTable, DataTableToolbar } from '../../components/datatable';
 import { getProductColumns } from './columns';
 import { usePersistedTableState } from '../../hooks/usePersistedTableState';
 import { processTableData } from '../../lib/table-query';
+import { ProductRow, Category } from '../../lib/api/types';
 
 
 
@@ -34,20 +35,20 @@ export function ProductListPage() {
     }
   });
   const debouncedSearch = useDebounce(tableState.search, 300);
-  const categoryFilter = tableState.filters['category_id'] || '';
+  const categoryFilter = (tableState.filters['category_id'] as string) || '';
 
-  const [editingProduct, setEditingProduct] = useState<unknown | null>(null);
+  const [editingProduct, setEditingProduct] = useState<ProductRow | null>(null);
   const [viewingProductId, setViewingProductId] = useState<string | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const { data: products, isLoading, error, refetch } = useQuery({
     queryKey: ['products'],
-    queryFn: () => api.products.list(),
+    queryFn: () => api.products.list() as Promise<ProductRow[]>,
   });
 
   const { data: categories } = useQuery({
     queryKey: ['categories'],
-    queryFn: () => api.categories.list(),
+    queryFn: () => api.categories.list() as Promise<Category[]>,
   });
 
   const filteredProducts = useMemo(() => {
@@ -106,7 +107,7 @@ export function ProductListPage() {
                   onChange={e => setFilter('category_id', e.target.value)}
                 >
                   <option value="">All Categories</option>
-                  {categories?.map((c: Record<string, unknown>) => (
+                  {categories?.map((c) => (
                     <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
                 </select>

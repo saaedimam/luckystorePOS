@@ -10,6 +10,31 @@ import { clsx } from 'clsx';
 
 type DateFilter = 'today' | 'week' | 'month' | 'all';
 
+interface Supplier {
+  name: string;
+}
+
+interface PurchaseReceiptItem {
+  id: string;
+  quantity: number;
+  unit_cost: number;
+  items: {
+    name: string;
+    sku: string | null;
+  } | null;
+}
+
+interface PurchaseReceipt {
+  id: string;
+  created_at: string;
+  invoice_number: string | null;
+  invoice_total: number;
+  amount_paid: number;
+  status: string;
+  parties: Supplier | null;
+  purchase_receipt_items: PurchaseReceiptItem[];
+}
+
 export function PurchaseHistoryPage() {
   const { storeId } = useAuth();
   const [dateFilter, setDateFilter] = useState<DateFilter>('month');
@@ -19,7 +44,7 @@ export function PurchaseHistoryPage() {
     queryKey: ['purchase-receipts', storeId, dateFilter],
     queryFn: () => {
       if (!storeId) return [];
-      const filters: unknown = {};
+      const filters: { startDate?: string; endDate?: string } = {};
       const today = new Date();
 
       if (dateFilter === 'today') {
@@ -35,7 +60,7 @@ export function PurchaseHistoryPage() {
         filters.endDate = today.toISOString().split('T')[0];
       }
 
-      return api.purchases.list(storeId, filters);
+      return api.purchases.list(storeId, filters) as unknown as PurchaseReceipt[];
     },
     enabled: !!storeId,
   });
@@ -51,7 +76,7 @@ export function PurchaseHistoryPage() {
 
   const filteredReceipts = useMemo(() => {
     if (!receipts) return [];
-    return receipts;
+    return receipts || [];
   }, [receipts]);
 
   if (error) {
@@ -105,7 +130,7 @@ export function PurchaseHistoryPage() {
               'px-4 py-2 rounded-md text-sm font-medium transition-colors',
               dateFilter === filter
                 ? 'bg-primary text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-background-subtle text-text-secondary hover:bg-background-default'
             )}
           >
             {filter === 'today' && 'Today'}
@@ -119,7 +144,7 @@ export function PurchaseHistoryPage() {
       {/* Receipts Table */}
       <div className="card overflow-hidden">
         <table className="w-full">
-          <thead className="bg-gray-50 border-b border-border-color">
+          <thead className="bg-background-subtle border-b border-border-default">
             <tr className="text-left text-sm text-text-muted">
               <th className="px-4 py-3 font-medium">PO Number</th>
               <th className="px-4 py-3 font-medium">Supplier</th>
@@ -131,7 +156,7 @@ export function PurchaseHistoryPage() {
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border-color">
+          <tbody className="divide-y divide-border-default">
             {isLoading ? (
               Array(5).fill(0).map((_, i) => (
                 <tr key={i}>
@@ -155,11 +180,11 @@ export function PurchaseHistoryPage() {
                 </td>
               </tr>
             ) : (
-              filteredReceipts.map((receipt: Record<string, unknown>) => (
+              filteredReceipts.map((receipt) => (
                 <>
                   <tr
                     key={receipt.id}
-                    className="hover:bg-gray-50 cursor-pointer transition-colors"
+                    className="hover:bg-background-subtle cursor-pointer transition-colors"
                     onClick={() => setExpandedReceiptId(expandedReceiptId === receipt.id ? null : receipt.id)}
                   >
                     <td className="px-4 py-3 font-medium">{receipt.invoice_number || 'PO-' + receipt.id.slice(0, 8)}</td>
@@ -171,10 +196,10 @@ export function PurchaseHistoryPage() {
                       <span className={clsx(
                         'px-2 py-1 rounded-full text-xs font-medium',
                         receipt.status === 'posted'
-                          ? 'bg-green-100 text-green-800'
+                          ? 'bg-success/10 text-success-dark dark:text-success'
                           : receipt.status === 'draft'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-gray-100 text-gray-800'
+                          ? 'bg-warning/10 text-warning'
+                          : 'bg-background-subtle text-text-muted'
                       )}>
                         {receipt.status || 'unknown'}
                       </span>
@@ -184,7 +209,7 @@ export function PurchaseHistoryPage() {
                     </td>
                     <td className="px-4 py-3">
                       <button
-                        className="p-1 hover:bg-gray-100 rounded"
+                        className="p-1 hover:bg-background-subtle rounded"
                         onClick={(e) => {
                           e.stopPropagation();
                           setExpandedReceiptId(expandedReceiptId === receipt.id ? null : receipt.id);
@@ -196,7 +221,7 @@ export function PurchaseHistoryPage() {
                   </tr>
                   {expandedReceiptId === receipt.id && receipt.purchase_receipt_items && (
                     <tr>
-                      <td colSpan={8} className="px-4 py-4 bg-gray-50">
+                      <td colSpan={8} className="px-4 py-4 bg-background-subtle">
                         <div className="ml-8">
                           <h4 className="font-medium mb-2 text-sm text-text-muted">Receipt Items:</h4>
                           <table className="w-full text-sm">
@@ -210,8 +235,8 @@ export function PurchaseHistoryPage() {
                               </tr>
                             </thead>
                             <tbody>
-                              {receipt.purchase_receipt_items.map((item: Record<string, unknown>) => (
-                                <tr key={item.id} className="border-t border-gray-200">
+                              {receipt.purchase_receipt_items.map((item: PurchaseReceiptItem) => (
+                                <tr key={item.id} className="border-t border-border-default">
                                   <td className="py-2">{item.items?.name || 'Unknown Product'}</td>
                                   <td className="py-2 text-text-muted">{item.items?.sku || '-'}</td>
                                   <td className="py-2 text-right">{item.quantity}</td>

@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { X, UserPlus } from 'lucide-react';
+import { UserPlus } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
+import { Modal } from '../../components/ui/Modal';
 
 interface AddUserModalProps {
   isOpen: boolean;
@@ -22,19 +23,17 @@ export function AddUserModal({ isOpen, storeId, tenantId, onClose }: AddUserModa
   const [error, setError] = useState<string | null>(null);
 
   const createMutation = useMutation({
-    mutationFn: (user: Record<string, unknown>) => api.settings.addUser(storeId, user),
+    mutationFn: (user: { email: string; password: string; fullName: string; role: string; pin: string; tenantId: string }) => api.settings.addUser(storeId, user),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['settings-users'] });
       setFormData({ fullName: '', email: '', password: '', role: 'cashier', pin: '' });
       setError(null);
       onClose();
     },
-    onError: (err: Error | Record<string, unknown>) => {
-      setError(err.message || 'Failed to add user');
+    onError: (err: unknown) => {
+      setError(err instanceof Error ? err.message : 'Failed to add user');
     },
   });
-
-  if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,247 +57,99 @@ export function AddUserModal({ isOpen, storeId, tenantId, onClose }: AddUserModa
   };
 
   return (
-    <div
-      className="modal-overlay"
-      onClick={onClose}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: 'rgba(0,0,0,0.4)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000,
-        backdropFilter: 'blur(2px)',
-      }}
-    >
-      <div
-        className="modal-content card"
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          width: '100%',
-          maxWidth: '480px',
-          backgroundColor: 'var(--bg-card)',
-          maxHeight: '90vh',
-          display: 'flex',
-          flexDirection: 'column',
-          padding: 'var(--space-6)',
-          borderRadius: 'var(--radius-lg)',
-          boxShadow: 'var(--shadow-lg)',
-        }}
-      >
-        <header
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 'var(--space-6)',
-          }}
-        >
-          <h2 style={{ fontSize: 'var(--font-size-xl)', fontWeight: '700' }}>Add User</h2>
-          <button onClick={onClose} style={{ color: 'var(--text-muted)' }}>
-            <X size={24} />
-          </button>
-        </header>
+    <Modal isOpen={isOpen} onClose={onClose} title="Add User">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div className="form-group">
+          <label className="block text-sm font-semibold text-text-secondary mb-1">
+            Full Name
+          </label>
+          <input
+            type="text"
+            value={formData.fullName}
+            onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+            required
+            placeholder="Rahim Uddin"
+            className="w-full p-3 border border-border-default rounded-md bg-background-subtle text-text-primary outline-none focus:border-primary-default"
+          />
+        </div>
 
-        <form
-          onSubmit={handleSubmit}
-          style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}
-        >
+        <div className="form-group">
+          <label className="block text-sm font-semibold text-text-secondary mb-1">
+            Email
+          </label>
+          <input
+            type="email"
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            required
+            placeholder="rahim@luckystore.com"
+            className="w-full p-3 border border-border-default rounded-md bg-background-subtle text-text-primary outline-none focus:border-primary-default"
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="block text-sm font-semibold text-text-secondary mb-1">
+            Password
+          </label>
+          <input
+            type="password"
+            value={formData.password}
+            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            required
+            placeholder="Minimum 6 characters"
+            className="w-full p-3 border border-border-default rounded-md bg-background-subtle text-text-primary outline-none focus:border-primary-default"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
           <div className="form-group">
-            <label
-              style={{
-                display: 'block',
-                fontSize: 'var(--font-size-sm)',
-                fontWeight: '600',
-                marginBottom: 'var(--space-1)',
-              }}
-            >
-              Full Name
+            <label className="block text-sm font-semibold text-text-secondary mb-1">
+              Role
             </label>
-            <input
-              type="text"
-              value={formData.fullName}
-              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-              required
-              placeholder="Rahim Uddin"
-              style={{
-                width: '100%',
-                padding: 'var(--space-3)',
-                borderRadius: 'var(--radius-md)',
-                border: '1px solid var(--border-color)',
-                backgroundColor: 'var(--input-bg)',
-                color: 'var(--text-main)',
-              }}
-            />
-          </div>
-
-          <div className="form-group">
-            <label
-              style={{
-                display: 'block',
-                fontSize: 'var(--font-size-sm)',
-                fontWeight: '600',
-                marginBottom: 'var(--space-1)',
-              }}
+            <select
+              value={formData.role}
+              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+              className="w-full p-3 border border-border-default rounded-md bg-background-subtle text-text-primary outline-none focus:border-primary-default"
             >
-              Email
-            </label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              required
-              placeholder="rahim@luckystore.com"
-              style={{
-                width: '100%',
-                padding: 'var(--space-3)',
-                borderRadius: 'var(--radius-md)',
-                border: '1px solid var(--border-color)',
-                backgroundColor: 'var(--input-bg)',
-                color: 'var(--text-main)',
-              }}
-            />
+              <option value="admin">Admin</option>
+              <option value="manager">Manager</option>
+              <option value="cashier">Staff</option>
+            </select>
           </div>
-
           <div className="form-group">
-            <label
-              style={{
-                display: 'block',
-                fontSize: 'var(--font-size-sm)',
-                fontWeight: '600',
-                marginBottom: 'var(--space-1)',
-              }}
-            >
-              Password
+            <label className="block text-sm font-semibold text-text-secondary mb-1">
+              POS PIN
             </label>
             <input
               type="password"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              inputMode="numeric"
+              maxLength={6}
+              value={formData.pin}
+              onChange={(e) => setFormData({ ...formData, pin: e.target.value.replace(/\D/g, '') })}
               required
-              placeholder="Minimum 6 characters"
-              style={{
-                width: '100%',
-                padding: 'var(--space-3)',
-                borderRadius: 'var(--radius-md)',
-                border: '1px solid var(--border-color)',
-                backgroundColor: 'var(--input-bg)',
-                color: 'var(--text-main)',
-              }}
+              placeholder="4-6 digits"
+              className="w-full p-3 border border-border-default rounded-md bg-background-subtle text-text-primary outline-none focus:border-primary-default"
             />
           </div>
+        </div>
 
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 'var(--space-4)',
-            }}
-          >
-            <div className="form-group">
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: 'var(--font-size-sm)',
-                  fontWeight: '600',
-                  marginBottom: 'var(--space-1)',
-                }}
-              >
-                Role
-              </label>
-              <select
-                value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                style={{
-                  width: '100%',
-                  padding: 'var(--space-3)',
-                  borderRadius: 'var(--radius-md)',
-                  border: '1px solid var(--border-color)',
-                  backgroundColor: 'var(--input-bg)',
-                  color: 'var(--text-main)',
-                }}
-              >
-                <option value="admin">Admin</option>
-                <option value="manager">Manager</option>
-                <option value="cashier">Staff</option>
-              </select>
-            </div>
-            <div className="form-group">
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: 'var(--font-size-sm)',
-                  fontWeight: '600',
-                  marginBottom: 'var(--space-1)',
-                }}
-              >
-                POS PIN
-              </label>
-              <input
-                type="password"
-                inputMode="numeric"
-                maxLength={6}
-                value={formData.pin}
-                onChange={(e) => setFormData({ ...formData, pin: e.target.value.replace(/\D/g, '') })}
-                required
-                placeholder="4-6 digits"
-                style={{
-                  width: '100%',
-                  padding: 'var(--space-3)',
-                  borderRadius: 'var(--radius-md)',
-                  border: '1px solid var(--border-color)',
-                  backgroundColor: 'var(--input-bg)',
-                  color: 'var(--text-main)',
-                }}
-              />
-            </div>
+        {error && (
+          <div className="p-3 bg-danger/10 border border-danger/25 text-danger rounded-md text-sm font-medium">
+            {error}
           </div>
+        )}
 
-          {error && (
-            <div
-              style={{
-                padding: 'var(--space-3)',
-                borderRadius: 'var(--radius-md)',
-                backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                color: 'var(--color-danger)',
-                fontSize: 'var(--font-size-sm)',
-                fontWeight: '500',
-              }}
-            >
-              {error}
-            </div>
-          )}
-
-          <div
-            style={{
-              marginTop: 'var(--space-2)',
-              paddingTop: 'var(--space-4)',
-              borderTop: '1px solid var(--border-color)',
-            }}
+        <div className="mt-2 pt-4 border-t border-border-default">
+          <button
+            type="submit"
+            disabled={createMutation.isPending}
+            className="button-primary w-full flex items-center justify-center gap-2 font-semibold"
+            style={{ opacity: createMutation.isPending ? 0.7 : 1 }}
           >
-            <button
-              type="submit"
-              disabled={createMutation.isPending}
-              style={{
-                width: '100%',
-                backgroundColor: 'var(--color-primary)',
-                color: '#000',
-                padding: 'var(--space-3)',
-                borderRadius: 'var(--radius-md)',
-                fontWeight: '600',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 'var(--space-2)',
-                opacity: createMutation.isPending ? 0.7 : 1,
-              }}
-            >
-              <UserPlus size={18} /> {createMutation.isPending ? 'Adding...' : 'Add User'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+            <UserPlus size={18} /> {createMutation.isPending ? 'Adding...' : 'Add User'}
+          </button>
+        </div>
+      </form>
+    </Modal>
   );
 }

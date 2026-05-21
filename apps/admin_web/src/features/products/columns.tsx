@@ -1,12 +1,13 @@
-import React from 'react';
 import { ColumnDef } from '../../components/datatable';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Edit2 } from 'lucide-react';
 
+import { ProductRow } from '../../lib/api/types';
+
 export const getProductColumns = (
-  onEdit: (row: Record<string, unknown>) => void
-): ColumnDef<unknown>[] => [
+  onEdit: (row: ProductRow) => void
+): ColumnDef<ProductRow>[] => [
   {
     id: 'name',
     header: 'Product',
@@ -59,7 +60,7 @@ export const getProductColumns = (
   {
     id: 'status',
     header: 'Status',
-    accessor: 'is_active',
+    accessor: 'active',
     sortable: false,
     width: '12%',
     render: (val) => (

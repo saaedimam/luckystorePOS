@@ -84,14 +84,18 @@ export const LedgerPage: React.FC<LedgerPageConfig> = ({
 
   const fetchLedger = async (party: Party) => {
     setSelectedParty(party);
-    const { data, error } = await supabase
-      .from('ledger_entries')
-      .select('*')
+    const { data, error } = await (supabase
+      .from('ledger_entries' as unknown as 'items')
+      .select('*') as unknown as {
+        eq: (key: string, value: string) => {
+          order: (key: string, options: { ascending: boolean }) => Promise<{ data: unknown[]; error: { message: string } | null }>
+        }
+      })
       .eq('party_id', party.id)
       .order('effective_date', { ascending: false });
 
     if (!error && data) {
-      setLedgerEntries(data as LedgerEntry[]);
+      setLedgerEntries(data as unknown as LedgerEntry[]);
     }
   };
 

@@ -7,9 +7,11 @@ import { Form, FormInput, FormSelect, PriceInput, BarcodeInput, FormActions } fr
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
 
+import { Category } from '../../lib/api/types';
+
 interface ProductAddModalProps {
   isOpen: boolean;
-  categories: unknown[] | undefined;
+  categories: Category[] | undefined;
   onClose: () => void;
 }
 
@@ -43,7 +45,7 @@ export function ProductAddModal({ isOpen, categories, onClose }: ProductAddModal
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Add New Product" className="max-w-2xl">
-      <Form form={form} onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <Form<ProductData> form={form} onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="grid grid-cols-2 gap-4">
           <FormInput 
             name="name"
@@ -56,7 +58,7 @@ export function ProductAddModal({ isOpen, categories, onClose }: ProductAddModal
             <FormSelect
               name="categoryId"
               label="Category"
-              options={categories?.map(c => ({ label: c.name, value: c.id })) || []}
+              options={categories?.map((c) => ({ label: c.name, value: c.id })) || []}
             />
           </div>
 

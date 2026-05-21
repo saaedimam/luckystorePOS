@@ -8,45 +8,39 @@ export const inventory = {
     if (error) throw error;
     return data;
   },
-  update: async (tenantId: string, storeId: string, itemId: string, delta: number, reason: string, notes?: string, operationId?: string) => {
+  update: async (tenantId: string, storeId: string, itemId: string, delta: number, reason: string, notes?: string) => {
     return withSerializableRetry(async () => {
-      const { data, error } = await supabase.rpc('adjust_inventory_stock', {
-        p_tenant_id: tenantId,
+      const { data, error } = await supabase.rpc('adjust_stock', {
         p_store_id: storeId,
         p_item_id: itemId,
-        p_quantity_delta: delta,
-        p_movement_type: 'adjustment',
-        p_reference_type: 'adjustment',
-        p_reference_id: null,
-        p_notes: `[${reason}] ${notes || ''}`.trim(),
-        p_operation_id: operationId || crypto.randomUUID()
+        p_delta: delta,
+        p_reason: reason,
+        p_notes: notes || '',
+        p_performed_by: tenantId // Assuming tenantId is user id here for RPC context or just omitting if not needed
       });
       if (error) throw error;
       return data;
     });
   },
-  set: async (tenantId: string, storeId: string, itemId: string, newQty: number, reason: string, notes?: string, operationId?: string) => {
+  set: async (_tenantId: string, storeId: string, itemId: string, newQty: number, reason: string, notes?: string) => {
     return withSerializableRetry(async () => {
-      const { data, error } = await supabase.rpc('set_inventory_stock', {
-        p_tenant_id: tenantId,
+      const { data, error } = await supabase.rpc('set_stock', {
         p_store_id: storeId,
         p_item_id: itemId,
-        p_new_quantity: newQty,
-        p_movement_type: 'manual',
-        p_reference_type: 'adjustment',
-        p_reference_id: null,
-        p_notes: `[${reason}] ${notes || ''}`.trim(),
-        p_operation_id: operationId || crypto.randomUUID()
+        p_new_qty: newQty,
+        p_reason: reason,
+        p_notes: notes || ''
       });
       if (error) throw error;
       return data;
     });
   },
-  history: async (storeId: string, itemId?: string, movementType?: string) => {
-    const { data, error } = await supabase.rpc('get_inventory_movements', {
+  history: async (storeId: string, itemId?: string) => {
+    const { data, error } = await supabase.rpc('get_stock_movements', {
       p_store_id: storeId,
-      p_item_id: itemId || null,
-      p_movement_type: movementType || null
+      p_item_id: itemId || undefined,
+      p_limit: 50,
+      p_offset: 0
     });
     if (error) throw error;
     return data;

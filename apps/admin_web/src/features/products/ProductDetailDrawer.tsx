@@ -1,6 +1,6 @@
 
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Drawer } from '../../components/ui/Drawer';
 import { Button } from '../../components/ui/Button';
 import { Edit2, Package, TrendingUp, Trash2 } from 'lucide-react';
@@ -12,10 +12,19 @@ import { Badge } from '../../components/ui/Badge';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { useNotify } from '../../components/NotificationContext';
 
+import { ProductRow } from '../../lib/api/types';
+
+interface StockMovementRow {
+  id: string;
+  created_at: string;
+  delta: number;
+  reason: string;
+}
+
 interface ProductDetailDrawerProps {
   productId: string | null;
   onClose: () => void;
-  onEdit: (product: Record<string, unknown>) => void;
+  onEdit: (product: ProductRow) => void;
 }
 
 export function ProductDetailDrawer({ productId, onClose, onEdit }: ProductDetailDrawerProps) {
@@ -44,7 +53,7 @@ export function ProductDetailDrawer({ productId, onClose, onEdit }: ProductDetai
       notify('Product deactivated', 'success');
       onClose();
     },
-    onError: (err: Error | Record<string, unknown>) => notify(err.message || 'Failed to deactivate product', 'error'),
+    onError: (err: unknown) => notify(err instanceof Error ? err.message : 'Failed to deactivate product', 'error'),
   });
 
   if (!productId) return null;
@@ -72,16 +81,16 @@ export function ProductDetailDrawer({ productId, onClose, onEdit }: ProductDetai
               <h2 className="text-xl font-bold text-text-main">{product.name}</h2>
               <div className="text-sm text-text-muted mb-2">{product.categories?.name || 'No Category'}</div>
               <div className="flex gap-2">
-                <Badge variant={product.is_active ? 'success' : 'neutral'}>
-                  {product.is_active ? 'Active' : 'Inactive'}
+                <Badge variant={(product as unknown as ProductRow).active ? 'success' : 'neutral'}>
+                  {(product as unknown as ProductRow).active ? 'Active' : 'Inactive'}
                 </Badge>
-                <Badge variant="info">{product.sku || 'No SKU'}</Badge>
+                <Badge variant="info">{(product as unknown as ProductRow).sku || 'No SKU'}</Badge>
               </div>
             </div>
-            <Button variant="outline" onClick={() => onEdit(product)} icon={<Edit2 size={16} />}>
+            <Button variant="outline" onClick={() => onEdit(product as unknown as ProductRow)} icon={<Edit2 size={16} />}>
               Edit
             </Button>
-            {product.is_active && (
+            {(product as unknown as ProductRow).active && (
               <button
                 onClick={() => setShowDeactivate(true)}
                 style={{ color: 'var(--color-danger)', cursor: 'pointer', background: 'none', border: 'none', padding: '8px' }}
@@ -100,7 +109,7 @@ export function ProductDetailDrawer({ productId, onClose, onEdit }: ProductDetai
             </div>
             <div className="card p-4">
               <div className="text-sm text-text-muted mb-1">Current Stock</div>
-              <div className="text-xl font-bold">{product.stock || 0}</div>
+              <div className="text-xl font-bold">{(product as unknown as ProductRow).stock || 0}</div>
             </div>
           </div>
 
@@ -124,7 +133,7 @@ export function ProductDetailDrawer({ productId, onClose, onEdit }: ProductDetai
                       <td colSpan={3} className="p-3 text-center text-text-muted">Loading history...</td>
                     </tr>
                   ) : stockHistory && stockHistory.length > 0 ? (
-                    stockHistory.map((log: Record<string, unknown>) => (
+                    (stockHistory as unknown as StockMovementRow[]).map((log) => (
                       <tr key={log.id} className="border-b border-border-light text-sm">
                         <td className="p-3">{new Date(log.created_at).toLocaleDateString()}</td>
                         <td className="p-3 font-medium">

@@ -7,7 +7,7 @@ import {
 import { clsx } from 'clsx';
 import { ErrorState, EmptyState, SkeletonBlock } from '../../components/PageState';
 import { MetricCard } from '../../components/data-display/MetricCard';
-import { useAuth } from '../../lib/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { api } from '../../lib/api';
 import { downloadCSV } from '../../lib/format';
 import type {
@@ -23,6 +23,51 @@ import {
 type DateRange = 'today' | 'week' | 'month' | 'custom';
 type TabType = 'sales' | 'inventory' | 'profit' | 'analytics' | 'customers' | 'staff';
 type AnalyticsSubTab = 'valuation' | 'top-sellers' | 'slow-movers' | 'movement';
+
+interface SalesReportData {
+  totalRevenue: number;
+  transactionCount: number;
+  avgTicket: number;
+  dailySales: Array<{ date: string; revenue: number; count: number }>;
+  topProducts: Array<{ name: string; quantity: number; revenue: number }>;
+}
+
+interface InventoryValueData {
+  totalValue: number;
+  totalItems: number;
+  lowStockCount: number;
+  outOfStockCount: number;
+  inventory: Array<{ name: string; sku: string | null; qty_on_hand: number; cost: number; totalValue: number }>;
+}
+
+interface ProfitLossData {
+  grossRevenue: number;
+  cogs: number;
+  grossProfit: number;
+  totalExpenses: number;
+  netProfit: number;
+}
+
+interface CustomerAnalyticsData {
+  customer_name: string;
+  phone: string | null;
+  total_spent: number;
+  purchase_count: number;
+  avg_order_value: number;
+  last_purchase_date: string | null;
+  days_since_last: number | null;
+}
+
+interface StaffPerformanceData {
+  staff_name: string;
+  role: string;
+  total_sales: number;
+  total_revenue: number;
+  avg_ticket: number;
+  total_discounts: number;
+  active_days: number;
+  revenue_per_day: number;
+}
 
 export const ReportsPage: React.FC = () => {
   const { storeId } = useAuth();
@@ -265,29 +310,29 @@ export const ReportsPage: React.FC = () => {
         ) : (
           <>
             {activeTab === 'sales' && salesQuery.data && (
-              <SalesReportContent data={salesQuery.data} prevData={prevSalesQuery.data} />
+              <SalesReportContent data={salesQuery.data as SalesReportData} prevData={prevSalesQuery.data as SalesReportData} />
             )}
             {activeTab === 'inventory' && inventoryQuery.data && (
-              <InventoryReportContent data={inventoryQuery.data} />
+              <InventoryReportContent data={inventoryQuery.data as InventoryValueData} />
             )}
             {activeTab === 'profit' && profitQuery.data && (
-              <ProfitReportContent data={profitQuery.data} />
+              <ProfitReportContent data={profitQuery.data as ProfitLossData} />
             )}
             {activeTab === 'analytics' && (
               <InventoryAnalyticsContent
                 subTab={analyticsSubTab}
                 onSubTabChange={setAnalyticsSubTab}
-                valuationData={valuationQuery.data}
-                topSellersData={topSellersQuery.data}
-                slowMoversData={slowMoversQuery.data}
-                movementData={movementQuery.data}
+                valuationData={valuationQuery.data as StockValuationItem[]}
+                topSellersData={topSellersQuery.data as TopSellingItem[]}
+                slowMoversData={slowMoversQuery.data as SlowMovingItem[]}
+                movementData={movementQuery.data as DailyMovementItem[]}
               />
             )}
             {activeTab === 'customers' && customerQuery.data && (
-              <CustomerAnalyticsContent data={customerQuery.data} />
+              <CustomerAnalyticsContent data={customerQuery.data as CustomerAnalyticsData[]} />
             )}
             {activeTab === 'staff' && staffQuery.data && (
-              <StaffPerformanceContent data={staffQuery.data} />
+              <StaffPerformanceContent data={staffQuery.data as StaffPerformanceData[]} />
             )}
           </>
         )}
@@ -300,8 +345,8 @@ export const ReportsPage: React.FC = () => {
 // =========================================================================
 // Sales Report Content
 // =========================================================================
-function SalesReportContent({ data, prevData }: { data: Record<string, unknown>; prevData?: Record<string, unknown> }) {
-  const maxDaily = Math.max(...data.dailySales.map((d: Record<string, unknown>) => d.revenue), 1);
+function SalesReportContent({ data, prevData }: { data: SalesReportData; prevData?: SalesReportData }) {
+  const maxDaily = Math.max(...data.dailySales.map((d) => d.revenue), 1);
 
   const revChange = prevData && prevData.totalRevenue > 0
     ? ((data.totalRevenue - prevData.totalRevenue) / prevData.totalRevenue) * 100
@@ -317,7 +362,7 @@ function SalesReportContent({ data, prevData }: { data: Record<string, unknown>;
         <button
           className="button-outline gap-2 text-sm"
           onClick={() => downloadCSV(
-            data.dailySales.map((d: Record<string, unknown>) => ({ date: d.date, revenue: d.revenue, count: d.count })),
+            data.dailySales.map((d) => ({ date: d.date, revenue: d.revenue, count: d.count })),
             `sales-report-${data.dailySales[0]?.date ?? 'report'}.csv`
           )}
         >
@@ -349,11 +394,11 @@ function SalesReportContent({ data, prevData }: { data: Record<string, unknown>;
       <div className="space-y-3">
         <h3 className="font-semibold text-lg">Daily Revenue Trend</h3>
         <div className="flex items-end justify-between h-48 gap-2">
-          {data.dailySales.map((day: Record<string, unknown>, idx: number) => {
+          {data.dailySales.map((day, idx: number) => {
             const height = maxDaily > 0 ? (day.revenue / maxDaily) * 100 : 0;
             return (
               <div key={idx} className="flex flex-col items-center flex-1 gap-1">
-                <div className="w-full bg-emerald-500 rounded-t transition-all duration-300 hover:bg-emerald-600"
+                <div className="w-full bg-success-dark dark:bg-success rounded-t transition-all duration-300 hover:opacity-85"
                   style={{ height: `${height}%`, minHeight: day.revenue > 0 ? 4 : 0 }}
                   title={`${day.date}: ৳${day.revenue.toLocaleString()}`} />
                 <span className="text-xs text-text-muted">{day.date.slice(5)}</span>
@@ -366,16 +411,16 @@ function SalesReportContent({ data, prevData }: { data: Record<string, unknown>;
       <div>
         <h3 className="font-semibold text-lg mb-4">Top Selling Products</h3>
         <table className="w-full">
-          <thead className="bg-gray-50 border-b border-border-color">
+          <thead className="bg-background-subtle border-b border-border-default">
             <tr className="text-left text-sm text-text-muted">
               <th className="px-4 py-3 font-medium">Product</th>
               <th className="px-4 py-3 font-medium text-right">Quantity Sold</th>
               <th className="px-4 py-3 font-medium text-right">Revenue</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border-color">
-            {data.topProducts.map((product: Record<string, unknown>, idx: number) => (
-              <tr key={idx} className="hover:bg-gray-50">
+          <tbody className="divide-y divide-border-default">
+            {data.topProducts.map((product, idx: number) => (
+              <tr key={idx} className="hover:bg-background-subtle">
                 <td className="px-4 py-3 font-medium">{product.name}</td>
                 <td className="px-4 py-3 text-right">{product.quantity}</td>
                 <td className="px-4 py-3 text-right">৳{product.revenue.toLocaleString()}</td>
@@ -394,7 +439,7 @@ function SalesReportContent({ data, prevData }: { data: Record<string, unknown>;
 // =========================================================================
 // Inventory Report Content
 // =========================================================================
-function InventoryReportContent({ data }: { data: Record<string, unknown> }) {
+function InventoryReportContent({ data }: { data: InventoryValueData }) {
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -402,7 +447,7 @@ function InventoryReportContent({ data }: { data: Record<string, unknown> }) {
         <button
           className="button-outline gap-2 text-sm"
           onClick={() => downloadCSV(
-            data.inventory.map((item: Record<string, unknown>) => ({ name: item.name, sku: item.sku || '', qty: item.qty, cost: item.cost, totalValue: item.totalValue })),
+            data.inventory.map((item) => ({ name: item.name, sku: item.sku || '', qty: item.qty_on_hand, cost: item.cost, totalValue: item.totalValue })),
             `inventory-value-${new Date().toISOString().split('T')[0]}.csv`
           )}
         >
@@ -421,7 +466,7 @@ function InventoryReportContent({ data }: { data: Record<string, unknown> }) {
         <h3 className="font-semibold text-lg mb-4">Inventory Details</h3>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-border-color">
+            <thead className="bg-background-subtle border-b border-border-default">
               <tr className="text-left text-sm text-text-muted">
                 <th className="px-4 py-3 font-medium">Product</th>
                 <th className="px-4 py-3 font-medium">SKU</th>
@@ -430,15 +475,15 @@ function InventoryReportContent({ data }: { data: Record<string, unknown> }) {
                 <th className="px-4 py-3 font-medium text-right">Total Value</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border-color">
-              {data.inventory.map((item: Record<string, unknown>, idx: number) => (
-                <tr key={idx} className="hover:bg-gray-50">
+            <tbody className="divide-y divide-border-default">
+              {data.inventory.map((item, idx: number) => (
+                <tr key={idx} className="hover:bg-background-subtle">
                   <td className="px-4 py-3 font-medium">{item.name}</td>
                   <td className="px-4 py-3 text-text-muted">{item.sku || '-'}</td>
                   <td className="px-4 py-3 text-right">
                     <span className={clsx(
-                      item.qty_on_hand === 0 ? 'text-red-600' :
-                      item.qty_on_hand <= 5 ? 'text-amber-600' : ''
+                      item.qty_on_hand === 0 ? 'text-danger' :
+                      item.qty_on_hand <= 5 ? 'text-warning' : ''
                     )}>
                       {item.qty_on_hand}
                     </span>
@@ -458,7 +503,7 @@ function InventoryReportContent({ data }: { data: Record<string, unknown> }) {
 // =========================================================================
 // Profit & Loss Report Content
 // =========================================================================
-function ProfitReportContent({ data }: { data: Record<string, unknown> }) {
+function ProfitReportContent({ data }: { data: ProfitLossData }) {
   const isProfit = data.netProfit >= 0;
 
   return (
@@ -488,27 +533,27 @@ function ProfitReportContent({ data }: { data: Record<string, unknown> }) {
         <MetricCard title="Net Profit" value={`৳${Math.abs(data.netProfit).toLocaleString()}`} icon={<TrendingUp size={20} />} color={isProfit ? 'success' : 'danger'} variant="solid" />
       </div>
 
-      <div className="bg-gray-50 rounded-lg p-6">
+      <div className="bg-background-subtle rounded-lg p-6">
         <div className="space-y-3">
-          <div className="flex justify-between py-2 border-b border-border-color">
+          <div className="flex justify-between py-2 border-b border-border-default">
             <span className="text-text-muted">Gross Revenue</span>
             <span className="font-medium">৳{data.grossRevenue.toLocaleString()}</span>
           </div>
-          <div className="flex justify-between py-2 border-b border-border-color">
+          <div className="flex justify-between py-2 border-b border-border-default">
             <span className="text-text-muted">Less: Cost of Goods Sold</span>
-            <span className="font-medium text-red-600">-৳{data.cogs.toLocaleString()}</span>
+            <span className="font-medium text-danger">-৳{data.cogs.toLocaleString()}</span>
           </div>
-          <div className="flex justify-between py-2 border-b-2 border-border-color">
+          <div className="flex justify-between py-2 border-b-2 border-border-default">
             <span className="font-medium">Gross Profit</span>
-            <span className={clsx('font-bold', data.grossProfit >= 0 ? 'text-emerald-600' : 'text-red-600')}>৳{data.grossProfit.toLocaleString()}</span>
+            <span className={clsx('font-bold', data.grossProfit >= 0 ? 'text-success-dark dark:text-success' : 'text-danger')}>৳{data.grossProfit.toLocaleString()}</span>
           </div>
-          <div className="flex justify-between py-2 border-b border-border-color">
+          <div className="flex justify-between py-2 border-b border-border-default">
             <span className="text-text-muted">Less: Operating Expenses</span>
-            <span className="font-medium text-red-600">-৳{data.totalExpenses.toLocaleString()}</span>
+            <span className="font-medium text-danger">-৳{data.totalExpenses.toLocaleString()}</span>
           </div>
-          <div className="flex justify-between py-3 bg-emerald-50 rounded px-4">
+          <div className="flex justify-between py-3 bg-success/10 rounded px-4">
             <span className="font-bold text-lg">Net Profit</span>
-            <span className={clsx('font-bold text-lg', isProfit ? 'text-emerald-600' : 'text-red-600')}>
+            <span className={clsx('font-bold text-lg', isProfit ? 'text-success-dark dark:text-success' : 'text-danger')}>
               {isProfit ? '+' : '-'}৳{Math.abs(data.netProfit).toLocaleString()}
             </span>
           </div>
@@ -516,15 +561,15 @@ function ProfitReportContent({ data }: { data: Record<string, unknown> }) {
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-blue-50 rounded-lg p-4">
+        <div className="bg-info/10 rounded-lg p-4">
           <div className="text-sm text-text-muted mb-1">Gross Profit Margin</div>
-          <div className="text-2xl font-bold text-blue-600">
+          <div className="text-2xl font-bold text-info">
             {data.grossRevenue > 0 ? ((data.grossProfit / data.grossRevenue) * 100).toFixed(1) : 0}%
           </div>
         </div>
-        <div className="bg-purple-50 rounded-lg p-4">
+        <div className="bg-primary-subtle rounded-lg p-4">
           <div className="text-sm text-text-muted mb-1">Net Profit Margin</div>
-          <div className="text-2xl font-bold text-purple-600">
+          <div className="text-2xl font-bold text-primary-default">
             {data.grossRevenue > 0 ? ((data.netProfit / data.grossRevenue) * 100).toFixed(1) : 0}%
           </div>
         </div>
@@ -583,17 +628,17 @@ function StockValuationContent({ data }: { data: StockValuationItem[] | null }) 
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="grid grid-cols-3 gap-4 flex-1">
-          <div className="bg-emerald-50 rounded-lg p-3 text-center">
+          <div className="bg-success/10 rounded-lg p-3 text-center">
             <div className="text-sm text-text-muted">Total Retail Value</div>
-            <div className="text-xl font-bold text-emerald-600">৳{totalValue.toLocaleString('en-BD', { maximumFractionDigits: 0 })}</div>
+            <div className="text-xl font-bold text-success-dark dark:text-success">৳{totalValue.toLocaleString('en-BD', { maximumFractionDigits: 0 })}</div>
           </div>
-          <div className="bg-amber-50 rounded-lg p-3 text-center">
+          <div className="bg-warning/10 rounded-lg p-3 text-center">
             <div className="text-sm text-text-muted">Total Cost Value</div>
-            <div className="text-xl font-bold text-amber-600">৳{totalCost.toLocaleString('en-BD', { maximumFractionDigits: 0 })}</div>
+            <div className="text-xl font-bold text-warning">৳{totalCost.toLocaleString('en-BD', { maximumFractionDigits: 0 })}</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-3 text-center">
+          <div className="bg-info/10 rounded-lg p-3 text-center">
             <div className="text-sm text-text-muted">Overall Margin</div>
-            <div className="text-xl font-bold text-blue-600">{overallMargin.toFixed(1)}%</div>
+            <div className="text-xl font-bold text-info">{overallMargin.toFixed(1)}%</div>
           </div>
         </div>
         <button
@@ -612,7 +657,7 @@ function StockValuationContent({ data }: { data: StockValuationItem[] | null }) 
           <BarChart data={data.slice(0, 15)} layout="vertical">
             <XAxis type="number" tickFormatter={(v) => `৳${(v / 1000).toFixed(0)}k`} />
             <YAxis type="category" dataKey="item_name" width={120} tick={{ fontSize: 11 }} />
-            <Tooltip formatter={(value: Record<string, unknown>) => [`৳${Number(value).toLocaleString()}`, '']} />
+            <Tooltip formatter={(value: unknown) => [`৳${Number(value || 0).toLocaleString()}`, '']} />
             <Bar dataKey="total_value" fill="var(--color-success-default)" radius={[0, 4, 4, 0]} name="Retail Value" />
           </BarChart>
         </ResponsiveContainer>
@@ -620,7 +665,7 @@ function StockValuationContent({ data }: { data: StockValuationItem[] | null }) 
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b">
+          <thead className="bg-background-subtle border-b border-border-default">
             <tr className="text-left text-text-muted">
               <th className="px-3 py-2">Item</th>
               <th className="px-3 py-2 text-right">Qty</th>
@@ -630,9 +675,9 @@ function StockValuationContent({ data }: { data: StockValuationItem[] | null }) 
               <th className="px-3 py-2 text-right">Margin</th>
             </tr>
           </thead>
-          <tbody className="divide-y">
+          <tbody className="divide-y divide-border-default">
             {data.slice(0, 20).map((item, idx) => (
-              <tr key={idx} className="hover:bg-gray-50">
+              <tr key={idx} className="hover:bg-background-subtle">
                 <td className="px-3 py-2 font-medium">{item.item_name}</td>
                 <td className="px-3 py-2 text-right">{item.qty_on_hand}</td>
                 <td className="px-3 py-2 text-right">৳{item.unit_cost}</td>
@@ -671,7 +716,7 @@ function TopSellersContent({ data }: { data: TopSellingItem[] | null }) {
           <BarChart data={data.slice(0, 15)}>
             <XAxis dataKey="item_name" tick={{ fontSize: 10 }} angle={-45} textAnchor="end" height={80} />
             <YAxis tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
-            <Tooltip formatter={(value: Record<string, unknown>) => [`৳${Number(value).toLocaleString()}`, '']} />
+            <Tooltip formatter={(value: unknown) => [`৳${Number(value || 0).toLocaleString()}`, '']} />
             <Bar dataKey="total_revenue" fill="var(--color-success-default)" radius={[4, 4, 0, 0]} name="Revenue" />
           </BarChart>
         </ResponsiveContainer>
@@ -679,7 +724,7 @@ function TopSellersContent({ data }: { data: TopSellingItem[] | null }) {
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b">
+          <thead className="bg-background-subtle border-b border-border-default">
             <tr className="text-left text-text-muted">
               <th className="px-3 py-2">Item</th>
               <th className="px-3 py-2">Category</th>
@@ -688,14 +733,14 @@ function TopSellersContent({ data }: { data: TopSellingItem[] | null }) {
               <th className="px-3 py-2 text-right">Profit</th>
             </tr>
           </thead>
-          <tbody className="divide-y">
+          <tbody className="divide-y divide-border-default">
             {data.slice(0, 20).map((item, idx) => (
-              <tr key={idx} className="hover:bg-gray-50">
+              <tr key={idx} className="hover:bg-background-subtle">
                 <td className="px-3 py-2 font-medium">{item.item_name}</td>
                 <td className="px-3 py-2 text-text-muted">{item.category_name || '-'}</td>
                 <td className="px-3 py-2 text-right">{item.total_qty}</td>
                 <td className="px-3 py-2 text-right">৳{item.total_revenue.toLocaleString()}</td>
-                <td className="px-3 py-2 text-right text-emerald-600">৳{item.total_profit.toLocaleString()}</td>
+                <td className="px-3 py-2 text-right text-success-dark dark:text-success">৳{item.total_profit.toLocaleString()}</td>
               </tr>
             ))}
           </tbody>
@@ -731,7 +776,7 @@ function SlowMoversContent({ data }: { data: SlowMovingItem[] | null }) {
           <BarChart data={data.slice(0, 15)}>
             <XAxis dataKey="item_name" tick={{ fontSize: 10 }} angle={-45} textAnchor="end" height={80} />
             <YAxis tickFormatter={(v) => `৳${(v / 1000).toFixed(0)}k`} />
-            <Tooltip formatter={(value: Record<string, unknown>) => [`৳${Number(value).toLocaleString()}`, 'Cost']} />
+            <Tooltip formatter={(value: unknown) => [`৳${Number(value || 0).toLocaleString()}`, 'Cost']} />
             <Bar dataKey="total_cost" fill="var(--color-danger-default)" radius={[4, 4, 0, 0]} name="Cost Value" />
           </BarChart>
         </ResponsiveContainer>
@@ -739,7 +784,7 @@ function SlowMoversContent({ data }: { data: SlowMovingItem[] | null }) {
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b">
+          <thead className="bg-background-subtle border-b border-border-default">
             <tr className="text-left text-text-muted">
               <th className="px-3 py-2">Item</th>
               <th className="px-3 py-2">Category</th>
@@ -748,13 +793,13 @@ function SlowMoversContent({ data }: { data: SlowMovingItem[] | null }) {
               <th className="px-3 py-2 text-right">Last Sold</th>
             </tr>
           </thead>
-          <tbody className="divide-y">
+          <tbody className="divide-y divide-border-default">
             {data.slice(0, 20).map((item, idx) => (
-              <tr key={idx} className="hover:bg-gray-50">
+              <tr key={idx} className="hover:bg-background-subtle">
                 <td className="px-3 py-2 font-medium">{item.item_name}</td>
                 <td className="px-3 py-2 text-text-muted">{item.category_name || '-'}</td>
                 <td className="px-3 py-2 text-right">{item.qty_on_hand}</td>
-                <td className="px-3 py-2 text-right text-red-600">৳{item.total_cost.toLocaleString()}</td>
+                <td className="px-3 py-2 text-right text-danger">৳{item.total_cost.toLocaleString()}</td>
                 <td className="px-3 py-2 text-right text-text-muted">
                   {item.last_sold_at ? new Date(item.last_sold_at).toLocaleDateString() : 'Never'}
                 </td>
@@ -799,7 +844,7 @@ function MovementTrendContent({ data }: { data: DailyMovementItem[] | null }) {
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b">
+          <thead className="bg-background-subtle border-b border-border-default">
             <tr className="text-left text-text-muted">
               <th className="px-3 py-2">Date</th>
               <th className="px-3 py-2 text-right">Stock In</th>
@@ -807,13 +852,13 @@ function MovementTrendContent({ data }: { data: DailyMovementItem[] | null }) {
               <th className="px-3 py-2 text-right">Net Delta</th>
             </tr>
           </thead>
-          <tbody className="divide-y">
+          <tbody className="divide-y divide-border-default">
             {data.map((item, idx) => (
-              <tr key={idx} className="hover:bg-gray-50">
+              <tr key={idx} className="hover:bg-background-subtle">
                 <td className="px-3 py-2 font-medium">{item.trend_date}</td>
-                <td className="px-3 py-2 text-right text-emerald-600">+{item.total_in}</td>
-                <td className="px-3 py-2 text-right text-red-600">-{item.total_out}</td>
-                <td className={clsx('px-3 py-2 text-right font-medium', item.net_delta >= 0 ? 'text-emerald-600' : 'text-red-600')}>
+                <td className="px-3 py-2 text-right text-success-dark dark:text-success">+{item.total_in}</td>
+                <td className="px-3 py-2 text-right text-danger">-{item.total_out}</td>
+                <td className={clsx('px-3 py-2 text-right font-medium', item.net_delta >= 0 ? 'text-success-dark dark:text-success' : 'text-danger')}>
                   {item.net_delta >= 0 ? '+' : ''}{item.net_delta}
                 </td>
               </tr>
@@ -828,14 +873,14 @@ function MovementTrendContent({ data }: { data: DailyMovementItem[] | null }) {
 // =========================================================================
 // Customer Analytics Content
 // =========================================================================
-function CustomerAnalyticsContent({ data }: { data: Record<string, unknown>[] }) {
+function CustomerAnalyticsContent({ data }: { data: CustomerAnalyticsData[] }) {
   if (!data || data.length === 0) return <EmptyState icon={<Users size={32} />} title="No customer data" description="Customer purchases will appear here once they make transactions." />;
 
   const totalCustomers = data.length;
-  const totalSpent = data.reduce((s: number, c: Record<string, unknown>) => s + Number(c.total_spent), 0);
+  const totalSpent = data.reduce((s, c) => s + Number(c.total_spent), 0);
   const avgLTV = totalCustomers > 0 ? totalSpent / totalCustomers : 0;
   const avgFrequency = totalCustomers > 0
-    ? data.reduce((s: number, c: Record<string, unknown>) => s + Number(c.purchase_count), 0) / totalCustomers
+    ? data.reduce((s, c) => s + Number(c.purchase_count), 0) / totalCustomers
     : 0;
 
   const spendBuckets = [
@@ -845,7 +890,7 @@ function CustomerAnalyticsContent({ data }: { data: Record<string, unknown>[] })
     { range: '10k-25k', min: 10000, max: 25000, count: 0 },
     { range: '25k+', min: 25000, max: Infinity, count: 0 },
   ];
-  data.forEach((c: Record<string, unknown>) => {
+  data.forEach((c) => {
     for (const bucket of spendBuckets) {
       if (Number(c.total_spent) >= bucket.min && Number(c.total_spent) < bucket.max) {
         bucket.count++;
@@ -860,7 +905,7 @@ function CustomerAnalyticsContent({ data }: { data: Record<string, unknown>[] })
         <h2 className="font-semibold text-lg">Customer Analytics</h2>
         <button
           className="button-outline gap-2 text-sm"
-          onClick={() => downloadCSV(data.map((c: Record<string, unknown>) => ({
+          onClick={() => downloadCSV(data.map((c) => ({
             name: c.customer_name,
             phone: c.phone || '',
             totalSpent: c.total_spent,
@@ -887,7 +932,7 @@ function CustomerAnalyticsContent({ data }: { data: Record<string, unknown>[] })
           <BarChart data={spendBuckets}>
             <XAxis dataKey="range" tick={{ fontSize: 12 }} />
             <YAxis allowDecimals={false} />
-            <Tooltip formatter={(value: Record<string, unknown>) => [value, 'Customers']} />
+            <Tooltip formatter={(value) => [value, 'Customers']} />
             <Bar dataKey="count" fill="var(--color-primary-default)" radius={[4, 4, 0, 0]} name="Customers" />
           </BarChart>
         </ResponsiveContainer>
@@ -896,7 +941,7 @@ function CustomerAnalyticsContent({ data }: { data: Record<string, unknown>[] })
       <div className="overflow-x-auto">
         <h3 className="font-semibold text-sm text-text-muted mb-3">Top Customers</h3>
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b">
+          <thead className="bg-background-subtle border-b border-border-default">
             <tr className="text-left text-text-muted">
               <th className="px-3 py-2">Customer</th>
               <th className="px-3 py-2">Phone</th>
@@ -906,9 +951,9 @@ function CustomerAnalyticsContent({ data }: { data: Record<string, unknown>[] })
               <th className="px-3 py-2 text-right">Last Purchase</th>
             </tr>
           </thead>
-          <tbody className="divide-y">
-            {data.slice(0, 25).map((c: Record<string, unknown>, idx: number) => (
-              <tr key={idx} className="hover:bg-gray-50">
+          <tbody className="divide-y divide-border-default">
+            {data.slice(0, 25).map((c, idx: number) => (
+              <tr key={idx} className="hover:bg-background-subtle">
                 <td className="px-3 py-2 font-medium">{c.customer_name}</td>
                 <td className="px-3 py-2 text-text-muted">{c.phone || '-'}</td>
                 <td className="px-3 py-2 text-right">{c.purchase_count}</td>
@@ -929,11 +974,11 @@ function CustomerAnalyticsContent({ data }: { data: Record<string, unknown>[] })
 // =========================================================================
 // Staff Performance Content
 // =========================================================================
-function StaffPerformanceContent({ data }: { data: Record<string, unknown>[] }) {
+function StaffPerformanceContent({ data }: { data: StaffPerformanceData[] }) {
   if (!data || data.length === 0) return <EmptyState icon={<UserCheck size={32} />} title="No staff data" description="Staff performance will appear once sales are recorded by cashiers." />;
 
-  const totalRevenue = data.reduce((s: number, st: Record<string, unknown>) => s + Number(st.total_revenue), 0);
-  const totalSales = data.reduce((s: number, st: Record<string, unknown>) => s + Number(st.total_sales), 0);
+  const totalRevenue = data.reduce((s, st) => s + Number(st.total_revenue), 0);
+  const totalSales = data.reduce((s, st) => s + Number(st.total_sales), 0);
   const avgTicket = totalSales > 0 ? totalRevenue / totalSales : 0;
 
   return (
@@ -942,7 +987,7 @@ function StaffPerformanceContent({ data }: { data: Record<string, unknown>[] }) 
         <h2 className="font-semibold text-lg">Staff Performance (30 days)</h2>
         <button
           className="button-outline gap-2 text-sm"
-          onClick={() => downloadCSV(data.map((st: Record<string, unknown>) => ({
+          onClick={() => downloadCSV(data.map((st) => ({
             name: st.staff_name,
             role: st.role,
             totalSales: st.total_sales,
@@ -970,7 +1015,7 @@ function StaffPerformanceContent({ data }: { data: Record<string, unknown>[] }) 
           <BarChart data={data.slice(0, 15)}>
             <XAxis dataKey="staff_name" tick={{ fontSize: 10 }} angle={-45} textAnchor="end" height={80} />
             <YAxis tickFormatter={(v) => `৳${(v / 1000).toFixed(0)}k`} />
-            <Tooltip formatter={(value: Record<string, unknown>) => [`৳${Number(value).toLocaleString()}`, '']} />
+            <Tooltip formatter={(value) => [`৳${Number(value).toLocaleString()}`, '']} />
             <Bar dataKey="total_revenue" fill="var(--color-primary-default)" radius={[4, 4, 0, 0]} name="Revenue" />
           </BarChart>
         </ResponsiveContainer>
@@ -979,7 +1024,7 @@ function StaffPerformanceContent({ data }: { data: Record<string, unknown>[] }) 
       <div className="overflow-x-auto">
         <h3 className="font-semibold text-sm text-text-muted mb-3">Staff Details</h3>
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b">
+          <thead className="bg-background-subtle border-b border-border-default">
             <tr className="text-left text-text-muted">
               <th className="px-3 py-2">Staff</th>
               <th className="px-3 py-2">Role</th>
@@ -991,24 +1036,24 @@ function StaffPerformanceContent({ data }: { data: Record<string, unknown>[] }) 
               <th className="px-3 py-2 text-right">Rev/Day</th>
             </tr>
           </thead>
-          <tbody className="divide-y">
-            {data.map((st: Record<string, unknown>, idx: number) => (
-              <tr key={idx} className="hover:bg-gray-50">
+          <tbody className="divide-y divide-border-default">
+            {data.map((st, idx: number) => (
+              <tr key={idx} className="hover:bg-background-subtle">
                 <td className="px-3 py-2 font-medium">{st.staff_name}</td>
                 <td className="px-3 py-2">
                   <span className={clsx(
                     'text-xs font-semibold px-2 py-0.5 rounded-full',
-                    st.role === 'admin' ? 'bg-purple-100 text-purple-700' :
-                    st.role === 'manager' ? 'bg-blue-100 text-blue-700' :
-                    'bg-gray-100 text-gray-700'
+                    st.role === 'admin' ? 'bg-primary-subtle text-primary-default' :
+                    st.role === 'manager' ? 'bg-info/10 text-info' :
+                    'bg-background-subtle text-text-secondary'
                   )}>{st.role}</span>
                 </td>
                 <td className="px-3 py-2 text-right">{st.total_sales}</td>
                 <td className="px-3 py-2 text-right font-medium">৳{Number(st.total_revenue).toLocaleString()}</td>
                 <td className="px-3 py-2 text-right">৳{Number(st.avg_ticket).toLocaleString('en-BD', { maximumFractionDigits: 0 })}</td>
-                <td className="px-3 py-2 text-right text-amber-600">৳{Number(st.total_discounts).toLocaleString()}</td>
+                <td className="px-3 py-2 text-right text-warning">৳{Number(st.total_discounts).toLocaleString()}</td>
                 <td className="px-3 py-2 text-right">{st.active_days}</td>
-                <td className="px-3 py-2 text-right text-emerald-600">৳{Number(st.revenue_per_day).toLocaleString('en-BD', { maximumFractionDigits: 0 })}</td>
+                <td className="px-3 py-2 text-right text-success-dark dark:text-success">৳{Number(st.revenue_per_day).toLocaleString('en-BD', { maximumFractionDigits: 0 })}</td>
               </tr>
             ))}
           </tbody>
