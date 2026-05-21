@@ -9,6 +9,7 @@ export interface Product {
   image_url?: string;
   category_id?: string;
   stock_qty: number;
+  reserved_online?: number;
 }
 
 interface CartItem extends Product {

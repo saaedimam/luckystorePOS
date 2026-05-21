@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Navigation, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { logger } from '@/lib/logger';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface LocationGuardProps {
@@ -13,11 +14,15 @@ export function LocationGuard({ children }: LocationGuardProps) {
   const [status, setStatus] = useState<'idle' | 'checking' | 'granted' | 'denied' | 'out_of_range'>('idle');
   const [error, setError] = useState<string | null>(null);
 
+  const [isMounted, setIsMounted] = useState(false);
+
   // For demo purposes, we auto-grant if a bypass key is in local storage
   useEffect(() => {
+    setIsMounted(true);
     if (localStorage.getItem('lucky-location-bypass') === 'true') {
       setStatus('granted');
     }
+    return () => setIsMounted(false);
   }, []);
 
   const checkLocation = () => {
@@ -30,14 +35,19 @@ export function LocationGuard({ children }: LocationGuardProps) {
       return;
     }
 
+    const geoOptions = {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0
+    };
+
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
         
         try {
-          // Call our RPC to check range
-          // STORE_ID placeholder - in production fetch from config
-          const STORE_ID = '00000000-0000-0000-0000-000000000001'; 
+          // Use environment variable or fallback to default
+          const STORE_ID = process.env.NEXT_PUBLIC_STORE_ID || '00000000-0000-0000-0000-000000000001'; 
           
           const { data: isWithinRange, error: rpcError } = await supabase.rpc('is_within_delivery_range', {
             p_store_id: STORE_ID,
@@ -47,23 +57,32 @@ export function LocationGuard({ children }: LocationGuardProps) {
 
           if (rpcError) throw rpcError;
 
-          if (isWithinRange) {
-            setStatus('granted');
-            localStorage.setItem('lucky-location-bypass', 'true');
-          } else {
-            setStatus('out_of_range');
+          if (isMounted) {
+            if (isWithinRange) {
+              setStatus('granted');
+              localStorage.setItem('lucky-location-bypass', 'true');
+            } else {
+              setStatus('out_of_range');
+            }
           }
         } catch (err) {
-          console.error('Location check error:', err);
-          setError('Could not verify your location. Please try again.');
-          setStatus('denied');
+          logger.error('Location check error:', err);
+          if (isMounted) {
+            setError('Could not verify your location. Please try again.');
+            setStatus('denied');
+          }
         }
       },
       (err) => {
-        console.error('Geolocation error:', err);
-        setError('Location access denied. We need your location to verify delivery availability.');
-        setStatus('denied');
-      }
+        logger.error('Geolocation error:', err);
+        if (isMounted) {
+          if (err.code === 1) setError('Please allow location access in your browser settings.');
+          else if (err.code === 3) setError('Location request timed out. Please try again.');
+          else setError('Could not determine your location.');
+          setStatus('denied');
+        }
+      },
+      geoOptions
     );
   };
 
@@ -85,7 +104,7 @@ export function LocationGuard({ children }: LocationGuardProps) {
               </div>
               <h1 className="text-2xl font-black tracking-tight mb-4 leading-tight">ডেলিভারি এরিয়া চেক করুন</h1>
               <p className="text-text-secondary mb-10 text-sm px-4">
-                আমরা বর্তমানে শুধু ঢাকা ব্রাঞ্চের ৫ কিমি ব্যাসার্ধের মধ্যে ডেলিভারি দিচ্ছি। কেনাকাটা শুরু করতে আপনার লোকেশন শেয়ার করুন।
+                আমরা বর্তমানে শুধু চট্টগ্রাম ব্রাঞ্চের ১০ কিমি ব্যাসার্ধের মধ্যে ডেলিভারি দিচ্ছি। কেনাকাটা শুরু করতে আপনার লোকেশন শেয়ার করুন।
               </p>
               
               {error && (
@@ -126,7 +145,7 @@ export function LocationGuard({ children }: LocationGuardProps) {
               </div>
               <h2 className="text-2xl font-black text-danger-default mb-4">দুঃখিত, আপনি রেঞ্জের বাইরে!</h2>
               <p className="text-text-secondary text-sm mb-10">
-                আপনি বর্তমানে আমাদের ৫ কিমি ডেলিভারি রেঞ্জের বাইরে অবস্থান করছেন। আমরা শীঘ্রই আপনার এলাকায় আসার চেষ্টা করব!
+                আপনি বর্তমানে আমাদের ১০ কিমি ডেলিভারি রেঞ্জের বাইরে অবস্থান করছেন। আমরা শীঘ্রই আপনার এলাকায় আসার চেষ্টা করব!
               </p>
               <button 
                 onClick={() => setStatus('idle')}

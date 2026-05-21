@@ -1,6 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .font-bangla {
+    font-family: 'Hind Siliguri', sans-serif;
+  }
+}
 
 :root {
   /* Use design tokens instead of hardcoded values */

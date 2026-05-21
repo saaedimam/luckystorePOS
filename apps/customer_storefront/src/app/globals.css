@@ -103,6 +103,11 @@
   .store-container {
     @apply max-w-lg mx-auto px-6 pt-12 pb-24;
   }
+
+  .font-bangla {
+    font-family: var(--font-hind-siliguri), sans-serif;
+    line-height: 1.6;
+  }
 }
 
 /* Custom Scrollbars */
