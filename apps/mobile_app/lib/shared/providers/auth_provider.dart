@@ -67,10 +67,16 @@ class AuthProvider extends ChangeNotifier {
       if (email != null && email.isNotEmpty && password != null && password.isNotEmpty) {
         try {
           debugPrint('[AuthProvider] Attempting service account bootstrap...');
-          await _supabase.auth.signInWithPassword(email: email, password: password);
-          debugPrint('[AuthProvider] Bootstrapped session with service account: $email');
+          if (email.isNotEmpty && password.isNotEmpty) {
+            await _supabase.auth.signInWithPassword(email: email, password: password);
+            debugPrint('[AuthProvider] Bootstrapped session with service account: $email');
+          } else {
+            debugPrint('[AuthProvider] Service account bootstrap skipped: MANAGER_EMAIL or MANAGER_PASSWORD not set.');
+          }
+        } on AuthException catch (e) {
+          debugPrint('[AuthProvider] Service account bootstrap failed: ${e.message}');
         } catch (e) {
-          debugPrint('[AuthProvider] Service account bootstrap failed: $e');
+          debugPrint('[AuthProvider] Service account bootstrap failed with unexpected error: $e');
         }
       }
     }
