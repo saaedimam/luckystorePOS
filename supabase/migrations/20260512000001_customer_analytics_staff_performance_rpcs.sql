@@ -66,9 +66,9 @@ AS $$
   WHERE cs.purchase_count > 0
   ORDER BY cs.total_spent DESC
   LIMIT p_limit;
-$$
-REVOKE ALL ON FUNCTION public.get_customer_analytics(uuid, integer) FROM PUBLIC
-GRANT EXECUTE ON FUNCTION public.get_customer_analytics(uuid, integer) TO authenticated
+$$;
+REVOKE ALL ON FUNCTION public.get_customer_analytics(uuid, integer) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.get_customer_analytics(uuid, integer) TO authenticated;
 -- ---------------------------------------------------------------------------
 -- 2) RPC: get_staff_performance
 -- Sales performance per cashier for a given store over the last p_days.
@@ -123,13 +123,13 @@ AS $$
   )
   GROUP BY u.id, u.full_name, u.name, u.email, u.role
   ORDER BY total_revenue DESC;
-$$
-REVOKE ALL ON FUNCTION public.get_staff_performance(uuid, integer) FROM PUBLIC
-GRANT EXECUTE ON FUNCTION public.get_staff_performance(uuid, integer) TO authenticated
+$$;
+REVOKE ALL ON FUNCTION public.get_staff_performance(uuid, integer) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.get_staff_performance(uuid, integer) TO authenticated;
 -- ---------------------------------------------------------------------------
 -- 3) Repair: get_store_users (overcome signature mismatch from repair mig)
 -- ---------------------------------------------------------------------------
-DROP FUNCTION IF EXISTS public.get_store_users(uuid) CASCADE
+DROP FUNCTION IF EXISTS public.get_store_users(uuid) CASCADE;
 CREATE OR REPLACE FUNCTION public.get_store_users(p_store_id uuid)
 RETURNS TABLE (
   id uuid,
@@ -147,6 +147,6 @@ AS $$
   FROM public.users
   WHERE store_id = p_store_id OR role = 'admin'
   ORDER BY role ASC, full_name ASC;
-$$
-REVOKE ALL ON FUNCTION public.get_store_users(uuid) FROM PUBLIC
-GRANT EXECUTE ON FUNCTION public.get_store_users(uuid) TO authenticated
+$$;
+REVOKE ALL ON FUNCTION public.get_store_users(uuid) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.get_store_users(uuid) TO authenticated;

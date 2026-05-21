@@ -37,9 +37,9 @@ CREATE POLICY "Tenant isolation on inventory_snapshots"
     FOR ALL
     TO authenticated
     USING (EXISTS (
-        SELECT 1 FROM public.user_stores 
-        WHERE user_stores.store_id = inventory_snapshots.store_id 
-        AND user_stores.user_id = auth.uid()
+        SELECT 1 FROM public.users 
+        WHERE users.store_id = inventory_snapshots.store_id 
+        AND users.auth_id = auth.uid()
     ));
 
 CREATE INDEX IF NOT EXISTS idx_inventory_snapshots_period 
