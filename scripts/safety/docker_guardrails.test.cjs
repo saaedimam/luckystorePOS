@@ -5,7 +5,7 @@ const { lines, runResult } = require('./_helpers.cjs');
 test('docker container count is bounded when docker is available', () => {
   const result = runResult('docker', ['ps', '-a', '--format', '{{.Names}}']);
   if (!result.ok) {
-    assert.ok(/permission denied|Cannot connect|docker daemon/i.test(result.stderr), result.stderr);
+    assert.ok(/permission denied|Cannot connect|docker daemon|failed to connect|no such file or directory/i.test(result.stderr), result.stderr);
     return;
   }
 
@@ -15,7 +15,7 @@ test('docker container count is bounded when docker is available', () => {
 test('docker volume count is bounded when docker is available', () => {
   const result = runResult('docker', ['volume', 'ls', '-q']);
   if (!result.ok) {
-    assert.ok(/permission denied|Cannot connect|docker daemon/i.test(result.stderr), result.stderr);
+    assert.ok(/permission denied|Cannot connect|docker daemon|failed to connect|no such file or directory/i.test(result.stderr), result.stderr);
     return;
   }
 
