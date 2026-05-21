@@ -34,11 +34,30 @@ export default function StorefrontClient({ initialProducts, categories }: { init
   const { lang, addItem } = useCartStore();
 
   useEffect(() => {
+    // POS sales deduct from stock_levels — subscribe there, not on products
     const channel = supabase
-      .channel('public:products')
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'products' }, (payload) => {
-        setProducts(current => current.map(p => p.id === payload.new.id ? { ...p, ...payload.new as ProductWithStock } : p));
-      })
+      .channel('stock_levels:changes')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'stock_levels' },
+        (payload) => {
+          const updated = payload.new as { item_id: string; qty: number; qty_reserved_online: number };
+          setProducts(current =>
+            current.map(p => {
+              if (p.id !== updated.item_id) return p;
+              return {
+                ...p,
+                stock_levels: [
+                  {
+                    qty: updated.qty ?? 0,
+                    qty_reserved_online: updated.qty_reserved_online ?? 0,
+                  },
+                ],
+              };
+            })
+          );
+        }
+      )
       .subscribe();
 
     return () => {
