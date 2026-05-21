@@ -244,3 +244,9 @@ artifacts/governance/staging-fingerprint.json
 # Governance Artifacts
 artifacts/governance/*.json
 artifacts/governance/*.txt
+
+# Generated outputs
+VibeCoderOutput/
+EOF
+eslint-report.json
+
