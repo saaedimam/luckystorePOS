@@ -1,24 +1,16 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('[Lucky Store] Supabase env vars missing — storefront will run in demo mode.');
-}
-
-// Browser / client-side client (anon key, used in 'use client' components)
-export const supabase = createClient(
-  supabaseUrl || 'https://placeholder.supabase.co',
-  supabaseAnonKey || 'placeholder'
+// Browser/client-side client (for 'use client' components)
+export const supabase = createSupabaseClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder'
 );
 
 // Server-side client factory (used in API route handlers)
-// Identical to browser client for anon operations; swapped for service-role in future
-export function createServerClient() {
-  return createClient(
-    supabaseUrl || 'https://placeholder.supabase.co',
-    supabaseAnonKey || 'placeholder',
+export function createClient() {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder',
     { auth: { persistSession: false } }
   );
 }

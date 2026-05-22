@@ -1,133 +1,320 @@
 @import "tailwindcss";
 
 @theme {
-  /* Design Tokens from Lucky Store POS Core */
-  --color-primitive-neutral-0: #FFFFFF;
-  --color-primitive-neutral-50: #F8FAFC;
-  --color-primitive-neutral-100: #F1F5F9;
-  --color-primitive-neutral-200: #E2E8F0;
-  --color-primitive-neutral-400: #94A3B8;
-  --color-primitive-neutral-600: #475569;
-  --color-primitive-neutral-800: #1E293B;
-  --color-primitive-neutral-900: #0F172A;
+  /* ==========================================================================
+     PRIMITIVE COLOR TOKENS (with Stitch fallbacks)
+     These are the base colors that semantic tokens reference.
+     When Stitch MCP is available, --stitch-* variables override these.
+     ========================================================================== */
 
-  --color-background-default: #F8FAFC;
-  --color-background-subtle: #F1F5F9;
+  /* Primary Brand Colors */
+  --color-primary: var(--stitch-primary, #D4A843);
+  --color-primary-hover: var(--stitch-primary-hover, #c2983b);
+  --color-primary-subtle: var(--stitch-primary-subtle, #e8d5a3);
+  --color-primary-contrast: var(--stitch-primary-contrast, #0F172A);
 
-  --color-surface-default: #FFFFFF;
-  --color-surface-raised: #FFFFFF;
-  --color-surface-overlay: rgba(15, 23, 42, 0.45);
+  /* Secondary Colors */
+  --color-secondary: var(--stitch-secondary, #0B0D12);
+  --color-secondary-hover: var(--stitch-secondary-hover, #1a1d26);
+  --color-secondary-subtle: var(--stitch-secondary-subtle, #2d3142);
 
-  /* Lucky Store Signature Gold */
-  --color-primary-default: #E8B84B;
-  --color-primary-hover: #D4941A;
-  --color-primary-pressed: #B0781A;
-  --color-primary-subtle: #FEF3C7;
-  --color-primary-on: #1E293B;
+  /* Neutral Scale (0-1000) */
+  --color-neutral-0: var(--stitch-neutral-0, #FFFFFF);
+  --color-neutral-50: var(--stitch-neutral-50, #FAFAFA);
+  --color-neutral-100: var(--stitch-neutral-100, #F5F0E8);
+  --color-neutral-200: var(--stitch-neutral-200, #E8E0D5);
+  --color-neutral-300: var(--stitch-neutral-300, #C4B5A0);
+  --color-neutral-400: var(--stitch-neutral-400, #A89880);
+  --color-neutral-500: var(--stitch-neutral-500, #8B7355);
+  --color-neutral-600: var(--stitch-neutral-600, #6B5A45);
+  --color-neutral-700: var(--stitch-neutral-700, #4A3D2F);
+  --color-neutral-800: var(--stitch-neutral-800, #2D261E);
+  --color-neutral-900: var(--stitch-neutral-900, #1a1a1a);
+  --color-neutral-1000: var(--stitch-neutral-1000, #0B0D12);
 
-  --color-secondary-default: #0D9488;
-  --color-secondary-hover: #0F766E;
-  --color-secondary-subtle: #F0FDFA;
-  --color-secondary-on: #FFFFFF;
+  /* Semantic Status Colors */
+  --color-success: var(--stitch-success, #10B981);
+  --color-success-subtle: var(--stitch-success-subtle, #DCFCE7);
+  --color-success-text: var(--stitch-success-text, #166534);
 
-  --color-success-default: #22C55E;
-  --color-success-dark: #15803D;
-  --color-success-subtle: #F0FDF4;
-  --color-success-on: #FFFFFF;
+  --color-warning: var(--stitch-warning, #F59E0B);
+  --color-warning-subtle: var(--stitch-warning-subtle, #FEF3C7);
+  --color-warning-text: var(--stitch-warning-text, #92400E);
 
-  --color-danger-default: #EF4444;
-  --color-danger-dark: #B91C1C;
-  --color-danger-subtle: #FFF1F2;
-  --color-danger-on: #FFFFFF;
+  --color-danger: var(--stitch-danger, #F43F5E);
+  --color-danger-subtle: var(--stitch-danger-subtle, #FFE4E6);
+  --color-danger-text: var(--stitch-danger-text, #9F1239);
 
-  --color-warning-default: #FBBF24;
-  --color-warning-dark: #D97706;
-  --color-warning-subtle: #FFFBEB;
-  --color-warning-on: #1E293B;
+  --color-info: var(--stitch-info, #3B82F6);
+  --color-info-subtle: var(--stitch-info-subtle, #DBEAFE);
+  --color-info-text: var(--stitch-info-text, #1E40AF);
 
-  --color-info-default: #3B82F6;
-  --color-info-subtle: #EFF6FF;
-  --color-info-on: #FFFFFF;
+  /* ==========================================================================
+     SEMANTIC COLOR TOKENS (Use these in components!)
+     These map primitive colors to meaningful use cases.
+     ========================================================================== */
 
-  --color-border-default: #E2E8F0;
-  --color-border-strong: #94A3B8;
+  /* Background Colors */
+  --color-bg-canvas: var(--color-neutral-100);
+  --color-bg-surface: var(--color-neutral-0);
+  --color-bg-surface-raised: var(--color-neutral-0);
+  --color-bg-subtle: var(--color-neutral-100);
+  --color-bg-muted: var(--color-neutral-200);
+  --color-bg-disabled: var(--color-neutral-100);
 
-  --color-text-primary: #0F172A;
-  --color-text-secondary: #475569;
-  --color-text-muted: #94A3B8;
-  --color-text-inverse: #FFFFFF;
-  --color-text-link: #4F46E5;
+  /* Text Colors */
+  --color-text-primary: var(--color-neutral-900);
+  --color-text-secondary: var(--color-neutral-600);
+  --color-text-tertiary: var(--color-neutral-500);
+  --color-text-muted: var(--color-neutral-500);
+  --color-text-disabled: var(--color-neutral-300);
+  --color-text-inverse: var(--color-neutral-0);
+  --color-text-link: var(--color-primary);
+  --color-text-link-hover: var(--color-primary-hover);
 
-  /* Semantic Mapping for Tailwind Utilities */
-  --color-background: var(--color-background-default);
-  --color-primary: var(--color-primary-default);
-  --color-secondary: var(--color-secondary-default);
-  --color-success: var(--color-success-default);
-  --color-danger: var(--color-danger-default);
-  --color-warning: var(--color-warning-default);
-  --color-info: var(--color-info-default);
-  --color-border: var(--color-border-default);
+  /* Border Colors */
+  --color-border-default: var(--color-neutral-200);
+  --color-border-strong: var(--color-neutral-300);
+  --color-border-subtle: var(--color-neutral-100);
+  --color-border-disabled: var(--color-neutral-200);
+  --color-border-focus: var(--color-primary);
 
-  --radius-none: 0px;
-  --radius-xs: 4px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  /* Interactive Colors */
+  --color-interactive-default: var(--color-primary);
+  --color-interactive-hover: var(--color-primary-hover);
+  --color-interactive-active: var(--color-primary);
+  --color-interactive-disabled: var(--color-neutral-300);
+
+  /* ==========================================================================
+     TYPOGRAPHY TOKENS
+     ========================================================================== */
+
+  /* Font Families */
+  --font-sans: var(--stitch-font-sans, 'Inter'), system-ui, -apple-system, sans-serif;
+  --font-bangla: var(--stitch-font-bangla, 'Hind Siliguri'), 'Noto Sans Bengali', sans-serif;
+  --font-display: var(--stitch-font-display, 'Space Grotesk'), 'Inter', sans-serif;
+  --font-mono: var(--stitch-font-mono, 'Fira Code'), ui-monospace, monospace;
+
+  /* Font Sizes */
+  --text-2xs: var(--stitch-text-2xs, 0.625rem);    /* 10px */
+  --text-xs: var(--stitch-text-xs, 0.75rem);        /* 12px */
+  --text-sm: var(--stitch-text-sm, 0.875rem);       /* 14px */
+  --text-base: var(--stitch-text-base, 1rem);       /* 16px */
+  --text-lg: var(--stitch-text-lg, 1.125rem);       /* 18px */
+  --text-xl: var(--stitch-text-xl, 1.25rem);        /* 20px */
+  --text-2xl: var(--stitch-text-2xl, 1.5rem);       /* 24px */
+  --text-3xl: var(--stitch-text-3xl, 1.875rem);     /* 30px */
+  --text-4xl: var(--stitch-text-4xl, 2.25rem);     /* 36px */
+
+  /* Font Weights */
+  --font-thin: 100;
+  --font-extralight: 200;
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+  --font-black: 900;
+
+  /* Line Heights */
+  --leading-none: 1;
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 2;
+
+  /* ==========================================================================
+     SPACING TOKENS (4px base grid)
+     ========================================================================== */
+
+  --space-0: 0;
+  --space-1: 0.25rem;      /* 4px */
+  --space-2: 0.5rem;       /* 8px */
+  --space-3: 0.75rem;      /* 12px */
+  --space-4: 1rem;         /* 16px */
+  --space-5: 1.25rem;      /* 20px */
+  --space-6: 1.5rem;        /* 24px */
+  --space-8: 2rem;         /* 32px */
+  --space-10: 2.5rem;      /* 40px */
+  --space-12: 3rem;        /* 48px */
+  --space-16: 4rem;        /* 64px */
+  --space-20: 5rem;        /* 80px */
+  --space-24: 6rem;        /* 96px */
+
+  /* ==========================================================================
+     ELEVATION / SHADOW TOKENS
+     ========================================================================== */
+
+  --shadow-none: none;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+  --shadow-primary: 0 10px 40px -10px rgba(212, 168, 67, 0.3);
+
+  /* ==========================================================================
+     BORDER RADIUS TOKENS
+     ========================================================================== */
+
+  --radius-none: 0;
+  --radius-sm: 0.375rem;   /* 6px */
+  --radius-md: 0.5rem;     /* 8px */
+  --radius-lg: 0.75rem;    /* 12px */
+  --radius-xl: 1rem;       /* 16px */
+  --radius-2xl: 1.5rem;    /* 24px */
   --radius-full: 9999px;
 
-  --shadow-level-1: 0px 1px 3px 0px rgba(15, 23, 42, 0.08), 0px 1px 2px -1px rgba(15, 23, 42, 0.06);
-  --shadow-level-2: 0px 4px 8px -2px rgba(15, 23, 42, 0.10), 0px 2px 4px -2px rgba(15, 23, 42, 0.06);
-  --shadow-level-3: 0px 20px 40px -8px rgba(15, 23, 42, 0.14), 0px 8px 16px -4px rgba(15, 23, 42, 0.08);
+  /* ==========================================================================
+     Z-INDEX TOKENS
+     ========================================================================== */
 
-  --font-sans: var(--font-hind-siliguri), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --z-hide: -1;
+  --z-auto: auto;
+  --z-base: 0;
+  --z-docked: 10;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-banner: 1200;
+  --z-overlay: 1300;
+  --z-modal: 1400;
+  --z-popover: 1500;
+  --z-toast: 1600;
+  --z-tooltip: 1700;
+
+  /* ==========================================================================
+     LEGACY TOKENS (Deprecated - for backwards compatibility)
+     These will be removed in a future version. Use semantic tokens instead.
+     ========================================================================== */
+
+  --color-gold: var(--color-primary);
+  --color-gold-dark: var(--color-primary-hover);
+  --color-gold-light: var(--color-primary-subtle);
+  --color-charcoal: var(--color-neutral-1000);
+  --color-pale: var(--color-bg-canvas);
+  --color-canvas: var(--color-bg-surface);
+  --color-stock-bg: var(--color-success-subtle);
+  --color-stock-text: var(--color-success-text);
+  --color-whatsapp: #22c55e;
+  --color-whatsapp-bg: #f0fdf4;
 }
 
-@layer base {
-  body {
-    @apply bg-background text-text-primary antialiased;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-  }
+/* ==========================================================================
+   BASE STYLES
+   ========================================================================== */
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg-canvas);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@layer components {
-  .glass-card {
-    @apply backdrop-blur-md bg-white/40 border border-white/20 shadow-level-2;
-  }
-  
-  .premium-button {
-    @apply h-14 px-8 rounded-full font-bold transition-all active:scale-95 flex items-center justify-center gap-2 shadow-level-1 hover:shadow-level-2;
-  }
-
-  .store-container {
-    @apply max-w-lg mx-auto px-6 pt-12 pb-24;
-  }
-
-  .font-bangla {
-    font-family: var(--font-hind-siliguri), sans-serif;
-    line-height: 1.6;
-  }
+::selection {
+  background-color: rgba(212, 168, 67, 0.3);
 }
 
-/* Custom Scrollbars */
-::-webkit-scrollbar {
-  width: 6px;
+/* ==========================================================================
+   UTILITY CLASSES
+   ========================================================================== */
+
+/* Scrollbar utilities */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Typography utilities */
+.font-bangla { font-family: var(--font-bangla); }
+.font-display { font-family: var(--font-display); }
+.tabular-nums { font-variant-numeric: tabular-nums; }
+
+/* ==========================================================================
+   ANIMATIONS
+   ========================================================================== */
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-::-webkit-scrollbar-track {
-  @apply bg-transparent;
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-::-webkit-scrollbar-thumb {
-  @apply bg-black/10 rounded-full hover:bg-black/20 transition-colors;
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }
 
-@keyframes fadeIn {
-  0% { opacity: 0; transform: translateY(1px); }
-  100% { opacity: 1; transform: translateY(0); }
+.animate-slide-up {
+  animation: slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-fade-in {
-  animation: fadeIn 120ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: fade-in 0.3s ease-out forwards;
 }
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   COMPONENT PATTERNS (Reusable class combinations)
+   ========================================================================== */
+
+/* Card patterns */
+.card {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+}
+
+.card-hover {
+  transition: border-color 0.2s ease;
+}
+
+.card-hover:hover {
+  border-color: var(--color-border-strong);
+}
+
+/* Button patterns */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-primary-contrast);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+/* Surface patterns */
+.surface-default {
+  background-color: var(--color-bg-surface);
+}
+
+.surface-subtle {
+  background-color: var(--color-bg-subtle);
+}
+
+/* ==========================================================================
+   DARK MODE (Future support)
+   When Stitch provides dark tokens, these can be enabled.
+   ========================================================================== */
+
+/*
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg-canvas: var(--stitch-dark-bg-canvas, #0B0D12);
+    --color-bg-surface: var(--stitch-dark-bg-surface, #1a1a1a);
+    --color-text-primary: var(--stitch-dark-text-primary, #FAFAFA);
+    --color-text-secondary: var(--stitch-dark-text-secondary, #C4B5A0);
+    --color-border-default: var(--stitch-dark-border-default, #2D261E);
+  }
+}
+*/

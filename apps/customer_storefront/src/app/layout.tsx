@@ -1,47 +1,30 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono, Hind_Siliguri } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter, Hind_Siliguri, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const hindSiliguri = Hind_Siliguri({
-  variable: "--font-hind-siliguri",
-  subsets: ["latin", "bengali"],
-  weight: ["300", "400", "500", "600", "700"],
-});
-
-export const viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-};
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const hindSiliguri = Hind_Siliguri({ subsets: ["bengali"], weight: ["400","500","600","700"], variable: "--font-hind-siliguri", display: "swap" });
+const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], weight: ["400","500","600","700"], variable: "--font-space-grotesk", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Lucky Store | লাকি স্টোর - Online Ordering",
-  description: "Premium grocery and essentials from Lucky Store. Fast delivery within 5km of Dhaka Branch.",
+  title: "লাকি স্টোর — Lucky Store",
+  description: "Fresh groceries & essentials delivered to your door in Chittagong.",
+  other: {
+    'cache-control': 'no-cache, no-store, must-revalidate',
+  },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export const viewport: Viewport = {
+  width: "device-width", initialScale: 1, maximumScale: 1, userScalable: false, themeColor: "#D4A843",
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${hindSiliguri.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-background text-text-primary">
-        {children}
+    <html lang="bn" className={`${inter.variable} ${hindSiliguri.variable} ${spaceGrotesk.variable}`}>
+      <body className="min-h-screen bg-bg-canvas text-text-primary antialiased">
+        <div className="max-w-2xl mx-auto min-h-screen relative shadow-[0_0_40px_rgba(0,0,0,0.04)] bg-bg-surface flex flex-col overflow-hidden">
+          {children}
+        </div>
       </body>
     </html>
   );

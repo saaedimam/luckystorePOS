@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
+
+export const dynamic = 'force-static';
+export const revalidate = false;
 
 // Haversine (duplicated here to keep route self-contained — no shared dep needed)
 function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
@@ -53,7 +56,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const db = createServerClient();
+    const db = createClient();
 
     // ── Delivery zone + distance check ────────────────────────────────────────
     let deliveryFee = 40;
@@ -206,7 +209,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'orderNumber query param required' }, { status: 400 });
   }
 
-  const db = createServerClient();
+  const db = createClient();
   const { data: order, error } = await db
     .from('online_orders')
     .select(`

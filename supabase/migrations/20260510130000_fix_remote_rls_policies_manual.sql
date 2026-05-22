@@ -78,8 +78,8 @@ DROP POLICY IF EXISTS "items_select_tenant_isolated" ON public.items;
 DROP POLICY IF EXISTS "items_manage_authorized" ON public.items;
 
 -- Create correct policies
-CREATE POLICY "categories_select_tenant_isolated"
-  ON public.categories
+CREATE POLICY "items_select_tenant_isolated"
+  ON public.items
   FOR SELECT
   TO authenticated
   USING (
@@ -93,8 +93,8 @@ CREATE POLICY "categories_select_tenant_isolated"
     )
   );
 
-CREATE POLICY "categories_manage_authorized"
-  ON public.categories
+CREATE POLICY "items_manage_authorized"
+  ON public.items
   FOR ALL
   TO authenticated
   USING (

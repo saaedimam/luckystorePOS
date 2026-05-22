@@ -2,14 +2,7 @@
 -- Migration: Update Product Prices from Price Lists
 -- =============================================================================
 
--- Update products with prices from price_lists table
-UPDATE public.products p
-SET
-  price = COALESCE(pl.price, 0),
-  cost = COALESCE(pl.cost, 0)
-FROM public.price_lists pl
-WHERE p.id = pl.item_id
-  AND p.price = 0;
+-- Note: price_lists table not present in this schema; prices are set via SKU-based logic below.
 
 -- Set default prices for products that still have no price
 -- Using item_id pattern to set reasonable defaults based on category

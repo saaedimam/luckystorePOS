@@ -27,7 +27,7 @@ AS $$
     i.sku as sku,
     i.image_url as image_url,
     c.name as category_name,
-    COALESCE(sl.qty_on_hand, 0) as current_qty,
+    COALESCE(sl.qty, 0)::bigint as current_qty,
     COALESCE(sat.min_qty, 5) as min_qty,
     COALESCE(sat.reorder_qty, 20) as reorder_qty
   FROM public.items i
@@ -35,8 +35,8 @@ AS $$
   LEFT JOIN public.stock_levels sl ON sl.item_id = i.id AND sl.store_id = p_store_id
   LEFT JOIN public.stock_alert_thresholds sat ON sat.item_id = i.id AND sat.store_id = p_store_id
   WHERE i.is_active = true
-    AND COALESCE(sl.qty_on_hand, 0) <= COALESCE(sat.min_qty, 5)
-  ORDER BY COALESCE(sl.qty_on_hand, 0) ASC, i.name ASC
+    AND COALESCE(sl.qty, 0) <= COALESCE(sat.min_qty, 5)
+  ORDER BY COALESCE(sl.qty, 0) ASC, i.name ASC
   LIMIT 50;
 $$;
 
@@ -56,9 +56,9 @@ DECLARE
 BEGIN
   SELECT 
     COUNT(DISTINCT i.id),
-    SUM(CASE WHEN sl.qty_on_hand = 0 THEN 1 ELSE 0 END),
-    COALESCE(SUM(sl.qty_on_hand * i.price), 0),
-    COALESCE(SUM(sl.qty_on_hand * i.cost), 0)
+    SUM(CASE WHEN sl.qty = 0 THEN 1 ELSE 0 END),
+    COALESCE(SUM(sl.qty * i.price), 0),
+    COALESCE(SUM(sl.qty * i.cost), 0)
   INTO 
     v_total_skus, 
     v_out_of_stock, 
@@ -101,7 +101,7 @@ AS $$
     'cost',         i.cost,
     'group_tag',    i.group_tag,
     'image_url',    i.image_url,
-    'qty_on_hand',  COALESCE(sl.qty_on_hand, 0),
+    'qty_on_hand',  COALESCE(sl.qty, 0),
     'category',     c.name
   )
   FROM public.items i
@@ -148,7 +148,7 @@ AS $$
       i.image_url,
       c.name AS category,
       c.id AS category_id,
-      COALESCE(sl.qty_on_hand, 0) AS qty_on_hand
+      COALESCE(sl.qty, 0) AS qty_on_hand
     FROM public.items i
     LEFT JOIN public.stock_levels sl
            ON sl.item_id = i.id AND sl.store_id = p_store_id
@@ -178,7 +178,10 @@ RETURNS TABLE (
   current_qty integer,
   min_qty integer,
   reorder_status text,
-  last_updated timestamptz
+  last_updated timestamptz,
+  category_id uuid,
+  price numeric,
+  image_url text
 )
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -191,22 +194,25 @@ BEGIN
     i.id,
     i.name,
     i.sku,
-    COALESCE(sl.qty_on_hand, 0) as current_qty,
-    COALESCE(sat.min_qty, 5) as min_qty,
+    COALESCE(sl.qty, 0)::integer as current_qty,
+    COALESCE(sat.min_qty, 5)::integer as min_qty,
     CASE 
-      WHEN COALESCE(sl.qty_on_hand, 0) = 0 THEN 'OUT'
-      WHEN COALESCE(sl.qty_on_hand, 0) <= COALESCE(sat.min_qty, 5) THEN 'LOW'
-      ELSE 'OK'
+      WHEN COALESCE(sl.qty, 0) = 0 THEN 'OUT'::text
+      WHEN COALESCE(sl.qty, 0) <= COALESCE(sat.min_qty, 5) THEN 'LOW'::text
+      ELSE 'OK'::text
     END as reorder_status,
-    COALESCE(sl.updated_at, i.updated_at) as last_updated
+    i.updated_at as last_updated,
+    i.category_id,
+    i.price,
+    i.image_url
   FROM public.items i
   LEFT JOIN public.stock_levels sl ON sl.item_id = i.id AND sl.store_id = p_store_id
   LEFT JOIN public.stock_alert_thresholds sat ON sat.item_id = i.id AND sat.store_id = p_store_id
   WHERE i.is_active = true
   ORDER BY 
     CASE 
-      WHEN COALESCE(sl.qty_on_hand, 0) = 0 THEN 0
-      WHEN COALESCE(sl.qty_on_hand, 0) <= COALESCE(sat.min_qty, 5) THEN 1
+      WHEN COALESCE(sl.qty, 0) = 0 THEN 0
+      WHEN COALESCE(sl.qty, 0) <= COALESCE(sat.min_qty, 5) THEN 1
       ELSE 2
     END ASC,
     i.name ASC;
@@ -236,7 +242,7 @@ BEGIN
   -- IF v_user_id IS NULL THEN RAISE EXCEPTION 'Not authenticated'; END IF;
 
   -- Get current qty
-  SELECT COALESCE(qty_on_hand, 0) INTO v_current_qty
+  SELECT COALESCE(qty, 0) INTO v_current_qty
   FROM public.stock_levels
   WHERE store_id = p_store_id AND item_id = p_item_id;
 
@@ -264,3 +270,4 @@ GRANT EXECUTE ON FUNCTION public.lookup_item_by_scan(text, uuid) TO authenticate
 GRANT EXECUTE ON FUNCTION public.search_items_pos(uuid, text, uuid, integer, integer) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.get_inventory_list(uuid) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.set_stock(uuid, uuid, integer, text, text) TO authenticated;
+

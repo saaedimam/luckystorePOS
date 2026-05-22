@@ -128,16 +128,21 @@ CREATE INDEX idx_rider_earnings_payment ON public.rider_earnings(rider_id, payme
 -- RIDER LOCATION HISTORY (Time-series optimized)
 -- =============================================================================
 CREATE TABLE IF NOT EXISTS public.rider_location_history (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID NOT NULL DEFAULT gen_random_uuid(),
     rider_id UUID REFERENCES public.riders(id) ON DELETE CASCADE NOT NULL,
     location GEOGRAPHY(POINT, 4326) NOT NULL,
     accuracy_meters DECIMAL(5,2),
     battery_level INTEGER CHECK (battery_level BETWEEN 0 AND 100),
-    recorded_at TIMESTAMPTZ DEFAULT now(),
+    recorded_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 
     -- Partitioning support for high-volume tracking
-    tenant_id UUID REFERENCES public.stores(id) ON DELETE CASCADE NOT NULL
+    tenant_id UUID REFERENCES public.stores(id) ON DELETE CASCADE NOT NULL,
+
+    -- Composite PK must include the partition key (recorded_at) per PostgreSQL requirement.
+    -- No separate UNIQUE(id) allowed on partitioned tables unless it includes all partition cols.
+    PRIMARY KEY (id, recorded_at)
 ) PARTITION BY RANGE (recorded_at);
+
 
 -- Create initial partition (current month)
 CREATE TABLE IF NOT EXISTS public.rider_location_history_current

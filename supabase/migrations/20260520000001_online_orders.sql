@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS public.online_orders (
 CREATE TABLE IF NOT EXISTS public.online_order_items (
   id           UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
   order_id     UUID          NOT NULL REFERENCES public.online_orders(id) ON DELETE CASCADE,
-  product_id   UUID          NOT NULL REFERENCES public.products(id),
+  item_id      UUID          NOT NULL,
   quantity     INTEGER       NOT NULL CHECK (quantity > 0),
   unit_price   DECIMAL(12,2) NOT NULL,
   total_price  DECIMAL(12,2) NOT NULL
@@ -302,17 +302,21 @@ CREATE TRIGGER touch_updated_at
 -- ---------------------------------------------------------------------------
 DO $$
 BEGIN
-  IF NOT EXISTS (
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public'
+      AND table_name   = 'inventory'
+  ) AND NOT EXISTS (
     SELECT 1 FROM information_schema.columns
     WHERE table_schema = 'public'
       AND table_name   = 'inventory'
       AND column_name  = 'reserved_online'
   ) THEN
-    ALTER TABLE public.inventory
-      ADD COLUMN reserved_online INTEGER NOT NULL DEFAULT 0;
+    EXECUTE 'ALTER TABLE public.inventory ADD COLUMN reserved_online INTEGER NOT NULL DEFAULT 0';
   END IF;
 END;
 $$;
+
 
 -- ---------------------------------------------------------------------------
 -- 13. Grants — allow anon role to call the order-placement pathway

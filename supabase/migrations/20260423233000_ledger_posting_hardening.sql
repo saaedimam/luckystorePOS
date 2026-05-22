@@ -29,6 +29,8 @@ CREATE TABLE IF NOT EXISTS public.ledger_posting_queue (
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 
+DROP FUNCTION IF EXISTS public.register_ledger_worker(text);
+
 CREATE OR REPLACE FUNCTION public.register_ledger_worker(
   p_worker_id text
 )
@@ -52,6 +54,8 @@ BEGIN
   RETURN v_worker;
 END;
 $$;
+
+DROP FUNCTION IF EXISTS public.heartbeat_ledger_worker(text);
 
 CREATE OR REPLACE FUNCTION public.heartbeat_ledger_worker(
   p_worker_id text

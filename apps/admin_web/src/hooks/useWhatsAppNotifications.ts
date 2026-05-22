@@ -9,18 +9,16 @@ export interface WhatsAppLog {
   error_code?: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useWhatsAppNotifications() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const getNotificationLogs = useCallback(async (orderId: string): Promise<WhatsAppLog[]> => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error: queryError } = await (supabase as any)
+    const { data, error: queryError } = await supabase
       .from('whatsapp_logs')
       .select('id, status, template, created_at, error_code')
       .eq('order_id', orderId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
 
     if (queryError) {
       console.error('Error fetching WhatsApp logs:', queryError);
@@ -35,8 +33,7 @@ export function useWhatsAppNotifications() {
     setError(null);
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error: rpcError } = await (supabase as any).rpc('send_whatsapp_notification_manually', {
+      const { data, error: rpcError } = await (supabase.rpc as unknown as (...args: unknown[]) => Promise<{ data: unknown; error: Error | null }>)('send_whatsapp_notification_manually', {
         p_order_id: orderId,
         p_status: status
       });
@@ -54,14 +51,13 @@ export function useWhatsAppNotifications() {
   }, []);
 
   const getLastNotificationStatus = useCallback(async (orderId: string): Promise<WhatsAppLog | null> => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error: queryError } = await (supabase as any)
+    const { data, error: queryError } = await supabase
       .from('whatsapp_logs')
       .select('id, status, template, created_at, error_code')
       .eq('order_id', orderId)
       .order('created_at', { ascending: false })
       .limit(1)
-      .single();
+      .single()
 
     if (queryError || !data) return null;
     return data as WhatsAppLog;

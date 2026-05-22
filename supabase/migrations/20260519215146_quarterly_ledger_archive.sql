@@ -76,7 +76,7 @@ BEGIN
         WITH ledger_to_archive AS (
             SELECT 
                 sl.store_id,
-                sl.item_id,
+                sl.product_id AS item_id,
                 date_trunc('quarter', sl.created_at) AS q_start,
                 (date_trunc('quarter', sl.created_at) + INTERVAL '3 months' - INTERVAL '1 microsecond') AS q_end,
                 COALESCE(SUM(CASE WHEN sl.transaction_type IN ('purchase_add', 'adjustment', 'return_in', 'transfer_in') 
@@ -90,10 +90,10 @@ BEGIN
               AND NOT EXISTS (
                   SELECT 1 FROM public.inventory_snapshots sn
                   WHERE sn.store_id = sl.store_id
-                    AND sn.item_id = sl.item_id
+                    AND sn.item_id = sl.product_id
                     AND sn.period_start = date_trunc('quarter', sl.created_at)
               )
-            GROUP BY sl.store_id, sl.item_id, date_trunc('quarter', sl.created_at)
+            GROUP BY sl.store_id, sl.product_id, date_trunc('quarter', sl.created_at)
             LIMIT v_batch_size
         ),
         inserted_snapshots AS (
@@ -136,11 +136,12 @@ $$;
 -- 3. CRON SCHEDULE
 -- =============================================================================
 
+CREATE EXTENSION IF NOT EXISTS pg_cron;
+
 SELECT cron.schedule(
     'quarterly-ledger-archive',
     '0 3 1 1,4,7,10 *',  -- 3 AM on Jan 1, Apr 1, Jul 1, Oct 1
-    $$SELECT public.archive_stock_ledger_quarterly(now() - INTERVAL '1 year')$$,
-    'UTC'
+    $$SELECT public.archive_stock_ledger_quarterly(now() - INTERVAL '1 year')$$
 );
 
 -- =============================================================================
@@ -153,7 +154,7 @@ SELECT store_id, item_id, net_change AS quantity, period_end AS created_at,
        NULL::UUID AS purchase_id, source_ledger_ids AS metadata
 FROM public.inventory_snapshots
 UNION ALL
-SELECT store_id, item_id, quantity_change AS quantity, created_at, transaction_type::TEXT AS movement_type,
+SELECT store_id, product_id AS item_id, quantity_change AS quantity, created_at, transaction_type::TEXT AS movement_type,
        NULL::UUID AS sale_id, NULL::UUID AS purchase_id, NULL::UUID[] AS metadata
 FROM public.stock_ledger
 WHERE created_at >= date_trunc('year', CURRENT_DATE - INTERVAL '1 year');

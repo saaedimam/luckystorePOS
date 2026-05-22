@@ -2,9 +2,10 @@
 -- This file is executed after migrations during 'supabase db reset'
 
 -- 1. Create Default Tenant
-INSERT INTO public.tenants (id, name, slug)
-VALUES ('00000000-0000-0000-0000-000000000001', 'Local Development Tenant', 'local-dev')
+INSERT INTO public.tenants (id, name)
+VALUES ('00000000-0000-0000-0000-000000000001', 'Local Development Tenant')
 ON CONFLICT (id) DO NOTHING;
+
 
 -- 2. Create Default Store
 INSERT INTO public.stores (id, code, name, tenant_id)

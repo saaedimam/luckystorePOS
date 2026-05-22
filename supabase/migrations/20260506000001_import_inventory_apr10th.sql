@@ -10,12 +10,22 @@ DO $$ BEGIN /* no-op: manual CSV import template */ END; $$;
 
 -- Structural sanitation: Ensure table structure is correct for import
 ALTER TABLE public.categories ADD COLUMN IF NOT EXISTS description text;
-DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'categories_name_key') THEN ALTER TABLE public.categories ADD CONSTRAINT categories_name_key UNIQUE (name); END IF; END $$;
+ALTER TABLE public.categories ADD COLUMN IF NOT EXISTS created_at timestamptz DEFAULT now();
+ALTER TABLE public.categories ADD COLUMN IF NOT EXISTS updated_at timestamptz DEFAULT now();
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'categories_name_col_unique') THEN ALTER TABLE public.categories ADD CONSTRAINT categories_name_col_unique UNIQUE (name); END IF; END $$;
+
 ALTER TABLE public.items ADD COLUMN IF NOT EXISTS short_code text;
 ALTER TABLE public.items ADD COLUMN IF NOT EXISTS brand text;
 ALTER TABLE public.items ADD COLUMN IF NOT EXISTS active boolean DEFAULT true;
+ALTER TABLE public.items ADD COLUMN IF NOT EXISTS is_active boolean DEFAULT true;
 ALTER TABLE public.items ADD COLUMN IF NOT EXISTS mrp numeric DEFAULT 0;
 
+ALTER TABLE public.stock_levels ADD COLUMN IF NOT EXISTS id uuid DEFAULT gen_random_uuid();
+ALTER TABLE public.stock_levels ADD COLUMN IF NOT EXISTS low_stock_threshold integer DEFAULT 5;
+ALTER TABLE public.stock_levels ADD COLUMN IF NOT EXISTS created_at timestamptz DEFAULT now();
+ALTER TABLE public.stock_levels ADD COLUMN IF NOT EXISTS updated_at timestamptz DEFAULT now();
+
+/*
 -- Step 1: Create temp table matching CSV structure
 DROP TABLE IF EXISTS temp_inventory_apr10th;
 CREATE TEMP TABLE temp_inventory_apr10th (

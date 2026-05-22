@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
+
+export const dynamic = 'force-static';
+export const revalidate = false;
 
 // Haversine formula — returns distance in km
 function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
@@ -24,7 +27,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'lat and lng are required numbers' }, { status: 400 });
     }
 
-    const db = createServerClient();
+    const db = createClient();
 
     // Fetch the active delivery zone (first active zone if no store_id given)
     let query = db

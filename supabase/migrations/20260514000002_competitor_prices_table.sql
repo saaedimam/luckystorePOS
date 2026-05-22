@@ -2,7 +2,8 @@
 -- Stores scraped prices from competitors for price comparison
 
 -- Drop if exists with wrong schema (defensive)
-drop table if exists public.competitor_prices cascade
+drop table if exists public.competitor_prices cascade;
+
 -- Create table with all columns explicitly
 create table public.competitor_prices (
     id uuid default gen_random_uuid() primary key,
@@ -38,18 +39,22 @@ create table public.competitor_prices (
     
     created_at timestamptz default now() not null,
     updated_at timestamptz default now() not null
-)
+);
+
 -- Indexes for performance
-create index if not exists idx_competitor_prices_store_id on public.competitor_prices(store_id)
-create index if not exists idx_competitor_prices_product_id on public.competitor_prices(product_id)
-create index if not exists idx_competitor_prices_competitor on public.competitor_prices(competitor_name)
-create index if not exists idx_competitor_prices_scraped_at on public.competitor_prices(scraped_at desc)
-create index if not exists idx_competitor_prices_batch on public.competitor_prices(scrape_batch_id)
+create index if not exists idx_competitor_prices_store_id on public.competitor_prices(store_id);
+create index if not exists idx_competitor_prices_product_id on public.competitor_prices(product_id);
+create index if not exists idx_competitor_prices_competitor on public.competitor_prices(competitor_name);
+create index if not exists idx_competitor_prices_scraped_at on public.competitor_prices(scraped_at desc);
+create index if not exists idx_competitor_prices_batch on public.competitor_prices(scrape_batch_id);
+
 -- Composite index for common queries
 create index if not exists idx_competitor_prices_store_product_scraped 
-    on public.competitor_prices(store_id, product_id, scraped_at desc)
+    on public.competitor_prices(store_id, product_id, scraped_at desc);
+
 -- RLS: Users can only see competitor prices for their store
-alter table public.competitor_prices enable row level security
+alter table public.competitor_prices enable row level security;
+
 create policy "Users can view competitor prices for their store"
     on public.competitor_prices
     for select
@@ -59,13 +64,15 @@ create policy "Users can view competitor prices for their store"
             where id = auth.uid() 
             and raw_user_meta_data->>'current_store_id' = competitor_prices.store_id::text
         )
-    )
+    );
+
 create policy "Service role can manage competitor prices"
     on public.competitor_prices
     for all
     to service_role
     using (true)
-    with check (true)
+    with check (true);
+
 -- Function to cleanup old data (keep 90 days)
 create or replace function public.cleanup_old_competitor_prices()
 returns void as $$
@@ -73,7 +80,8 @@ begin
     delete from public.competitor_prices
     where scraped_at < now() - interval '90 days';
 end;
-$$ language plpgsql security definer
+$$ language plpgsql security definer;
+
 -- Trigger to auto-cleanup on insert (run every 1000 inserts)
 create or replace function public.trigger_cleanup_competitor_prices()
 returns trigger as $$
@@ -88,12 +96,14 @@ begin
     
     return new;
 end;
-$$ language plpgsql
-drop trigger if exists trg_cleanup_competitor_prices on public.competitor_prices
+$$ language plpgsql;
+
+drop trigger if exists trg_cleanup_competitor_prices on public.competitor_prices;
 create trigger trg_cleanup_competitor_prices
     after insert on public.competitor_prices
     for each row
-    execute function public.trigger_cleanup_competitor_prices()
+    execute function public.trigger_cleanup_competitor_prices();
+
 -- Function to check price alerts (>15% above market)
 create or replace function public.check_price_alerts(p_store_id uuid, p_threshold numeric default 0.15)
 returns table (
@@ -134,13 +144,14 @@ begin
         ma.competitor_prices as competitors
     from public.items i
     join market_averages ma on ma.product_id = i.id
-    where i.store_id = p_store_id
+    where i.tenant_id = (select tenant_id from public.stores where id = p_store_id)
     and i.price > ma.avg_price * (1 + p_threshold)
     order by price_gap_percent desc;
 end;
-$$ language plpgsql security definer
+$$ language plpgsql security definer;
+
 -- Updated timestamp trigger
 create trigger update_competitor_prices_updated_at
     before update on public.competitor_prices
     for each row
-    execute function public.set_current_timestamp_updated_at()
+    execute function public.set_current_timestamp_updated_at();

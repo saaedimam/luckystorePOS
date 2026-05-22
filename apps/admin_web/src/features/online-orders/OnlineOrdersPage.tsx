@@ -47,13 +47,25 @@ function OrderDetailsPane({
   onMarkReady: () => void,
   onMarkDelivered: () => void
 }) {
-  const [items, setItems] = useState<any[]>([]);
+  interface OrderItem {
+    id: string;
+    quantity: number;
+    unit_price: number;
+    total_price: number;
+    product: {
+      name_en: string;
+      name_bn: string | null;
+      image_url: string | null;
+    } | null;
+  }
+
+  const [items, setItems] = useState<OrderItem[]>([]);
 
   useEffect(() => {
-    (supabase as any).from('online_order_items')
+    supabase.from('online_order_items')
       .select('*, product:products(*)')
       .eq('order_id', selectedOrder.id)
-      .then(({ data }: { data: any }) => setItems(data || []));
+      .then(({ data }) => setItems((data as OrderItem[]) || []));
   }, [selectedOrder.id]);
 
   return (
@@ -100,7 +112,7 @@ function OrderDetailsPane({
               <div className="w-10 h-10 bg-background-subtle rounded-xl flex items-center justify-center text-text-secondary"><MapPin size={18} /></div>
               <div>
                 <p className="text-[10px] font-bold text-text-muted font-sans">Delivery Address</p>
-                <p className="font-bold text-sm font-bangla">{selectedOrder.delivery_address}</p>
+                <p className="font-bold text-sm font-bangla">{selectedOrder.customer_address}</p>
               </div>
             </div>
           </div>
@@ -140,7 +152,7 @@ function OrderDetailsPane({
             <tbody>
               {items.map((item) => (
                 <tr key={item.id} className="border-b border-border-default/50 last:border-0">
-                  <td className="py-3 font-bangla font-medium">{item.product?.name || 'Unknown Product'}</td>
+                  <td className="py-3 font-bangla font-medium">{item.product?.name_en || 'Unknown Product'}</td>
                   <td className="py-3 text-center">{item.quantity}</td>
                   <td className="py-3 text-right">৳{item.unit_price}</td>
                   <td className="py-3 text-right font-bold">৳{item.total_price}</td>
@@ -193,7 +205,7 @@ export default function OnlineOrdersPage() {
   const updateStatus = async (orderId: string, status: string, reason?: string) => {
     // Determine which RPC to use. New RPC uses p_operation_id for idempotency.
     if (status === 'ACCEPTED') {
-      const { error } = await (supabase as any).rpc('accept_online_order', {
+      const { error } = await (supabase.rpc as unknown as (...args: unknown[]) => Promise<{ error: Error | null }>)('accept_online_order', {
         p_operation_id: crypto.randomUUID(),
         p_order_id: orderId,
         p_tenant_id: tenantId
@@ -201,10 +213,10 @@ export default function OnlineOrdersPage() {
       if (error) toast.error('Failed to accept order: ' + error.message);
       else toast.success('Order Accepted');
     } else {
-      const { error } = await (supabase as any).rpc('update_online_order_status', { 
-        p_order_id: orderId, 
-        p_new_status: status, 
-        p_reason: reason || null 
+      const { error } = await (supabase.rpc as unknown as (...args: unknown[]) => Promise<{ error: Error | null }>)('update_online_order_status', {
+        p_order_id: orderId,
+        p_new_status: status,
+        p_reason: reason || null
       });
       if (error) toast.error('Failed to update status: ' + error.message);
       else toast.success(`Order marked as ${status}`);

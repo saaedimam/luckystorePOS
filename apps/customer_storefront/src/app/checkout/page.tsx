@@ -40,7 +40,7 @@ export default function CheckoutPage() {
   useEffect(() => setMounted(true), []);
 
   const itemCount = items.reduce((a, i) => a + i.quantity, 0);
-  const subtotal = total();
+  const subtotal = total;
   const deliveryFee = deliveryResult?.delivery_fee ?? 40;
   const grandTotal = subtotal + deliveryFee;
 

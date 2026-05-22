@@ -174,14 +174,22 @@ ALTER TABLE public.sales
   ADD COLUMN IF NOT EXISTS voided_at       timestamptz,
   ADD COLUMN IF NOT EXISTS void_reason     text;
 
-UPDATE public.sales
-SET
-  sale_number = COALESCE(sale_number, receipt_number),
-  discount_amount = COALESCE(discount_amount, discount_total, 0),
-  total_amount = COALESCE(total_amount, total, 0)
-WHERE sale_number IS NULL
-   OR discount_amount IS NULL
-   OR total_amount IS NULL;
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' AND table_name = 'sales' AND column_name = 'receipt_number'
+  ) THEN
+    EXECUTE 'UPDATE public.sales
+    SET
+      sale_number = COALESCE(sale_number, receipt_number),
+      discount_amount = COALESCE(discount_amount, discount_total, 0),
+      total_amount = COALESCE(total_amount, total, 0)
+    WHERE sale_number IS NULL
+       OR discount_amount IS NULL
+       OR total_amount IS NULL';
+  END IF;
+END $$;
 
 CREATE OR REPLACE FUNCTION public.generate_sale_number()
 RETURNS TRIGGER AS $$
@@ -228,12 +236,22 @@ ALTER TABLE public.sale_items
   ADD COLUMN IF NOT EXISTS unit_price numeric(12,2),
   ADD COLUMN IF NOT EXISTS line_total numeric(12,2);
 
-UPDATE public.sale_items
-SET
-  unit_price = COALESCE(unit_price, price),
-  line_total = COALESCE(line_total, total)
-WHERE unit_price IS NULL
-   OR line_total IS NULL;
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' AND table_name = 'sale_items' AND column_name = 'price'
+  ) THEN
+    IF EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_schema = 'public' AND table_name = 'sale_items' AND column_name = 'total'
+    ) THEN
+      EXECUTE 'UPDATE public.sale_items SET unit_price = COALESCE(unit_price, price), line_total = COALESCE(line_total, total) WHERE unit_price IS NULL OR line_total IS NULL';
+    ELSE
+      EXECUTE 'UPDATE public.sale_items SET unit_price = COALESCE(unit_price, price) WHERE unit_price IS NULL';
+    END IF;
+  END IF;
+END $$;
 
 CREATE INDEX IF NOT EXISTS idx_sale_items_sale ON public.sale_items (sale_id);
 CREATE INDEX IF NOT EXISTS idx_sale_items_item ON public.sale_items (item_id);

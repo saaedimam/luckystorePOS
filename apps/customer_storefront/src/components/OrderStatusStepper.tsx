@@ -47,7 +47,7 @@ export const OrderStatusStepper: React.FC<StepperProps> = ({ status }) => {
                 <div className={clsx(
                   "w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all duration-500 z-10 border-2",
                   isCompleted && "bg-success-default border-success-default text-white",
-                  isActive && "bg-[#D4A843] border-[#D4A843] text-[#0F172A] shadow-level-2 scale-110",
+                  isActive && "bg-primary border-primary text-primary-contrast shadow-lg scale-110",
                   isPending && "bg-background-subtle border-border-default text-text-muted"
                 )}>
                   <Icon size={18} />
@@ -68,13 +68,13 @@ export const OrderStatusStepper: React.FC<StepperProps> = ({ status }) => {
               <div className="pb-8">
                 <p className={clsx(
                   "text-sm font-black leading-none font-bangla",
-                  isActive ? "text-[#0F172A]" : isCompleted ? "text-text-primary" : "text-text-muted"
+                  isActive ? "text-primary-contrast" : isCompleted ? "text-text-primary" : "text-text-muted"
                 )}>
                   {step.bangla}
                 </p>
                 <p className={clsx(
                   "text-[10px] uppercase font-bold tracking-wider mt-1.5",
-                  isActive ? "text-[#D4A843]" : "text-text-muted/60"
+                  isActive ? "text-primary" : "text-text-muted/60"
                 )}>
                   {step.label}
                 </p>

@@ -86,8 +86,8 @@ AS $$
     i.sku,
     c.name                   AS category_name,
     SUM(si.qty)              AS total_qty,
-    SUM(si.total)            AS total_revenue,
-    SUM(si.total - (si.cost * si.qty)) AS total_profit
+    SUM(si.line_total)            AS total_revenue,
+    SUM(si.line_total - (si.cost * si.qty)) AS total_profit
   FROM public.sale_items si
   JOIN public.sales    sa ON sa.id = si.sale_id
   JOIN public.items    i  ON i.id  = si.item_id

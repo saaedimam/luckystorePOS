@@ -69,9 +69,9 @@ CREATE TYPE "public"."sale_status" AS ENUM (
 );
 
 CREATE TABLE IF NOT EXISTS public.items (
-    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id uuid NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
-    category_id uuid REFERENCES public.categories(id) ON DELETE SET NULL,
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    tenant_id uuid NOT NULL,
+    category_id uuid,
     sku text,
     name text NOT NULL,
     description text,
@@ -81,11 +81,21 @@ CREATE TABLE IF NOT EXISTS public.items (
     unit text DEFAULT 'piece',
     barcode text,
     is_active boolean DEFAULT true,
+    active boolean DEFAULT true,
+    short_code text,
+    brand text,
+    group_tag text,
+    mrp numeric,
     has_variants boolean DEFAULT false,
     created_at timestamptz DEFAULT now(),
     updated_at timestamptz DEFAULT now()
 );
 
+
+CREATE TYPE "public"."session_status" AS ENUM (
+    'open',
+    'closed'
+);
 
 ALTER TYPE "public"."session_status" OWNER TO "postgres";
 
@@ -2404,19 +2414,31 @@ CREATE TABLE IF NOT EXISTS "public"."payment_methods" (
 
 -- Stock tables
 CREATE TABLE IF NOT EXISTS public.stock_levels (
-    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     store_id uuid NOT NULL,
     item_id uuid NOT NULL,
     qty integer NULL DEFAULT 0,
-    reserved integer NULL DEFAULT 0,
-    version integer NOT NULL DEFAULT 0,
-    created_at timestamptz DEFAULT now(),
-    updated_at timestamptz DEFAULT now(),
-    CONSTRAINT stock_levels_store_item_unique UNIQUE (store_id, item_id),
-    CONSTRAINT stock_levels_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id) ON DELETE CASCADE,
-    CONSTRAINT stock_levels_store_id_fkey FOREIGN KEY (store_id) REFERENCES public.stores(id) ON DELETE CASCADE
+    reserved integer NULL DEFAULT 0
 );
 
+
+CREATE TABLE IF NOT EXISTS public.receipt_config (
+  store_id          uuid    NOT NULL,
+  store_name        text,                        -- printed at top of receipt
+  header_text       text,                        -- e.g. 'Thank you for shopping!'
+  footer_text       text,                        -- e.g. 'Return policy: 3 days'
+  logo_url          text,                        -- URL to logo for PDF receipts
+  currency_symbol   text    NOT NULL DEFAULT '৳',
+  show_tax          boolean NOT NULL DEFAULT false,
+  -- Receipt printer
+  receipt_printer_type  text DEFAULT 'bluetooth_escpos',  -- 'bluetooth_escpos' | 'pdf'
+  receipt_printer_name  text,                   -- BT device name to auto-connect
+  -- Label printer
+  label_printer_type    text DEFAULT 'tspl_bluetooth',    -- 'tspl_bluetooth'
+  label_printer_name    text,                   -- BT device name to auto-connect
+  label_width_mm        integer DEFAULT 40,
+  label_height_mm       integer DEFAULT 30,
+  updated_at        timestamptz NOT NULL DEFAULT now()
+);
 
 ALTER TABLE "public"."receipt_config" OWNER TO "postgres";
 
@@ -6720,6 +6742,9 @@ ALTER TABLE ONLY "public"."item_batches"
 ALTER TABLE ONLY "public"."items"
     ADD CONSTRAINT "items_category_id_fkey" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE SET NULL;
 
+ALTER TABLE ONLY "public"."items"
+    ADD CONSTRAINT "items_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants"("id") ON DELETE CASCADE;
+
 
 
 ALTER TABLE ONLY "public"."journal_batches"
@@ -8116,15 +8141,8 @@ GRANT ALL ON TABLE "public"."payment_methods" TO "service_role";
 
 
 
-REVOKE ALL ON FUNCTION "public"."get_payment_methods"("p_store_id" "uuid") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."get_payment_methods"("p_store_id" "uuid") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."get_payment_methods"("p_store_id" "uuid") TO "service_role";
 
 
-
-REVOKE ALL ON FUNCTION "public"."get_pos_categories"("p_store_id" "uuid") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."get_pos_categories"("p_store_id" "uuid") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."get_pos_categories"("p_store_id" "uuid") TO "service_role";
 
 
 

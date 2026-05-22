@@ -52,7 +52,7 @@ export const pos = {
       p_store_id: saleData.storeId,
       p_items: JSON.stringify(saleData.items),
       p_payments: JSON.stringify(saleData.payments),
-      p_notes: saleData.notes || null,
+      p_notes: saleData.notes || undefined,
     });
     if (error) throw error;
     debugLog('Sale result', data);
@@ -81,7 +81,7 @@ export const pos = {
     const { data, error } = await supabase.rpc('complete_sale_v2', {
       p_store_id: payload.storeId,
       p_cashier_id: payload.cashierId,
-      p_customer_id: payload.customerId || null,
+      p_customer_id: payload.customerId || undefined,
       p_items: payload.items,
       p_payments: payload.payments,
       p_total: payload.total,

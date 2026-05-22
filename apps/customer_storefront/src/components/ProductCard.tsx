@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { PackageX, ShoppingCart, Loader2 } from 'lucide-react';
-import { Product } from '@/store/useCart';
+import { Product } from '@/types/product';
 import { clsx } from 'clsx';
 
 interface ProductCardProps {
@@ -22,7 +22,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const router = useRouter();
   const [isAdding, setIsAdding] = useState(false);
 
-  const availableStock = product.stock_qty - (product.reserved_online || 0);
+  const availableStock = (product.stock_qty || 0) - (product.reserved_online || 0);
   const isOutOfStock = availableStock <= 0;
 
   const handleAddToCart = async (e: React.MouseEvent) => {
@@ -39,17 +39,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
-  let badgeColor = 'bg-[#10B981]/15 text-[#10B981] border-[#10B981]/20';
+  let badgeColor = 'bg-success-subtle text-success border-success/20';
   let stockText = `${availableStock} টি ইন-স্টক`;
   
   if (isOutOfStock) {
-    badgeColor = 'bg-[#F43F5E]/15 text-[#F43F5E] border-[#F43F5E]/20';
+    badgeColor = 'bg-danger-subtle text-danger border-danger/20';
     stockText = 'স্টক শেষ';
   } else if (availableStock < 5) {
-    badgeColor = 'bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/20';
+    badgeColor = 'bg-warning-subtle text-warning border-warning/20';
     stockText = `মাত্র ${availableStock} টি আছে`;
   } else if (availableStock <= 10) {
-    badgeColor = 'bg-[#D4A843]/15 text-[#D4A843] border-[#D4A843]/20';
+    badgeColor = 'bg-primary/15 text-primary border-primary/20';
     stockText = `আর ${availableStock} টি আছে`;
   }
 
@@ -127,10 +127,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             whileTap={isOutOfStock ? undefined : { scale: 0.9 }}
             transition={{ duration: 0.1 }}
             className={clsx(
-              "flex h-[44px] w-full sm:w-[44px] items-center justify-center rounded-lg sm:rounded-full focus:outline-none focus:ring-2 focus:ring-[#D4A843]",
+              "flex h-[44px] w-full sm:w-[44px] items-center justify-center rounded-lg sm:rounded-full focus:outline-none focus:ring-2 focus:ring-primary",
               isOutOfStock
                 ? 'bg-background-subtle text-text-muted cursor-not-allowed'
-                : 'bg-[#D4A843] text-[#0F172A] hover:bg-[#C29837] shadow-level-1'
+                : 'bg-primary text-primary-contrast hover:bg-primary-hover shadow-md'
             )}
           >
             {isAdding ? (

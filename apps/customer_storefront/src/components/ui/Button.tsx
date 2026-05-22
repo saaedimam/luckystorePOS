@@ -27,10 +27,10 @@ export const Button: React.FC<ButtonProps> = ({
   
   const variants = {
     // Primary Gold from tokens.ts (#D4A843)
-    primary: "bg-[#D4A843] text-[#0F172A] hover:bg-[#C29837] focus:ring-[#D4A843] shadow-level-1 hover:shadow-level-2",
+    primary: "bg-primary text-primary-contrast hover:bg-primary-hover focus:ring-primary shadow-md hover:shadow-lg",
     // Secondary Outline
     secondary: "bg-surface-default border border-border-default text-text-secondary hover:border-border-strong focus:ring-border-strong",
-    outline: "bg-transparent border-2 border-[#D4A843] text-[#D4A843] hover:bg-[#D4A843]/10 focus:ring-[#D4A843]",
+    outline: "bg-transparent border-2 border-primary text-primary hover:bg-primary/10 focus:ring-primary",
     danger: "bg-danger-default text-white hover:bg-danger-dark focus:ring-danger-default",
   };
 

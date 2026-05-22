@@ -38,6 +38,15 @@ CREATE TABLE IF NOT EXISTS public.online_order_items (
     total_price integer NOT NULL
 );
 
+-- 2.5 Reconcile foreign key constraints for online_order_items (item_id -> products.id)
+ALTER TABLE public.online_order_items 
+  DROP CONSTRAINT IF EXISTS online_order_items_item_id_fkey,
+  DROP CONSTRAINT IF EXISTS online_order_items_product_id_fkey;
+
+ALTER TABLE public.online_order_items
+  ADD CONSTRAINT online_order_items_item_id_fkey 
+  FOREIGN KEY (item_id) REFERENCES public.products(id);
+
 -- 3. RLS
 ALTER TABLE public.online_orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.online_order_items ENABLE ROW LEVEL SECURITY;

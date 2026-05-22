@@ -22,7 +22,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({ name: '', whatsapp: '', address: '' });
 
-  const subtotal = total();
+  const subtotal = total;
   const deliveryFee = 40;
   const grandTotal = subtotal + deliveryFee;
 

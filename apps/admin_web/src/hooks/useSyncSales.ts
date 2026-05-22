@@ -29,7 +29,7 @@ export function useSyncSales() {
       const { error } = await supabase.rpc('complete_sale_v2', {
         p_store_id: payload.storeId,
         p_cashier_id: payload.cashierId,
-        p_customer_id: payload.customerId ?? null,
+        p_customer_id: payload.customerId ?? undefined,
         p_items: payload.items as unknown as Json,
         p_payments: payload.payments as unknown as Json,
         p_total: payload.total,

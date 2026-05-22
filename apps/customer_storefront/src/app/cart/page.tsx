@@ -3,8 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useCart } from '@/store/useCart';
 import { useRouter } from 'next/navigation';
-import { Trash2, Plus, Minus, ArrowRight, ShoppingCart } from 'lucide-react';
-import clsx from 'clsx';
+import { Trash2, Plus, Minus, ArrowRight, ShoppingCart, ChevronLeft } from 'lucide-react';
 import Image from 'next/image';
 
 export default function CartPage() {
@@ -18,137 +17,137 @@ export default function CartPage() {
 
   if (!mounted) return null;
 
-  const subtotal = total();
+  const subtotal = total;
+  const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
-    <main className="min-h-screen bg-background-subtle flex flex-col md:flex-row pb-32 md:pb-0">
-      {/* Left Column: Cart Items */}
-      <div className="flex-1 md:overflow-y-auto md:h-screen hide-scrollbar">
-        <header className="sticky top-0 z-40 bg-surface-default/80 backdrop-blur-lg border-b border-border-default px-4 py-4 md:px-8 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+    <main className="min-h-screen bg-bg-canvas flex flex-col">
+      {/* Header */}
+      <header className="sticky top-0 z-40 bg-bg-canvas/95 backdrop-blur-sm px-4 py-3 flex items-center gap-3 border-b border-border-default">
+        <button
+          onClick={() => router.push('/')}
+          className="w-9 h-9 flex items-center justify-center rounded-xl bg-bg-surface border border-border-default text-text-primary hover:bg-bg-subtle transition-colors"
+          aria-label="Back to store"
+        >
+          <ChevronLeft size={20} />
+        </button>
+        <div className="flex-1">
+          <h1 className="text-base font-bold text-text-primary font-bangla">আপনার কার্ট</h1>
+          <p className="text-xs text-text-muted">{itemCount} আইটেম</p>
+        </div>
+      </header>
+
+      {/* Content */}
+      <div className="flex-1 p-4 max-w-2xl mx-auto w-full">
+        {items.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="w-20 h-20 bg-bg-subtle rounded-2xl flex items-center justify-center mb-4">
+              <ShoppingCart size={32} className="text-text-muted" />
+            </div>
+            <p className="text-base font-bold text-text-primary font-bangla mb-1">আপনার কার্ট খালি</p>
+            <p className="text-sm text-text-muted mb-6">পণ্য যোগ করে কেনাকাটা শুরু করুন</p>
             <button
               onClick={() => router.push('/')}
-              className="w-10 h-10 rounded-full bg-background-subtle flex items-center justify-center text-text-secondary hover:bg-border-default transition-colors focus:outline-none focus:ring-2 focus:ring-[#D4A843]"
-              aria-label="Back to store"
+              className="h-12 px-6 rounded-xl font-bold bg-primary text-text-primary hover:bg-primary-hover active:scale-95 transition-all"
             >
-              ←
+              কেনাকাটা শুরু করুন
             </button>
-            <h1 className="text-xl font-bold text-text-primary">আপনার কার্ট</h1>
           </div>
-          {items.length > 0 && (
-            <span className="text-sm font-bold bg-[#D4A843]/15 text-[#D4A843] px-3 py-1 rounded-full border border-[#D4A843]/20">
-              {items.reduce((acc, item) => acc + item.quantity, 0)} আইটেম
-            </span>
-          )}
-        </header>
-
-        <div className="p-4 md:p-8 max-w-3xl mx-auto">
-          {items.length === 0 ? (
-            <div className="text-center py-20 flex flex-col items-center">
-              <div className="w-24 h-24 bg-background-subtle rounded-full flex items-center justify-center mb-6">
-                <ShoppingCart size={48} className="text-text-muted opacity-50" />
-              </div>
-              <p className="text-lg font-bold text-text-primary mb-2">আপনার কার্ট সম্পূর্ণ খালি</p>
-              <p className="text-text-secondary mb-8">দোকান থেকে কিছু পণ্য যোগ করুন।</p>
-              <button 
-                onClick={() => router.push('/')} 
-                className="h-[56px] rounded-[12px] font-bold bg-[#D4A843] text-[#0F172A] px-8 transition-transform active:scale-95 shadow-level-1 hover:shadow-level-2 hover:bg-[#C29837]"
+        ) : (
+          <div className="space-y-3">
+            {items.map((item) => (
+              <div
+                key={item.id}
+                className="bg-bg-surface border border-border-default rounded-xl p-3 flex gap-3"
               >
-                কেনাকাটা শুরু করুন
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {items.map((item) => (
-                <div key={item.id} className="bg-surface-default border border-border-default rounded-[12px] p-4 flex gap-4 shadow-sm items-center">
-                  {/* Image */}
-                  <div className="w-20 h-20 bg-background-subtle rounded-lg overflow-hidden shrink-0 relative">
-                    {item.image_url ? (
-                      <Image src={item.image_url} alt={item.name_en} fill className="object-cover" unoptimized />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <ShoppingCart className="text-text-muted opacity-20" size={24} />
-                      </div>
-                    )}
-                  </div>
+                {/* Image */}
+                <div className="w-20 h-20 bg-bg-canvas rounded-lg overflow-hidden shrink-0 relative">
+                  {item.image_url ? (
+                    <Image
+                      src={item.image_url}
+                      alt={item.name_en}
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <ShoppingCart className="text-text-muted" size={20} />
+                    </div>
+                  )}
+                </div>
 
-                  {/* Info */}
-                  <div className="flex-1 min-w-0 flex flex-col">
-                    <h3 className="font-bangla font-bold text-text-primary text-sm leading-[1.6] line-clamp-2 mb-1" title={item.name_bn || item.name_en}>
-                      {item.name_bn || item.name_en}
-                    </h3>
-                    <p className="font-sans text-[10px] text-text-muted uppercase tracking-wider truncate mb-2">
-                      {item.name_en}
-                    </p>
-                    <div className="font-sans font-black tabular-nums text-text-primary mt-auto">
+                {/* Info */}
+                <div className="flex-1 min-w-0 flex flex-col">
+                  <h3
+                    className="font-bangla font-semibold text-sm text-text-primary leading-snug line-clamp-2"
+                    title={item.name_bn || item.name_en}
+                  >
+                    {item.name_bn || item.name_en}
+                  </h3>
+                  <p className="text-[10px] text-text-muted truncate mt-0.5">{item.name_en}</p>
+                  <div className="mt-auto flex items-center justify-between">
+                    <div className="font-bold text-text-primary tabular-nums">
                       ৳{item.price.toLocaleString('en-IN')}
                     </div>
-                  </div>
 
-                  {/* Controls */}
-                  <div className="flex flex-col items-end justify-between h-full py-1">
-                    <button 
-                      onClick={() => removeItem(item.id)}
-                      className="text-text-muted hover:text-danger-default transition-colors p-2 -mr-2"
-                      aria-label="Remove item"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-
-                    <div className="flex items-center gap-3 bg-background-subtle rounded-full border border-border-default p-1 mt-2">
-                      <button 
+                    {/* Quantity Controls */}
+                    <div className="flex items-center gap-2 bg-bg-subtle rounded-lg p-1">
+                      <button
                         onClick={() => updateQuantity(item.id, Math.max(0, item.quantity - 1))}
-                        className="w-[36px] h-[36px] flex items-center justify-center rounded-full bg-surface-default text-text-primary shadow-sm hover:bg-border-default active:scale-95 transition-all"
+                        className="w-7 h-7 flex items-center justify-center rounded-md bg-bg-surface text-text-primary shadow-sm hover:bg-bg-canvas active:scale-95 transition-all"
                         aria-label="Decrease quantity"
                       >
-                        <Minus size={16} />
+                        <Minus size={14} />
                       </button>
-                      <span className="font-bold tabular-nums w-4 text-center text-sm">{item.quantity}</span>
-                      <button 
+                      <span className="font-bold tabular-nums w-5 text-center text-sm">
+                        {item.quantity}
+                      </span>
+                      <button
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="w-[36px] h-[36px] flex items-center justify-center rounded-full bg-surface-default text-text-primary shadow-sm hover:bg-border-default active:scale-95 transition-all"
+                        className="w-7 h-7 flex items-center justify-center rounded-md bg-bg-surface text-text-primary shadow-sm hover:bg-bg-canvas active:scale-95 transition-all"
                         aria-label="Increase quantity"
                       >
-                        <Plus size={16} />
+                        <Plus size={14} />
                       </button>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+
+                {/* Remove Button */}
+                <button
+                  onClick={() => removeItem(item.id)}
+                  className="text-text-muted hover:text-rose-500 transition-colors p-1 self-start"
+                  aria-label="Remove item"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Right Sidebar (Desktop) / Bottom Sheet (Mobile) */}
+      {/* Bottom Checkout Bar */}
       {items.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 md:static md:w-[400px] lg:w-[450px] bg-surface-default border-t md:border-t-0 md:border-l border-border-default shadow-[0_-10px_40px_rgba(0,0,0,0.05)] md:shadow-none z-50 flex flex-col md:h-screen">
-          
-          <div className="flex-1 overflow-y-auto p-4 md:p-8 hidden md:block">
-            <h2 className="text-lg font-bold text-text-primary mb-6">কার্ট সারসংক্ষেপ</h2>
-            <div className="border-t border-border-default pt-4 space-y-4">
-              <div className="flex justify-between text-sm">
-                <span className="text-text-secondary">সাবটোটাল</span>
-                <span className="font-semibold tabular-nums">৳{subtotal.toLocaleString('en-IN')}</span>
-              </div>
-              <p className="text-xs text-text-muted">ডেলিভারি ফি চেকআউট পেজে হিসাব করা হবে।</p>
+        <div className="sticky bottom-0 left-0 right-0 bg-bg-surface border-t border-border-default p-4">
+          <div className="max-w-2xl mx-auto space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-text-muted">মোট ({itemCount} আইটেম)</span>
+              <span className="text-xl font-bold text-text-primary tabular-nums">
+                ৳{subtotal.toLocaleString('en-IN')}
+              </span>
             </div>
-          </div>
-
-          <div className="p-4 md:p-8 bg-surface-default md:bg-transparent">
-            <div className="flex justify-between items-end mb-4 md:hidden">
-               <div className="flex flex-col">
-                 <span className="text-xs font-semibold text-text-secondary">মোট সাবটোটাল</span>
-                 <span className="text-xl font-black text-text-primary">৳{subtotal.toLocaleString('en-IN')}</span>
-               </div>
-            </div>
-
             <button
               onClick={() => router.push('/checkout')}
-              className="w-full h-[56px] rounded-[12px] font-bold text-lg flex items-center justify-center gap-2 bg-[#D4A843] text-[#0F172A] hover:bg-[#C29837] active:scale-[0.98] shadow-level-2 transition-all"
+              className="w-full h-12 rounded-xl font-bold bg-primary text-text-primary hover:bg-primary-hover active:scale-[0.98] shadow-lg shadow-primary/25 transition-all flex items-center justify-center gap-2"
             >
-              চেকআউটে যান <ArrowRight size={20} />
+              চেকআউট করুন
+              <ArrowRight size={18} />
             </button>
+            <p className="text-[10px] text-center text-text-muted">
+              ডেলিভারি ফি পরবর্তী ধাপে যোগ করা হবে
+            </p>
           </div>
         </div>
       )}

@@ -2,7 +2,7 @@
 -- Fixes: "Cannot coerce the result to a single JSON object" error on delete
 
 -- Delete policy: Only admin/manager can delete expenses from their tenant
-DROP POLICY IF EXISTS "expenses_delete" ON public.expenses
+DROP POLICY IF EXISTS "expenses_delete" ON public.expenses;
 CREATE POLICY "expenses_delete" ON public.expenses 
   FOR DELETE 
   TO authenticated 
@@ -15,9 +15,10 @@ CREATE POLICY "expenses_delete" ON public.expenses
         AND u.role IN ('admin', 'manager')
         AND u.tenant_id = public.get_current_user_tenant_id()
     )
-  )
+  );
+
 -- Update policy: Only admin/manager can update expenses from their tenant
-DROP POLICY IF EXISTS "expenses_update" ON public.expenses
+DROP POLICY IF EXISTS "expenses_update" ON public.expenses;
 CREATE POLICY "expenses_update" ON public.expenses 
   FOR UPDATE 
   TO authenticated 
@@ -40,4 +41,4 @@ CREATE POLICY "expenses_update" ON public.expenses
         AND u.role IN ('admin', 'manager')
         AND u.tenant_id = public.get_current_user_tenant_id()
     )
-  )
+  );

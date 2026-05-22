@@ -14,10 +14,18 @@
 
 -- Structural sanitation: Ensure table structure is correct for import
 ALTER TABLE public.categories ADD COLUMN IF NOT EXISTS description text;
+ALTER TABLE public.categories ADD COLUMN IF NOT EXISTS created_at timestamptz DEFAULT now();
+ALTER TABLE public.categories ADD COLUMN IF NOT EXISTS updated_at timestamptz DEFAULT now();
+
 ALTER TABLE public.items ADD COLUMN IF NOT EXISTS short_code text;
 ALTER TABLE public.items ADD COLUMN IF NOT EXISTS brand text;
+ALTER TABLE public.items ADD COLUMN IF NOT EXISTS is_active boolean DEFAULT true;
 DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'items_sku_key') THEN ALTER TABLE public.items ADD CONSTRAINT items_sku_key UNIQUE (sku); END IF; END $$;
+
+ALTER TABLE public.stock_levels ADD COLUMN IF NOT EXISTS id uuid DEFAULT gen_random_uuid();
 ALTER TABLE public.stock_levels ADD COLUMN IF NOT EXISTS low_stock_threshold integer DEFAULT 5;
+ALTER TABLE public.stock_levels ADD COLUMN IF NOT EXISTS created_at timestamptz DEFAULT now();
+ALTER TABLE public.stock_levels ADD COLUMN IF NOT EXISTS updated_at timestamptz DEFAULT now();
 
 -- Create temp table matching CSV structure
 CREATE TEMP TABLE IF NOT EXISTS temp_inventory_import (

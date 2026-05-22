@@ -7,14 +7,25 @@ export interface OnlineOrder {
   order_number: string;
   customer_name: string;
   customer_whatsapp: string;
-  delivery_address: string;
+  customer_address: string;
+  customer_lat: number | null;
+  customer_lng: number | null;
   subtotal: number;
   delivery_fee: number;
   total: number;
   status: string;
   payment_method: string;
+  payment_status: string;
+  tenant_id: string;
+  rider_id: string | null;
+  accepted_at: string | null;
+  rider_assigned_at: string | null;
+  out_for_delivery_at: string | null;
+  delivered_at: string | null;
+  discount: number;
   cancellation_reason?: string;
   created_at: string;
+  updated_at: string;
   isNew?: boolean; // Ephemeral flag for UI pulse
 }
 
@@ -42,7 +53,8 @@ export const useOrderQueue = create<OrderQueueState>((set, get) => ({
   initializeAudioContext: () => {
     let ctx = get().audioCtx;
     if (!ctx) {
-      ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      ctx = new AudioContextClass();
       set({ audioCtx: ctx });
     }
     if (ctx.state === 'suspended') {
@@ -57,19 +69,19 @@ export const useOrderQueue = create<OrderQueueState>((set, get) => ({
     set({ isSubscribed: true });
 
     // Initial fetch
-    (supabase as any)
+    supabase
       .from('online_orders')
       .select('*')
       .eq('tenant_id', tenantId)
       .order('created_at', { ascending: false })
-      .then(({ data, error }: { data: any, error: any }) => {
+      .then(({ data, error }) => {
         if (!error && data) {
-          set({ orders: data as OnlineOrder[] });
+          set({ orders: data as unknown as OnlineOrder[] });
         }
       });
 
     // Realtime subscription
-    (supabase as any)
+    supabase
       .channel('online-orders-queue')
       .on(
         'postgres_changes',
@@ -79,7 +91,7 @@ export const useOrderQueue = create<OrderQueueState>((set, get) => ({
           table: 'online_orders',
           filter: `tenant_id=eq.${tenantId}`,
         },
-        (payload: any) => {
+        (payload: { eventType: 'INSERT' | 'UPDATE' | 'DELETE'; new: Record<string, unknown>; old: Record<string, unknown> }) => {
           const { eventType, new: newRecord, old: oldRecord } = payload;
           const { orders, audioCtx } = get();
 
@@ -134,7 +146,25 @@ export const useOrderQueue = create<OrderQueueState>((set, get) => ({
     if (!order) return;
 
     // Fetch order items
-    const { data: items, error } = await (supabase as any)
+    interface OrderItem {
+      id: string;
+      order_id: string;
+      item_id: string;
+      product: {
+        id: string;
+        name_en: string;
+        name_bn: string | null;
+        barcode: string | null;
+        qty: number;
+        category_id: string | null;
+        image_url: string | null;
+      };
+      unit_price: number;
+      quantity: number;
+      total_price: number;
+    }
+
+    const { data: items, error } = await supabase
       .from('online_order_items')
       .select('*, product:products(*)')
       .eq('order_id', orderId);
@@ -147,20 +177,20 @@ export const useOrderQueue = create<OrderQueueState>((set, get) => ({
     const cartStore = useCartStore.getState();
     cartStore.clearCart();
 
-    items.forEach((item: any) => {
+    (items as unknown as OrderItem[]).forEach((item) => {
       // Map to POS Product structure as expected by addItem.
       // Note: We might need to ensure the product object maps correctly.
       if (item.product) {
         cartStore.addItem({
           id: item.product.id,
-          name: item.product.name,
+          name: item.product.name_en,
           price: item.unit_price,
-          barcode: item.product.barcode,
+          barcode: item.product.barcode || '',
           stock: item.product.qty,
-          category: item.product.category,
-          imageUrl: item.product.image_url,
+          category: item.product.category_id || 'uncategorized',
+          imageUrl: item.product.image_url || '',
         });
-        
+
         // Update to correct quantity
         cartStore.updateQty(item.product.id, item.quantity);
       }

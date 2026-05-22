@@ -189,32 +189,41 @@ export type Database = {
         Row: {
           category: string
           color: string | null
+          created_at: string | null
+          description: string | null
           icon: string | null
           id: string
           image_url: string | null
           name: string | null
           store_id: string | null
           tenant_id: string | null
+          updated_at: string | null
         }
         Insert: {
           category: string
           color?: string | null
+          created_at?: string | null
+          description?: string | null
           icon?: string | null
           id?: string
           image_url?: string | null
           name?: string | null
           store_id?: string | null
           tenant_id?: string | null
+          updated_at?: string | null
         }
         Update: {
           category?: string
           color?: string | null
+          created_at?: string | null
+          description?: string | null
           icon?: string | null
           id?: string
           image_url?: string | null
           name?: string | null
           store_id?: string | null
           tenant_id?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -415,6 +424,51 @@ export type Database = {
           },
         ]
       }
+      credit_ledger: {
+        Row: {
+          amount: number
+          created_at: string | null
+          customer_id: string
+          id: string
+          note: string | null
+          sale_id: string | null
+          type: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          customer_id: string
+          id?: string
+          note?: string | null
+          sale_id?: string | null
+          type: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          customer_id?: string
+          id?: string
+          note?: string | null
+          sale_id?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_ledger_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "credit_ledger_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_reminders: {
         Row: {
           created_at: string
@@ -479,46 +533,36 @@ export type Database = {
       }
       customers: {
         Row: {
-          balance: number
-          created_at: string
-          credit_limit: number
+          balance: number | null
+          created_at: string | null
+          credit_limit: number | null
           id: string
           name: string
           phone_whatsapp: string | null
-          store_id: string
           tenant_id: string
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
-          balance?: number
-          created_at?: string
-          credit_limit?: number
+          balance?: number | null
+          created_at?: string | null
+          credit_limit?: number | null
           id?: string
           name: string
           phone_whatsapp?: string | null
-          store_id: string
           tenant_id: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
-          balance?: number
-          created_at?: string
-          credit_limit?: number
+          balance?: number | null
+          created_at?: string | null
+          credit_limit?: number | null
           id?: string
           name?: string
           phone_whatsapp?: string | null
-          store_id?: string
           tenant_id?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "customers_store_id_fkey"
-            columns: ["store_id"]
-            isOneToOne: false
-            referencedRelation: "stores"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "customers_tenant_id_fkey"
             columns: ["tenant_id"]
@@ -578,6 +622,54 @@ export type Database = {
           },
         ]
       }
+      delivery_zones: {
+        Row: {
+          delivery_fee: number
+          id: string
+          is_active: boolean
+          radius_km: number
+          store_id: string | null
+          store_lat: number
+          store_lng: number
+          tenant_id: string
+        }
+        Insert: {
+          delivery_fee?: number
+          id?: string
+          is_active?: boolean
+          radius_km?: number
+          store_id?: string | null
+          store_lat: number
+          store_lng: number
+          tenant_id: string
+        }
+        Update: {
+          delivery_fee?: number
+          id?: string
+          is_active?: boolean
+          radius_km?: number
+          store_id?: string | null
+          store_lat?: number
+          store_lng?: number
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "delivery_zones_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "delivery_zones_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       discounts: {
         Row: {
           created_at: string
@@ -631,7 +723,7 @@ export type Database = {
           ledger_batch_id: string | null
           payment_type: string
           store_id: string
-          tenant_id: string
+          tenant_id: string | null
           updated_at: string
           vendor_name: string
         }
@@ -646,7 +738,7 @@ export type Database = {
           ledger_batch_id?: string | null
           payment_type: string
           store_id: string
-          tenant_id: string
+          tenant_id?: string | null
           updated_at?: string
           vendor_name: string
         }
@@ -661,7 +753,7 @@ export type Database = {
           ledger_batch_id?: string | null
           payment_type?: string
           store_id?: string
-          tenant_id?: string
+          tenant_id?: string | null
           updated_at?: string
           vendor_name?: string
         }
@@ -849,6 +941,48 @@ export type Database = {
           },
         ]
       }
+      inventory_adjustments: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          delta: number
+          id: string
+          product_id: string
+          reason: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          delta: number
+          id?: string
+          product_id: string
+          reason?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          delta?: number
+          id?: string
+          product_id?: string
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_adjustments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_adjustments_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inventory_items: {
         Row: {
           barcode: string | null
@@ -880,6 +1014,209 @@ export type Database = {
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_movements: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          movement_type: Database["public"]["Enums"]["movement_type"]
+          new_quantity: number
+          notes: string | null
+          operation_id: string | null
+          previous_quantity: number
+          product_id: string
+          quantity_delta: number
+          reference_id: string | null
+          reference_type: Database["public"]["Enums"]["reference_type"]
+          store_id: string
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          movement_type: Database["public"]["Enums"]["movement_type"]
+          new_quantity: number
+          notes?: string | null
+          operation_id?: string | null
+          previous_quantity: number
+          product_id: string
+          quantity_delta: number
+          reference_id?: string | null
+          reference_type: Database["public"]["Enums"]["reference_type"]
+          store_id: string
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          movement_type?: Database["public"]["Enums"]["movement_type"]
+          new_quantity?: number
+          notes?: string | null
+          operation_id?: string | null
+          previous_quantity?: number
+          product_id?: string
+          quantity_delta?: number
+          reference_id?: string | null
+          reference_type?: Database["public"]["Enums"]["reference_type"]
+          store_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_movements_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_reconciliations: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          counted_by: string
+          counted_quantity: number
+          created_at: string
+          difference: number
+          expected_quantity: number
+          id: string
+          notes: string | null
+          product_id: string
+          status: Database["public"]["Enums"]["reconciliation_status"]
+          store_id: string
+          tenant_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          counted_by: string
+          counted_quantity: number
+          created_at?: string
+          difference: number
+          expected_quantity: number
+          id?: string
+          notes?: string | null
+          product_id: string
+          status?: Database["public"]["Enums"]["reconciliation_status"]
+          store_id: string
+          tenant_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          counted_by?: string
+          counted_quantity?: number
+          created_at?: string
+          difference?: number
+          expected_quantity?: number
+          id?: string
+          notes?: string | null
+          product_id?: string
+          status?: Database["public"]["Enums"]["reconciliation_status"]
+          store_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_reconciliations_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_reconciliations_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_reconciliations_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_snapshots: {
+        Row: {
+          archived_by: string | null
+          created_at: string
+          id: string
+          item_id: string
+          ledger_entry_count: number
+          net_change: number
+          period_end: string
+          period_start: string
+          source_ledger_ids: string[]
+          store_id: string
+          total_in: number
+          total_out: number
+        }
+        Insert: {
+          archived_by?: string | null
+          created_at?: string
+          id?: string
+          item_id: string
+          ledger_entry_count?: number
+          net_change?: number
+          period_end: string
+          period_start: string
+          source_ledger_ids: string[]
+          store_id: string
+          total_in?: number
+          total_out?: number
+        }
+        Update: {
+          archived_by?: string | null
+          created_at?: string
+          id?: string
+          item_id?: string
+          ledger_entry_count?: number
+          net_change?: number
+          period_end?: string
+          period_start?: string
+          source_ledger_ids?: string[]
+          store_id?: string
+          total_in?: number
+          total_out?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_snapshots_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_snapshots_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
             referencedColumns: ["id"]
           },
         ]
@@ -961,14 +1298,17 @@ export type Database = {
           created_at: string | null
           description: string | null
           group_tag: string | null
+          has_variants: boolean | null
           id: string
           image_url: string | null
+          is_active: boolean | null
           mrp: number | null
           name: string
-          price: number | null
+          price: number
           short_code: string | null
           sku: string | null
-          tenant_id: string | null
+          tenant_id: string
+          unit: string | null
           updated_at: string | null
         }
         Insert: {
@@ -980,14 +1320,17 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           group_tag?: string | null
+          has_variants?: boolean | null
           id?: string
           image_url?: string | null
+          is_active?: boolean | null
           mrp?: number | null
           name: string
-          price?: number | null
+          price?: number
           short_code?: string | null
           sku?: string | null
-          tenant_id?: string | null
+          tenant_id: string
+          unit?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -999,14 +1342,17 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           group_tag?: string | null
+          has_variants?: boolean | null
           id?: string
           image_url?: string | null
+          is_active?: boolean | null
           mrp?: number | null
           name?: string
-          price?: number | null
+          price?: number
           short_code?: string | null
           sku?: string | null
-          tenant_id?: string | null
+          tenant_id?: string
+          unit?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -1015,6 +1361,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "items_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
         ]
@@ -1392,6 +1745,149 @@ export type Database = {
         }
         Relationships: []
       }
+      online_order_items: {
+        Row: {
+          id: string
+          item_id: string
+          order_id: string
+          quantity: number
+          total_price: number
+          unit_price: number
+        }
+        Insert: {
+          id?: string
+          item_id: string
+          order_id: string
+          quantity: number
+          total_price: number
+          unit_price: number
+        }
+        Update: {
+          id?: string
+          item_id?: string
+          order_id?: string
+          quantity?: number
+          total_price?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "online_order_items_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "online_order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "online_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      online_order_number_seq: {
+        Row: {
+          last_val: number
+          seq_date: string
+          tenant_id: string
+        }
+        Insert: {
+          last_val?: number
+          seq_date: string
+          tenant_id: string
+        }
+        Update: {
+          last_val?: number
+          seq_date?: string
+          tenant_id?: string
+        }
+        Relationships: []
+      }
+      online_orders: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          customer_address: string
+          customer_lat: number | null
+          customer_lng: number | null
+          customer_name: string
+          customer_whatsapp: string
+          delivered_at: string | null
+          delivery_fee: number
+          discount: number
+          id: string
+          order_number: string
+          out_for_delivery_at: string | null
+          payment_method: string
+          payment_status: string
+          rider_assigned_at: string | null
+          rider_id: string | null
+          status: string
+          subtotal: number
+          tenant_id: string
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          customer_address: string
+          customer_lat?: number | null
+          customer_lng?: number | null
+          customer_name: string
+          customer_whatsapp: string
+          delivered_at?: string | null
+          delivery_fee?: number
+          discount?: number
+          id?: string
+          order_number: string
+          out_for_delivery_at?: string | null
+          payment_method?: string
+          payment_status?: string
+          rider_assigned_at?: string | null
+          rider_id?: string | null
+          status?: string
+          subtotal: number
+          tenant_id: string
+          total: number
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          customer_address?: string
+          customer_lat?: number | null
+          customer_lng?: number | null
+          customer_name?: string
+          customer_whatsapp?: string
+          delivered_at?: string | null
+          delivery_fee?: number
+          discount?: number
+          id?: string
+          order_number?: string
+          out_for_delivery_at?: string | null
+          payment_method?: string
+          payment_status?: string
+          rider_assigned_at?: string | null
+          rider_id?: string | null
+          status?: string
+          subtotal?: number
+          tenant_id?: string
+          total?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "online_orders_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       parties: {
         Row: {
           created_at: string
@@ -1461,6 +1957,44 @@ export type Database = {
             columns: ["store_id"]
             isOneToOne: false
             referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string | null
+          id: string
+          method: string
+          reference: string | null
+          sale_id: string | null
+          status: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          id?: string
+          method: string
+          reference?: string | null
+          sale_id?: string | null
+          status?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          id?: string
+          method?: string
+          reference?: string | null
+          sale_id?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
             referencedColumns: ["id"]
           },
         ]
@@ -1582,6 +2116,75 @@ export type Database = {
             columns: ["store_id"]
             isOneToOne: false
             referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          category_id: string | null
+          cost: number | null
+          created_at: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name_bn: string | null
+          name_en: string
+          price: number
+          reorder_point: number | null
+          reserved_online: number
+          sku: string | null
+          stock_qty: number | null
+          tenant_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          category_id?: string | null
+          cost?: number | null
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name_bn?: string | null
+          name_en: string
+          price?: number
+          reorder_point?: number | null
+          reserved_online?: number
+          sku?: string | null
+          stock_qty?: number | null
+          tenant_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          category_id?: string | null
+          cost?: number | null
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name_bn?: string | null
+          name_en?: string
+          price?: number
+          reorder_point?: number | null
+          reserved_online?: number
+          sku?: string | null
+          stock_qty?: number | null
+          tenant_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
         ]
@@ -2030,6 +2633,277 @@ export type Database = {
           },
         ]
       }
+      rider_assignments: {
+        Row: {
+          assigned_at: string | null
+          assigned_by: string | null
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          notes: string | null
+          operation_id: string
+          order_id: string
+          rider_id: string
+          rider_location_at_assign: unknown
+          status: string
+          tenant_id: string
+        }
+        Insert: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          operation_id: string
+          order_id: string
+          rider_id: string
+          rider_location_at_assign?: unknown
+          status: string
+          tenant_id: string
+        }
+        Update: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          operation_id?: string
+          order_id?: string
+          rider_id?: string
+          rider_location_at_assign?: unknown
+          status?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rider_assignments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "online_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rider_assignments_rider_id_fkey"
+            columns: ["rider_id"]
+            isOneToOne: false
+            referencedRelation: "riders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rider_assignments_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rider_earnings: {
+        Row: {
+          assignment_id: string | null
+          bonus_amount: number
+          created_at: string | null
+          delivery_fee: number
+          id: string
+          operation_id: string
+          paid_at: string | null
+          payment_status: string | null
+          rider_id: string
+          tenant_id: string
+          tip_amount: number
+          total_amount: number
+        }
+        Insert: {
+          assignment_id?: string | null
+          bonus_amount?: number
+          created_at?: string | null
+          delivery_fee?: number
+          id?: string
+          operation_id: string
+          paid_at?: string | null
+          payment_status?: string | null
+          rider_id: string
+          tenant_id: string
+          tip_amount?: number
+          total_amount?: number
+        }
+        Update: {
+          assignment_id?: string | null
+          bonus_amount?: number
+          created_at?: string | null
+          delivery_fee?: number
+          id?: string
+          operation_id?: string
+          paid_at?: string | null
+          payment_status?: string | null
+          rider_id?: string
+          tenant_id?: string
+          tip_amount?: number
+          total_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rider_earnings_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "rider_assignments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rider_earnings_rider_id_fkey"
+            columns: ["rider_id"]
+            isOneToOne: false
+            referencedRelation: "riders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rider_earnings_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rider_location_history: {
+        Row: {
+          accuracy_meters: number | null
+          battery_level: number | null
+          id: string
+          location: unknown
+          recorded_at: string
+          rider_id: string
+          tenant_id: string
+        }
+        Insert: {
+          accuracy_meters?: number | null
+          battery_level?: number | null
+          id?: string
+          location: unknown
+          recorded_at?: string
+          rider_id: string
+          tenant_id: string
+        }
+        Update: {
+          accuracy_meters?: number | null
+          battery_level?: number | null
+          id?: string
+          location?: unknown
+          recorded_at?: string
+          rider_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rider_location_history_rider_id_fkey"
+            columns: ["rider_id"]
+            isOneToOne: false
+            referencedRelation: "riders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rider_location_history_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rider_location_history_current: {
+        Row: {
+          accuracy_meters: number | null
+          battery_level: number | null
+          id: string
+          location: unknown
+          recorded_at: string
+          rider_id: string
+          tenant_id: string
+        }
+        Insert: {
+          accuracy_meters?: number | null
+          battery_level?: number | null
+          id?: string
+          location: unknown
+          recorded_at?: string
+          rider_id: string
+          tenant_id: string
+        }
+        Update: {
+          accuracy_meters?: number | null
+          battery_level?: number | null
+          id?: string
+          location?: unknown
+          recorded_at?: string
+          rider_id?: string
+          tenant_id?: string
+        }
+        Relationships: []
+      }
+      riders: {
+        Row: {
+          auth_user_id: string | null
+          created_at: string | null
+          current_location: unknown
+          email: string | null
+          full_name: string
+          id: string
+          location_updated_at: string | null
+          phone: string
+          photo_url: string | null
+          pin_hash: string | null
+          status: string | null
+          tenant_id: string
+          updated_at: string | null
+          vehicle_plate: string | null
+          vehicle_type: string | null
+        }
+        Insert: {
+          auth_user_id?: string | null
+          created_at?: string | null
+          current_location?: unknown
+          email?: string | null
+          full_name: string
+          id?: string
+          location_updated_at?: string | null
+          phone: string
+          photo_url?: string | null
+          pin_hash?: string | null
+          status?: string | null
+          tenant_id: string
+          updated_at?: string | null
+          vehicle_plate?: string | null
+          vehicle_type?: string | null
+        }
+        Update: {
+          auth_user_id?: string | null
+          created_at?: string | null
+          current_location?: unknown
+          email?: string | null
+          full_name?: string
+          id?: string
+          location_updated_at?: string | null
+          phone?: string
+          photo_url?: string | null
+          pin_hash?: string | null
+          status?: string | null
+          tenant_id?: string
+          updated_at?: string | null
+          vehicle_plate?: string | null
+          vehicle_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "riders_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sale_audit_log: {
         Row: {
           after_state: Json
@@ -2117,6 +2991,7 @@ export type Database = {
           price: number | null
           qty: number | null
           sale_id: string | null
+          unit_price: number | null
         }
         Insert: {
           batch_id?: string | null
@@ -2127,6 +3002,7 @@ export type Database = {
           price?: number | null
           qty?: number | null
           sale_id?: string | null
+          unit_price?: number | null
         }
         Update: {
           batch_id?: string | null
@@ -2137,6 +3013,7 @@ export type Database = {
           price?: number | null
           qty?: number | null
           sale_id?: string | null
+          unit_price?: number | null
         }
         Relationships: [
           {
@@ -2271,14 +3148,18 @@ export type Database = {
           created_at: string | null
           customer_id: string | null
           customer_whatsapp: string | null
+          discount: number | null
           discount_amount: number | null
           fulfilled_subtotal: number | null
           id: string
+          idempotency_key: string | null
           invoice_pdf_url: string | null
           invoice_sent_at: string | null
           invoice_sent_via: string | null
           ledger_batch_id: string | null
           notes: string | null
+          offline_created_at: string | null
+          operation_id: string | null
           payment_meta: Json | null
           payment_method: string | null
           sale_number: string
@@ -2286,6 +3167,8 @@ export type Database = {
           status: string | null
           store_id: string | null
           subtotal: number | null
+          synced_at: string | null
+          total: number | null
           total_amount: number | null
           void_reason: string | null
           voided_at: string | null
@@ -2303,14 +3186,18 @@ export type Database = {
           created_at?: string | null
           customer_id?: string | null
           customer_whatsapp?: string | null
+          discount?: number | null
           discount_amount?: number | null
           fulfilled_subtotal?: number | null
           id?: string
+          idempotency_key?: string | null
           invoice_pdf_url?: string | null
           invoice_sent_at?: string | null
           invoice_sent_via?: string | null
           ledger_batch_id?: string | null
           notes?: string | null
+          offline_created_at?: string | null
+          operation_id?: string | null
           payment_meta?: Json | null
           payment_method?: string | null
           sale_number: string
@@ -2318,6 +3205,8 @@ export type Database = {
           status?: string | null
           store_id?: string | null
           subtotal?: number | null
+          synced_at?: string | null
+          total?: number | null
           total_amount?: number | null
           void_reason?: string | null
           voided_at?: string | null
@@ -2335,14 +3224,18 @@ export type Database = {
           created_at?: string | null
           customer_id?: string | null
           customer_whatsapp?: string | null
+          discount?: number | null
           discount_amount?: number | null
           fulfilled_subtotal?: number | null
           id?: string
+          idempotency_key?: string | null
           invoice_pdf_url?: string | null
           invoice_sent_at?: string | null
           invoice_sent_via?: string | null
           ledger_batch_id?: string | null
           notes?: string | null
+          offline_created_at?: string | null
+          operation_id?: string | null
           payment_meta?: Json | null
           payment_method?: string | null
           sale_number?: string
@@ -2350,6 +3243,8 @@ export type Database = {
           status?: string | null
           store_id?: string | null
           subtotal?: number | null
+          synced_at?: string | null
+          total?: number | null
           total_amount?: number | null
           void_reason?: string | null
           voided_at?: string | null
@@ -2399,6 +3294,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      spatial_ref_sys: {
+        Row: {
+          auth_name: string | null
+          auth_srid: number | null
+          proj4text: string | null
+          srid: number
+          srtext: string | null
+        }
+        Insert: {
+          auth_name?: string | null
+          auth_srid?: number | null
+          proj4text?: string | null
+          srid: number
+          srtext?: string | null
+        }
+        Update: {
+          auth_name?: string | null
+          auth_srid?: number | null
+          proj4text?: string | null
+          srid?: number
+          srtext?: string | null
+        }
+        Relationships: []
       }
       stock_alert_thresholds: {
         Row: {
@@ -2514,22 +3433,37 @@ export type Database = {
       }
       stock_levels: {
         Row: {
+          created_at: string | null
+          id: string | null
           item_id: string
+          low_stock_threshold: number | null
           qty: number | null
+          qty_reserved_online: number | null
           reserved: number | null
           store_id: string
+          updated_at: string | null
         }
         Insert: {
+          created_at?: string | null
+          id?: string | null
           item_id: string
+          low_stock_threshold?: number | null
           qty?: number | null
+          qty_reserved_online?: number | null
           reserved?: number | null
           store_id: string
+          updated_at?: string | null
         }
         Update: {
+          created_at?: string | null
+          id?: string | null
           item_id?: string
+          low_stock_threshold?: number | null
           qty?: number | null
+          qty_reserved_online?: number | null
           reserved?: number | null
           store_id?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -2555,6 +3489,7 @@ export type Database = {
           created_by: string | null
           delta: number
           id: string
+          idempotency_key: string | null
           item_id: string | null
           meta: Json | null
           notes: string | null
@@ -2573,6 +3508,7 @@ export type Database = {
           created_by?: string | null
           delta: number
           id?: string
+          idempotency_key?: string | null
           item_id?: string | null
           meta?: Json | null
           notes?: string | null
@@ -2591,6 +3527,7 @@ export type Database = {
           created_by?: string | null
           delta?: number
           id?: string
+          idempotency_key?: string | null
           item_id?: string | null
           meta?: Json | null
           notes?: string | null
@@ -2677,7 +3614,6 @@ export type Database = {
           from_store_id: string
           id: string
           notes: string | null
-          status: Database["public"]["Enums"]["stock_transfer_status"]
           to_store_id: string
           updated_at: string
           updated_by: string | null
@@ -2688,7 +3624,6 @@ export type Database = {
           from_store_id: string
           id?: string
           notes?: string | null
-          status?: Database["public"]["Enums"]["stock_transfer_status"]
           to_store_id: string
           updated_at?: string
           updated_by?: string | null
@@ -2699,7 +3634,6 @@ export type Database = {
           from_store_id?: string
           id?: string
           notes?: string | null
-          status?: Database["public"]["Enums"]["stock_transfer_status"]
           to_store_id?: string
           updated_at?: string
           updated_by?: string | null
@@ -2741,6 +3675,7 @@ export type Database = {
           code: string
           created_at: string | null
           id: string
+          location: unknown
           name: string
           tenant_id: string
           timezone: string | null
@@ -2750,6 +3685,7 @@ export type Database = {
           code: string
           created_at?: string | null
           id?: string
+          location?: unknown
           name: string
           tenant_id?: string
           timezone?: string | null
@@ -2759,6 +3695,7 @@ export type Database = {
           code?: string
           created_at?: string | null
           id?: string
+          location?: unknown
           name?: string
           tenant_id?: string
           timezone?: string | null
@@ -2878,11 +3815,289 @@ export type Database = {
           },
         ]
       }
+      whatsapp_logs: {
+        Row: {
+          created_at: string | null
+          error_code: string | null
+          id: string
+          message_id: string | null
+          order_id: string | null
+          recipient: string
+          response: Json | null
+          retry_count: number | null
+          status: string
+          template: string
+          tenant_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          error_code?: string | null
+          id?: string
+          message_id?: string | null
+          order_id?: string | null
+          recipient: string
+          response?: Json | null
+          retry_count?: number | null
+          status: string
+          template: string
+          tenant_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          error_code?: string | null
+          id?: string
+          message_id?: string | null
+          order_id?: string | null
+          recipient?: string
+          response?: Json | null
+          retry_count?: number | null
+          status?: string
+          template?: string
+          tenant_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_logs_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "online_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_logs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
-      [_ in never]: never
+      geography_columns: {
+        Row: {
+          coord_dimension: number | null
+          f_geography_column: unknown
+          f_table_catalog: unknown
+          f_table_name: unknown
+          f_table_schema: unknown
+          srid: number | null
+          type: string | null
+        }
+        Relationships: []
+      }
+      geometry_columns: {
+        Row: {
+          coord_dimension: number | null
+          f_geometry_column: unknown
+          f_table_catalog: string | null
+          f_table_name: unknown
+          f_table_schema: unknown
+          srid: number | null
+          type: string | null
+        }
+        Insert: {
+          coord_dimension?: number | null
+          f_geometry_column?: unknown
+          f_table_catalog?: string | null
+          f_table_name?: unknown
+          f_table_schema?: unknown
+          srid?: number | null
+          type?: string | null
+        }
+        Update: {
+          coord_dimension?: number | null
+          f_geometry_column?: unknown
+          f_table_catalog?: string | null
+          f_table_name?: unknown
+          f_table_schema?: unknown
+          srid?: number | null
+          type?: string | null
+        }
+        Relationships: []
+      }
+      unified_stock_movements: {
+        Row: {
+          created_at: string | null
+          item_id: string | null
+          metadata: string[] | null
+          movement_type: string | null
+          purchase_id: string | null
+          quantity: number | null
+          sale_id: string | null
+          store_id: string | null
+        }
+        Relationships: []
+      }
+      v_stock_ledger_product_summary: {
+        Row: {
+          first_movement: string | null
+          largest_movement: number | null
+          last_movement: string | null
+          product_id: string | null
+          product_name: string | null
+          sku: string | null
+          total_added: number | null
+          total_deducted: number | null
+          total_movements: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_ledger_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_stock_ledger_recent: {
+        Row: {
+          barcode: string | null
+          created_at: string | null
+          id: string | null
+          metadata: Json | null
+          movement_id: string | null
+          new_quantity: number | null
+          performed_by: string | null
+          performed_by_email: string | null
+          previous_quantity: number | null
+          product_id: string | null
+          product_name: string | null
+          quantity_change: number | null
+          reason: string | null
+          reference_id: string | null
+          sku: string | null
+          store_id: string | null
+          store_name: string | null
+          transaction_type: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_ledger_performed_by_fkey"
+            columns: ["performed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_ledger_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_ledger_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
+      _postgis_deprecate: {
+        Args: { newname: string; oldname: string; version: string }
+        Returns: undefined
+      }
+      _postgis_index_extent: {
+        Args: { col: string; tbl: unknown }
+        Returns: unknown
+      }
+      _postgis_pgsql_version: { Args: never; Returns: string }
+      _postgis_scripts_pgsql_version: { Args: never; Returns: string }
+      _postgis_selectivity: {
+        Args: { att_name: string; geom: unknown; mode?: string; tbl: unknown }
+        Returns: number
+      }
+      _postgis_stats: {
+        Args: { ""?: string; att_name: string; tbl: unknown }
+        Returns: string
+      }
+      _st_3dintersects: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      _st_contains: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      _st_containsproperly: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      _st_coveredby:
+        | { Args: { geog1: unknown; geog2: unknown }; Returns: boolean }
+        | { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
+      _st_covers:
+        | { Args: { geog1: unknown; geog2: unknown }; Returns: boolean }
+        | { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
+      _st_crosses: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      _st_dwithin: {
+        Args: {
+          geog1: unknown
+          geog2: unknown
+          tolerance: number
+          use_spheroid?: boolean
+        }
+        Returns: boolean
+      }
+      _st_equals: { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
+      _st_intersects: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      _st_linecrossingdirection: {
+        Args: { line1: unknown; line2: unknown }
+        Returns: number
+      }
+      _st_longestline: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: unknown
+      }
+      _st_maxdistance: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: number
+      }
+      _st_orderingequals: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      _st_overlaps: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      _st_sortablehash: { Args: { geom: unknown }; Returns: number }
+      _st_touches: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      _st_voronoi: {
+        Args: {
+          clip?: unknown
+          g1: unknown
+          return_polygons?: boolean
+          tolerance?: number
+        }
+        Returns: unknown
+      }
+      _st_within: { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
+      accept_online_order: {
+        Args: {
+          p_operation_id: string
+          p_order_id: string
+          p_tenant_id: string
+        }
+        Returns: Json
+      }
       add_batch_and_adjust_stock: {
         Args: {
           p_batch_number: string
@@ -2906,14 +4121,132 @@ export type Database = {
         }
         Returns: string
       }
-      adjust_stock: {
+      addauth: { Args: { "": string }; Returns: boolean }
+      addgeometrycolumn:
+        | {
+            Args: {
+              catalog_name: string
+              column_name: string
+              new_dim: number
+              new_srid_in: number
+              new_type: string
+              schema_name: string
+              table_name: string
+              use_typmod?: boolean
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              column_name: string
+              new_dim: number
+              new_srid: number
+              new_type: string
+              schema_name: string
+              table_name: string
+              use_typmod?: boolean
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              column_name: string
+              new_dim: number
+              new_srid: number
+              new_type: string
+              table_name: string
+              use_typmod?: boolean
+            }
+            Returns: string
+          }
+      adjust_inventory_stock:
+        | {
+            Args: {
+              p_allow_negative?: boolean
+              p_movement_type: Database["public"]["Enums"]["movement_type"]
+              p_notes?: string
+              p_product_id: string
+              p_quantity_delta: number
+              p_reference_id?: string
+              p_reference_type: Database["public"]["Enums"]["reference_type"]
+              p_store_id: string
+              p_tenant_id: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_allow_negative?: boolean
+              p_movement_type: Database["public"]["Enums"]["movement_type"]
+              p_notes?: string
+              p_operation_id?: string
+              p_product_id: string
+              p_quantity_delta: number
+              p_reference_id?: string
+              p_reference_type: Database["public"]["Enums"]["reference_type"]
+              p_store_id: string
+              p_tenant_id: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_allow_negative?: boolean
+              p_expected_quantity?: number
+              p_movement_type: Database["public"]["Enums"]["movement_type"]
+              p_notes?: string
+              p_operation_id?: string
+              p_product_id: string
+              p_quantity_delta: number
+              p_reference_id?: string
+              p_reference_type: Database["public"]["Enums"]["reference_type"]
+              p_store_id: string
+              p_tenant_id: string
+            }
+            Returns: Json
+          }
+      adjust_stock:
+        | {
+            Args: {
+              p_delta: number
+              p_item_id: string
+              p_notes?: string
+              p_performed_by?: string
+              p_reason: string
+              p_store_id: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_delta: number
+              p_idempotency_key?: string
+              p_item_id: string
+              p_notes?: string
+              p_performed_by?: string
+              p_reason: string
+              p_store_id: string
+            }
+            Returns: Json
+          }
+      approve_inventory_reconciliation: {
+        Args: { p_notes?: string; p_reconciliation_id: string }
+        Returns: Json
+      }
+      archive_stock_ledger_quarterly: {
+        Args: { p_cutoff_date?: string }
+        Returns: {
+          period_end: string
+          period_start: string
+          snapshots_created: number
+        }[]
+      }
+      assign_rider_to_order: {
         Args: {
-          p_delta: number
-          p_item_id: string
-          p_notes?: string
-          p_performed_by?: string
-          p_reason: string
-          p_store_id: string
+          p_assigned_by: string
+          p_operation_id: string
+          p_order_id: string
+          p_rider_id: string
         }
         Returns: Json
       }
@@ -2989,20 +4322,17 @@ export type Database = {
         Args: { p_closing_cash: number; p_session_id: string }
         Returns: Json
       }
-      complete_sale: {
+      complete_sale_v2: {
         Args: {
           p_cashier_id: string
-          p_client_transaction_id?: string
+          p_customer_id?: string
           p_discount?: number
-          p_fulfillment_policy?: string
           p_items?: Json
-          p_notes?: string
-          p_override_reason?: string
-          p_override_token?: string
+          p_offline_created_at?: string
+          p_operation_id?: string
           p_payments?: Json
-          p_session_id?: string
-          p_snapshot?: Json
           p_store_id: string
+          p_total?: number
         }
         Returns: Json
       }
@@ -3071,16 +4401,70 @@ export type Database = {
         Args: { p_item_id: string; p_quantity: number; p_store_id: string }
         Returns: undefined
       }
-      deduct_stock: {
-        Args: {
-          p_metadata?: Json
-          p_product_id: string
-          p_quantity: number
-          p_store_id: string
-        }
-        Returns: Json
-      }
+      deduct_stock:
+        | {
+            Args: {
+              p_metadata?: Json
+              p_product_id: string
+              p_quantity: number
+              p_store_id: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_metadata?: Json
+              p_operation_id?: string
+              p_product_id: string
+              p_quantity: number
+              p_store_id: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_expected_quantity?: number
+              p_metadata?: Json
+              p_operation_id?: string
+              p_product_id: string
+              p_quantity: number
+              p_store_id: string
+            }
+            Returns: Json
+          }
       delete_reminder: { Args: { p_reminder_id: string }; Returns: boolean }
+      disablelongtransactions: { Args: never; Returns: string }
+      dropgeometrycolumn:
+        | {
+            Args: {
+              catalog_name: string
+              column_name: string
+              schema_name: string
+              table_name: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              column_name: string
+              schema_name: string
+              table_name: string
+            }
+            Returns: string
+          }
+        | { Args: { column_name: string; table_name: string }; Returns: string }
+      dropgeometrytable:
+        | {
+            Args: {
+              catalog_name: string
+              schema_name: string
+              table_name: string
+            }
+            Returns: string
+          }
+        | { Args: { schema_name: string; table_name: string }; Returns: string }
+        | { Args: { table_name: string }; Returns: string }
+      enablelongtransactions: { Args: never; Returns: string }
       enqueue_sale_for_ledger_posting: {
         Args: { p_priority?: number; p_sale_id: string; p_store_id: string }
         Returns: string
@@ -3093,10 +4477,110 @@ export type Database = {
         Args: { p_store_id: string }
         Returns: undefined
       }
+      equals: { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
       generate_daily_reconciliation: {
         Args: { p_date: string; p_store_id: string }
         Returns: Json
       }
+      generate_order_number: { Args: { p_tenant_id: string }; Returns: string }
+      geometry: { Args: { "": string }; Returns: unknown }
+      geometry_above: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geometry_below: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geometry_cmp: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: number
+      }
+      geometry_contained_3d: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geometry_contains: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geometry_contains_3d: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geometry_distance_box: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: number
+      }
+      geometry_distance_centroid: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: number
+      }
+      geometry_eq: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geometry_ge: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geometry_gt: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geometry_le: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geometry_left: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geometry_lt: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geometry_overabove: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geometry_overbelow: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geometry_overlaps: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geometry_overlaps_3d: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geometry_overleft: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geometry_overright: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geometry_right: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geometry_same: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geometry_same_3d: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geometry_within: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      geomfromewkt: { Args: { "": string }; Returns: unknown }
       get_close_risk_analytics: {
         Args: {
           p_from?: string
@@ -3129,6 +4613,10 @@ export type Database = {
           total_out: number
           trend_date: string
         }[]
+      }
+      get_edge_function_url: {
+        Args: { function_name: string }
+        Returns: string
       }
       get_expected_cash: {
         Args: {
@@ -3168,6 +4656,31 @@ export type Database = {
           sku: string
         }[]
       }
+      get_inventory_movements: {
+        Args: {
+          p_limit?: number
+          p_movement_type?: Database["public"]["Enums"]["movement_type"]
+          p_offset?: number
+          p_product_id?: string
+          p_store_id: string
+        }
+        Returns: {
+          created_at: string
+          created_by: string
+          id: string
+          movement_type: Database["public"]["Enums"]["movement_type"]
+          new_quantity: number
+          notes: string
+          performer_name: string
+          previous_quantity: number
+          product_id: string
+          product_name: string
+          product_sku: string
+          quantity_delta: number
+          reference_id: string
+          reference_type: Database["public"]["Enums"]["reference_type"]
+        }[]
+      }
       get_inventory_summary: { Args: { p_store_id: string }; Returns: Json }
       get_low_stock_items: {
         Args: { p_store_id: string }
@@ -3194,15 +4707,20 @@ export type Database = {
         }
         Returns: Json
       }
-      get_price_alerts: {
-        Args: { p_store_id: string; p_threshold: number }
+      get_nearest_available_riders: {
+        Args: {
+          p_limit?: number
+          p_max_distance_km?: number
+          p_store_lat: number
+          p_store_lng: number
+        }
         Returns: {
-          competitors: Json
-          market_avg_price: number
-          our_price: number
-          price_gap_percent: number
-          product_id: string
-          product_name: string
+          distance_km: number
+          full_name: string
+          location_updated_at: string
+          phone: string
+          rider_id: string
+          vehicle_type: string
         }[]
       }
       get_new_receipt: { Args: { store: string }; Returns: string }
@@ -3422,9 +4940,10 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      gettransactionid: { Args: never; Returns: unknown }
       heartbeat_ledger_worker: {
         Args: { p_worker_id: string }
-        Returns: undefined
+        Returns: boolean
       }
       import_apply_stock_delta: {
         Args: { p_delta: number; p_item_id: string; p_store_id: string }
@@ -3439,12 +4958,30 @@ export type Database = {
         }
         Returns: Json
       }
+      increment_stock: {
+        Args: {
+          p_metadata?: Json
+          p_product_id: string
+          p_quantity: number
+          p_store_id: string
+        }
+        Returns: Json
+      }
+      is_admin_in_tenant: { Args: { p_tenant_id: string }; Returns: boolean }
       is_ledger_worker_alive: {
         Args: { p_max_staleness?: string; p_worker_id: string }
         Returns: boolean
       }
       is_period_closed: {
         Args: { p_posted_at: string; p_store_id: string }
+        Returns: boolean
+      }
+      is_within_delivery_range: {
+        Args: {
+          p_customer_lat: number
+          p_customer_lng: number
+          p_store_id: string
+        }
         Returns: boolean
       }
       issue_pos_override_token: {
@@ -3475,16 +5012,80 @@ export type Database = {
         }
         Returns: undefined
       }
+      longtransactionsenabled: { Args: never; Returns: boolean }
       lookup_item_by_scan: {
         Args: { p_scan_value: string; p_store_id: string }
         Returns: Json
       }
       mark_followup_resolved: { Args: { p_note_id: string }; Returns: boolean }
+      ping_rider_location: {
+        Args: {
+          p_accuracy?: number
+          p_battery?: number
+          p_latitude: number
+          p_longitude: number
+          p_rider_id: string
+        }
+        Returns: Json
+      }
+      place_online_order: {
+        Args: {
+          p_address: string
+          p_customer_name: string
+          p_delivery_fee: number
+          p_items: Json
+          p_store_id: string
+          p_subtotal: number
+          p_total: number
+          p_whatsapp: string
+        }
+        Returns: Json
+      }
+      populate_geometry_columns:
+        | { Args: { tbl_oid: unknown; use_typmod?: boolean }; Returns: number }
+        | { Args: { use_typmod?: boolean }; Returns: string }
       post_draft_purchase_receipt: {
         Args: { p_receipt_id: string }
         Returns: Json
       }
       post_sale_to_ledger: { Args: { p_sale_id: string }; Returns: Json }
+      postgis_constraint_dims: {
+        Args: { geomcolumn: string; geomschema: string; geomtable: string }
+        Returns: number
+      }
+      postgis_constraint_srid: {
+        Args: { geomcolumn: string; geomschema: string; geomtable: string }
+        Returns: number
+      }
+      postgis_constraint_type: {
+        Args: { geomcolumn: string; geomschema: string; geomtable: string }
+        Returns: string
+      }
+      postgis_extensions_upgrade: { Args: never; Returns: string }
+      postgis_full_version: { Args: never; Returns: string }
+      postgis_geos_version: { Args: never; Returns: string }
+      postgis_lib_build_date: { Args: never; Returns: string }
+      postgis_lib_revision: { Args: never; Returns: string }
+      postgis_lib_version: { Args: never; Returns: string }
+      postgis_libjson_version: { Args: never; Returns: string }
+      postgis_liblwgeom_version: { Args: never; Returns: string }
+      postgis_libprotobuf_version: { Args: never; Returns: string }
+      postgis_libxml_version: { Args: never; Returns: string }
+      postgis_proj_version: { Args: never; Returns: string }
+      postgis_scripts_build_date: { Args: never; Returns: string }
+      postgis_scripts_installed: { Args: never; Returns: string }
+      postgis_scripts_released: { Args: never; Returns: string }
+      postgis_svn_version: { Args: never; Returns: string }
+      postgis_type_name: {
+        Args: {
+          coord_dimension: number
+          geomname: string
+          use_new_name?: boolean
+        }
+        Returns: string
+      }
+      postgis_version: { Args: never; Returns: string }
+      postgis_wagyu_version: { Args: never; Returns: string }
       process_ledger_posting_batch: {
         Args: {
           p_batch_size?: number
@@ -3539,23 +5140,36 @@ export type Database = {
         }
         Returns: Json
       }
-      record_purchase: {
-        Args: {
-          p_amount_paid?: number
-          p_idempotency_key: string
-          p_invoice_number?: string
-          p_invoice_total?: number
-          p_items?: Json
-          p_notes?: string
-          p_payable_account_id?: string
-          p_payment_account_id?: string
-          p_status?: string
-          p_store_id: string
-          p_supplier_id: string
-          p_tenant_id: string
-        }
-        Returns: Json
-      }
+      record_purchase:
+        | {
+            Args: {
+              p_account_id: string
+              p_idempotency_key: string
+              p_items: Json
+              p_notes?: string
+              p_party_id: string
+              p_store_id: string
+              p_tenant_id: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_amount_paid?: number
+              p_idempotency_key: string
+              p_invoice_number?: string
+              p_invoice_total?: number
+              p_items?: Json
+              p_notes?: string
+              p_payable_account_id?: string
+              p_payment_account_id?: string
+              p_status?: string
+              p_store_id: string
+              p_supplier_id: string
+              p_tenant_id: string
+            }
+            Returns: Json
+          }
       record_purchase_v2: {
         Args: {
           p_amount_paid?: number
@@ -3576,39 +5190,29 @@ export type Database = {
       record_sale: {
         Args: {
           p_idempotency_key: string
-          p_items: string
-          p_notes: string | null
-          p_payments: string
+          p_items: Json
+          p_notes?: string
+          p_payments: Json
           p_store_id: string
           p_tenant_id: string
         }
-        Returns: {
-          batch_id: string
-          status: string
-          total_revenue: number
-        }
-      }
-      complete_sale_v2: {
-        Args: {
-          p_cashier_id: string
-          p_customer_id: string | null
-          p_discount: number
-          p_items: Json
-          p_offline_created_at: string
-          p_operation_id: string
-          p_payments: Json
-          p_store_id: string
-          p_total: number
-        }
-        Returns: {
-          batch_id: string
-          sale_id: string
-          status: string
-        }
+        Returns: Json
       }
       register_ledger_worker: {
         Args: { p_worker_id: string }
-        Returns: undefined
+        Returns: {
+          active: boolean
+          created_at: string
+          last_heartbeat: string
+          updated_at: string
+          worker_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "ledger_workers"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       renew_ledger_job_lease: {
         Args: { p_queue_id: string; p_worker_id: string }
@@ -3618,6 +5222,10 @@ export type Database = {
       resolve_payment_ledger_account: {
         Args: { p_payment_method_id: string; p_store_id: string }
         Returns: string
+      }
+      rider_login: {
+        Args: { p_device_id?: string; p_phone: string; p_pin: string }
+        Returns: Json
       }
       search_items_pos: {
         Args: {
@@ -3629,6 +5237,38 @@ export type Database = {
         }
         Returns: Json
       }
+      send_whatsapp_notification_manually: {
+        Args: { p_order_id: string; p_status?: string }
+        Returns: Json
+      }
+      set_inventory_stock:
+        | {
+            Args: {
+              p_movement_type: Database["public"]["Enums"]["movement_type"]
+              p_new_quantity: number
+              p_notes?: string
+              p_product_id: string
+              p_reference_id?: string
+              p_reference_type: Database["public"]["Enums"]["reference_type"]
+              p_store_id: string
+              p_tenant_id: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_movement_type: Database["public"]["Enums"]["movement_type"]
+              p_new_quantity: number
+              p_notes?: string
+              p_operation_id?: string
+              p_product_id: string
+              p_reference_id?: string
+              p_reference_type: Database["public"]["Enums"]["reference_type"]
+              p_store_id: string
+              p_tenant_id: string
+            }
+            Returns: Json
+          }
       set_stock: {
         Args: {
           p_item_id: string
@@ -3639,6 +5279,587 @@ export type Database = {
         }
         Returns: Json
       }
+      st_3dclosestpoint: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: unknown
+      }
+      st_3ddistance: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: number
+      }
+      st_3dintersects: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      st_3dlongestline: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: unknown
+      }
+      st_3dmakebox: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: unknown
+      }
+      st_3dmaxdistance: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: number
+      }
+      st_3dshortestline: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: unknown
+      }
+      st_addpoint: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: unknown
+      }
+      st_angle:
+        | { Args: { line1: unknown; line2: unknown }; Returns: number }
+        | {
+            Args: { pt1: unknown; pt2: unknown; pt3: unknown; pt4?: unknown }
+            Returns: number
+          }
+      st_area:
+        | { Args: { geog: unknown; use_spheroid?: boolean }; Returns: number }
+        | { Args: { "": string }; Returns: number }
+      st_asencodedpolyline: {
+        Args: { geom: unknown; nprecision?: number }
+        Returns: string
+      }
+      st_asewkt: { Args: { "": string }; Returns: string }
+      st_asgeojson:
+        | {
+            Args: { geog: unknown; maxdecimaldigits?: number; options?: number }
+            Returns: string
+          }
+        | {
+            Args: { geom: unknown; maxdecimaldigits?: number; options?: number }
+            Returns: string
+          }
+        | {
+            Args: {
+              geom_column?: string
+              maxdecimaldigits?: number
+              pretty_bool?: boolean
+              r: Record<string, unknown>
+            }
+            Returns: string
+          }
+        | { Args: { "": string }; Returns: string }
+      st_asgml:
+        | {
+            Args: {
+              geog: unknown
+              id?: string
+              maxdecimaldigits?: number
+              nprefix?: string
+              options?: number
+            }
+            Returns: string
+          }
+        | {
+            Args: { geom: unknown; maxdecimaldigits?: number; options?: number }
+            Returns: string
+          }
+        | { Args: { "": string }; Returns: string }
+        | {
+            Args: {
+              geog: unknown
+              id?: string
+              maxdecimaldigits?: number
+              nprefix?: string
+              options?: number
+              version: number
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              geom: unknown
+              id?: string
+              maxdecimaldigits?: number
+              nprefix?: string
+              options?: number
+              version: number
+            }
+            Returns: string
+          }
+      st_askml:
+        | {
+            Args: { geog: unknown; maxdecimaldigits?: number; nprefix?: string }
+            Returns: string
+          }
+        | {
+            Args: { geom: unknown; maxdecimaldigits?: number; nprefix?: string }
+            Returns: string
+          }
+        | { Args: { "": string }; Returns: string }
+      st_aslatlontext: {
+        Args: { geom: unknown; tmpl?: string }
+        Returns: string
+      }
+      st_asmarc21: { Args: { format?: string; geom: unknown }; Returns: string }
+      st_asmvtgeom: {
+        Args: {
+          bounds: unknown
+          buffer?: number
+          clip_geom?: boolean
+          extent?: number
+          geom: unknown
+        }
+        Returns: unknown
+      }
+      st_assvg:
+        | {
+            Args: { geog: unknown; maxdecimaldigits?: number; rel?: number }
+            Returns: string
+          }
+        | {
+            Args: { geom: unknown; maxdecimaldigits?: number; rel?: number }
+            Returns: string
+          }
+        | { Args: { "": string }; Returns: string }
+      st_astext: { Args: { "": string }; Returns: string }
+      st_astwkb:
+        | {
+            Args: {
+              geom: unknown
+              prec?: number
+              prec_m?: number
+              prec_z?: number
+              with_boxes?: boolean
+              with_sizes?: boolean
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              geom: unknown[]
+              ids: number[]
+              prec?: number
+              prec_m?: number
+              prec_z?: number
+              with_boxes?: boolean
+              with_sizes?: boolean
+            }
+            Returns: string
+          }
+      st_asx3d: {
+        Args: { geom: unknown; maxdecimaldigits?: number; options?: number }
+        Returns: string
+      }
+      st_azimuth:
+        | { Args: { geog1: unknown; geog2: unknown }; Returns: number }
+        | { Args: { geom1: unknown; geom2: unknown }; Returns: number }
+      st_boundingdiagonal: {
+        Args: { fits?: boolean; geom: unknown }
+        Returns: unknown
+      }
+      st_buffer:
+        | {
+            Args: { geom: unknown; options?: string; radius: number }
+            Returns: unknown
+          }
+        | {
+            Args: { geom: unknown; quadsegs: number; radius: number }
+            Returns: unknown
+          }
+      st_centroid: { Args: { "": string }; Returns: unknown }
+      st_clipbybox2d: {
+        Args: { box: unknown; geom: unknown }
+        Returns: unknown
+      }
+      st_closestpoint: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: unknown
+      }
+      st_collect: { Args: { geom1: unknown; geom2: unknown }; Returns: unknown }
+      st_concavehull: {
+        Args: {
+          param_allow_holes?: boolean
+          param_geom: unknown
+          param_pctconvex: number
+        }
+        Returns: unknown
+      }
+      st_contains: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      st_containsproperly: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      st_coorddim: { Args: { geometry: unknown }; Returns: number }
+      st_coveredby:
+        | { Args: { geog1: unknown; geog2: unknown }; Returns: boolean }
+        | { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
+      st_covers:
+        | { Args: { geog1: unknown; geog2: unknown }; Returns: boolean }
+        | { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
+      st_crosses: { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
+      st_curvetoline: {
+        Args: { flags?: number; geom: unknown; tol?: number; toltype?: number }
+        Returns: unknown
+      }
+      st_delaunaytriangles: {
+        Args: { flags?: number; g1: unknown; tolerance?: number }
+        Returns: unknown
+      }
+      st_difference: {
+        Args: { geom1: unknown; geom2: unknown; gridsize?: number }
+        Returns: unknown
+      }
+      st_disjoint: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      st_distance:
+        | {
+            Args: { geog1: unknown; geog2: unknown; use_spheroid?: boolean }
+            Returns: number
+          }
+        | { Args: { geom1: unknown; geom2: unknown }; Returns: number }
+      st_distancesphere:
+        | { Args: { geom1: unknown; geom2: unknown }; Returns: number }
+        | {
+            Args: { geom1: unknown; geom2: unknown; radius: number }
+            Returns: number
+          }
+      st_distancespheroid: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: number
+      }
+      st_dwithin: {
+        Args: {
+          geog1: unknown
+          geog2: unknown
+          tolerance: number
+          use_spheroid?: boolean
+        }
+        Returns: boolean
+      }
+      st_equals: { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
+      st_expand:
+        | { Args: { box: unknown; dx: number; dy: number }; Returns: unknown }
+        | {
+            Args: { box: unknown; dx: number; dy: number; dz?: number }
+            Returns: unknown
+          }
+        | {
+            Args: {
+              dm?: number
+              dx: number
+              dy: number
+              dz?: number
+              geom: unknown
+            }
+            Returns: unknown
+          }
+      st_force3d: { Args: { geom: unknown; zvalue?: number }; Returns: unknown }
+      st_force3dm: {
+        Args: { geom: unknown; mvalue?: number }
+        Returns: unknown
+      }
+      st_force3dz: {
+        Args: { geom: unknown; zvalue?: number }
+        Returns: unknown
+      }
+      st_force4d: {
+        Args: { geom: unknown; mvalue?: number; zvalue?: number }
+        Returns: unknown
+      }
+      st_generatepoints:
+        | { Args: { area: unknown; npoints: number }; Returns: unknown }
+        | {
+            Args: { area: unknown; npoints: number; seed: number }
+            Returns: unknown
+          }
+      st_geogfromtext: { Args: { "": string }; Returns: unknown }
+      st_geographyfromtext: { Args: { "": string }; Returns: unknown }
+      st_geohash:
+        | { Args: { geog: unknown; maxchars?: number }; Returns: string }
+        | { Args: { geom: unknown; maxchars?: number }; Returns: string }
+      st_geomcollfromtext: { Args: { "": string }; Returns: unknown }
+      st_geometricmedian: {
+        Args: {
+          fail_if_not_converged?: boolean
+          g: unknown
+          max_iter?: number
+          tolerance?: number
+        }
+        Returns: unknown
+      }
+      st_geometryfromtext: { Args: { "": string }; Returns: unknown }
+      st_geomfromewkt: { Args: { "": string }; Returns: unknown }
+      st_geomfromgeojson:
+        | { Args: { "": Json }; Returns: unknown }
+        | { Args: { "": Json }; Returns: unknown }
+        | { Args: { "": string }; Returns: unknown }
+      st_geomfromgml: { Args: { "": string }; Returns: unknown }
+      st_geomfromkml: { Args: { "": string }; Returns: unknown }
+      st_geomfrommarc21: { Args: { marc21xml: string }; Returns: unknown }
+      st_geomfromtext: { Args: { "": string }; Returns: unknown }
+      st_gmltosql: { Args: { "": string }; Returns: unknown }
+      st_hasarc: { Args: { geometry: unknown }; Returns: boolean }
+      st_hausdorffdistance: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: number
+      }
+      st_hexagon: {
+        Args: { cell_i: number; cell_j: number; origin?: unknown; size: number }
+        Returns: unknown
+      }
+      st_hexagongrid: {
+        Args: { bounds: unknown; size: number }
+        Returns: Record<string, unknown>[]
+      }
+      st_interpolatepoint: {
+        Args: { line: unknown; point: unknown }
+        Returns: number
+      }
+      st_intersection: {
+        Args: { geom1: unknown; geom2: unknown; gridsize?: number }
+        Returns: unknown
+      }
+      st_intersects:
+        | { Args: { geog1: unknown; geog2: unknown }; Returns: boolean }
+        | { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
+      st_isvaliddetail: {
+        Args: { flags?: number; geom: unknown }
+        Returns: Database["public"]["CompositeTypes"]["valid_detail"]
+        SetofOptions: {
+          from: "*"
+          to: "valid_detail"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      st_length:
+        | { Args: { geog: unknown; use_spheroid?: boolean }; Returns: number }
+        | { Args: { "": string }; Returns: number }
+      st_letters: { Args: { font?: Json; letters: string }; Returns: unknown }
+      st_linecrossingdirection: {
+        Args: { line1: unknown; line2: unknown }
+        Returns: number
+      }
+      st_linefromencodedpolyline: {
+        Args: { nprecision?: number; txtin: string }
+        Returns: unknown
+      }
+      st_linefromtext: { Args: { "": string }; Returns: unknown }
+      st_linelocatepoint: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: number
+      }
+      st_linetocurve: { Args: { geometry: unknown }; Returns: unknown }
+      st_locatealong: {
+        Args: { geometry: unknown; leftrightoffset?: number; measure: number }
+        Returns: unknown
+      }
+      st_locatebetween: {
+        Args: {
+          frommeasure: number
+          geometry: unknown
+          leftrightoffset?: number
+          tomeasure: number
+        }
+        Returns: unknown
+      }
+      st_locatebetweenelevations: {
+        Args: { fromelevation: number; geometry: unknown; toelevation: number }
+        Returns: unknown
+      }
+      st_longestline: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: unknown
+      }
+      st_makebox2d: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: unknown
+      }
+      st_makeline: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: unknown
+      }
+      st_makevalid: {
+        Args: { geom: unknown; params: string }
+        Returns: unknown
+      }
+      st_maxdistance: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: number
+      }
+      st_minimumboundingcircle: {
+        Args: { inputgeom: unknown; segs_per_quarter?: number }
+        Returns: unknown
+      }
+      st_mlinefromtext: { Args: { "": string }; Returns: unknown }
+      st_mpointfromtext: { Args: { "": string }; Returns: unknown }
+      st_mpolyfromtext: { Args: { "": string }; Returns: unknown }
+      st_multilinestringfromtext: { Args: { "": string }; Returns: unknown }
+      st_multipointfromtext: { Args: { "": string }; Returns: unknown }
+      st_multipolygonfromtext: { Args: { "": string }; Returns: unknown }
+      st_node: { Args: { g: unknown }; Returns: unknown }
+      st_normalize: { Args: { geom: unknown }; Returns: unknown }
+      st_offsetcurve: {
+        Args: { distance: number; line: unknown; params?: string }
+        Returns: unknown
+      }
+      st_orderingequals: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      st_overlaps: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: boolean
+      }
+      st_perimeter: {
+        Args: { geog: unknown; use_spheroid?: boolean }
+        Returns: number
+      }
+      st_pointfromtext: { Args: { "": string }; Returns: unknown }
+      st_pointm: {
+        Args: {
+          mcoordinate: number
+          srid?: number
+          xcoordinate: number
+          ycoordinate: number
+        }
+        Returns: unknown
+      }
+      st_pointz: {
+        Args: {
+          srid?: number
+          xcoordinate: number
+          ycoordinate: number
+          zcoordinate: number
+        }
+        Returns: unknown
+      }
+      st_pointzm: {
+        Args: {
+          mcoordinate: number
+          srid?: number
+          xcoordinate: number
+          ycoordinate: number
+          zcoordinate: number
+        }
+        Returns: unknown
+      }
+      st_polyfromtext: { Args: { "": string }; Returns: unknown }
+      st_polygonfromtext: { Args: { "": string }; Returns: unknown }
+      st_project: {
+        Args: { azimuth: number; distance: number; geog: unknown }
+        Returns: unknown
+      }
+      st_quantizecoordinates: {
+        Args: {
+          g: unknown
+          prec_m?: number
+          prec_x: number
+          prec_y?: number
+          prec_z?: number
+        }
+        Returns: unknown
+      }
+      st_reduceprecision: {
+        Args: { geom: unknown; gridsize: number }
+        Returns: unknown
+      }
+      st_relate: { Args: { geom1: unknown; geom2: unknown }; Returns: string }
+      st_removerepeatedpoints: {
+        Args: { geom: unknown; tolerance?: number }
+        Returns: unknown
+      }
+      st_segmentize: {
+        Args: { geog: unknown; max_segment_length: number }
+        Returns: unknown
+      }
+      st_setsrid:
+        | { Args: { geog: unknown; srid: number }; Returns: unknown }
+        | { Args: { geom: unknown; srid: number }; Returns: unknown }
+      st_sharedpaths: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: unknown
+      }
+      st_shortestline: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: unknown
+      }
+      st_simplifypolygonhull: {
+        Args: { geom: unknown; is_outer?: boolean; vertex_fraction: number }
+        Returns: unknown
+      }
+      st_split: { Args: { geom1: unknown; geom2: unknown }; Returns: unknown }
+      st_square: {
+        Args: { cell_i: number; cell_j: number; origin?: unknown; size: number }
+        Returns: unknown
+      }
+      st_squaregrid: {
+        Args: { bounds: unknown; size: number }
+        Returns: Record<string, unknown>[]
+      }
+      st_srid:
+        | { Args: { geog: unknown }; Returns: number }
+        | { Args: { geom: unknown }; Returns: number }
+      st_subdivide: {
+        Args: { geom: unknown; gridsize?: number; maxvertices?: number }
+        Returns: unknown[]
+      }
+      st_swapordinates: {
+        Args: { geom: unknown; ords: unknown }
+        Returns: unknown
+      }
+      st_symdifference: {
+        Args: { geom1: unknown; geom2: unknown; gridsize?: number }
+        Returns: unknown
+      }
+      st_symmetricdifference: {
+        Args: { geom1: unknown; geom2: unknown }
+        Returns: unknown
+      }
+      st_tileenvelope: {
+        Args: {
+          bounds?: unknown
+          margin?: number
+          x: number
+          y: number
+          zoom: number
+        }
+        Returns: unknown
+      }
+      st_touches: { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
+      st_transform:
+        | {
+            Args: { from_proj: string; geom: unknown; to_proj: string }
+            Returns: unknown
+          }
+        | {
+            Args: { from_proj: string; geom: unknown; to_srid: number }
+            Returns: unknown
+          }
+        | { Args: { geom: unknown; to_proj: string }; Returns: unknown }
+      st_triangulatepolygon: { Args: { g1: unknown }; Returns: unknown }
+      st_union:
+        | { Args: { geom1: unknown; geom2: unknown }; Returns: unknown }
+        | {
+            Args: { geom1: unknown; geom2: unknown; gridsize: number }
+            Returns: unknown
+          }
+      st_voronoilines: {
+        Args: { extend_to?: unknown; g1: unknown; tolerance?: number }
+        Returns: unknown
+      }
+      st_voronoipolygons: {
+        Args: { extend_to?: unknown; g1: unknown; tolerance?: number }
+        Returns: unknown
+      }
+      st_within: { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
+      st_wkbtosql: { Args: { wkb: string }; Returns: unknown }
+      st_wkttosql: { Args: { "": string }; Returns: unknown }
+      st_wrapx: {
+        Args: { geom: unknown; move: number; wrap: number }
+        Returns: unknown
+      }
       sync_offline_orders: {
         Args: { p_orders: Json }
         Returns: {
@@ -3646,6 +5867,11 @@ export type Database = {
           order_id: string
           status: string
         }[]
+      }
+      unlockrows: { Args: { "": string }; Returns: number }
+      update_online_order_status: {
+        Args: { p_new_status: string; p_order_id: string; p_reason?: string }
+        Returns: Json
       }
       update_receipt_config_simple: {
         Args: {
@@ -3706,6 +5932,15 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      update_rider_assignment_status: {
+        Args: {
+          p_assignment_id: string
+          p_new_status: string
+          p_notes?: string
+          p_operation_id: string
+        }
+        Returns: Json
+      }
       update_stock_transfer_status: {
         Args: {
           p_new_status: Database["public"]["Enums"]["stock_transfer_status"]
@@ -3713,6 +5948,16 @@ export type Database = {
           p_transfer_id: string
         }
         Returns: boolean
+      }
+      updategeometrysrid: {
+        Args: {
+          catalogn_name: string
+          column_name: string
+          new_srid_in: number
+          schema_name: string
+          table_name: string
+        }
+        Returns: string
       }
       upsert_stock_level: {
         Args: { p_item_id: string; p_quantity: number; p_store_id: string }
@@ -3727,13 +5972,28 @@ export type Database = {
         }
         Returns: Json
       }
-      void_sale: {
-        Args: { p_reason?: string; p_sale_id: string }
-        Returns: Json
-      }
+      void_sale:
+        | { Args: { p_reason?: string; p_sale_id: string }; Returns: Json }
+        | {
+            Args: {
+              p_idempotency_key?: string
+              p_reason?: string
+              p_sale_id: string
+            }
+            Returns: Json
+          }
     }
     Enums: {
       discount_type: "percentage" | "fixed"
+      movement_type:
+        | "sale"
+        | "purchase"
+        | "adjustment"
+        | "return"
+        | "damage"
+        | "transfer"
+        | "manual"
+        | "sync_repair"
       payment_type: "cash" | "mobile_banking" | "card" | "other"
       po_status:
         | "draft"
@@ -3741,6 +6001,14 @@ export type Database = {
         | "partially_received"
         | "received"
         | "cancelled"
+      reconciliation_status: "pending" | "approved" | "rejected"
+      reference_type:
+        | "sale"
+        | "purchase"
+        | "expense"
+        | "adjustment"
+        | "system"
+        | "sync"
       sale_status: "completed" | "voided" | "refunded"
       session_status: "open" | "closed"
       stock_transfer_status:
@@ -3750,7 +6018,15 @@ export type Database = {
         | "cancelled"
     }
     CompositeTypes: {
-      [_ in never]: never
+      geometry_dump: {
+        path: number[] | null
+        geom: unknown
+      }
+      valid_detail: {
+        valid: boolean | null
+        reason: string | null
+        location: unknown
+      }
     }
   }
 }
@@ -3879,6 +6155,16 @@ export const Constants = {
   public: {
     Enums: {
       discount_type: ["percentage", "fixed"],
+      movement_type: [
+        "sale",
+        "purchase",
+        "adjustment",
+        "return",
+        "damage",
+        "transfer",
+        "manual",
+        "sync_repair",
+      ],
       payment_type: ["cash", "mobile_banking", "card", "other"],
       po_status: [
         "draft",
@@ -3886,6 +6172,15 @@ export const Constants = {
         "partially_received",
         "received",
         "cancelled",
+      ],
+      reconciliation_status: ["pending", "approved", "rejected"],
+      reference_type: [
+        "sale",
+        "purchase",
+        "expense",
+        "adjustment",
+        "system",
+        "sync",
       ],
       sale_status: ["completed", "voided", "refunded"],
       session_status: ["open", "closed"],

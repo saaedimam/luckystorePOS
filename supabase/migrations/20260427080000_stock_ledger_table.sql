@@ -103,15 +103,16 @@ CREATE POLICY stock_ledger_insert_authenticated
   );
 
 -- Service role can do anything
+DROP POLICY IF EXISTS stock_ledger_service_role_all ON public.stock_ledger;
 CREATE POLICY stock_ledger_service_role_all 
   ON public.stock_ledger
   TO service_role
   USING (true);
 
+DROP POLICY IF EXISTS stock_ledger_service_role_insert ON public.stock_ledger;
 CREATE POLICY stock_ledger_service_role_insert 
   ON public.stock_ledger FOR INSERT 
   TO service_role
-  USING (true)
   WITH CHECK (true);
 
 -- -----------------------------------------------------------------------------

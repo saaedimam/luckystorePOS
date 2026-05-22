@@ -5,9 +5,7 @@
 CREATE OR REPLACE FUNCTION reserve_online_stock()
 RETURNS TRIGGER AS $$
 BEGIN
-  UPDATE inventory 
-  SET reserved_online = reserved_online + NEW.quantity
-  WHERE product_id = NEW.product_id;
+  -- Legacy trigger placeholder, overridden in 20260525000000_stock_reservation_trigger.sql
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
