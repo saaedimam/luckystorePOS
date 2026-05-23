@@ -16,10 +16,10 @@ class AuthService {
     try {
       await _supabase.auth.signInWithPassword(email: email, password: password);
       return true;
-    } on AuthException catch (e) {
+    } on AuthException catch (_) {
       // print('Login failed: ${e.message}');
       return false;
-    } catch (e) {
+    } catch (_) {
       // Catch any other unexpected errors
       // print('An unexpected error occurred during login: $e');
       return false;
