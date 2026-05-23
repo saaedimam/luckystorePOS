@@ -1,113 +1,161 @@
 /**
  * Lucky Store Design Token Dictionary
- * Version: 1.1.0 (Synced with Figma 2026-05-20)
- * Note: These values are surgically synced from the master design system.
+ * Version: 2.0.0 (Warm Anthropic-inspired Palette - 2026-05-23)
+ * Reference: luckystorepos-admin.md design system
  */
 
 :root {
-  /* 1.1 Foundations */
+  /* ========================================
+     1. FOUNDATIONS
+     ======================================== */
   --font-size: 14px;
   --radius-none: 0px;
-  --radius-xs: 2px;
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
   --radius-full: 9999px;
 
-  /* 1.2 Accents (Mode agnostic) */
-  --accent-gold: #D4A843;
-  --accent-gold-soft: rgba(212, 168, 67, 0.15);
-  --accent-emerald: #10B981;
-  --accent-emerald-soft: rgba(16, 185, 129, 0.15);
-  --accent-rose: #F43F5E;
-  --accent-rose-soft: rgba(244, 63, 94, 0.15);
-  --accent-blue: #3B82F6;
-  --accent-blue-soft: rgba(59, 130, 246, 0.15);
-  --accent-amber: #F59E0B;
-  --accent-amber-soft: rgba(245, 158, 11, 0.15);
+  /* ========================================
+     2. WARM COLOR PALETTE (New Design)
+     ======================================== */
+  --warm-bg: #f5f4ed;
+  --warm-surface: #faf9f5;
+  --warm-fg: #141413;
+  --warm-muted: #5e5d59;
+  --warm-dim: #87867f;
+  --warm-border: #f0eee6;
+  --warm-border-warm: #e8e6dc;
+  --warm-accent: #c96442;
+  --warm-accent-light: #d97757;
+  --warm-sand: #e8e6dc;
+  --warm-charcoal: #4d4c48;
+  --warm-dark: #30302e;
+  --warm-deep: #141413;
+  --warm-silver: #b0aea5;
+  --warm-ring: #d1cfc5;
+  --warm-success: #4a7c59;
+  --warm-warning: #c9a227;
+  --warm-danger: #b53333;
 
-  /* 1.3 Semantic Tokens — Light Mode */
-  
+  /* ========================================
+     3. SEMANTIC TOKENS - Light Mode
+     ======================================== */
+
   /* Background & Surface */
-  --color-background-default: #F0F1F3;
-  --color-background-subtle: #F9FAFB;
-  --color-surface-default: #FFFFFF;
-  --color-surface-raised: #FFFFFF;
-  --color-surface-overlay: rgba(15, 17, 23, 0.45);
+  --bg: var(--warm-bg);
+  --bg-app: var(--warm-bg);
+  --bg-main: var(--warm-bg);
+  --bg-card: var(--warm-surface);
+  --bg-accent: var(--warm-sand);
+  --color-background-default: var(--warm-bg);
+  --color-background-subtle: var(--warm-sand);
+  --color-surface-default: var(--warm-surface);
+  --color-surface-raised: var(--warm-surface);
+  --color-surface-overlay: rgba(20, 20, 19, 0.45);
 
-  /* Primary (Gold) */
-  --color-primary-default: var(--accent-gold);
-  --color-primary-hover: #C09638;
-  --color-primary-pressed: #AC852F;
-  --color-primary-subtle: var(--accent-gold-soft);
-  --color-primary-on: #0B0D12;
+  /* Primary (Terracotta) */
+  --accent: var(--warm-accent);
+  --accent-light: var(--warm-accent-light);
+  --color-primary-default: var(--warm-accent);
+  --color-primary-hover: var(--warm-accent-light);
+  --color-primary-pressed: #b85635;
+  --color-primary-subtle: rgba(201, 100, 66, 0.08);
+  --color-primary-on: #ffffff;
 
-  /* Secondary (Emerald) */
-  --color-secondary-default: var(--accent-emerald);
-  --color-secondary-hover: #059669;
-  --color-secondary-subtle: var(--accent-emerald-soft);
-  --color-secondary-on: #FFFFFF;
+  /* Secondary (Sand) */
+  --color-secondary-default: var(--warm-sand);
+  --color-secondary-hover: var(--warm-border-warm);
+  --color-secondary-subtle: rgba(232, 230, 220, 0.5);
+  --color-secondary-on: var(--warm-charcoal);
 
-  /* Semantic - Success */
-  --color-success-default: var(--accent-emerald);
-  --color-success-dark: #059669;
-  --color-success-subtle: var(--accent-emerald-soft);
-  --color-success-on: #FFFFFF;
+  /* Semantic - Success (Forest Green) */
+  --success: var(--warm-success);
+  --color-success-default: var(--warm-success);
+  --color-success-dark: #3d6349;
+  --color-success-subtle: rgba(74, 124, 89, 0.08);
+  --color-success-on: #ffffff;
 
-  /* Semantic - Danger */
-  --color-danger-default: var(--accent-rose);
-  --color-danger-dark: #E11D48;
-  --color-danger-subtle: var(--accent-rose-soft);
-  --color-danger-on: #FFFFFF;
+  /* Semantic - Danger (Deep Red) */
+  --danger: var(--warm-danger);
+  --color-danger-default: var(--warm-danger);
+  --color-danger-dark: #9c2a2a;
+  --color-danger-subtle: rgba(181, 51, 51, 0.08);
+  --color-danger-on: #ffffff;
 
-  /* Semantic - Warning */
-  --color-warning-default: var(--accent-amber);
-  --color-warning-dark: #D97706;
-  --color-warning-subtle: var(--accent-amber-soft);
-  --color-warning-on: #0B0D12;
+  /* Semantic - Warning (Golden) */
+  --warning: var(--warm-warning);
+  --color-warning-default: var(--warm-warning);
+  --color-warning-dark: #a88420;
+  --color-warning-subtle: rgba(201, 162, 39, 0.08);
+  --color-warning-on: var(--warm-deep);
 
   /* Semantic - Info */
-  --color-info-default: var(--accent-blue);
-  --color-info-subtle: var(--accent-blue-soft);
-  --color-info-on: #FFFFFF;
+  --color-info-default: #6b7280;
+  --color-info-subtle: rgba(107, 114, 128, 0.08);
+  --color-info-on: #ffffff;
 
   /* Borders */
-  --color-border-default: #E8EAED;
-  --color-border-strong: #D1D5DB;
+  --border-color: var(--warm-border);
+  --color-border-default: var(--warm-border);
+  --color-border-strong: var(--warm-border-warm);
 
   /* Text */
-  --color-text-primary: #0F1117;
-  --color-text-secondary: #6B7280;
-  --color-text-muted: #9CA3AF;
-  --color-text-inverse: #FFFFFF;
-  --color-text-link: #3B82F6;
+  --text-main: var(--warm-fg);
+  --color-text-primary: var(--warm-fg);
+  --color-text-secondary: var(--warm-muted);
+  --color-text-tertiary: var(--warm-dim);
+  --color-text-muted: var(--warm-silver);
+  --color-text-inverse: #ffffff;
+  --color-text-link: var(--warm-accent);
 
-  /* 2. Typography Ramp */
-  --font-family-primary: 'Inter', 'Hind Siliguri', system-ui, sans-serif;
-  --font-family-mono: 'JetBrains Mono', monospace;
+  /* Legacy accents (for backward compatibility) */
+  --accent-gold: var(--warm-accent);
+  --accent-gold-soft: rgba(201, 100, 66, 0.15);
+  --accent-emerald: var(--warm-success);
+  --accent-emerald-soft: rgba(74, 124, 89, 0.15);
+  --accent-rose: var(--warm-danger);
+  --accent-rose-soft: rgba(181, 51, 51, 0.15);
+  --accent-blue: #6b7280;
+  --accent-blue-soft: rgba(107, 114, 128, 0.15);
+  --accent-amber: var(--warm-warning);
+  --accent-amber-soft: rgba(201, 162, 39, 0.15);
+
+  /* ========================================
+     4. TYPOGRAPHY RAMP
+     ======================================== */
+  --font-display: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+
+  --font-family-primary: var(--font-body);
+  --font-family-mono: var(--font-mono);
 
   --font-hero-size: 32px;
-  --font-hero-weight: 800;
+  --font-hero-weight: 500;
   --font-hero-line-height: 1.2;
 
-  --font-heading-size: 20px;
-  --font-heading-weight: 700;
-  --font-heading-line-height: 1.3;
+  --font-heading-size: 24px;
+  --font-heading-weight: 500;
+  --font-heading-line-height: 1.2;
 
-  --font-subheading-size: 16px;
-  --font-subheading-weight: 600;
-  --font-subheading-line-height: 1.4;
+  --font-subheading-size: 18px;
+  --font-subheading-weight: 500;
+  --font-subheading-line-height: 1.3;
 
   --font-body-size: 14px;
-  --font-body-weight: 500;
+  --font-body-weight: 400;
   --font-body-line-height: 1.5;
 
   --font-caption-size: 12px;
-  --font-caption-weight: 600;
+  --font-caption-weight: 500;
   --font-caption-line-height: 1.4;
 
-  /* 3. Spacing Scale */
+  /* ========================================
+     5. SPACING SCALE
+     ======================================== */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -119,33 +167,67 @@
   --space-12: 48px;
   --space-16: 64px;
 
-  /* 4. Elevation */
-  --elevation-1: 0px 1px 2px rgba(0, 0, 0, 0.05);
-  --elevation-2: 0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --elevation-3: 0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -2px rgba(0, 0, 0, 0.05);
+  /* Layout specific */
+  --sidebar-w: 260px;
+  --sidebar-collapsed: 72px;
+  --header-h: 64px;
 
-  /* 5. Motion */
-  --motion-duration-fast: 120ms;
-  --motion-duration-normal: 220ms;
-  --motion-easing-standard: cubic-bezier(0.16, 1, 0.3, 1);
+  /* ========================================
+     6. ELEVATION
+     ======================================== */
+  --elevation-1: 0px 1px 2px rgba(20, 20, 19, 0.05);
+  --elevation-2: 0px 4px 6px -1px rgba(20, 20, 19, 0.08), 0px 2px 4px -1px rgba(20, 20, 19, 0.04);
+  --elevation-3: 0px 10px 15px -3px rgba(20, 20, 19, 0.08), 0px 4px 6px -2px rgba(20, 20, 19, 0.04);
+  --elevation-card: 0 4px 24px rgba(20, 20, 19, 0.05);
+
+  /* ========================================
+     7. MOTION
+     ======================================== */
+  --motion-duration-fast: 150ms;
+  --motion-duration-normal: 200ms;
+  --motion-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ========================================
+     8. SHADOWS
+     ======================================== */
+  --shadow-sm: 0 1px 2px rgba(20, 20, 19, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(20, 20, 19, 0.08);
+  --shadow-lg: 0 10px 15px -3px rgba(20, 20, 19, 0.08);
+  --shadow-ring: 0 0 0 1px var(--warm-ring);
 }
 
+/* ========================================
+   DARK MODE (Reserved for future use)
+   ======================================== */
 .dark {
-  --color-background-default: #0B0D12;
-  --color-background-subtle: #0F1117;
-  --color-surface-default: #151821;
-  --color-surface-raised: #1A1F2E;
+  --bg: #1a1a18;
+  --bg-app: #1a1a18;
+  --bg-main: #1a1a18;
+  --bg-card: #242422;
+
+  --warm-fg: #f5f4ed;
+  --warm-muted: #b0aea5;
+  --warm-dim: #87867f;
+  --warm-border: #30302e;
+  --warm-border-warm: #3a3a36;
+
+  --color-background-default: #1a1a18;
+  --color-background-subtle: #242422;
+  --color-surface-default: #242422;
+  --color-surface-raised: #2d2d2a;
   --color-surface-overlay: rgba(0, 0, 0, 0.6);
 
-  --color-text-primary: #E8E8E8;
-  --color-text-secondary: #8B95A5;
-  --color-text-tertiary: #5A6270;
-  --color-text-muted: #3D4451;
-  --color-text-inverse: #0B0D12;
+  --color-text-primary: #f5f4ed;
+  --color-text-secondary: #b0aea5;
+  --color-text-tertiary: #87867f;
+  --color-text-muted: #5e5d59;
+  --color-text-inverse: #141413;
 
-  --color-border-default: #2A2F3D;
-  --color-border-strong: #3D4451;
+  --color-border-default: #30302e;
+  --color-border-strong: #3a3a36;
 
-  --color-primary-on: #0B0D12;
-  --color-secondary-on: #FFFFFF;
+  --color-primary-on: #141413;
+  --color-secondary-on: #f5f4ed;
 }

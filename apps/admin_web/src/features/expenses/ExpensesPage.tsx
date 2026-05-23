@@ -267,123 +267,135 @@ export function ExpensesPage() {
         }
       />
 
-      <div className="dashboard-grid mt-6 mb-6">
+      <div className="metric-grid">
         <MetricCard title="Today" value={`৳${todayTotal.toLocaleString('en-BD', { minimumFractionDigits: 2 })}`} icon={<CalendarDays size={20} className="text-success-dark dark:text-success" />} color="success" variant="light" />
         <MetricCard title="This Week" value={`৳${weekTotal.toLocaleString('en-BD', { minimumFractionDigits: 2 })}`} icon={<TrendingUp size={20} className="text-success-dark dark:text-success" />} color="success" variant="light" />
         <MetricCard title="This Month" value={`৳${monthTotal.toLocaleString('en-BD', { minimumFractionDigits: 2 })}`} icon={<Wallet size={20} className="text-success-dark dark:text-success" />} color="success" variant="light" />
       </div>
 
       {/* Expense Dashboard */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div className="layout-2col page-section">
         {/* Overview Stats */}
-        <div className="card p-6">
-          <h2 className="text-lg font-semibold text-text-primary mb-4">Expense Overview</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-surface-secondary rounded-lg">
-              <div className="text-sm text-text-muted">Total Expenses</div>
-              <div className="text-2xl font-bold text-text-primary">৳{totalStats.total.toLocaleString('en-BD', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</div>
-              <div className="text-xs text-text-muted">{totalStats.count} transactions</div>
-            </div>
-            <div className="p-4 bg-surface-secondary rounded-lg">
-              <div className="text-sm text-text-muted">Average Expense</div>
-              <div className="text-2xl font-bold text-text-primary">৳{totalStats.avg.toLocaleString('en-BD', { maximumFractionDigits: 0 })}</div>
-              <div className="text-xs text-text-muted">per transaction</div>
-            </div>
-            <div className="p-4 bg-surface-secondary rounded-lg">
-              <div className="text-sm text-text-muted">Highest Single</div>
-              <div className="text-2xl font-bold text-danger">৳{totalStats.max.toLocaleString('en-BD', { maximumFractionDigits: 0 })}</div>
-              <div className="text-xs text-text-muted">single expense</div>
-            </div>
-            <div className="p-4 bg-surface-secondary rounded-lg">
-              <div className="text-sm text-text-muted">Lowest Single</div>
-              <div className="text-2xl font-bold text-success">৳{totalStats.min.toLocaleString('en-BD', { maximumFractionDigits: 0 })}</div>
-              <div className="text-xs text-text-muted">single expense</div>
-            </div>
+        <div className="card">
+          <div className="card-header">
+            <h2 className="card-title">Expense Overview</h2>
           </div>
-          {monthlyComparison.lastMonth > 0 && (
-            <div className="mt-4 p-4 bg-surface-secondary rounded-lg">
-              <div className="text-sm text-text-muted mb-2">Month Over Month</div>
-              <div className="flex items-center gap-2">
-                <span className="text-lg font-semibold text-text-primary">৳{monthlyComparison.thisMonth.toLocaleString('en-BD', { maximumFractionDigits: 0 })}</span>
-                {monthlyComparison.change !== 0 && (
-                  <span className={`flex items-center text-sm ${monthlyComparison.change > 0 ? 'text-danger' : 'text-success'}`}>
-                    {monthlyComparison.change > 0 ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
-                    {Math.abs(monthlyComparison.change).toFixed(1)}%
-                  </span>
-                )}
+          <div className="card-body">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="stat-card">
+                <div className="text-sm text-text-muted">Total Expenses</div>
+                <div className="text-2xl font-bold text-text-primary">৳{totalStats.total.toLocaleString('en-BD', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</div>
+                <div className="text-xs text-text-muted">{totalStats.count} transactions</div>
               </div>
-              <div className="text-xs text-text-muted">vs ৳{monthlyComparison.lastMonth.toLocaleString('en-BD', { maximumFractionDigits: 0 })} last month</div>
+              <div className="stat-card">
+                <div className="text-sm text-text-muted">Average Expense</div>
+                <div className="text-2xl font-bold text-text-primary">৳{totalStats.avg.toLocaleString('en-BD', { maximumFractionDigits: 0 })}</div>
+                <div className="text-xs text-text-muted">per transaction</div>
+              </div>
+              <div className="stat-card">
+                <div className="text-sm text-text-muted">Highest Single</div>
+                <div className="text-2xl font-bold text-danger">৳{totalStats.max.toLocaleString('en-BD', { maximumFractionDigits: 0 })}</div>
+                <div className="text-xs text-text-muted">single expense</div>
+              </div>
+              <div className="stat-card">
+                <div className="text-sm text-text-muted">Lowest Single</div>
+                <div className="text-2xl font-bold text-success">৳{totalStats.min.toLocaleString('en-BD', { maximumFractionDigits: 0 })}</div>
+                <div className="text-xs text-text-muted">single expense</div>
+              </div>
             </div>
-          )}
+            {monthlyComparison.lastMonth > 0 && (
+              <div className="mt-4 stat-card border-none bg-surface-secondary">
+                <div className="text-sm text-text-muted mb-2">Month Over Month</div>
+                <div className="flex items-center gap-2">
+                  <span className="text-lg font-semibold text-text-primary">৳{monthlyComparison.thisMonth.toLocaleString('en-BD', { maximumFractionDigits: 0 })}</span>
+                  {monthlyComparison.change !== 0 && (
+                    <span className={`flex items-center text-sm ${monthlyComparison.change > 0 ? 'text-danger' : 'text-success'}`}>
+                      {monthlyComparison.change > 0 ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
+                      {Math.abs(monthlyComparison.change).toFixed(1)}%
+                    </span>
+                  )}
+                </div>
+                <div className="text-xs text-text-muted">vs ৳{monthlyComparison.lastMonth.toLocaleString('en-BD', { maximumFractionDigits: 0 })} last month</div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Category Breakdown */}
-        <div className="card p-6">
-          <h2 className="text-lg font-semibold text-text-primary mb-4">By Category</h2>
-          {categoryBreakdown.length > 0 ? (
-            <>
-              <div className="h-[200px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={categoryBreakdown}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={70}
-                      label={({ name, percent }) => `${(name as string).split(' ')[0]} ${((percent ?? 0) * 100).toFixed(0)}%`}
-                      labelLine={false}
-                    >
-                      {categoryBreakdown.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      formatter={(value) => [`৳${Number(value).toLocaleString('en-BD', { maximumFractionDigits: 0 })}`, 'Amount']}
-                      contentStyle={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border-default)', borderRadius: 'var(--radius-md)' }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="mt-4 space-y-2">
-                {categoryBreakdown.slice(0, 4).map((cat, idx) => (
-                  <div key={cat.name} className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: CHART_COLORS[idx % CHART_COLORS.length] }} />
-                      <span className="text-text-muted">{cat.name}</span>
+        <div className="card">
+          <div className="card-header">
+            <h2 className="card-title">By Category</h2>
+          </div>
+          <div className="card-body">
+            {categoryBreakdown.length > 0 ? (
+              <>
+                <div className="h-[200px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={categoryBreakdown}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={70}
+                        label={({ name, percent }) => `${(name as string).split(' ')[0]} ${((percent ?? 0) * 100).toFixed(0)}%`}
+                        labelLine={false}
+                      >
+                        {categoryBreakdown.map((_, index) => (
+                          <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        formatter={(value) => [`৳${Number(value).toLocaleString('en-BD', { maximumFractionDigits: 0 })}`, 'Amount']}
+                        contentStyle={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)' }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="mt-4 space-y-2">
+                  {categoryBreakdown.slice(0, 4).map((cat, idx) => (
+                    <div key={cat.name} className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: CHART_COLORS[idx % CHART_COLORS.length] }} />
+                        <span className="text-text-muted">{cat.name}</span>
+                      </div>
+                      <span className="font-medium text-text-primary">৳{cat.value.toLocaleString('en-BD', { maximumFractionDigits: 0 })}</span>
                     </div>
-                    <span className="font-medium text-text-primary">৳{cat.value.toLocaleString('en-BD', { maximumFractionDigits: 0 })}</span>
-                  </div>
-                ))}
-              </div>
-            </>
-          ) : (
-            <EmptyState icon={<Receipt size={32} />} title="No data" description="Add expenses to see breakdown" />
-          )}
+                  ))}
+                </div>
+              </>
+            ) : (
+              <EmptyState icon={<Receipt size={32} />} title="No data" description="Add expenses to see breakdown" />
+            )}
+          </div>
         </div>
 
         {/* Monthly Trend */}
-        <div className="card p-6">
-          <h2 className="text-lg font-semibold text-text-primary mb-4">Monthly Trend</h2>
-          {monthlyTrend.length > 0 ? (
-            <div className="h-[250px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={monthlyTrend}>
-                  <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke="var(--color-text-muted)" />
-                  <YAxis tick={{ fontSize: 12 }} stroke="var(--color-text-muted)" tickFormatter={(v) => `৳${(v / 1000).toFixed(0)}k`} />
-                  <Tooltip
-                    formatter={(value) => [`৳${Number(value).toLocaleString('en-BD', { maximumFractionDigits: 0 })}`, 'Total']}
-                    labelStyle={{ color: 'var(--color-text-primary)' }}
-                    contentStyle={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border-default)', borderRadius: 'var(--radius-md)' }}
-                  />
-                  <Bar dataKey="total" fill="var(--color-success-default)" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          ) : (
-            <EmptyState icon={<TrendingUp size={32} />} title="No data" description="Add expenses to see trend" />
-          )}
+        <div className="card">
+          <div className="card-header">
+            <h2 className="card-title">Monthly Trend</h2>
+          </div>
+          <div className="card-body">
+            {monthlyTrend.length > 0 ? (
+              <div className="h-[250px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={monthlyTrend}>
+                    <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke="var(--text-muted)" />
+                    <YAxis tick={{ fontSize: 12 }} stroke="var(--text-muted)" tickFormatter={(v) => `৳${(v / 1000).toFixed(0)}k`} />
+                    <Tooltip
+                      formatter={(value) => [`৳${Number(value).toLocaleString('en-BD', { maximumFractionDigits: 0 })}`, 'Total']}
+                      labelStyle={{ color: 'var(--text-primary)' }}
+                      contentStyle={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)' }}
+                    />
+                    <Bar dataKey="total" fill="var(--color-success-default)" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <EmptyState icon={<TrendingUp size={32} />} title="No data" description="Add expenses to see trend" />
+            )}
+          </div>
         </div>
 
         {/* Payment Type & Top Vendors */}
@@ -433,36 +445,38 @@ export function ExpensesPage() {
       </div>
 
       {/* Top 5 Highest Expenses */}
-      <div className="card p-6 mb-6">
-        <h2 className="text-lg font-semibold text-text-primary mb-4">Top 5 Highest Expenses</h2>
-        {topExpenses.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full">
+      <div className="card page-section">
+        <div className="card-header">
+          <h2 className="card-title">Top 5 Highest Expenses</h2>
+        </div>
+        <div className="card-body" style={{ padding: 0 }}>
+          {topExpenses.length > 0 ? (
+            <table className="data-table">
               <thead>
-                <tr className="border-b border-border-default">
-                  <th className="text-left text-sm font-medium text-text-muted pb-2">Date</th>
-                  <th className="text-left text-sm font-medium text-text-muted pb-2">Description</th>
-                  <th className="text-left text-sm font-medium text-text-muted pb-2">Category</th>
-                  <th className="text-right text-sm font-medium text-text-muted pb-2">Amount</th>
+                <tr>
+                  <th>Date</th>
+                  <th>Description</th>
+                  <th>Category</th>
+                  <th className="text-right">Amount</th>
                 </tr>
               </thead>
               <tbody>
                 {topExpenses.map((e) => (
-                  <tr key={e.id} className="border-b border-border-light">
-                    <td className="py-3 text-sm text-text-muted">{e.date}</td>
-                    <td className="py-3 text-sm text-text-primary">{e.description}</td>
-                    <td className="py-3">
+                  <tr key={e.id}>
+                    <td>{e.date}</td>
+                    <td>{e.description}</td>
+                    <td>
                       <span className="text-xs px-2 py-1 rounded-full bg-surface-secondary text-text-muted">{e.category}</span>
                     </td>
-                    <td className="py-3 text-right text-sm font-semibold text-danger">৳{e.amount.toLocaleString('en-BD', { minimumFractionDigits: 2 })}</td>
+                    <td className="text-right font-mono text-danger">৳{e.amount.toLocaleString('en-BD', { minimumFractionDigits: 2 })}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
-        ) : (
-          <EmptyState icon={<Receipt size={32} />} title="No expenses" description="Add expenses to see top transactions" />
-        )}
+          ) : (
+            <EmptyState icon={<Receipt size={32} />} title="No expenses" description="Add expenses to see top transactions" />
+          )}
+        </div>
       </div>
 
       <div className="card expenses-filters">
@@ -496,7 +510,7 @@ export function ExpensesPage() {
       </div>
 
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-        <table className="expenses-table">
+        <table className="data-table">
           <thead>
             <tr>
               <th>Date</th>

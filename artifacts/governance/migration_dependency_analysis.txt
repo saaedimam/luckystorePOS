@@ -1,6 +1,6 @@
 Migration Dependency Analysis
-Generated: 2026-05-19T22:53:41.299Z
-Migrations: 109
+Generated: 2026-05-23T22:40:59.556Z
+Migrations: 128
 
 CRITICAL DEPENDENCY ISSUES
 ===========================
@@ -158,6 +158,9 @@ CRITICAL DEPENDENCY ISSUES
 20260511030000_enrich_inventory_list.sql
   [CRITICAL] forward_dependency: get_inventory_list
 
+20260511130416_inventory_reconciliations.sql
+  [CRITICAL] forward_dependency: adjust_inventory_stock
+
 20260512000000_customer_staff_analytics.sql
   [CRITICAL] forward_dependency: get_store_users
   [CRITICAL] forward_dependency: get_customer_analytics
@@ -167,7 +170,15 @@ CRITICAL DEPENDENCY ISSUES
   [CRITICAL] forward_dependency: competitor_prices
   [CRITICAL] forward_dependency: cleanup_old_competitor_prices
 
-UNSAFE MIGRATIONS (60)
+20260520000001_online_orders.sql
+  [CRITICAL] forward_dependency: online_orders
+  [CRITICAL] forward_dependency: online_order_items
+  [CRITICAL] forward_dependency: delivery_zones
+
+20260520124315_reserve_online_stock_trigger.sql
+  [CRITICAL] forward_dependency: online_order_items
+
+UNSAFE MIGRATIONS (66)
 ====================
 
 20260301000000_baseline_core_tables.sql (foundational)

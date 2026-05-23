@@ -5,6 +5,8 @@ import { useCart } from '@/store/useCart';
 import { useRouter } from 'next/navigation';
 import { X, CheckCircle2, MessageCircle, Loader2, User, Phone, MapPin } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '@/components/ui/Button';
+import { cn } from '@/lib/utils';
 
 // This modal is a lightweight "quick checkout" option from the floating cart bar.
 // Full checkout with delivery check lives at /checkout. Both paths lead to /order/[orderNumber].
@@ -100,9 +102,17 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-black tracking-tight text-text-primary">অর্ডার করুন</h2>
-                <button onClick={onClose} className="p-2 hover:bg-background-subtle rounded-full transition-colors">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onClose}
+                  className={cn(
+                    "p-2 hover:bg-background-subtle rounded-full",
+                    "shadow-none hover:shadow-none"
+                  )}
+                >
                   <X size={20} />
-                </button>
+                </Button>
               </div>
 
               {/* Items summary */}
@@ -120,12 +130,14 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
               </div>
 
               {/* Option 1: Full checkout (with GPS check) */}
-              <button
+              <Button
                 onClick={handleViewFullCheckout}
-                className="w-full mb-3 premium-button bg-primary-default text-primary-on hover:bg-primary-hover shadow-level-2"
+                className={cn(
+                  "w-full mb-3 premium-button bg-primary-default text-primary-on hover:bg-primary-hover shadow-level-2"
+                )}
               >
                 ডেলিভারি চেক করে অর্ডার দিন
-              </button>
+              </Button>
 
               <div className="flex items-center gap-3 mb-3">
                 <div className="flex-1 h-px bg-border-default" />
@@ -177,13 +189,16 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   <p className="text-xs font-semibold text-danger-default bg-danger-subtle rounded-xl px-3 py-2">{error}</p>
                 )}
 
-                <button
+                <Button
                   type="submit"
                   disabled={loading || items.length === 0}
-                  className="premium-button w-full bg-surface-raised text-text-primary border border-border-default hover:border-border-strong disabled:opacity-50 transition-all"
+                  className={cn(
+                    "premium-button w-full bg-surface-raised text-text-primary border border-border-default hover:border-border-strong disabled:opacity-50",
+                    "shadow-none hover:shadow-none"
+                  )}
                 >
                   {loading ? <><Loader2 size={18} className="animate-spin" /> প্রক্রিয়াকরণ...</> : 'অর্ডার কনফার্ম করুন (COD)'}
-                </button>
+                </Button>
               </form>
             </div>
           ) : (

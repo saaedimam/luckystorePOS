@@ -1,5 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
+
 const WHATSAPP_NUMBER = "+8801234567890";
 
 export function Header() {
@@ -29,11 +32,20 @@ export function Header() {
             <span className="text-[10px] font-bold text-text-muted tracking-widest uppercase mt-0.5">Chittagong Branch</span>
           </div>
         </div>
-        <button onClick={openWhatsApp} className="w-10 h-10 rounded-full bg-green-50 border border-green-100 flex items-center justify-center text-green-600 hover:bg-green-100 active:scale-95 transition-all duration-200 shrink-0" aria-label="Chat on WhatsApp">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={openWhatsApp}
+          className={cn(
+            "w-10 h-10 rounded-full bg-green-50 border border-green-100 text-green-600 hover:bg-green-100 hover:text-green-700",
+            "active:scale-95 shrink-0 shadow-none hover:shadow-none"
+          )}
+          aria-label="Chat on WhatsApp"
+        >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
-        </button>
+        </Button>
       </div>
     </header>
   );

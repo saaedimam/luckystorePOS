@@ -1,15 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/**
+ * Base Styles - LuckyStore Admin
+ * Warm Anthropic-inspired foundation
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 *, *::before, *::after {
   box-sizing: border-box;
-}
-
-body, h1, h2, h3, h4, p, figure, blockquote, dl, dd {
   margin: 0;
+  padding: 0;
 }
 
-ul[role='list'], ol[role='list'] {
-  list-style: none;
+html, body {
+  height: 100%;
+  overflow: hidden;
 }
 
 html:focus-within {
@@ -17,17 +21,28 @@ html:focus-within {
 }
 
 body {
-  min-height: 100vh;
-  text-rendering: optimizeSpeed;
+  font-family: var(--font-body);
+  font-size: var(--font-size);
   line-height: 1.5;
-  font-family: var(--font-family);
-  background-color: var(--bg-app);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--bg);
   color: var(--text-main);
-  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+ul[role='list'], ol[role='list'] {
+  list-style: none;
 }
 
 a:not([class]) {
   text-decoration-skip-ink: auto;
+  color: var(--accent);
 }
 
 img, picture {
@@ -47,14 +62,14 @@ button {
 
 /* Focus styles */
 :focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
-/* Scrollbar styling */
+/* Scrollbar styling - Warm theme */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -62,18 +77,34 @@ button {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: var(--radius-xl);
+  background: var(--warm-ring);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+  background: var(--warm-dim);
 }
 
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.4; }
-  100% { opacity: 1; }
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--warm-ring) transparent;
+}
+
+/* Animations */
+@keyframes screenEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
 }
 
 /* Utility: hide scrollbar while keeping scroll functionality */
@@ -83,4 +114,38 @@ button {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* Screen animation helper */
+.screen-enter {
+  animation: screenEnter 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Typography utilities */
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+/* Text utilities */
+.text-muted {
+  color: var(--warm-muted);
+}
+
+.text-dim {
+  color: var(--warm-dim);
+}
+
+.text-accent {
+  color: var(--accent);
+}
+
+/* Selection styling */
+::selection {
+  background-color: rgba(201, 100, 66, 0.2);
+  color: var(--warm-deep);
 }

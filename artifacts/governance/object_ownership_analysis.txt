@@ -1,12 +1,12 @@
 Object Ownership Analysis
-Generated: 2026-05-19T22:53:41.354Z
-Migrations: 109
-Objects Tracked: 279
-Conflicts: 609
+Generated: 2026-05-23T22:40:59.608Z
+Migrations: 128
+Objects Tracked: 335
+Conflicts: 662
 
 CANONICAL OWNERSHIP
 ==================
-Ledger Tables (16)
+Ledger Tables (22)
   idx_stock_ledger_created_at → 20260301000000_baseline_core_tables.sql
   idx_stock_ledger_movement_id → 20260301000000_baseline_core_tables.sql
   idx_stock_ledger_product_id → 20260301000000_baseline_core_tables.sql
@@ -22,14 +22,22 @@ Ledger Tables (16)
   stock_ledger_service_role_all → 20260427080000_stock_ledger_table.sql
   stock_ledger_service_role_insert → 20260427080000_stock_ledger_table.sql
   idx_stock_ledger_store_product → 20260427210000_reconcile_stock_ledger_schema.sql
+  idx_reconciliations_tenant_store → 20260511130416_inventory_reconciliations.sql
+  idx_reconciliations_product → 20260511130416_inventory_reconciliations.sql
+  idx_reconciliations_status → 20260511130416_inventory_reconciliations.sql
+  select_reconciliations → 20260511130416_inventory_reconciliations.sql
+  insert_reconciliations → 20260511130416_inventory_reconciliations.sql
+  update_reconciliations → 20260511130416_inventory_reconciliations.sql
   stock_levels_read → 20260511150000_fix_stock_levels_read_rls.sql
 
 RPC Functions (0)
 
 Security Functions (0)
 
-HIGH-RISK CONFLICTS (608)
+HIGH-RISK CONFLICTS (661)
 ====================
+[duplicate_creator] public
+[duplicate_creator] public
 [duplicate_creator] public
 [duplicate_creator] public
 [duplicate_creator] public
@@ -552,8 +560,8 @@ HIGH-RISK CONFLICTS (608)
 [duplicate_creator] idx_items_tenant_id
 [duplicate_creator] categories_select_tenant_isolated
 [duplicate_creator] categories_manage_authorized
-[duplicate_creator] categories_select_tenant_isolated
-[duplicate_creator] categories_manage_authorized
+[duplicate_creator] items_select_tenant_isolated
+[duplicate_creator] items_manage_authorized
 [duplicate_creator] stock_transfer_items_select_tenant
 [duplicate_creator] purchase_order_items_select_tenant
 [duplicate_creator] pgcrypto
@@ -573,6 +581,22 @@ HIGH-RISK CONFLICTS (608)
 [duplicate_creator] managers
 [duplicate_creator] allow
 [duplicate_creator] allow
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
 [duplicate_creator] public
 [duplicate_creator] public
 [duplicate_creator] public
@@ -618,6 +642,9 @@ HIGH-RISK CONFLICTS (608)
 [duplicate_creator] public
 [duplicate_creator] authenticated
 [duplicate_creator] authenticated
+[duplicate_creator] pgcrypto
+[duplicate_creator] public
+[duplicate_creator] public
 [duplicate_creator] public
 [duplicate_creator] public
 [duplicate_creator] public
@@ -636,5 +663,37 @@ HIGH-RISK CONFLICTS (608)
 [duplicate_creator] public
 [duplicate_creator] public
 [duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] staff
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] postgis
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] postgis
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] public
+[duplicate_creator] pg_net
+[duplicate_creator] public
+[duplicate_creator] products_guest_read
+[duplicate_creator] idx_products_is_active
+[duplicate_creator] products_guest_read
 [replacement_without_owner] 20260506000003_repair_stock_and_reminder_functions.sql
 [replacement_without_owner] 20260506040100_fix_empty_search_path_on_security_definer_functions.sql

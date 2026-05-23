@@ -49,6 +49,7 @@ graph TD
 |-------|---------|---------|---------|--------|
 | Self-Improving Agent | 3.0.21 | agent:bootstrap | hooks/openclaw/handler.ts | ERRORS.md, LEARNINGS.md, FEATURE_REQUESTS.md |
 | Token Optimizer | 2.x | SessionEnd, PreCompact | scripts/measure.py | dashboard.html, checkpoints/ |
+| Token Saver | 1.0 | Task start | .ai/skills/token-saver/ | ATOM enforcement, zero-cost routing |
 
 ```mermaid
 classDiagram
@@ -129,6 +130,39 @@ sequenceDiagram
 | MCP tools | <3K deferred | ToolSearch enabled |
 | Savings | 5-25% | Before/after compare |
 
+## ATOM (Active Token Optimization Mode)
+
+Token Saver skill enforces zero-cost subscription routing with strict metered API blocking.
+
+### Core Principles
+- **$0/month metered API cost** — All operations route through subscription CLIs
+- **Blocked endpoints**: api.anthropic.com, api.openai.com, generativelanguage.googleapis.com
+- **Response format**: `[GOAL]` / `[CODE]` / `[RISK]`
+
+### Active Subscriptions
+| Service | CLI | Status |
+|---------|-----|--------|
+| Claude Code | `claude` | ACTIVE |
+| Antigravity | `agy` | ACTIVE |
+| Ollama Cloud | `ollama` | Available |
+
+### Configuration
+```bash
+# Initialize token-saver state
+bash .ai/skills/token-saver/references/runtime-detection.sh
+
+# Check configuration
+cat .agent-state/runtime.json
+cat .agent-state/subscriptions.json
+cat .agent-state/budget.json  # $0.00/month limit
+```
+
+### Blocked (Metered APIs)
+- ANTHROPIC_API_KEY → Use `claude` CLI
+- OPENAI_API_KEY → No zero-cost route (blocked)
+- GEMINI_API_KEY → Use `agy` CLI (Antigravity)
+- DEEPSEEK_API_KEY → No zero-cost route (blocked)
+
 ## Memory Hub
 
 | Category | Location | Access Pattern |
@@ -149,8 +183,8 @@ graph TD
     D --> F
     E --> F
     F -->|Yes| G[CLAUDE.md]
-    F -->|No| H[Archive]
+    F -->|No| H[.hermes/memory-hub/archive/]
 ```
 
 ---
-*Agent Config Version: 2026.05.21*
+*Agent Config Version: 2026.05.24*

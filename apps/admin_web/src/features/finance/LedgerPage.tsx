@@ -134,11 +134,11 @@ export const LedgerPage: React.FC<LedgerPageConfig> = ({
         </button>
       } />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 'var(--space-6)' }}>
+      <div className="flex flex-col lg:flex-row gap-6">
         {/* Party List */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 'var(--space-4)' }}>
+        <div className="w-full lg:w-1/3 flex flex-col gap-4">
           {parties.length === 0 ? (
-            <div className="card col-[1/-1]">
+            <div className="card">
               <EmptyState
                 icon={<Icon size={48} />}
                 title={emptyTitle}
@@ -149,26 +149,18 @@ export const LedgerPage: React.FC<LedgerPageConfig> = ({
             <button
               key={p.id}
               onClick={() => fetchLedger(p)}
-              style={{
-                display: 'block',
-                width: '100%',
-                textAlign: 'left',
-                padding: 'var(--space-4)',
-                borderRadius: 'var(--radius-lg)',
-                border: selectedParty?.id === p.id ? '2px solid var(--color-primary)' : '1px solid var(--border-color)',
-                backgroundColor: selectedParty?.id === p.id ? 'var(--color-primary-subtle)' : 'var(--bg-card)',
-                cursor: 'pointer',
-                transition: 'all var(--transition-fast)',
-                boxShadow: selectedParty?.id === p.id ? 'var(--shadow-md)' : 'var(--shadow-sm)'
-              }}
-              className="card"
+              className={`card text-left transition-all cursor-pointer ${
+                selectedParty?.id === p.id 
+                  ? 'border-[var(--color-primary-default)] bg-[var(--color-primary-subtle)] shadow-md' 
+                  : 'hover:border-[var(--color-primary-default)] hover:shadow-md'
+              }`}
             >
-              <div style={{ fontWeight: '600', color: 'var(--text-main)' }}>{p.name}</div>
-              <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-muted)' }}>{p.phone || 'No phone'}</div>
-              <div style={{ marginTop: 'var(--space-2)', fontSize: 'var(--font-size-lg)', fontWeight: '700', color: (p.current_balance ?? 0) > 0 ? balanceColorPositive : 'var(--color-success)' }}>
+              <div className="font-semibold text-text-primary">{p.name}</div>
+              <div className="text-sm text-text-muted">{p.phone || 'No phone'}</div>
+              <div className="mt-2 text-lg font-bold" style={{ color: (p.current_balance ?? 0) > 0 ? balanceColorPositive : 'var(--color-success-default)' }}>
                 ৳ {(p.current_balance ?? 0).toLocaleString()}
               </div>
-              <div style={{ fontSize: 'var(--font-size-xs)', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-light)', marginTop: '2px' }}>
+              <div className="text-xs uppercase tracking-wider text-text-muted mt-0.5">
                 {balanceLabel}
               </div>
             </button>
@@ -176,73 +168,60 @@ export const LedgerPage: React.FC<LedgerPageConfig> = ({
         </div>
 
         {/* Ledger Detail */}
-        {selectedParty ? (
-          <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-            <div style={{
-              padding: 'var(--space-4)',
-              borderBottom: '1px solid var(--border-color)',
-              backgroundColor: 'var(--color-background-subtle)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <div>
-                <h2 style={{ fontWeight: '700', color: 'var(--text-main)' }}>{selectedParty.name}</h2>
-                <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)' }}>{statementSubtitle}</p>
+        <div className="w-full lg:w-2/3">
+          {selectedParty ? (
+            <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+              <div className="card-header flex justify-between items-center bg-surface-secondary">
+                <div>
+                  <h2 className="card-title text-text-primary">{selectedParty.name}</h2>
+                  <p className="text-xs text-text-muted">{statementSubtitle}</p>
+                </div>
+                <button
+                  className="button-outline"
+                  onClick={() => window.print()}
+                >
+                  Print Statement
+                </button>
               </div>
-              <button
-                className="button-outline"
-                onClick={() => window.print()}
-              >
-                Print Statement
-              </button>
-            </div>
-
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+  
+              <table className="data-table">
                 <thead>
-                  <tr style={{
-                    textAlign: 'left',
-                    borderBottom: '1px solid var(--border-color)',
-                    backgroundColor: 'var(--color-background-subtle)',
-                    color: 'var(--text-muted)',
-                    fontSize: 'var(--font-size-xs)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em'
-                  }}>
-                    <th style={{ padding: 'var(--space-4)' }}>Date</th>
-                    <th style={{ padding: 'var(--space-4)' }}>Reference</th>
-                    <th style={{ padding: 'var(--space-4)', textAlign: 'right' }}>{debitLabel}</th>
-                    <th style={{ padding: 'var(--space-4)', textAlign: 'right' }}>{creditLabel}</th>
-                    <th style={{ padding: 'var(--space-4)', textAlign: 'right' }}>Balance</th>
+                  <tr>
+                    <th>Date</th>
+                    <th>Reference</th>
+                    <th className="text-right">{debitLabel}</th>
+                    <th className="text-right">{creditLabel}</th>
+                    <th className="text-right">Balance</th>
                   </tr>
                 </thead>
                 <tbody>
                   {ledgerEntries.length === 0 ? (
                     <tr>
-                      <td colSpan={5} style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--text-muted)' }}>
-                        <p style={{ fontSize: 'var(--font-size-lg)', fontWeight: '600', color: 'var(--text-main)', marginBottom: 'var(--space-1)' }}>{emptyLedgerText}</p>
-                        <p style={{ fontSize: 'var(--font-size-sm)' }}>Transactions will appear once sales or payments are recorded.</p>
+                      <td colSpan={5}>
+                        <div className="p-12 text-center">
+                          <p className="text-lg font-semibold text-text-primary mb-1">{emptyLedgerText}</p>
+                          <p className="text-sm text-text-muted">Transactions will appear once sales or payments are recorded.</p>
+                        </div>
                       </td>
                     </tr>
                   ) : ledgerEntries.map((entry, idx) => (
-                    <tr key={entry.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                      <td style={{ padding: 'var(--space-4)', color: 'var(--text-muted)', fontSize: 'var(--font-size-sm)' }}>
+                    <tr key={entry.id}>
+                      <td className="text-text-muted text-sm">
                         {format(new Date(entry.effective_date), 'MMM dd, yyyy')}
                       </td>
-                      <td style={{ padding: 'var(--space-4)' }}>
-                        <div style={{ fontWeight: '500', color: 'var(--text-main)' }}>{entry.reference_type}</div>
-                        <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-light)', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <td>
+                        <div className="font-medium text-text-primary">{entry.reference_type}</div>
+                        <div className="text-xs text-text-muted truncate max-w-[120px]">
                           {entry.reference_id}
                         </div>
                       </td>
-                      <td style={{ padding: 'var(--space-4)', textAlign: 'right', color: debitColor, fontWeight: '600' }}>
+                      <td className="text-right font-semibold" style={{ color: debitColor }}>
                         {entry.debit_amount > 0 ? `৳ ${entry.debit_amount.toLocaleString()}` : '-'}
                       </td>
-                      <td style={{ padding: 'var(--space-4)', textAlign: 'right', color: creditColor, fontWeight: '600' }}>
+                      <td className="text-right font-semibold" style={{ color: creditColor }}>
                         {entry.credit_amount > 0 ? `৳ ${entry.credit_amount.toLocaleString()}` : '-'}
                       </td>
-                      <td style={{ padding: 'var(--space-4)', textAlign: 'right', fontWeight: '700', color: 'var(--text-main)' }}>
+                      <td className="text-right font-bold text-text-primary">
                         ৳ {balanceAtPoint(idx).toLocaleString()}
                       </td>
                     </tr>
@@ -250,21 +229,16 @@ export const LedgerPage: React.FC<LedgerPageConfig> = ({
                 </tbody>
               </table>
             </div>
-          </div>
-        ) : (
-          <div className="card" style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 'var(--space-12)',
-            border: '2px dashed var(--border-color)',
-            color: 'var(--text-muted)'
-          }}>
-            <Icon size={48} style={{ marginBottom: 'var(--space-4)', opacity: 0.2 }} />
-            <p>Select a {partyType} to view their statement</p>
-          </div>
-        )}
+          ) : (
+            <div className="card flex items-center justify-center p-12 border-dashed border-2 border-border-default">
+              <EmptyState 
+                icon={<Icon size={48} />} 
+                title={`Select a ${partyType}`}
+                description="Choose an account from the list to view their statement" 
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       <Drawer isOpen={showAddParty} onClose={() => setShowAddParty(false)} title={`Add ${partyType === 'supplier' ? 'Supplier' : 'Customer'}`}>
@@ -283,16 +257,16 @@ export const LedgerPage: React.FC<LedgerPageConfig> = ({
           setNewPartyPhone('');
           setShowAddParty(false);
           notify(`${partyType === 'supplier' ? 'Supplier' : 'Customer'} added`, 'success');
-        }} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+        }} className="flex flex-col gap-4">
           <div>
-            <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: '600', marginBottom: 'var(--space-1)' }}>Name *</label>
+            <label className="block text-sm font-semibold mb-1">Name *</label>
             <input type="text" value={newPartyName} onChange={e => setNewPartyName(e.target.value)} className="input w-full" placeholder="Enter name" required />
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: '600', marginBottom: 'var(--space-1)' }}>Phone</label>
+            <label className="block text-sm font-semibold mb-1">Phone</label>
             <input type="text" value={newPartyPhone} onChange={e => setNewPartyPhone(e.target.value)} className="input w-full" placeholder="Phone number" />
           </div>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-3)', marginTop: 'var(--space-4)' }}>
+          <div className="flex justify-end gap-3 mt-4">
             <button type="button" className="button-outline" onClick={() => setShowAddParty(false)}>Cancel</button>
             <button type="submit" className="button-primary">Add {partyType === 'supplier' ? 'Supplier' : 'Customer'}</button>
           </div>

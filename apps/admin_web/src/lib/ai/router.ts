@@ -324,17 +324,17 @@ export class ModelRouter {
 
     // Step 3: Execute with appropriate provider
     let result: T;
-    let actualTokensUsed = {
+    const actualTokensUsed = {
       input: task.inputTokens,
       output: task.expectedOutputTokens,
     };
 
     switch (decision.provider) {
       case "ollama-cloud":
-        result = await this.executeWithOllama<T>(task, decision.model as OllamaModel, payload);
+        result = await this.executeWithOllama<T>(task, decision.model as OllamaModel);
         break;
       case "gemini":
-        result = await this.executeWithGemini<T>(task, decision.model as GeminiModel, payload);
+        result = await this.executeWithGemini<T>(task, decision.model as GeminiModel);
         break;
       default:
         throw new ConfigurationError(`Unknown provider: ${decision.provider}`);
@@ -435,8 +435,7 @@ export class ModelRouter {
    */
   private async executeWithOllama<T>(
     task: AITask,
-    model: OllamaModel,
-    _payload: Record<string, unknown>
+    model: OllamaModel
   ): Promise<T> {
     // TODO: Implement actual Ollama Cloud API call
     // This would use the Ollama Cloud API endpoint
@@ -451,8 +450,7 @@ export class ModelRouter {
    */
   private async executeWithGemini<T>(
     task: AITask,
-    model: GeminiModel,
-    _payload: Record<string, unknown>
+    model: GeminiModel
   ): Promise<T> {
     // TODO: Implement actual Gemini API call
     // This would use the Gemini API endpoint

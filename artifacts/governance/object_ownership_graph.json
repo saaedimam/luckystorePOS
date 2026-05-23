@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-05-19T22:53:41.354Z",
-  "migration_count": 109,
-  "objects_tracked": 279,
-  "conflicts_detected": 609,
+  "timestamp": "2026-05-23T22:40:59.608Z",
+  "migration_count": 128,
+  "objects_tracked": 335,
+  "conflicts_detected": 662,
   "ownership_graph": {
     "extensions": {
       "type": "extensions schema if needed\nCREATE SCHEMA IF NOT EXISTS",
@@ -591,6 +591,84 @@
         {
           "name": "public",
           "type": "TABLE",
+          "migration": "20260506000000_import_inventory_from_csv.sql",
+          "timestamp": "20260506000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260506000000_import_inventory_from_csv.sql",
+          "timestamp": "20260506000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260506000000_import_inventory_from_csv.sql",
+          "timestamp": "20260506000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260506000000_import_inventory_from_csv.sql",
+          "timestamp": "20260506000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260506000000_import_inventory_from_csv.sql",
+          "timestamp": "20260506000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260506000000_import_inventory_from_csv.sql",
+          "timestamp": "20260506000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260506000001_import_inventory_apr10th.sql",
+          "timestamp": "20260506000001"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260506000001_import_inventory_apr10th.sql",
+          "timestamp": "20260506000001"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260506000001_import_inventory_apr10th.sql",
+          "timestamp": "20260506000001"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260506000001_import_inventory_apr10th.sql",
+          "timestamp": "20260506000001"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260506000001_import_inventory_apr10th.sql",
+          "timestamp": "20260506000001"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260506000001_import_inventory_apr10th.sql",
+          "timestamp": "20260506000001"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260506000001_import_inventory_apr10th.sql",
+          "timestamp": "20260506000001"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
           "migration": "20260506000001_import_inventory_apr10th.sql",
           "timestamp": "20260506000001"
         },
@@ -896,6 +974,36 @@
         },
         {
           "name": "public",
+          "type": "TABLE",
+          "migration": "20260511125509_inventory_movements_ledger.sql",
+          "timestamp": "20260511125509"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260511130244_harden_inventory_movements.sql",
+          "timestamp": "20260511130244"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260511130244_harden_inventory_movements.sql",
+          "timestamp": "20260511130244"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260511130244_harden_inventory_movements.sql",
+          "timestamp": "20260511130244"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260511130416_inventory_reconciliations.sql",
+          "timestamp": "20260511130416"
+        },
+        {
+          "name": "public",
           "type": "table",
           "migration": "20260514000001_create_competitor_prices.sql",
           "timestamp": "20260514000001"
@@ -929,6 +1037,48 @@
           "type": "TABLE",
           "migration": "20260520000000_add_whatsapp_invoice_columns.sql",
           "timestamp": "20260520000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260520140143_update_store_location_chattogram.sql",
+          "timestamp": "20260520140143"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
         },
         {
           "name": "public",
@@ -987,38 +1137,128 @@
         {
           "name": "public",
           "type": "TABLE",
-          "migration": "20260521000002_online_order_module.sql",
-          "timestamp": "20260521000002"
+          "migration": "20260521000004_safe_online_orders.sql",
+          "timestamp": "20260521000004"
         },
         {
           "name": "public",
           "type": "TABLE",
-          "migration": "20260521000002_online_order_module.sql",
-          "timestamp": "20260521000002"
+          "migration": "20260521000004_safe_online_orders.sql",
+          "timestamp": "20260521000004"
         },
         {
           "name": "public",
           "type": "TABLE",
-          "migration": "20260521000002_online_order_module.sql",
-          "timestamp": "20260521000002"
+          "migration": "20260521000004_safe_online_orders.sql",
+          "timestamp": "20260521000004"
         },
         {
           "name": "public",
           "type": "TABLE",
-          "migration": "20260521000002_online_order_module.sql",
-          "timestamp": "20260521000002"
+          "migration": "20260521000004_safe_online_orders.sql",
+          "timestamp": "20260521000004"
         },
         {
           "name": "public",
           "type": "TABLE",
-          "migration": "20260521000002_online_order_module.sql",
-          "timestamp": "20260521000002"
+          "migration": "20260521000004_safe_online_orders.sql",
+          "timestamp": "20260521000004"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260522000001_accept_online_order_rpc.sql",
+          "timestamp": "20260522000001"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260522000001_accept_online_order_rpc.sql",
+          "timestamp": "20260522000001"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260522000001_accept_online_order_rpc.sql",
+          "timestamp": "20260522000001"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260522000002_create_whatsapp_logs_table.sql",
+          "timestamp": "20260522000002"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
         },
         {
           "name": "public",
           "type": "TABLE",
           "migration": "20260524000000_store_location.sql",
           "timestamp": "20260524000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260525000000_stock_reservation_trigger.sql",
+          "timestamp": "20260525000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260527000000_fix_storefront_products_schema.sql",
+          "timestamp": "20260527000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260527000000_fix_storefront_products_schema.sql",
+          "timestamp": "20260527000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260527000000_fix_storefront_products_schema.sql",
+          "timestamp": "20260527000000"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260527000001_fix_products_schema.sql",
+          "timestamp": "20260527000001"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260527000001_fix_products_schema.sql",
+          "timestamp": "20260527000001"
+        },
+        {
+          "name": "public",
+          "type": "TABLE",
+          "migration": "20260527000001_fix_products_schema.sql",
+          "timestamp": "20260527000001"
         }
       ],
       "drops": [
@@ -1111,6 +1351,18 @@
           "type": "FUNCTION IF EXISTS",
           "migration": "20260423232000_production_hardening.sql",
           "timestamp": "20260423232000"
+        },
+        {
+          "name": "public",
+          "type": "FUNCTION IF EXISTS",
+          "migration": "20260423233000_ledger_posting_hardening.sql",
+          "timestamp": "20260423233000"
+        },
+        {
+          "name": "public",
+          "type": "FUNCTION IF EXISTS",
+          "migration": "20260423233000_ledger_posting_hardening.sql",
+          "timestamp": "20260423233000"
         },
         {
           "name": "public",
@@ -1555,6 +1807,16 @@
           "timestamp": "20260423233000"
         },
         {
+          "action": "DROP",
+          "migration": "20260423233000_ledger_posting_hardening.sql",
+          "timestamp": "20260423233000"
+        },
+        {
+          "action": "DROP",
+          "migration": "20260423233000_ledger_posting_hardening.sql",
+          "timestamp": "20260423233000"
+        },
+        {
           "action": "ALTER",
           "migration": "20260423240000_sheets_migration_expenses_and_rpc.sql",
           "timestamp": "20260423240000"
@@ -1708,6 +1970,71 @@
           "action": "ALTER",
           "migration": "20260506000000_import_inventory_from_csv.sql",
           "timestamp": "20260506000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260506000000_import_inventory_from_csv.sql",
+          "timestamp": "20260506000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260506000000_import_inventory_from_csv.sql",
+          "timestamp": "20260506000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260506000000_import_inventory_from_csv.sql",
+          "timestamp": "20260506000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260506000000_import_inventory_from_csv.sql",
+          "timestamp": "20260506000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260506000000_import_inventory_from_csv.sql",
+          "timestamp": "20260506000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260506000000_import_inventory_from_csv.sql",
+          "timestamp": "20260506000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260506000001_import_inventory_apr10th.sql",
+          "timestamp": "20260506000001"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260506000001_import_inventory_apr10th.sql",
+          "timestamp": "20260506000001"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260506000001_import_inventory_apr10th.sql",
+          "timestamp": "20260506000001"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260506000001_import_inventory_apr10th.sql",
+          "timestamp": "20260506000001"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260506000001_import_inventory_apr10th.sql",
+          "timestamp": "20260506000001"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260506000001_import_inventory_apr10th.sql",
+          "timestamp": "20260506000001"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260506000001_import_inventory_apr10th.sql",
+          "timestamp": "20260506000001"
         },
         {
           "action": "ALTER",
@@ -2015,6 +2342,31 @@
           "timestamp": "20260511060000"
         },
         {
+          "action": "ALTER",
+          "migration": "20260511125509_inventory_movements_ledger.sql",
+          "timestamp": "20260511125509"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260511130244_harden_inventory_movements.sql",
+          "timestamp": "20260511130244"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260511130244_harden_inventory_movements.sql",
+          "timestamp": "20260511130244"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260511130244_harden_inventory_movements.sql",
+          "timestamp": "20260511130244"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260511130416_inventory_reconciliations.sql",
+          "timestamp": "20260511130416"
+        },
+        {
           "action": "DROP",
           "migration": "20260512000000_customer_staff_analytics.sql",
           "timestamp": "20260512000000"
@@ -2066,6 +2418,41 @@
         },
         {
           "action": "ALTER",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260520140143_update_store_location_chattogram.sql",
+          "timestamp": "20260520140143"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260521000000_core_pos_schema.sql",
+          "timestamp": "20260521000000"
+        },
+        {
+          "action": "ALTER",
           "migration": "20260521000000_core_pos_schema.sql",
           "timestamp": "20260521000000"
         },
@@ -2111,33 +2498,108 @@
         },
         {
           "action": "ALTER",
-          "migration": "20260521000002_online_order_module.sql",
-          "timestamp": "20260521000002"
+          "migration": "20260521000004_safe_online_orders.sql",
+          "timestamp": "20260521000004"
         },
         {
           "action": "ALTER",
-          "migration": "20260521000002_online_order_module.sql",
-          "timestamp": "20260521000002"
+          "migration": "20260521000004_safe_online_orders.sql",
+          "timestamp": "20260521000004"
         },
         {
           "action": "ALTER",
-          "migration": "20260521000002_online_order_module.sql",
-          "timestamp": "20260521000002"
+          "migration": "20260521000004_safe_online_orders.sql",
+          "timestamp": "20260521000004"
         },
         {
           "action": "ALTER",
-          "migration": "20260521000002_online_order_module.sql",
-          "timestamp": "20260521000002"
+          "migration": "20260521000004_safe_online_orders.sql",
+          "timestamp": "20260521000004"
         },
         {
           "action": "ALTER",
-          "migration": "20260521000002_online_order_module.sql",
-          "timestamp": "20260521000002"
+          "migration": "20260521000004_safe_online_orders.sql",
+          "timestamp": "20260521000004"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260522000001_accept_online_order_rpc.sql",
+          "timestamp": "20260522000001"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260522000001_accept_online_order_rpc.sql",
+          "timestamp": "20260522000001"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260522000001_accept_online_order_rpc.sql",
+          "timestamp": "20260522000001"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260522000002_create_whatsapp_logs_table.sql",
+          "timestamp": "20260522000002"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
         },
         {
           "action": "ALTER",
           "migration": "20260524000000_store_location.sql",
           "timestamp": "20260524000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260525000000_stock_reservation_trigger.sql",
+          "timestamp": "20260525000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260527000000_fix_storefront_products_schema.sql",
+          "timestamp": "20260527000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260527000000_fix_storefront_products_schema.sql",
+          "timestamp": "20260527000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260527000000_fix_storefront_products_schema.sql",
+          "timestamp": "20260527000000"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260527000001_fix_products_schema.sql",
+          "timestamp": "20260527000001"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260527000001_fix_products_schema.sql",
+          "timestamp": "20260527000001"
+        },
+        {
+          "action": "ALTER",
+          "migration": "20260527000001_fix_products_schema.sql",
+          "timestamp": "20260527000001"
         }
       ],
       "conflicts": []
@@ -6812,7 +7274,14 @@
       "owner_timestamp": "20260427080000",
       "created_at": "20260427080000",
       "alters": [],
-      "drops": [],
+      "drops": [
+        {
+          "name": "stock_ledger_service_role_all",
+          "type": "POLICY IF EXISTS",
+          "migration": "20260427080000_stock_ledger_table.sql",
+          "timestamp": "20260427080000"
+        }
+      ],
       "grants": [],
       "revokes": [],
       "policies": [],
@@ -6820,6 +7289,11 @@
       "history": [
         {
           "action": "CREATE",
+          "migration": "20260427080000_stock_ledger_table.sql",
+          "timestamp": "20260427080000"
+        },
+        {
+          "action": "DROP",
           "migration": "20260427080000_stock_ledger_table.sql",
           "timestamp": "20260427080000"
         }
@@ -6832,7 +7306,14 @@
       "owner_timestamp": "20260427080000",
       "created_at": "20260427080000",
       "alters": [],
-      "drops": [],
+      "drops": [
+        {
+          "name": "stock_ledger_service_role_insert",
+          "type": "POLICY IF EXISTS",
+          "migration": "20260427080000_stock_ledger_table.sql",
+          "timestamp": "20260427080000"
+        }
+      ],
       "grants": [],
       "revokes": [],
       "policies": [],
@@ -6840,6 +7321,11 @@
       "history": [
         {
           "action": "CREATE",
+          "migration": "20260427080000_stock_ledger_table.sql",
+          "timestamp": "20260427080000"
+        },
+        {
+          "action": "DROP",
           "migration": "20260427080000_stock_ledger_table.sql",
           "timestamp": "20260427080000"
         }
@@ -7062,6 +7548,306 @@
           "action": "CREATE",
           "migration": "20260511070000_create_product_images_bucket.sql",
           "timestamp": "20260511070000"
+        }
+      ],
+      "conflicts": []
+    },
+    "movement_type": {
+      "type": "TYPE",
+      "owner": "20260511125509_inventory_movements_ledger.sql",
+      "owner_timestamp": "20260511125509",
+      "created_at": "20260511125509",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260511125509_inventory_movements_ledger.sql",
+          "timestamp": "20260511125509"
+        }
+      ],
+      "conflicts": []
+    },
+    "reference_type": {
+      "type": "TYPE",
+      "owner": "20260511125509_inventory_movements_ledger.sql",
+      "owner_timestamp": "20260511125509",
+      "created_at": "20260511125509",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260511125509_inventory_movements_ledger.sql",
+          "timestamp": "20260511125509"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_inv_movements_tenant_store": {
+      "type": "INDEX IF NOT EXISTS",
+      "owner": "20260511125509_inventory_movements_ledger.sql",
+      "owner_timestamp": "20260511125509",
+      "created_at": "20260511125509",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260511125509_inventory_movements_ledger.sql",
+          "timestamp": "20260511125509"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_inv_movements_product": {
+      "type": "INDEX IF NOT EXISTS",
+      "owner": "20260511125509_inventory_movements_ledger.sql",
+      "owner_timestamp": "20260511125509",
+      "created_at": "20260511125509",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260511125509_inventory_movements_ledger.sql",
+          "timestamp": "20260511125509"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_inv_movements_created_at": {
+      "type": "INDEX IF NOT EXISTS",
+      "owner": "20260511125509_inventory_movements_ledger.sql",
+      "owner_timestamp": "20260511125509",
+      "created_at": "20260511125509",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260511125509_inventory_movements_ledger.sql",
+          "timestamp": "20260511125509"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_inv_movements_reference": {
+      "type": "INDEX IF NOT EXISTS",
+      "owner": "20260511125509_inventory_movements_ledger.sql",
+      "owner_timestamp": "20260511125509",
+      "created_at": "20260511125509",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260511125509_inventory_movements_ledger.sql",
+          "timestamp": "20260511125509"
+        }
+      ],
+      "conflicts": []
+    },
+    "select_inventory_movements": {
+      "type": "POLICY",
+      "owner": "20260511125509_inventory_movements_ledger.sql",
+      "owner_timestamp": "20260511125509",
+      "created_at": "20260511125509",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260511125509_inventory_movements_ledger.sql",
+          "timestamp": "20260511125509"
+        }
+      ],
+      "conflicts": []
+    },
+    "insert_inventory_movements": {
+      "type": "POLICY",
+      "owner": "20260511125509_inventory_movements_ledger.sql",
+      "owner_timestamp": "20260511125509",
+      "created_at": "20260511125509",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260511125509_inventory_movements_ledger.sql",
+          "timestamp": "20260511125509"
+        }
+      ],
+      "conflicts": []
+    },
+    "reconciliation_status": {
+      "type": "TYPE",
+      "owner": "20260511130416_inventory_reconciliations.sql",
+      "owner_timestamp": "20260511130416",
+      "created_at": "20260511130416",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260511130416_inventory_reconciliations.sql",
+          "timestamp": "20260511130416"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_reconciliations_tenant_store": {
+      "type": "INDEX IF NOT EXISTS",
+      "owner": "20260511130416_inventory_reconciliations.sql",
+      "owner_timestamp": "20260511130416",
+      "created_at": "20260511130416",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260511130416_inventory_reconciliations.sql",
+          "timestamp": "20260511130416"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_reconciliations_product": {
+      "type": "INDEX IF NOT EXISTS",
+      "owner": "20260511130416_inventory_reconciliations.sql",
+      "owner_timestamp": "20260511130416",
+      "created_at": "20260511130416",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260511130416_inventory_reconciliations.sql",
+          "timestamp": "20260511130416"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_reconciliations_status": {
+      "type": "INDEX IF NOT EXISTS",
+      "owner": "20260511130416_inventory_reconciliations.sql",
+      "owner_timestamp": "20260511130416",
+      "created_at": "20260511130416",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260511130416_inventory_reconciliations.sql",
+          "timestamp": "20260511130416"
+        }
+      ],
+      "conflicts": []
+    },
+    "select_reconciliations": {
+      "type": "POLICY",
+      "owner": "20260511130416_inventory_reconciliations.sql",
+      "owner_timestamp": "20260511130416",
+      "created_at": "20260511130416",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260511130416_inventory_reconciliations.sql",
+          "timestamp": "20260511130416"
+        }
+      ],
+      "conflicts": []
+    },
+    "insert_reconciliations": {
+      "type": "POLICY",
+      "owner": "20260511130416_inventory_reconciliations.sql",
+      "owner_timestamp": "20260511130416",
+      "created_at": "20260511130416",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260511130416_inventory_reconciliations.sql",
+          "timestamp": "20260511130416"
+        }
+      ],
+      "conflicts": []
+    },
+    "update_reconciliations": {
+      "type": "POLICY",
+      "owner": "20260511130416_inventory_reconciliations.sql",
+      "owner_timestamp": "20260511130416",
+      "created_at": "20260511130416",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260511130416_inventory_reconciliations.sql",
+          "timestamp": "20260511130416"
         }
       ],
       "conflicts": []
@@ -7486,6 +8272,434 @@
       ],
       "conflicts": []
     },
+    "pg_cron": {
+      "type": "EXTENSION IF NOT EXISTS",
+      "owner": "20260519215146_quarterly_ledger_archive.sql",
+      "owner_timestamp": "20260519215146",
+      "created_at": "20260519215146",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260519215146_quarterly_ledger_archive.sql",
+          "timestamp": "20260519215146"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_online_orders_tenant": {
+      "type": "INDEX IF NOT EXISTS",
+      "owner": "20260520000001_online_orders.sql",
+      "owner_timestamp": "20260520000001",
+      "created_at": "20260520000001",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_online_orders_status": {
+      "type": "INDEX IF NOT EXISTS",
+      "owner": "20260520000001_online_orders.sql",
+      "owner_timestamp": "20260520000001",
+      "created_at": "20260520000001",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_online_orders_whatsapp": {
+      "type": "INDEX IF NOT EXISTS",
+      "owner": "20260520000001_online_orders.sql",
+      "owner_timestamp": "20260520000001",
+      "created_at": "20260520000001",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_online_order_items_order": {
+      "type": "INDEX IF NOT EXISTS",
+      "owner": "20260520000001_online_orders.sql",
+      "owner_timestamp": "20260520000001",
+      "created_at": "20260520000001",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "conflicts": []
+    },
+    "tenant_online_orders_isolation": {
+      "type": "POLICY",
+      "owner": "20260520000001_online_orders.sql",
+      "owner_timestamp": "20260520000001",
+      "created_at": "20260520000001",
+      "alters": [],
+      "drops": [
+        {
+          "name": "tenant_online_orders_isolation",
+          "type": "POLICY IF EXISTS",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        },
+        {
+          "action": "DROP",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "conflicts": []
+    },
+    "public_order_tracking": {
+      "type": "POLICY",
+      "owner": "20260520000001_online_orders.sql",
+      "owner_timestamp": "20260520000001",
+      "created_at": "20260520000001",
+      "alters": [],
+      "drops": [
+        {
+          "name": "public_order_tracking",
+          "type": "POLICY IF EXISTS",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        },
+        {
+          "action": "DROP",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "conflicts": []
+    },
+    "public_order_insert": {
+      "type": "POLICY",
+      "owner": "20260520000001_online_orders.sql",
+      "owner_timestamp": "20260520000001",
+      "created_at": "20260520000001",
+      "alters": [],
+      "drops": [
+        {
+          "name": "public_order_insert",
+          "type": "POLICY IF EXISTS",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        },
+        {
+          "action": "DROP",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "conflicts": []
+    },
+    "tenant_online_order_items_isolation": {
+      "type": "POLICY",
+      "owner": "20260520000001_online_orders.sql",
+      "owner_timestamp": "20260520000001",
+      "created_at": "20260520000001",
+      "alters": [],
+      "drops": [
+        {
+          "name": "tenant_online_order_items_isolation",
+          "type": "POLICY IF EXISTS",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        },
+        {
+          "action": "DROP",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "conflicts": []
+    },
+    "public_order_items_tracking": {
+      "type": "POLICY",
+      "owner": "20260520000001_online_orders.sql",
+      "owner_timestamp": "20260520000001",
+      "created_at": "20260520000001",
+      "alters": [],
+      "drops": [
+        {
+          "name": "public_order_items_tracking",
+          "type": "POLICY IF EXISTS",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        },
+        {
+          "action": "DROP",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "conflicts": []
+    },
+    "public_order_items_insert": {
+      "type": "POLICY",
+      "owner": "20260520000001_online_orders.sql",
+      "owner_timestamp": "20260520000001",
+      "created_at": "20260520000001",
+      "alters": [],
+      "drops": [
+        {
+          "name": "public_order_items_insert",
+          "type": "POLICY IF EXISTS",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        },
+        {
+          "action": "DROP",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "conflicts": []
+    },
+    "tenant_delivery_zones_isolation": {
+      "type": "POLICY",
+      "owner": "20260520000001_online_orders.sql",
+      "owner_timestamp": "20260520000001",
+      "created_at": "20260520000001",
+      "alters": [],
+      "drops": [
+        {
+          "name": "tenant_delivery_zones_isolation",
+          "type": "POLICY IF EXISTS",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        },
+        {
+          "action": "DROP",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "conflicts": []
+    },
+    "public_delivery_zones_read": {
+      "type": "POLICY",
+      "owner": "20260520000001_online_orders.sql",
+      "owner_timestamp": "20260520000001",
+      "created_at": "20260520000001",
+      "alters": [],
+      "drops": [
+        {
+          "name": "public_delivery_zones_read",
+          "type": "POLICY IF EXISTS",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        },
+        {
+          "action": "DROP",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "conflicts": []
+    },
+    "seq_tenant_isolation": {
+      "type": "POLICY",
+      "owner": "20260520000001_online_orders.sql",
+      "owner_timestamp": "20260520000001",
+      "created_at": "20260520000001",
+      "alters": [],
+      "drops": [
+        {
+          "name": "seq_tenant_isolation",
+          "type": "POLICY IF EXISTS",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        },
+        {
+          "action": "DROP",
+          "migration": "20260520000001_online_orders.sql",
+          "timestamp": "20260520000001"
+        }
+      ],
+      "conflicts": []
+    },
+    "reserve_online_stock": {
+      "type": "FUNCTION",
+      "owner": "20260520124315_reserve_online_stock_trigger.sql",
+      "owner_timestamp": "20260520124315",
+      "created_at": "20260520124315",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260520124315_reserve_online_stock_trigger.sql",
+          "timestamp": "20260520124315"
+        }
+      ],
+      "conflicts": []
+    },
+    "postgis": {
+      "type": "EXTENSION IF NOT EXISTS",
+      "owner": "20260520140143_update_store_location_chattogram.sql",
+      "owner_timestamp": "20260520140143",
+      "created_at": "20260520140143",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260520140143_update_store_location_chattogram.sql",
+          "timestamp": "20260520140143"
+        }
+      ],
+      "conflicts": []
+    },
     "customers_select_all": {
       "type": "POLICY",
       "owner": "20260521000000_core_pos_schema.sql",
@@ -7666,31 +8880,11 @@
       ],
       "conflicts": []
     },
-    "riders_tenant_isolation": {
-      "type": "POLICY",
-      "owner": "20260521000002_online_order_module.sql",
-      "owner_timestamp": "20260521000002",
-      "created_at": "20260521000002",
-      "alters": [],
-      "drops": [],
-      "grants": [],
-      "revokes": [],
-      "policies": [],
-      "extensions": [],
-      "history": [
-        {
-          "action": "CREATE",
-          "migration": "20260521000002_online_order_module.sql",
-          "timestamp": "20260521000002"
-        }
-      ],
-      "conflicts": []
-    },
     "online_orders_tenant_isolation": {
       "type": "POLICY",
-      "owner": "20260521000002_online_order_module.sql",
-      "owner_timestamp": "20260521000002",
-      "created_at": "20260521000002",
+      "owner": "20260521000004_safe_online_orders.sql",
+      "owner_timestamp": "20260521000004",
+      "created_at": "20260521000004",
       "alters": [],
       "drops": [],
       "grants": [],
@@ -7700,28 +8894,8 @@
       "history": [
         {
           "action": "CREATE",
-          "migration": "20260521000002_online_order_module.sql",
-          "timestamp": "20260521000002"
-        }
-      ],
-      "conflicts": []
-    },
-    "online_order_items_tenant_isolation": {
-      "type": "POLICY",
-      "owner": "20260521000002_online_order_module.sql",
-      "owner_timestamp": "20260521000002",
-      "created_at": "20260521000002",
-      "alters": [],
-      "drops": [],
-      "grants": [],
-      "revokes": [],
-      "policies": [],
-      "extensions": [],
-      "history": [
-        {
-          "action": "CREATE",
-          "migration": "20260521000002_online_order_module.sql",
-          "timestamp": "20260521000002"
+          "migration": "20260521000004_safe_online_orders.sql",
+          "timestamp": "20260521000004"
         }
       ],
       "conflicts": []
@@ -7846,6 +9020,546 @@
       ],
       "conflicts": []
     },
+    "accept_online_order": {
+      "type": "FUNCTION",
+      "owner": "20260522000001_accept_online_order_rpc.sql",
+      "owner_timestamp": "20260522000001",
+      "created_at": "20260522000001",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000001_accept_online_order_rpc.sql",
+          "timestamp": "20260522000001"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_whatsapp_logs_tenant": {
+      "type": "INDEX",
+      "owner": "20260522000002_create_whatsapp_logs_table.sql",
+      "owner_timestamp": "20260522000002",
+      "created_at": "20260522000002",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000002_create_whatsapp_logs_table.sql",
+          "timestamp": "20260522000002"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_whatsapp_logs_order": {
+      "type": "INDEX",
+      "owner": "20260522000002_create_whatsapp_logs_table.sql",
+      "owner_timestamp": "20260522000002",
+      "created_at": "20260522000002",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000002_create_whatsapp_logs_table.sql",
+          "timestamp": "20260522000002"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_whatsapp_logs_created": {
+      "type": "INDEX",
+      "owner": "20260522000002_create_whatsapp_logs_table.sql",
+      "owner_timestamp": "20260522000002",
+      "created_at": "20260522000002",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000002_create_whatsapp_logs_table.sql",
+          "timestamp": "20260522000002"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_whatsapp_logs_status": {
+      "type": "INDEX",
+      "owner": "20260522000002_create_whatsapp_logs_table.sql",
+      "owner_timestamp": "20260522000002",
+      "created_at": "20260522000002",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000002_create_whatsapp_logs_table.sql",
+          "timestamp": "20260522000002"
+        }
+      ],
+      "conflicts": []
+    },
+    "tenant_whatsapp_logs_isolation": {
+      "type": "POLICY",
+      "owner": "20260522000002_create_whatsapp_logs_table.sql",
+      "owner_timestamp": "20260522000002",
+      "created_at": "20260522000002",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000002_create_whatsapp_logs_table.sql",
+          "timestamp": "20260522000002"
+        }
+      ],
+      "conflicts": []
+    },
+    "service_role_whatsapp_logs": {
+      "type": "POLICY",
+      "owner": "20260522000002_create_whatsapp_logs_table.sql",
+      "owner_timestamp": "20260522000002",
+      "created_at": "20260522000002",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000002_create_whatsapp_logs_table.sql",
+          "timestamp": "20260522000002"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_riders_tenant": {
+      "type": "INDEX",
+      "owner": "20260522000003_rider_app_infrastructure.sql",
+      "owner_timestamp": "20260522000003",
+      "created_at": "20260522000003",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_riders_status": {
+      "type": "INDEX",
+      "owner": "20260522000003_rider_app_infrastructure.sql",
+      "owner_timestamp": "20260522000003",
+      "created_at": "20260522000003",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_riders_auth_user": {
+      "type": "INDEX",
+      "owner": "20260522000003_rider_app_infrastructure.sql",
+      "owner_timestamp": "20260522000003",
+      "created_at": "20260522000003",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_riders_location": {
+      "type": "INDEX",
+      "owner": "20260522000003_rider_app_infrastructure.sql",
+      "owner_timestamp": "20260522000003",
+      "created_at": "20260522000003",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_rider_assignments_order": {
+      "type": "INDEX",
+      "owner": "20260522000003_rider_app_infrastructure.sql",
+      "owner_timestamp": "20260522000003",
+      "created_at": "20260522000003",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_rider_assignments_rider": {
+      "type": "INDEX",
+      "owner": "20260522000003_rider_app_infrastructure.sql",
+      "owner_timestamp": "20260522000003",
+      "created_at": "20260522000003",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_rider_assignments_tenant_status": {
+      "type": "INDEX",
+      "owner": "20260522000003_rider_app_infrastructure.sql",
+      "owner_timestamp": "20260522000003",
+      "created_at": "20260522000003",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_rider_assignments_operation_id": {
+      "type": "INDEX",
+      "owner": "20260522000003_rider_app_infrastructure.sql",
+      "owner_timestamp": "20260522000003",
+      "created_at": "20260522000003",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_rider_earnings_rider": {
+      "type": "INDEX",
+      "owner": "20260522000003_rider_app_infrastructure.sql",
+      "owner_timestamp": "20260522000003",
+      "created_at": "20260522000003",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_rider_earnings_payment": {
+      "type": "INDEX",
+      "owner": "20260522000003_rider_app_infrastructure.sql",
+      "owner_timestamp": "20260522000003",
+      "created_at": "20260522000003",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        }
+      ],
+      "conflicts": []
+    },
+    "idx_rider_location_history_rider": {
+      "type": "INDEX",
+      "owner": "20260522000003_rider_app_infrastructure.sql",
+      "owner_timestamp": "20260522000003",
+      "created_at": "20260522000003",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        }
+      ],
+      "conflicts": []
+    },
+    "riders_self_access": {
+      "type": "POLICY",
+      "owner": "20260522000003_rider_app_infrastructure.sql",
+      "owner_timestamp": "20260522000003",
+      "created_at": "20260522000003",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        }
+      ],
+      "conflicts": []
+    },
+    "riders_tenant_isolation": {
+      "type": "POLICY",
+      "owner": "20260522000003_rider_app_infrastructure.sql",
+      "owner_timestamp": "20260522000003",
+      "created_at": "20260522000003",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        }
+      ],
+      "conflicts": []
+    },
+    "riders_service_role": {
+      "type": "POLICY",
+      "owner": "20260522000003_rider_app_infrastructure.sql",
+      "owner_timestamp": "20260522000003",
+      "created_at": "20260522000003",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        }
+      ],
+      "conflicts": []
+    },
+    "rider_assignments_rider_view": {
+      "type": "POLICY",
+      "owner": "20260522000003_rider_app_infrastructure.sql",
+      "owner_timestamp": "20260522000003",
+      "created_at": "20260522000003",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        }
+      ],
+      "conflicts": []
+    },
+    "rider_assignments_tenant": {
+      "type": "POLICY",
+      "owner": "20260522000003_rider_app_infrastructure.sql",
+      "owner_timestamp": "20260522000003",
+      "created_at": "20260522000003",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        }
+      ],
+      "conflicts": []
+    },
+    "rider_earnings_rider_view": {
+      "type": "POLICY",
+      "owner": "20260522000003_rider_app_infrastructure.sql",
+      "owner_timestamp": "20260522000003",
+      "created_at": "20260522000003",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        }
+      ],
+      "conflicts": []
+    },
+    "rider_earnings_tenant": {
+      "type": "POLICY",
+      "owner": "20260522000003_rider_app_infrastructure.sql",
+      "owner_timestamp": "20260522000003",
+      "created_at": "20260522000003",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        }
+      ],
+      "conflicts": []
+    },
+    "rider_location_self": {
+      "type": "POLICY",
+      "owner": "20260522000003_rider_app_infrastructure.sql",
+      "owner_timestamp": "20260522000003",
+      "created_at": "20260522000003",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        }
+      ],
+      "conflicts": []
+    },
+    "rider_location_tenant": {
+      "type": "POLICY",
+      "owner": "20260522000003_rider_app_infrastructure.sql",
+      "owner_timestamp": "20260522000003",
+      "created_at": "20260522000003",
+      "alters": [],
+      "drops": [],
+      "grants": [],
+      "revokes": [],
+      "policies": [],
+      "extensions": [],
+      "history": [
+        {
+          "action": "CREATE",
+          "migration": "20260522000003_rider_app_infrastructure.sql",
+          "timestamp": "20260522000003"
+        }
+      ],
+      "conflicts": []
+    },
     "pg_net": {
       "type": "EXTENSION IF NOT EXISTS",
       "owner": "20260523000000_whatsapp_webhook.sql",
@@ -7866,11 +9580,11 @@
       ],
       "conflicts": []
     },
-    "postgis": {
-      "type": "EXTENSION IF NOT EXISTS",
-      "owner": "20260524000000_store_location.sql",
-      "owner_timestamp": "20260524000000",
-      "created_at": "20260524000000",
+    "idx_products_is_active": {
+      "type": "INDEX",
+      "owner": "20260527000000_fix_storefront_products_schema.sql",
+      "owner_timestamp": "20260527000000",
+      "created_at": "20260527000000",
       "alters": [],
       "drops": [],
       "grants": [],
@@ -7880,14 +9594,32 @@
       "history": [
         {
           "action": "CREATE",
-          "migration": "20260524000000_store_location.sql",
-          "timestamp": "20260524000000"
+          "migration": "20260527000000_fix_storefront_products_schema.sql",
+          "timestamp": "20260527000000"
         }
       ],
       "conflicts": []
     }
   },
   "conflicts": [
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260301000000_baseline_core_tables.sql",
+        "20260301000000_baseline_core_tables.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260301000000_baseline_core_tables.sql",
+        "20260301000000_baseline_core_tables.sql"
+      ],
+      "severity": "high"
+    },
     {
       "type": "duplicate_creator",
       "object": "public",
@@ -12549,18 +14281,18 @@
     },
     {
       "type": "duplicate_creator",
-      "object": "categories_select_tenant_isolated",
+      "object": "items_select_tenant_isolated",
       "creators": [
-        "20260510130000_fix_remote_rls_policies_manual.sql",
+        "20260508000000_fix_critical_rls_gaps.sql",
         "20260510130000_fix_remote_rls_policies_manual.sql"
       ],
       "severity": "high"
     },
     {
       "type": "duplicate_creator",
-      "object": "categories_manage_authorized",
+      "object": "items_manage_authorized",
       "creators": [
-        "20260510130000_fix_remote_rls_policies_manual.sql",
+        "20260508000000_fix_critical_rls_gaps.sql",
         "20260510130000_fix_remote_rls_policies_manual.sql"
       ],
       "severity": "high"
@@ -12741,6 +14473,51 @@
       "object": "public",
       "creators": [
         "20260511060000_update_pos_categories_with_visual_fields.sql",
+        "20260511125509_inventory_movements_ledger.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511125509_inventory_movements_ledger.sql",
+        "20260511125509_inventory_movements_ledger.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511125509_inventory_movements_ledger.sql",
+        "20260511125509_inventory_movements_ledger.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511125509_inventory_movements_ledger.sql",
+        "20260511125509_inventory_movements_ledger.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511125509_inventory_movements_ledger.sql",
+        "20260511125700_get_inventory_movements_rpc.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511125700_get_inventory_movements_rpc.sql",
         "20260511125848_update_rpcs_for_inventory_movements.sql"
       ],
       "severity": "high"
@@ -12768,6 +14545,105 @@
       "object": "public",
       "creators": [
         "20260511125848_update_rpcs_for_inventory_movements.sql",
+        "20260511130244_harden_inventory_movements.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511130244_harden_inventory_movements.sql",
+        "20260511130244_harden_inventory_movements.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511130244_harden_inventory_movements.sql",
+        "20260511130244_harden_inventory_movements.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511130244_harden_inventory_movements.sql",
+        "20260511130244_harden_inventory_movements.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511130244_harden_inventory_movements.sql",
+        "20260511130416_inventory_reconciliations.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511130416_inventory_reconciliations.sql",
+        "20260511130416_inventory_reconciliations.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511130416_inventory_reconciliations.sql",
+        "20260511131100_serializable_rpcs.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511131100_serializable_rpcs.sql",
+        "20260511131100_serializable_rpcs.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511131100_serializable_rpcs.sql",
+        "20260511131100_serializable_rpcs.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511131100_serializable_rpcs.sql",
+        "20260511131100_serializable_rpcs.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511131100_serializable_rpcs.sql",
+        "20260511131100_serializable_rpcs.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511131100_serializable_rpcs.sql",
         "20260512000000_customer_staff_analytics.sql"
       ],
       "severity": "high"
@@ -13143,9 +15019,81 @@
     },
     {
       "type": "duplicate_creator",
+      "object": "pgcrypto",
+      "creators": [
+        "20260510140100_fix_pgcrypto_schema.sql",
+        "20260520000001_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
       "object": "public",
       "creators": [
         "20260520000000_add_whatsapp_invoice_columns.sql",
+        "20260520000001_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260520000001_online_orders.sql",
+        "20260520000001_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260520000001_online_orders.sql",
+        "20260520000001_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260520000001_online_orders.sql",
+        "20260520000001_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260520000001_online_orders.sql",
+        "20260520000001_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260520000001_online_orders.sql",
+        "20260520000001_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260520000001_online_orders.sql",
+        "20260520000001_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260520000001_online_orders.sql",
         "20260521000000_core_pos_schema.sql"
       ],
       "severity": "high"
@@ -13218,51 +15166,6 @@
       "object": "public",
       "creators": [
         "20260521000001_complete_sale_rpc_v2.sql",
-        "20260521000002_online_order_module.sql"
-      ],
-      "severity": "high"
-    },
-    {
-      "type": "duplicate_creator",
-      "object": "public",
-      "creators": [
-        "20260521000002_online_order_module.sql",
-        "20260521000002_online_order_module.sql"
-      ],
-      "severity": "high"
-    },
-    {
-      "type": "duplicate_creator",
-      "object": "public",
-      "creators": [
-        "20260521000002_online_order_module.sql",
-        "20260521000002_online_order_module.sql"
-      ],
-      "severity": "high"
-    },
-    {
-      "type": "duplicate_creator",
-      "object": "public",
-      "creators": [
-        "20260521000002_online_order_module.sql",
-        "20260521000002_online_order_module.sql"
-      ],
-      "severity": "high"
-    },
-    {
-      "type": "duplicate_creator",
-      "object": "public",
-      "creators": [
-        "20260521000002_online_order_module.sql",
-        "20260521000002_online_order_module.sql"
-      ],
-      "severity": "high"
-    },
-    {
-      "type": "duplicate_creator",
-      "object": "public",
-      "creators": [
-        "20260521000002_online_order_module.sql",
         "20260521000003_invoice_storage.sql"
       ],
       "severity": "high"
@@ -13290,6 +15193,195 @@
       "object": "public",
       "creators": [
         "20260521000003_invoice_storage.sql",
+        "20260521000004_safe_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000004_safe_online_orders.sql",
+        "20260521000004_safe_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000004_safe_online_orders.sql",
+        "20260521000004_safe_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000004_safe_online_orders.sql",
+        "20260521000004_safe_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "staff",
+      "creators": [
+        "20260327100000_stock_levels_realtime_and_rpc.sql",
+        "20260521000004_safe_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000004_safe_online_orders.sql",
+        "20260521000004_safe_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000004_safe_online_orders.sql",
+        "20260521000004_safe_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000004_safe_online_orders.sql",
+        "20260521000004_safe_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000004_safe_online_orders.sql",
+        "20260521000004_safe_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000004_safe_online_orders.sql",
+        "20260522000002_create_whatsapp_logs_table.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "postgis",
+      "creators": [
+        "20260520140143_update_store_location_chattogram.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000002_create_whatsapp_logs_table.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
         "20260523000000_whatsapp_webhook.sql"
       ],
       "severity": "high"
@@ -13299,7 +15391,106 @@
       "object": "public",
       "creators": [
         "20260523000000_whatsapp_webhook.sql",
+        "20260523000000_whatsapp_webhook.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260523000000_whatsapp_webhook.sql",
+        "20260523000000_whatsapp_webhook.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "postgis",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
         "20260524000000_store_location.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260523000000_whatsapp_webhook.sql",
+        "20260524000000_store_location.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260524000000_store_location.sql",
+        "20260525000000_stock_reservation_trigger.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260525000000_stock_reservation_trigger.sql",
+        "20260525000000_stock_reservation_trigger.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260525000000_stock_reservation_trigger.sql",
+        "20260525000000_stock_reservation_trigger.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "pg_net",
+      "creators": [
+        "20260523000000_whatsapp_webhook.sql",
+        "20260526000000_notify_order_insert_webhook.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260525000000_stock_reservation_trigger.sql",
+        "20260526000000_notify_order_insert_webhook.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "products_guest_read",
+      "creators": [
+        "20260522000000_storefront_rls.sql",
+        "20260527000000_fix_storefront_products_schema.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "idx_products_is_active",
+      "creators": [
+        "20260527000000_fix_storefront_products_schema.sql",
+        "20260527000001_fix_products_schema.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "products_guest_read",
+      "creators": [
+        "20260527000000_fix_storefront_products_schema.sql",
+        "20260527000001_fix_products_schema.sql"
       ],
       "severity": "high"
     },
@@ -13394,6 +15585,36 @@
         "timestamp": "20260427210000"
       },
       {
+        "name": "idx_reconciliations_tenant_store",
+        "owner": "20260511130416_inventory_reconciliations.sql",
+        "timestamp": "20260511130416"
+      },
+      {
+        "name": "idx_reconciliations_product",
+        "owner": "20260511130416_inventory_reconciliations.sql",
+        "timestamp": "20260511130416"
+      },
+      {
+        "name": "idx_reconciliations_status",
+        "owner": "20260511130416_inventory_reconciliations.sql",
+        "timestamp": "20260511130416"
+      },
+      {
+        "name": "select_reconciliations",
+        "owner": "20260511130416_inventory_reconciliations.sql",
+        "timestamp": "20260511130416"
+      },
+      {
+        "name": "insert_reconciliations",
+        "owner": "20260511130416_inventory_reconciliations.sql",
+        "timestamp": "20260511130416"
+      },
+      {
+        "name": "update_reconciliations",
+        "owner": "20260511130416_inventory_reconciliations.sql",
+        "timestamp": "20260511130416"
+      },
+      {
         "name": "stock_levels_read",
         "owner": "20260511150000_fix_stock_levels_read_rls.sql",
         "timestamp": "20260511150000"
@@ -13404,6 +15625,24 @@
     "security_functions": []
   },
   "high_risk_conflicts": [
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260301000000_baseline_core_tables.sql",
+        "20260301000000_baseline_core_tables.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260301000000_baseline_core_tables.sql",
+        "20260301000000_baseline_core_tables.sql"
+      ],
+      "severity": "high"
+    },
     {
       "type": "duplicate_creator",
       "object": "public",
@@ -18059,18 +20298,18 @@
     },
     {
       "type": "duplicate_creator",
-      "object": "categories_select_tenant_isolated",
+      "object": "items_select_tenant_isolated",
       "creators": [
-        "20260510130000_fix_remote_rls_policies_manual.sql",
+        "20260508000000_fix_critical_rls_gaps.sql",
         "20260510130000_fix_remote_rls_policies_manual.sql"
       ],
       "severity": "high"
     },
     {
       "type": "duplicate_creator",
-      "object": "categories_manage_authorized",
+      "object": "items_manage_authorized",
       "creators": [
-        "20260510130000_fix_remote_rls_policies_manual.sql",
+        "20260508000000_fix_critical_rls_gaps.sql",
         "20260510130000_fix_remote_rls_policies_manual.sql"
       ],
       "severity": "high"
@@ -18251,6 +20490,51 @@
       "object": "public",
       "creators": [
         "20260511060000_update_pos_categories_with_visual_fields.sql",
+        "20260511125509_inventory_movements_ledger.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511125509_inventory_movements_ledger.sql",
+        "20260511125509_inventory_movements_ledger.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511125509_inventory_movements_ledger.sql",
+        "20260511125509_inventory_movements_ledger.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511125509_inventory_movements_ledger.sql",
+        "20260511125509_inventory_movements_ledger.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511125509_inventory_movements_ledger.sql",
+        "20260511125700_get_inventory_movements_rpc.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511125700_get_inventory_movements_rpc.sql",
         "20260511125848_update_rpcs_for_inventory_movements.sql"
       ],
       "severity": "high"
@@ -18278,6 +20562,105 @@
       "object": "public",
       "creators": [
         "20260511125848_update_rpcs_for_inventory_movements.sql",
+        "20260511130244_harden_inventory_movements.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511130244_harden_inventory_movements.sql",
+        "20260511130244_harden_inventory_movements.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511130244_harden_inventory_movements.sql",
+        "20260511130244_harden_inventory_movements.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511130244_harden_inventory_movements.sql",
+        "20260511130244_harden_inventory_movements.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511130244_harden_inventory_movements.sql",
+        "20260511130416_inventory_reconciliations.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511130416_inventory_reconciliations.sql",
+        "20260511130416_inventory_reconciliations.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511130416_inventory_reconciliations.sql",
+        "20260511131100_serializable_rpcs.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511131100_serializable_rpcs.sql",
+        "20260511131100_serializable_rpcs.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511131100_serializable_rpcs.sql",
+        "20260511131100_serializable_rpcs.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511131100_serializable_rpcs.sql",
+        "20260511131100_serializable_rpcs.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511131100_serializable_rpcs.sql",
+        "20260511131100_serializable_rpcs.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260511131100_serializable_rpcs.sql",
         "20260512000000_customer_staff_analytics.sql"
       ],
       "severity": "high"
@@ -18653,9 +21036,81 @@
     },
     {
       "type": "duplicate_creator",
+      "object": "pgcrypto",
+      "creators": [
+        "20260510140100_fix_pgcrypto_schema.sql",
+        "20260520000001_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
       "object": "public",
       "creators": [
         "20260520000000_add_whatsapp_invoice_columns.sql",
+        "20260520000001_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260520000001_online_orders.sql",
+        "20260520000001_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260520000001_online_orders.sql",
+        "20260520000001_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260520000001_online_orders.sql",
+        "20260520000001_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260520000001_online_orders.sql",
+        "20260520000001_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260520000001_online_orders.sql",
+        "20260520000001_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260520000001_online_orders.sql",
+        "20260520000001_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260520000001_online_orders.sql",
         "20260521000000_core_pos_schema.sql"
       ],
       "severity": "high"
@@ -18728,51 +21183,6 @@
       "object": "public",
       "creators": [
         "20260521000001_complete_sale_rpc_v2.sql",
-        "20260521000002_online_order_module.sql"
-      ],
-      "severity": "high"
-    },
-    {
-      "type": "duplicate_creator",
-      "object": "public",
-      "creators": [
-        "20260521000002_online_order_module.sql",
-        "20260521000002_online_order_module.sql"
-      ],
-      "severity": "high"
-    },
-    {
-      "type": "duplicate_creator",
-      "object": "public",
-      "creators": [
-        "20260521000002_online_order_module.sql",
-        "20260521000002_online_order_module.sql"
-      ],
-      "severity": "high"
-    },
-    {
-      "type": "duplicate_creator",
-      "object": "public",
-      "creators": [
-        "20260521000002_online_order_module.sql",
-        "20260521000002_online_order_module.sql"
-      ],
-      "severity": "high"
-    },
-    {
-      "type": "duplicate_creator",
-      "object": "public",
-      "creators": [
-        "20260521000002_online_order_module.sql",
-        "20260521000002_online_order_module.sql"
-      ],
-      "severity": "high"
-    },
-    {
-      "type": "duplicate_creator",
-      "object": "public",
-      "creators": [
-        "20260521000002_online_order_module.sql",
         "20260521000003_invoice_storage.sql"
       ],
       "severity": "high"
@@ -18800,6 +21210,195 @@
       "object": "public",
       "creators": [
         "20260521000003_invoice_storage.sql",
+        "20260521000004_safe_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000004_safe_online_orders.sql",
+        "20260521000004_safe_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000004_safe_online_orders.sql",
+        "20260521000004_safe_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000004_safe_online_orders.sql",
+        "20260521000004_safe_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "staff",
+      "creators": [
+        "20260327100000_stock_levels_realtime_and_rpc.sql",
+        "20260521000004_safe_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000004_safe_online_orders.sql",
+        "20260521000004_safe_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000004_safe_online_orders.sql",
+        "20260521000004_safe_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000004_safe_online_orders.sql",
+        "20260521000004_safe_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000004_safe_online_orders.sql",
+        "20260521000004_safe_online_orders.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260521000004_safe_online_orders.sql",
+        "20260522000002_create_whatsapp_logs_table.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "postgis",
+      "creators": [
+        "20260520140143_update_store_location_chattogram.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000002_create_whatsapp_logs_table.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
+        "20260522000003_rider_app_infrastructure.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
         "20260523000000_whatsapp_webhook.sql"
       ],
       "severity": "high"
@@ -18809,7 +21408,106 @@
       "object": "public",
       "creators": [
         "20260523000000_whatsapp_webhook.sql",
+        "20260523000000_whatsapp_webhook.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260523000000_whatsapp_webhook.sql",
+        "20260523000000_whatsapp_webhook.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "postgis",
+      "creators": [
+        "20260522000003_rider_app_infrastructure.sql",
         "20260524000000_store_location.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260523000000_whatsapp_webhook.sql",
+        "20260524000000_store_location.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260524000000_store_location.sql",
+        "20260525000000_stock_reservation_trigger.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260525000000_stock_reservation_trigger.sql",
+        "20260525000000_stock_reservation_trigger.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260525000000_stock_reservation_trigger.sql",
+        "20260525000000_stock_reservation_trigger.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "pg_net",
+      "creators": [
+        "20260523000000_whatsapp_webhook.sql",
+        "20260526000000_notify_order_insert_webhook.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "public",
+      "creators": [
+        "20260525000000_stock_reservation_trigger.sql",
+        "20260526000000_notify_order_insert_webhook.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "products_guest_read",
+      "creators": [
+        "20260522000000_storefront_rls.sql",
+        "20260527000000_fix_storefront_products_schema.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "idx_products_is_active",
+      "creators": [
+        "20260527000000_fix_storefront_products_schema.sql",
+        "20260527000001_fix_products_schema.sql"
+      ],
+      "severity": "high"
+    },
+    {
+      "type": "duplicate_creator",
+      "object": "products_guest_read",
+      "creators": [
+        "20260527000000_fix_storefront_products_schema.sql",
+        "20260527000001_fix_products_schema.sql"
       ],
       "severity": "high"
     },

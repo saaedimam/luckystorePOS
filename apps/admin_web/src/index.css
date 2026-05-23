@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+@import "@fontsource-variable/geist";
 
 @tailwind base;
 @tailwind components;
@@ -8,54 +9,163 @@
   .font-bangla {
     font-family: 'Hind Siliguri', sans-serif;
   }
+
+  .font-display {
+    font-family: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  }
+
+  /* Warm theme utilities */
+  .bg-warm {
+    background-color: #f5f4ed;
+  }
+
+  .bg-surface {
+    background-color: #faf9f5;
+  }
+
+  .text-warm-fg {
+    color: #141413;
+  }
+
+  .text-warm-muted {
+    color: #5e5d59;
+  }
+
+  .border-warm {
+    border-color: #f0eee6;
+  }
+
+  .accent-terracotta {
+    color: #c96442;
+  }
+
+  .bg-terracotta {
+    background-color: #c96442;
+  }
 }
 
 :root {
-  /* Use design tokens instead of hardcoded values */
-  --primary: var(--color-primary-default);
-  --primary-dark: var(--color-primary-hover);
-  --success: var(--color-success-default);
-  --danger: var(--color-danger-default);
-  --warning: var(--color-warning-default);
-  
-  --bg-main: var(--color-background-default);
-  --bg-card: var(--color-surface-default);
-  --bg-accent: var(--color-background-subtle);
-  
-  --text-main: var(--color-text-primary);
-  --text-muted: var(--color-text-secondary);
-  --border-color: var(--color-border-default);
+  /* Shadcn/ui theme mapping to warm palette */
+  --background: 48 14% 95%; /* #f5f4ed */
+  --foreground: 40 6% 8%; /* #141413 */
+  --card: 45 20% 98%; /* #faf9f5 */
+  --card-foreground: 40 6% 8%;
+  --popover: 45 20% 98%;
+  --popover-foreground: 40 6% 8%;
+  --primary: 17 55% 53%; /* #c96442 terracotta */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 45 14% 90%; /* #e8e6dc sand */
+  --secondary-foreground: 40 4% 29%; /* #4d4c48 charcoal */
+  --muted: 45 14% 90%;
+  --muted-foreground: 40 4% 36%; /* #5e5d59 muted */
+  --accent: 17 55% 53%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 45% 45%; /* #b53333 danger */
+  --destructive-foreground: 0 0% 100%;
+  --border: 43 17% 93%; /* #f0eee6 border */
+  --input: 43 17% 93%;
+  --ring: 40 8% 81%; /* #d1cfc5 ring */
+  --radius: 0.5rem;
+
+  /* Legacy variable mapping */
+  --primary: var(--accent);
+  --primary-dark: var(--accent-light);
+  --success: var(--warm-success);
+  --danger: var(--warm-danger);
+  --warning: var(--warm-warning);
+
+  --bg-main: var(--bg);
+  --bg-card: var(--bg-card);
+  --bg-accent: var(--bg-accent);
+
+  --text-main: var(--warm-fg);
+  --text-muted: var(--warm-muted);
+  --border-color: var(--warm-border);
 }
 
 @layer base {
+  * {
+    @apply border-border;
+  }
+
   body {
-    @apply bg-[var(--bg-main)] text-[var(--text-main)] antialiased;
+    @apply antialiased bg-warm text-warm-fg;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   ::selection {
-    background-color: rgb(14 165 233 / 0.3); /* sky-500/30 */
+    background-color: rgba(201, 100, 66, 0.2);
+    color: #141413;
   }
 }
 
 @layer components {
+  /* Card with warm styling */
+  .card-warm {
+    @apply bg-surface border border-warm rounded-xl overflow-hidden;
+    box-shadow: 0 4px 24px rgba(20, 20, 19, 0.05);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-warm:hover {
+    box-shadow: 0 4px 24px rgba(20, 20, 19, 0.08);
+  }
+
+  /* Button variants */
+  .btn-primary {
+    @apply bg-terracotta text-white;
+    box-shadow: 0 0 0 1px #c96442;
+  }
+
+  .btn-primary:hover {
+    background-color: #d97757;
+    box-shadow: 0 0 0 1px #d97757;
+  }
+
+  .btn-secondary {
+    background-color: #e8e6dc;
+    color: #4d4c48;
+    box-shadow: inset 0 0 0 1px #d1cfc5;
+  }
+
+  .btn-secondary:hover {
+    background-color: #f0eee6;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent;
+    color: #5e5d59;
+    box-shadow: inset 0 0 0 1px #f0eee6;
+  }
+
+  .btn-ghost:hover {
+    background-color: #f5f4ed;
+    color: #141413;
+  }
+
+  /* Glass card - subtle for overlays */
   .glass-card {
-    @apply backdrop-blur-md bg-white/5 border border-white/10 shadow-xl;
+    @apply backdrop-blur-md bg-white/80 border border-white/20 shadow-lg;
   }
-  
+
+  /* POS specific styles */
   .pos-button {
-    @apply h-12 px-6 rounded-xl font-bold transition-all active:scale-95 flex items-center justify-center gap-2;
+    @apply h-12 px-6 rounded-xl font-medium transition-all active:scale-95 flex items-center justify-center gap-2;
   }
-  
+
   .pos-input {
-    @apply bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 outline-none transition-all;
+    @apply bg-white border border-warm rounded-xl px-4 py-3 focus:border-terracotta focus:ring-1 focus:ring-terracotta/50 outline-none transition-all;
   }
 }
 
-/* Custom Scrollbars */
+/* Custom Scrollbars - Warm theme */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -63,5 +173,10 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
+  background: #d1cfc5;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #87867f;
 }

@@ -1,164 +1,168 @@
-import { useTranslation } from 'react-i18next';
-import { LayoutDashboard, ShoppingCart, Package, Warehouse, PlusCircle, Wallet, Users, PhoneCall, Settings, LogOut, Monitor, Receipt, Bell, BarChart3, ShoppingBag, TrendingDown } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
-import {  useAuth  } from '../hooks/useAuth';
-import '../styles/layout.css';
+import {
+  LayoutDashboard,
+  ShoppingCart,
+  Package,
+  Users,
+  Wallet,
+  Settings,
+  LogOut,
+  ShoppingBag,
+  ChevronLeft,
+  ChevronRight,
+  TrendingUp,
+} from 'lucide-react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import { useSidebarStore } from '../stores/sidebarStore';
 
 interface NavItem {
-  icon: React.ComponentType<{ size?: number }>;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
   label: string;
   path: string;
-  children?: { label: string; path: string }[];
 }
 
-interface NavGroup {
-  titleKey: string;
+interface NavSection {
+  id: string;
+  label: string;
   items: NavItem[];
 }
 
-function useNavGroups(): NavGroup[] {
-  const { t } = useTranslation();
+function useNavSections(): NavSection[] {
   return [
     {
-      titleKey: t('nav.overview'),
+      id: 'operations',
+      label: 'Operations',
       items: [
-        { icon: LayoutDashboard, label: t('nav.dashboard'), path: '/' },
-        { icon: Monitor, label: t('nav.quickPos'), path: '/pos' },
-      ]
+        { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+        { icon: ShoppingCart, label: 'Point of Sale', path: '/pos' },
+        { icon: Package, label: 'Inventory', path: '/catalog/inventory' },
+      ],
     },
     {
-      titleKey: t('nav.business'),
+      id: 'management',
+      label: 'Management',
       items: [
-        { icon: ShoppingCart, label: t('nav.sales'), path: '/sales' },
-        { icon: BarChart3, label: t('nav.dailySales'), path: '/daily-sales' },
-        { icon: Package, label: t('nav.products'), path: '/products' },
-        { icon: TrendingDown, label: t('nav.competitorPrices'), path: '/competitor-prices' },
-        { icon: Warehouse, label: t('nav.inventory'), path: '/inventory', children: [
-          { label: t('nav.inventory'), path: '/inventory' },
-          { label: t('nav.history'), path: '/inventory/history' },
-        ] },
-        { icon: PlusCircle, label: t('nav.purchase'), path: '/purchase', children: [
-          { label: t('nav.purchase'), path: '/purchase' },
-          { label: t('nav.history'), path: '/purchase/history' },
-        ] },
-      ]
+        { icon: Users, label: 'Sales & CRM', path: '/sales' },
+        { icon: ShoppingBag, label: 'Purchases', path: '/purchase' },
+        { icon: Wallet, label: 'Finance', path: '/finance/suppliers' },
+        { icon: TrendingUp, label: 'Competitors', path: '/competitors' },
+      ],
     },
     {
-      titleKey: t('nav.finance'),
+      id: 'system',
+      label: 'System',
       items: [
-        { icon: Receipt, label: t('nav.expenses'), path: '/expenses' },
-        { icon: Wallet, label: t('nav.supplierLedger'), path: '/finance/suppliers' },
-        { icon: Users, label: t('nav.customerLedger'), path: '/finance/customers' },
-        { icon: PhoneCall, label: t('nav.collections'), path: '/collections' },
-      ]
+        { icon: Settings, label: 'Settings', path: '/settings' },
+      ],
     },
-    {
-      titleKey: t('nav.other'),
-      items: [
-        { icon: Bell, label: t('nav.reminders'), path: '/reminders' },
-        { icon: BarChart3, label: t('nav.reports'), path: '/reports' },
-        { icon: Settings, label: t('nav.settings'), path: '/settings' },
-      ]
-    }
   ];
 }
 
 interface SidebarProps {
-  hidden?: boolean;
-  onClose?: () => void;
+  collapsed?: boolean;
 }
 
-export function Sidebar({ hidden = false, onClose }: SidebarProps) {
+export function Sidebar({ collapsed = false }: SidebarProps) {
   const { signOut } = useAuth();
-  const navGroups = useNavGroups();
+  const { toggle, isMobileOpen, setMobileOpen } = useSidebarStore();
+  const navSections = useNavSections();
+  const location = useLocation();
+
+  const handleNavClick = () => {
+    if (window.innerWidth < 768) {
+      setMobileOpen(false);
+    }
+  };
 
   return (
     <>
-      {/* Mobile overlay backdrop */}
-      {!hidden && (
+      {/* Mobile overlay */}
+      {isMobileOpen && (
         <div
-          className="sidebar-backdrop"
-          onClick={onClose}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(0,0,0,0.4)',
-            zIndex: 19,
-          }}
+          className="fixed inset-0 bg-black/40 z-40 md:hidden"
+          onClick={() => setMobileOpen(false)}
         />
       )}
-      <aside className={`sidebar ${hidden ? 'sidebar--hidden' : ''}`}>
+
+      {/* Toggle button - visible when expanded */}
+      <button
+        onClick={toggle}
+        className={`sidebar-toggle ${collapsed ? 'sidebar-toggle--collapsed' : ''}`}
+        title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+      >
+        {collapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
+      </button>
+
+      {/* Sidebar */}
+      <aside
+        className={`sidebar ${collapsed ? 'sidebar--collapsed' : ''} ${
+          isMobileOpen ? 'sidebar--mobile-open' : ''
+        }`}
+      >
+        {/* Header */}
         <div className="sidebar-header">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary-default shadow-level-2 transform -rotate-6 flex-shrink-0">
-              <ShoppingBag className="text-primary-on" size={24} />
-            </div>
-            <div>
-              <h2 className="text-lg font-black text-white tracking-tight leading-tight">Lucky Store</h2>
-              <p className="text-xs text-neutral-400 font-medium uppercase tracking-widest opacity-60">Admin Portal</p>
-            </div>
-          </div>
+          <div className="logo-mark">L</div>
+          {!collapsed && <span className="logo-text">LuckyStorePOS</span>}
         </div>
 
-        <div className="sidebar-nav-container">
-          {navGroups.map((group) => (
-                <div key={group.titleKey} className="sidebar-nav-group">
-                  <h3 className="sidebar-nav-title">{group.titleKey}</h3>
-                  <nav className="sidebar-nav flex flex-col gap-1">
-                {group.items.map((item) => (
-                  <div key={item.path} className="flex flex-col gap-1">
+        {/* Navigation */}
+        <nav className="sidebar-nav">
+          {navSections.map((section) => (
+            <div key={section.id} className="nav-section">
+              {!collapsed && (
+                <div className="nav-section-label">{section.label}</div>
+              )}
+              <div className="nav-items">
+                {section.items.map((item) => {
+                  const isActive =
+                    location.pathname === item.path ||
+                    location.pathname.startsWith(`${item.path}/`);
+                  return (
                     <NavLink
+                      key={item.path}
                       to={item.path}
-                      onClick={() => { if (window.innerWidth < 768) onClose?.(); }}
-                      className={({ isActive }) =>
-                        `sidebar-nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
-                          isActive
-                            ? 'bg-primary-default text-primary-on shadow-level-1'
-                            : 'text-neutral-400 hover:bg-neutral-800 hover:text-white'
-                        }`
-                      }
-                      end={!item.children}
+                      onClick={handleNavClick}
+                      className={`nav-item ${isActive ? 'nav-item--active' : ''}`}
+                      title={collapsed ? item.label : undefined}
                     >
-                      <item.icon size={20} />
-                      <span className="font-semibold text-sm">{item.label}</span>
+                      <span className="nav-icon">
+                        <item.icon size={20} />
+                      </span>
+                      {!collapsed && <span className="nav-label">{item.label}</span>}
                     </NavLink>
-                    {item.children && (
-                      <div className="sidebar-nav-children ml-7 border-l border-neutral-800 pl-4 my-1 flex flex-col gap-1">
-                        {item.children.map((child) => (
-                          <NavLink
-                            key={child.path}
-                            to={child.path}
-                            onClick={() => { if (window.innerWidth < 768) onClose?.(); }}
-                            className={({ isActive }) =>
-                              `sidebar-nav-item text-xs font-medium py-1.5 px-2 rounded-md transition-colors ${
-                                isActive
-                                  ? 'text-primary-default'
-                                  : 'text-neutral-500 hover:text-neutral-300'
-                              }`
-                            }
-                          >
-                            {child.label}
-                          </NavLink>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </nav>
+                  );
+                })}
+              </div>
             </div>
           ))}
-        </div>
+        </nav>
 
+        {/* Footer */}
         <div className="sidebar-footer">
+          {/* Branch selector */}
+          <div className="branch-select" title={collapsed ? 'Dhanmondi Branch' : undefined}>
+            <div className="branch-dot" />
+            {!collapsed && (
+              <div className="branch-info">
+                <div className="branch-name">Dhanmondi Branch</div>
+                <div className="branch-sub">Active · 3 staff</div>
+              </div>
+            )}
+          </div>
+
+          {/* Logout */}
           <button
             onClick={signOut}
-            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-danger-default hover:bg-danger/10 transition-colors font-bold text-sm"
+            className="logout-button"
+            title={collapsed ? 'Logout' : undefined}
           >
             <LogOut size={20} />
-            <span>Logout Session</span>
+            {!collapsed && <span>Logout</span>}
           </button>
         </div>
       </aside>
     </>
   );
 }
+
+export default Sidebar;

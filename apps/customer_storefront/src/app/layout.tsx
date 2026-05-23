@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Hind_Siliguri, Space_Grotesk } from "next/font/google";
+import { Inter, Hind_Siliguri, Space_Grotesk, Geist } from "next/font/google";
 import "./globals.css";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const hindSiliguri = Hind_Siliguri({ subsets: ["bengali"], weight: ["400","500","600","700"], variable: "--font-hind-siliguri", display: "swap" });
@@ -20,7 +23,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="bn" className={`${inter.variable} ${hindSiliguri.variable} ${spaceGrotesk.variable}`}>
+    <html lang="bn" className={cn(inter.variable, hindSiliguri.variable, spaceGrotesk.variable, "font-sans", geist.variable)}>
       <body className="min-h-screen bg-bg-canvas text-text-primary antialiased">
         <div className="max-w-2xl mx-auto min-h-screen relative shadow-[0_0_40px_rgba(0,0,0,0.04)] bg-bg-surface flex flex-col overflow-hidden">
           {children}

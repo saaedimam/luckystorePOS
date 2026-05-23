@@ -1,62 +1,78 @@
-'use client';
+import { Button as ButtonPrimitive } from "@base-ui/react/button"
+import { cva, type VariantProps } from "class-variance-authority"
+import { Loader2, LucideIcon } from "lucide-react"
 
-import React from 'react';
-import { Loader2, LucideIcon } from 'lucide-react';
-import { clsx } from 'clsx';
+import { cn } from "@/lib/utils"
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'danger';
+const buttonVariants = cva(
+  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+        outline:
+          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+        ghost:
+          "hover:bg-muted hover:text-foreground dark:hover:bg-muted/50",
+        destructive:
+          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default:
+          "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
+        sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
+        lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        icon: "size-8",
+        "icon-xs":
+          "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
+        "icon-sm":
+          "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
+        "icon-lg": "size-9",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+export interface ButtonProps extends ButtonPrimitive.Props, VariantProps<typeof buttonVariants> {
+  fullWidth?: boolean;
   isLoading?: boolean;
   icon?: LucideIcon;
-  iconPosition?: 'left' | 'right';
-  fullWidth?: boolean;
 }
 
-export const Button: React.FC<ButtonProps> = ({
-  children,
-  variant = 'primary',
+function Button({
+  className,
+  variant = "default",
+  size = "default",
+  fullWidth = false,
   isLoading = false,
   icon: Icon,
-  iconPosition = 'left',
-  fullWidth = false,
-  className,
-  disabled,
+  children,
   ...props
-}) => {
-  const baseStyles = "h-12 px-6 rounded-xl font-bold transition-all active:scale-95 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2";
-  
-  const variants = {
-    // Primary Gold from tokens.ts (#D4A843)
-    primary: "bg-primary text-primary-contrast hover:bg-primary-hover focus:ring-primary shadow-md hover:shadow-lg",
-    // Secondary Outline
-    secondary: "bg-surface-default border border-border-default text-text-secondary hover:border-border-strong focus:ring-border-strong",
-    outline: "bg-transparent border-2 border-primary text-primary hover:bg-primary/10 focus:ring-primary",
-    danger: "bg-danger-default text-white hover:bg-danger-dark focus:ring-danger-default",
-  };
-
-  const disabledStyles = "disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed disabled:active:scale-100";
-
+}: ButtonProps) {
   return (
-    <button
-      className={clsx(
-        baseStyles,
-        variants[variant],
-        disabledStyles,
+    <ButtonPrimitive
+      data-slot="button"
+      className={cn(
+        buttonVariants({ variant, size, className }),
         fullWidth && "w-full",
-        className
+        isLoading && "cursor-not-allowed opacity-70"
       )}
-      disabled={disabled || isLoading}
+      disabled={props.disabled || isLoading}
       {...props}
     >
-      {isLoading ? (
-        <Loader2 className="w-5 h-5 animate-spin" />
-      ) : (
-        <>
-          {Icon && iconPosition === 'left' && <Icon size={18} />}
-          {children}
-          {Icon && iconPosition === 'right' && <Icon size={18} />}
-        </>
-      )}
-    </button>
-  );
-};
+      {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+      {!isLoading && Icon && <Icon className="mr-2 h-4 w-4" />}
+      {children}
+    </ButtonPrimitive>
+  )
+}
+
+export { Button, buttonVariants }

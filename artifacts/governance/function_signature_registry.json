@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-05-19T22:53:41.239Z",
-  "migration_count": 109,
-  "functions_tracked": 194,
+  "timestamp": "2026-05-23T22:40:59.500Z",
+  "migration_count": 128,
+  "functions_tracked": 219,
   "missing_functions": 75,
   "conflicts_detected": 75,
   "registry": {
@@ -5027,6 +5027,16 @@
           "type": "REPLACE",
           "migration": "20260511125848_update_rpcs_for_inventory_movements.sql",
           "timestamp": "20260511125848"
+        },
+        {
+          "type": "REPLACE",
+          "migration": "20260511130244_harden_inventory_movements.sql",
+          "timestamp": "20260511130244"
+        },
+        {
+          "type": "REPLACE",
+          "migration": "20260511131100_serializable_rpcs.sql",
+          "timestamp": "20260511131100"
         }
       ],
       "granted_by": [],
@@ -5147,6 +5157,174 @@
           "message": "Function created without SECURITY DEFINER or explicit search_path"
         }
       ]
+    },
+    "prevent_inventory_movement_update()": {
+      "signature": "prevent_inventory_movement_update()",
+      "name": "prevent_inventory_movement_update",
+      "params": "",
+      "created_by": "20260511125509_inventory_movements_ledger.sql",
+      "created_timestamp": "20260511125509",
+      "is_security_definer": false,
+      "search_path": "implicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": [
+        {
+          "type": "unsafe_search_path",
+          "severity": "medium",
+          "message": "Function created without SECURITY DEFINER or explicit search_path"
+        }
+      ]
+    },
+    "adjust_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE)": {
+      "signature": "adjust_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE)",
+      "name": "adjust_inventory_stock",
+      "params": "p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE",
+      "created_by": "20260511125509_inventory_movements_ledger.sql",
+      "created_timestamp": "20260511125509",
+      "is_security_definer": true,
+      "search_path": "explicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
+    },
+    "set_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_new_quantity INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL)": {
+      "signature": "set_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_new_quantity INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL)",
+      "name": "set_inventory_stock",
+      "params": "p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_new_quantity INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL",
+      "created_by": "20260511125509_inventory_movements_ledger.sql",
+      "created_timestamp": "20260511125509",
+      "is_security_definer": true,
+      "search_path": "explicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
+    },
+    "get_inventory_movements(p_store_id UUID,\n    p_product_id UUID DEFAULT NULL,\n    p_movement_type movement_type DEFAULT NULL,\n    p_limit INTEGER DEFAULT 100,\n    p_offset INTEGER DEFAULT 0)": {
+      "signature": "get_inventory_movements(p_store_id UUID,\n    p_product_id UUID DEFAULT NULL,\n    p_movement_type movement_type DEFAULT NULL,\n    p_limit INTEGER DEFAULT 100,\n    p_offset INTEGER DEFAULT 0)",
+      "name": "get_inventory_movements",
+      "params": "p_store_id UUID,\n    p_product_id UUID DEFAULT NULL,\n    p_movement_type movement_type DEFAULT NULL,\n    p_limit INTEGER DEFAULT 100,\n    p_offset INTEGER DEFAULT 0",
+      "created_by": "20260511125700_get_inventory_movements_rpc.sql",
+      "created_timestamp": "20260511125700",
+      "is_security_definer": true,
+      "search_path": "explicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
+    },
+    "adjust_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE,\n    p_operation_id UUID DEFAULT NULL)": {
+      "signature": "adjust_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE,\n    p_operation_id UUID DEFAULT NULL)",
+      "name": "adjust_inventory_stock",
+      "params": "p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE,\n    p_operation_id UUID DEFAULT NULL",
+      "created_by": "20260511130244_harden_inventory_movements.sql",
+      "created_timestamp": "20260511130244",
+      "is_security_definer": true,
+      "search_path": "explicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
+    },
+    "set_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_new_quantity INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_operation_id UUID DEFAULT NULL)": {
+      "signature": "set_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_new_quantity INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_operation_id UUID DEFAULT NULL)",
+      "name": "set_inventory_stock",
+      "params": "p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_new_quantity INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_operation_id UUID DEFAULT NULL",
+      "created_by": "20260511130244_harden_inventory_movements.sql",
+      "created_timestamp": "20260511130244",
+      "is_security_definer": true,
+      "search_path": "explicit",
+      "mutated_by": [
+        {
+          "type": "REPLACE",
+          "migration": "20260511131100_serializable_rpcs.sql",
+          "timestamp": "20260511131100"
+        }
+      ],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
+    },
+    "deduct_stock(p_store_id uuid,\n  p_product_id uuid,\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb,\n  p_operation_id UUID DEFAULT NULL)": {
+      "signature": "deduct_stock(p_store_id uuid,\n  p_product_id uuid,\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb,\n  p_operation_id UUID DEFAULT NULL)",
+      "name": "deduct_stock",
+      "params": "p_store_id uuid,\n  p_product_id uuid,\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb,\n  p_operation_id UUID DEFAULT NULL",
+      "created_by": "20260511130244_harden_inventory_movements.sql",
+      "created_timestamp": "20260511130244",
+      "is_security_definer": true,
+      "search_path": "explicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
+    },
+    "approve_inventory_reconciliation(p_reconciliation_id UUID,\n    p_notes TEXT DEFAULT NULL)": {
+      "signature": "approve_inventory_reconciliation(p_reconciliation_id UUID,\n    p_notes TEXT DEFAULT NULL)",
+      "name": "approve_inventory_reconciliation",
+      "params": "p_reconciliation_id UUID,\n    p_notes TEXT DEFAULT NULL",
+      "created_by": "20260511130416_inventory_reconciliations.sql",
+      "created_timestamp": "20260511130416",
+      "is_security_definer": true,
+      "search_path": "explicit",
+      "mutated_by": [
+        {
+          "type": "REPLACE",
+          "migration": "20260511131100_serializable_rpcs.sql",
+          "timestamp": "20260511131100"
+        }
+      ],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
+    },
+    "adjust_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE,\n    p_operation_id UUID DEFAULT NULL,\n    p_expected_quantity INTEGER DEFAULT NULL)": {
+      "signature": "adjust_inventory_stock(p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE,\n    p_operation_id UUID DEFAULT NULL,\n    p_expected_quantity INTEGER DEFAULT NULL)",
+      "name": "adjust_inventory_stock",
+      "params": "p_tenant_id UUID,\n    p_store_id UUID,\n    p_product_id UUID,\n    p_quantity_delta INTEGER,\n    p_movement_type movement_type,\n    p_reference_type reference_type,\n    p_reference_id UUID DEFAULT NULL,\n    p_notes TEXT DEFAULT NULL,\n    p_allow_negative BOOLEAN DEFAULT FALSE,\n    p_operation_id UUID DEFAULT NULL,\n    p_expected_quantity INTEGER DEFAULT NULL",
+      "created_by": "20260511131100_serializable_rpcs.sql",
+      "created_timestamp": "20260511131100",
+      "is_security_definer": true,
+      "search_path": "explicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
+    },
+    "deduct_stock(p_store_id uuid,\n  p_product_id uuid,\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb,\n  p_operation_id UUID DEFAULT NULL,\n  p_expected_quantity INTEGER DEFAULT NULL)": {
+      "signature": "deduct_stock(p_store_id uuid,\n  p_product_id uuid,\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb,\n  p_operation_id UUID DEFAULT NULL,\n  p_expected_quantity INTEGER DEFAULT NULL)",
+      "name": "deduct_stock",
+      "params": "p_store_id uuid,\n  p_product_id uuid,\n  p_quantity integer,\n  p_metadata jsonb DEFAULT '{}'::jsonb,\n  p_operation_id UUID DEFAULT NULL,\n  p_expected_quantity INTEGER DEFAULT NULL",
+      "created_by": "20260511131100_serializable_rpcs.sql",
+      "created_timestamp": "20260511131100",
+      "is_security_definer": true,
+      "search_path": "explicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
     },
     "get_customer_analytics(p_store_id uuid,\n  p_limit    integer DEFAULT 50)": {
       "signature": "get_customer_analytics(p_store_id uuid,\n  p_limit    integer DEFAULT 50)",
@@ -5480,6 +5658,78 @@
       "conflicts": [],
       "risks": []
     },
+    "generate_order_number(p_tenant_id UUID)": {
+      "signature": "generate_order_number(p_tenant_id UUID)",
+      "name": "generate_order_number",
+      "params": "p_tenant_id UUID",
+      "created_by": "20260520000001_online_orders.sql",
+      "created_timestamp": "20260520000001",
+      "is_security_definer": true,
+      "search_path": "explicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
+    },
+    "trg_set_order_number()": {
+      "signature": "trg_set_order_number()",
+      "name": "trg_set_order_number",
+      "params": "",
+      "created_by": "20260520000001_online_orders.sql",
+      "created_timestamp": "20260520000001",
+      "is_security_definer": true,
+      "search_path": "explicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
+    },
+    "trg_touch_updated_at()": {
+      "signature": "trg_touch_updated_at()",
+      "name": "trg_touch_updated_at",
+      "params": "",
+      "created_by": "20260520000001_online_orders.sql",
+      "created_timestamp": "20260520000001",
+      "is_security_definer": false,
+      "search_path": "explicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
+    },
+    "reserve_online_stock()": {
+      "signature": "reserve_online_stock()",
+      "name": "reserve_online_stock",
+      "params": "",
+      "created_by": "20260520124315_reserve_online_stock_trigger.sql",
+      "created_timestamp": "20260520124315",
+      "is_security_definer": false,
+      "search_path": "implicit",
+      "mutated_by": [
+        {
+          "type": "REPLACE",
+          "migration": "20260525000000_stock_reservation_trigger.sql",
+          "timestamp": "20260525000000"
+        }
+      ],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": [
+        {
+          "type": "unsafe_search_path",
+          "severity": "medium",
+          "message": "Function created without SECURITY DEFINER or explicit search_path"
+        }
+      ]
+    },
     "complete_sale_v2(p_store_id uuid,\n    p_cashier_id uuid,\n    p_customer_id uuid DEFAULT NULL,\n    p_items jsonb DEFAULT '[]'::jsonb, -- [{product_id, qty, unit_price, discount}]\n    p_payments jsonb DEFAULT '[]'::jsonb, -- [{method, amount, reference}]\n    p_total numeric DEFAULT 0,\n    p_discount numeric DEFAULT 0,\n    p_offline_created_at timestamptz DEFAULT NULL,\n    p_operation_id text DEFAULT NULL)": {
       "signature": "complete_sale_v2(p_store_id uuid,\n    p_cashier_id uuid,\n    p_customer_id uuid DEFAULT NULL,\n    p_items jsonb DEFAULT '[]'::jsonb, -- [{product_id, qty, unit_price, discount}]\n    p_payments jsonb DEFAULT '[]'::jsonb, -- [{method, amount, reference}]\n    p_total numeric DEFAULT 0,\n    p_discount numeric DEFAULT 0,\n    p_offline_created_at timestamptz DEFAULT NULL,\n    p_operation_id text DEFAULT NULL)",
       "name": "complete_sale_v2",
@@ -5495,12 +5745,12 @@
       "conflicts": [],
       "risks": []
     },
-    "handle_online_order_stock_reservation()": {
-      "signature": "handle_online_order_stock_reservation()",
-      "name": "handle_online_order_stock_reservation",
+    "handle_sale_deletion_cleanup()": {
+      "signature": "handle_sale_deletion_cleanup()",
+      "name": "handle_sale_deletion_cleanup",
       "params": "",
-      "created_by": "20260521000002_online_order_module.sql",
-      "created_timestamp": "20260521000002",
+      "created_by": "20260521000003_invoice_storage.sql",
+      "created_timestamp": "20260521000003",
       "is_security_definer": false,
       "search_path": "implicit",
       "mutated_by": [],
@@ -5516,12 +5766,162 @@
         }
       ]
     },
-    "handle_sale_deletion_cleanup()": {
-      "signature": "handle_sale_deletion_cleanup()",
-      "name": "handle_sale_deletion_cleanup",
-      "params": "",
-      "created_by": "20260521000003_invoice_storage.sql",
-      "created_timestamp": "20260521000003",
+    "place_online_order(p_store_id uuid,\n    p_customer_name text,\n    p_whatsapp text,\n    p_address text,\n    p_items jsonb,\n    p_subtotal integer,\n    p_delivery_fee integer,\n    p_total integer)": {
+      "signature": "place_online_order(p_store_id uuid,\n    p_customer_name text,\n    p_whatsapp text,\n    p_address text,\n    p_items jsonb,\n    p_subtotal integer,\n    p_delivery_fee integer,\n    p_total integer)",
+      "name": "place_online_order",
+      "params": "p_store_id uuid,\n    p_customer_name text,\n    p_whatsapp text,\n    p_address text,\n    p_items jsonb,\n    p_subtotal integer,\n    p_delivery_fee integer,\n    p_total integer",
+      "created_by": "20260521000004_safe_online_orders.sql",
+      "created_timestamp": "20260521000004",
+      "is_security_definer": true,
+      "search_path": "explicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
+    },
+    "update_online_order_status(p_order_id uuid,\n    p_new_status text,\n    p_reason text DEFAULT NULL)": {
+      "signature": "update_online_order_status(p_order_id uuid,\n    p_new_status text,\n    p_reason text DEFAULT NULL)",
+      "name": "update_online_order_status",
+      "params": "p_order_id uuid,\n    p_new_status text,\n    p_reason text DEFAULT NULL",
+      "created_by": "20260521000004_safe_online_orders.sql",
+      "created_timestamp": "20260521000004",
+      "is_security_definer": true,
+      "search_path": "explicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
+    },
+    "accept_online_order(p_operation_id UUID,\n  p_order_id UUID,\n  p_tenant_id UUID)": {
+      "signature": "accept_online_order(p_operation_id UUID,\n  p_order_id UUID,\n  p_tenant_id UUID)",
+      "name": "accept_online_order",
+      "params": "p_operation_id UUID,\n  p_order_id UUID,\n  p_tenant_id UUID",
+      "created_by": "20260522000001_accept_online_order_rpc.sql",
+      "created_timestamp": "20260522000001",
+      "is_security_definer": true,
+      "search_path": "explicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
+    },
+    "assign_rider_to_order(p_order_id UUID,\n    p_rider_id UUID,\n    p_assigned_by UUID,\n    p_operation_id VARCHAR(64)": {
+      "signature": "assign_rider_to_order(p_order_id UUID,\n    p_rider_id UUID,\n    p_assigned_by UUID,\n    p_operation_id VARCHAR(64)",
+      "name": "assign_rider_to_order",
+      "params": "p_order_id UUID,\n    p_rider_id UUID,\n    p_assigned_by UUID,\n    p_operation_id VARCHAR(64",
+      "created_by": "20260522000003_rider_app_infrastructure.sql",
+      "created_timestamp": "20260522000003",
+      "is_security_definer": false,
+      "search_path": "implicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": [
+        {
+          "type": "unsafe_search_path",
+          "severity": "medium",
+          "message": "Function created without SECURITY DEFINER or explicit search_path"
+        }
+      ]
+    },
+    "update_rider_assignment_status(p_assignment_id UUID,\n    p_new_status VARCHAR(20)": {
+      "signature": "update_rider_assignment_status(p_assignment_id UUID,\n    p_new_status VARCHAR(20)",
+      "name": "update_rider_assignment_status",
+      "params": "p_assignment_id UUID,\n    p_new_status VARCHAR(20",
+      "created_by": "20260522000003_rider_app_infrastructure.sql",
+      "created_timestamp": "20260522000003",
+      "is_security_definer": false,
+      "search_path": "implicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": [
+        {
+          "type": "unsafe_search_path",
+          "severity": "medium",
+          "message": "Function created without SECURITY DEFINER or explicit search_path"
+        }
+      ]
+    },
+    "rider_login(p_phone VARCHAR(20)": {
+      "signature": "rider_login(p_phone VARCHAR(20)",
+      "name": "rider_login",
+      "params": "p_phone VARCHAR(20",
+      "created_by": "20260522000003_rider_app_infrastructure.sql",
+      "created_timestamp": "20260522000003",
+      "is_security_definer": false,
+      "search_path": "implicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": [
+        {
+          "type": "unsafe_search_path",
+          "severity": "medium",
+          "message": "Function created without SECURITY DEFINER or explicit search_path"
+        }
+      ]
+    },
+    "ping_rider_location(p_rider_id UUID,\n    p_latitude DECIMAL(10,8)": {
+      "signature": "ping_rider_location(p_rider_id UUID,\n    p_latitude DECIMAL(10,8)",
+      "name": "ping_rider_location",
+      "params": "p_rider_id UUID,\n    p_latitude DECIMAL(10,8",
+      "created_by": "20260522000003_rider_app_infrastructure.sql",
+      "created_timestamp": "20260522000003",
+      "is_security_definer": false,
+      "search_path": "implicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": [
+        {
+          "type": "unsafe_search_path",
+          "severity": "medium",
+          "message": "Function created without SECURITY DEFINER or explicit search_path"
+        }
+      ]
+    },
+    "get_nearest_available_riders(p_store_lat DECIMAL(10,8)": {
+      "signature": "get_nearest_available_riders(p_store_lat DECIMAL(10,8)",
+      "name": "get_nearest_available_riders",
+      "params": "p_store_lat DECIMAL(10,8",
+      "created_by": "20260522000003_rider_app_infrastructure.sql",
+      "created_timestamp": "20260522000003",
+      "is_security_definer": false,
+      "search_path": "implicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": [
+        {
+          "type": "unsafe_search_path",
+          "severity": "medium",
+          "message": "Function created without SECURITY DEFINER or explicit search_path"
+        }
+      ]
+    },
+    "get_edge_function_url(function_name TEXT)": {
+      "signature": "get_edge_function_url(function_name TEXT)",
+      "name": "get_edge_function_url",
+      "params": "function_name TEXT",
+      "created_by": "20260523000000_whatsapp_webhook.sql",
+      "created_timestamp": "20260523000000",
       "is_security_definer": false,
       "search_path": "implicit",
       "mutated_by": [],
@@ -5558,12 +5958,69 @@
         }
       ]
     },
+    "send_whatsapp_notification_manually(p_order_id UUID,\n    p_status TEXT DEFAULT NULL)": {
+      "signature": "send_whatsapp_notification_manually(p_order_id UUID,\n    p_status TEXT DEFAULT NULL)",
+      "name": "send_whatsapp_notification_manually",
+      "params": "p_order_id UUID,\n    p_status TEXT DEFAULT NULL",
+      "created_by": "20260523000000_whatsapp_webhook.sql",
+      "created_timestamp": "20260523000000",
+      "is_security_definer": false,
+      "search_path": "implicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": [
+        {
+          "type": "unsafe_search_path",
+          "severity": "medium",
+          "message": "Function created without SECURITY DEFINER or explicit search_path"
+        }
+      ]
+    },
     "is_within_delivery_range(p_store_id uuid,\n    p_customer_lat numeric,\n    p_customer_lng numeric)": {
       "signature": "is_within_delivery_range(p_store_id uuid,\n    p_customer_lat numeric,\n    p_customer_lng numeric)",
       "name": "is_within_delivery_range",
       "params": "p_store_id uuid,\n    p_customer_lat numeric,\n    p_customer_lng numeric",
       "created_by": "20260524000000_store_location.sql",
       "created_timestamp": "20260524000000",
+      "is_security_definer": false,
+      "search_path": "implicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": [
+        {
+          "type": "unsafe_search_path",
+          "severity": "medium",
+          "message": "Function created without SECURITY DEFINER or explicit search_path"
+        }
+      ]
+    },
+    "release_online_stock()": {
+      "signature": "release_online_stock()",
+      "name": "release_online_stock",
+      "params": "",
+      "created_by": "20260525000000_stock_reservation_trigger.sql",
+      "created_timestamp": "20260525000000",
+      "is_security_definer": true,
+      "search_path": "explicit",
+      "mutated_by": [],
+      "granted_by": [],
+      "revoked_by": [],
+      "missing": false,
+      "conflicts": [],
+      "risks": []
+    },
+    "trigger_notify_order()": {
+      "signature": "trigger_notify_order()",
+      "name": "trigger_notify_order",
+      "params": "",
+      "created_by": "20260526000000_notify_order_insert_webhook.sql",
+      "created_timestamp": "20260526000000",
       "is_security_definer": false,
       "search_path": "implicit",
       "mutated_by": [],

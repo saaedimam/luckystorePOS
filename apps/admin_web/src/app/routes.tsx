@@ -23,6 +23,7 @@ const LazyQuickPosPage = React.lazy(() => import('../features/pos/QuickPosPage')
 const LazyRemindersPage = React.lazy(() => import('../features/reminders/RemindersPage').then(m => ({ default: m.RemindersPage })));
 const LazyExpensesPage = React.lazy(() => import('../features/expenses/ExpensesPage').then(m => ({ default: m.ExpensesPage })));
 const LazyOnlineOrdersPage = React.lazy(() => import('../features/online-orders/OnlineOrdersPage'));
+const LazyCompetitorsPage = React.lazy(() => import('../features/competitorPrices/CompetitorPricesPage').then(m => ({ default: m.CompetitorPricesPage })));
 
 function SuspenseFallback() {
   return (
@@ -131,6 +132,10 @@ export const router = createBrowserRouter([
       {
         path: 'online-orders',
         element: <LazyRoute><LazyOnlineOrdersPage /></LazyRoute>,
+      },
+      {
+        path: 'competitors',
+        element: <LazyRoute><LazyCompetitorsPage /></LazyRoute>,
       },
     ],
   },

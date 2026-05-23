@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import { useCart } from "@/store/useCart";
+import { Button } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
 
 export function FloatingCartBar() {
   const { items, total, count, clearCart } = useCart();
@@ -25,10 +27,16 @@ export function FloatingCartBar() {
                 <span className="text-sm font-extrabold text-text-primary tabular-nums leading-none">৳{total.toLocaleString("bn-BD")}</span>
               </div>
             </div>
-            <button className="bg-black/10 hover:bg-black/20 text-text-primary px-5 py-2.5 rounded-xl font-bold text-sm transition-colors flex items-center gap-2 font-bangla shrink-0">
+            <Button
+              size="sm"
+              className={cn(
+                "bg-black/10 hover:bg-black/20 text-text-primary rounded-xl font-bold text-sm flex items-center gap-2 font-bangla shrink-0",
+                "border-0 shadow-none hover:shadow-none"
+              )}
+            >
               {isExpanded ? "চেকআউট" : "কার্টে যান"}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
-            </button>
+            </Button>
           </div>
           {isExpanded && (
             <div className="px-4 pb-4 border-t border-black/10">
@@ -45,8 +53,26 @@ export function FloatingCartBar() {
                 ))}
               </div>
               <div className="flex gap-2 mt-3 pt-3 border-t border-black/10">
-                <button onClick={clearCart} className="flex-1 py-2.5 rounded-xl bg-black/10 hover:bg-black/20 text-text-primary font-bold text-xs transition-colors font-bangla">খালি করুন</button>
-                <button className="flex-[2] py-2.5 rounded-xl bg-secondary hover:bg-secondary-hover text-primary font-bold text-sm transition-colors font-bangla">অর্ডার করুন</button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearCart}
+                  className={cn(
+                    "flex-1 rounded-xl bg-black/10 hover:bg-black/20 text-text-primary font-bold text-xs font-bangla",
+                    "border-0 shadow-none hover:shadow-none"
+                  )}
+                >
+                  খালি করুন
+                </Button>
+                <Button
+                  size="sm"
+                  className={cn(
+                    "flex-[2] rounded-xl bg-secondary hover:bg-secondary-hover text-primary font-bold text-sm font-bangla",
+                    "border-0 shadow-none hover:shadow-none"
+                  )}
+                >
+                  অর্ডার করুন
+                </Button>
               </div>
             </div>
           )}

@@ -250,3 +250,4 @@ VibeCoderOutput/
 EOF
 eslint-report.json
 
+.agent-state/

@@ -41,7 +41,6 @@ at the counter.
 | **Bangla Interface** | English + Bangla with HindSiliguri | English-only | English-only |
 | **Competitor Price Monitoring** | AI-powered scraping | Not available | Not available |
 | **Multi-Tenant Security** | Supabase RLS with tenant isolation | Basic auth | Basic auth |
-| **Deployment** | Docker one-command, Vercel free, APK sideload | Complex server | Vendor lock-in |
 | **Cost** | Free & Open Source | License fees + hardware | Monthly SaaS |
 
 ---
@@ -317,7 +316,6 @@ Run: `cd apps/scraper && npm run update-prices`
 
 ### DevOps
 
-![Docker](https://img.shields.io/badge/Docker-Multi--stage-2496ED?style=flat-square&logo=docker)
 ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-2088FF?style=flat-square&logo=githubactions)
 ![Vercel](https://img.shields.io/badge/Vercel-Hosting-000000?style=flat-square&logo=vercel)
 
@@ -339,7 +337,6 @@ Run: `cd apps/scraper && npm run update-prices`
 | Node.js | ≥ 20.0.0 | `node --version` |
 | npm | ≥ 10.0.0 | `npm --version` |
 | Supabase CLI | ≥ 1.0.0 | `supabase --version` |
-| Docker | ≥ 24.0.0 | `docker --version` *(optional)* |
 
 ### Setup
 
@@ -351,7 +348,6 @@ cp .env.example .env
 # Edit .env with your Supabase URL and anon key
 
 # 2. Start Supabase locally (optional — skip to use remote staging)
-supabase start
 supabase db reset
 
 # 3. Run the Flutter mobile app
@@ -364,11 +360,8 @@ cd apps/admin_web
 npm install
 npm run dev                  # Opens at http://localhost:5173/admin/
 
-# 5. Docker (optional — production-like)
-docker compose up -d         # Admin web at http://localhost:8080
 ```
 
-> **Tip:** For a full local developer setup guide including Docker configuration, 
 > seed credentials, and local vs. remote Supabase mode, see the **[Developer Runbook](docs/DEVELOPER.md)**.
 
 ---
@@ -442,14 +435,12 @@ luckystorePOS/
 </details>
 
 <details>
-<summary><strong>🔍 Docker</strong></summary>
 
 <br>
 
 - Multi-stage build: Node 22 Alpine builds React app → Nginx 1.27 Alpine serves it
 - Non-root `appuser` (UID 1001) for security
 - Health check configured on port 80
-- `docker compose up -d` for one-command deployment
 
 </details>
 
@@ -476,7 +467,6 @@ Set required secrets on each edge function:
 
 | Document | Purpose |
 |:---------|:--------|
-| [Developer Runbook](docs/DEVELOPER.md) | Local dev setup, Docker, seed credentials, troubleshooting |
 | [RLS Security Model](docs/RLS_SECURITY_MODEL.md) | Row-level security architecture |
 | [Offline Sync Implementation](docs/OFFLINE_SYNC_IMPLEMENTATION.md) | Offline-first sync design |
 | [Conflict Resolution Policy](docs/conflict_resolution_policy.md) | Offline sync conflict handling |
