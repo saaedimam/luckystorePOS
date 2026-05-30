@@ -5,4 +5,9 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   base: '/admin/',
+  build: {
+    // HOTFIX: Disable minification to prevent 't' variable collision
+    // This resolves ReferenceError: t is not defined in production
+    minify: false,
+  },
 })
