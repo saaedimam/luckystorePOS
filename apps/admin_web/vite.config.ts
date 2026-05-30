@@ -5,7 +5,10 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   base: '/admin/',
-  esbuild: {
-    keepNames: true, // Prevent mangling of 't' from useTranslation()
+  build: {
+    // HOTFIX: Disable minification to prevent 't' variable collision
+    // This resolves ReferenceError: t is not defined in production
+    // TODO: Re-enable in future with proper minification config
+    minify: false,
   }
 })
