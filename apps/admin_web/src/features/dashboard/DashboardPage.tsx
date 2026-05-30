@@ -22,6 +22,7 @@ export function DashboardPage() {
 
   const [isSalesModalOpen, setIsSalesModalOpen] = useState(false);
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'overview' | 'financials' | 'operations'>('overview');
 
   const missingMetricsQuery = useQuery({
     queryKey: ['dashboard-missing-metrics', storeId],
