@@ -7,16 +7,17 @@ import type {
 } from '../types';
 
 export async function fetchCompetitorPrices(
-  _storeId: string,
+  storeId: string,
   filters?: CompetitorPriceFilters
 ): Promise<CompetitorPrice[]> {
   let query = supabase
     .from('competitor_prices')
     .select(`
       *,
-      items:item_id (name, sku)
+      items:product_id (name, sku)
     `)
-    .order('last_updated', { ascending: false });
+    .eq('store_id', storeId)
+    .order('scraped_at', { ascending: false });
 
   if (filters?.itemId) {
     query = query.eq('item_id', filters.itemId);
@@ -37,24 +38,24 @@ export async function fetchCompetitorPrices(
 
   return (data || []).map((row: any) => ({
     id: row.id,
-    item_id: row.item_id,
-    item_name: row.items?.name,
-    sku: row.items?.sku,
+    item_id: row.product_id,
+    item_name: row.product_name || row.items?.name,
+    sku: row.product_sku || row.items?.sku,
     competitor_name: row.competitor_name,
     competitor_price: row.competitor_price,
-    competitor_url: row.competitor_url,
-    scraped_at: row.last_updated,
+    competitor_url: row.competitor_product_url,
+    scraped_at: row.scraped_at,
     created_at: row.created_at,
-    updated_at: row.last_updated,
+    updated_at: row.updated_at,
   }));
 }
 
 export async function fetchPriceAlerts(
-  _storeId: string,
+  storeId: string,
   threshold: number = 0.15
 ): Promise<PriceAlert[]> {
   const { data, error } = await supabase.rpc('check_price_alerts', {
-    p_store_id: _storeId,
+    p_store_id: storeId,
     p_threshold: threshold,
   });
 
@@ -63,15 +64,16 @@ export async function fetchPriceAlerts(
 }
 
 export async function addCompetitorPrice(
-  _storeId: string,
+  storeId: string,
   data: CompetitorPriceFormData
 ): Promise<void> {
   const { error } = await supabase.from('competitor_prices').insert({
-    item_id: data.item_id,
+    store_id: storeId,
+    product_id: data.item_id,
     competitor_name: data.competitor_name,
     competitor_price: data.competitor_price,
-    competitor_url: data.competitor_url || null,
-    last_updated: new Date().toISOString(),
+    competitor_product_url: data.competitor_url || null,
+    scraped_at: new Date().toISOString(),
   });
 
   if (error) throw error;
@@ -85,8 +87,8 @@ export async function updateCompetitorPrice(
     .from('competitor_prices')
     .update({
       ...data,
-      competitor_url: data.competitor_url || null,
-      last_updated: new Date().toISOString(),
+      competitor_product_url: data.competitor_url || null,
+      scraped_at: new Date().toISOString(),
     })
     .eq('id', id);
 
@@ -102,10 +104,11 @@ export async function deleteCompetitorPrice(id: string): Promise<void> {
   if (error) throw error;
 }
 
-export async function fetchCompetitorNames(_storeId: string): Promise<string[]> {
+export async function fetchCompetitorNames(storeId: string): Promise<string[]> {
   const { data, error } = await supabase
     .from('competitor_prices')
     .select('competitor_name')
+    .eq('store_id', storeId)
     .order('competitor_name');
 
   if (error) throw error;

@@ -16,3 +16,4 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 )
 
 registerServiceWorker()
+// Cache purge: 1780161184
