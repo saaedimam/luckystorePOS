@@ -10,4 +10,4 @@ export default defineConfig({
     // This resolves ReferenceError: t is not defined in production
     minify: false,
   },
-})
+})/* force rebuild 1780161551 */
