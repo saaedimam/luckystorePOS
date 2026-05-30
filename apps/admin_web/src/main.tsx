@@ -1,3 +1,9 @@
+// DEBUG: Capture early errors before module loading
+window.onerror = function(msg, url, line, col, err) {
+  console.error('[EARLY ERROR]', msg, 'at', url, 'line', line, 'col', col);
+  return false;
+};
+
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './lib/i18n' // Initialize i18n before App
