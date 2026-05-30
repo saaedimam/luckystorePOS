@@ -20,16 +20,16 @@ export async function fetchCompetitorPrices(
     .order('scraped_at', { ascending: false });
 
   if (filters?.itemId) {
-    query = query.eq('item_id', filters.itemId);
+    query = query.eq('product_id', filters.itemId);
   }
   if (filters?.competitorName) {
     query = query.ilike('competitor_name', `%${filters.competitorName}%`);
   }
   if (filters?.dateFrom) {
-    query = query.gte('last_updated', filters.dateFrom);
+    query = query.gte('scraped_at', filters.dateFrom);
   }
   if (filters?.dateTo) {
-    query = query.lte('last_updated', filters.dateTo);
+    query = query.lte('scraped_at', filters.dateTo);
   }
 
   const { data, error } = await query;
