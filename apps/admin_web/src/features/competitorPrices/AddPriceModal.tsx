@@ -55,7 +55,7 @@ export function AddPriceModal({ isOpen, onClose }: AddPriceModalProps) {
   });
 
   const addMutation = useMutation({
-    mutationFn: (data: CompetitorPriceFormData) => addCompetitorPrice(storeId!, data),
+    mutationFn: (data: CompetitorPriceFormData) => addCompetitorPrice(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['competitorPrices'] });
       notify('Competitor price added', 'success');
@@ -103,11 +103,11 @@ export function AddPriceModal({ isOpen, onClose }: AddPriceModalProps) {
     }
     
     addMutation.mutate({
-      product_id: selectedProduct.id,
-      product_name: selectedProduct.name,
+      item_id: selectedProduct.id,
+      item_name: selectedProduct.name,
       competitor_name: competitorName.trim(),
       competitor_price: parseFloat(competitorPrice),
-      competitor_product_url: competitorUrl.trim() || undefined,
+      competitor_url: competitorUrl.trim() || undefined,
     });
   };
 
