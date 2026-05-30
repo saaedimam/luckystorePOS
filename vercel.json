@@ -9,6 +9,18 @@
       "destination": "/index.html"
     },
     {
+      "source": "/admin-v2",
+      "destination": "/apps/admin_web/dist/index.html"
+    },
+    {
+      "source": "/admin-v2/assets/(.*)",
+      "destination": "/apps/admin_web/dist/assets/$1"
+    },
+    {
+      "source": "/admin-v2/(.*)",
+      "destination": "/apps/admin_web/dist/index.html"
+    },
+    {
       "source": "/admin",
       "destination": "/apps/admin_web/dist/index.html"
     },
