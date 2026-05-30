@@ -170,7 +170,7 @@ export function DashboardPage() {
   // Map category names to display labels and colors - Warm palette
   const categoryConfig: Record<string, { label: string; color: string; barColor: string }> = {
     'Stock Purchase': { label: 'Stock Purchase', color: 'text-warm-accent', barColor: 'bg-warm-accent' },
-    'Capital Expenditure': { label: t('dashboard.capital'), color: 'text-warm-warning', barColor: 'bg-warm-warning' },
+    'Capital Expenditure': { label: 'Capital Expenditure', color: 'text-warm-warning', barColor: 'bg-warm-warning' },
     'Staff salary': { label: 'Staff Salary', color: 'text-primary-default', barColor: 'bg-primary-subtle0' },
     'Utility Expenses': { label: 'Utilities', color: 'text-warm-success', barColor: 'bg-warm-success' },
     'All Other Expenses': { label: 'Other', color: 'text-warm-dim', barColor: 'bg-warm-silver' },
