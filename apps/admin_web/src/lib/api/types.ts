@@ -281,13 +281,19 @@ export interface StaffPerformanceItem {
 
 export interface CompetitorPrice {
   id: string;
-  item_id: string;
-  item_name?: string;  // joined from items
-  sku?: string;        // joined from items
+  product_id: string;
+  product_name: string;
+  product_sku?: string;
   competitor_name: string;
+  competitor_product_id?: string;
+  competitor_product_url?: string;
   competitor_price: number;
-  competitor_url: string | null;
+  competitor_original_price?: number;
+  currency?: string;
+  our_price?: number;
+  price_gap_percent?: number;
   scraped_at: string;
+  scrape_status?: string;
   created_at: string;
   updated_at: string;
 }
@@ -302,10 +308,11 @@ export interface PriceAlert {
 }
 
 export interface CompetitorPriceFormData {
-  item_id: string;
+  product_id: string;
+  product_name: string;
   competitor_name: string;
   competitor_price: number;
-  competitor_url?: string;
+  competitor_product_url?: string;
 }
 
 export type CompetitorPriceFilters = {

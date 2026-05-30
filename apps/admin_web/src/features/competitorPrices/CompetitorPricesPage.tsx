@@ -33,7 +33,7 @@ export function CompetitorPricesPage() {
 
   const { data: prices, isLoading: pricesLoading } = useQuery({
     queryKey: ['competitorPrices', storeId],
-    queryFn: () => fetchCompetitorPrices(storeId!),
+    queryFn: () => fetchCompetitorPrices(),
     enabled: !!storeId,
   });
 
