@@ -209,9 +209,15 @@ data/*.json
 # -----------------------------------------------------------------------------
 .gemini/
 .hermes/
-.ai/
+.ai/*
+!.ai/context/
 artifacts/
 docs/testing/
 test_out.txt
 graphify-out/
 VibeCoderOutput/
+
+# AI Context Files (root only)
+/CLAUDE.md
+/context.md
+/gemini.md
