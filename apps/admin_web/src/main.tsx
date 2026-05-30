@@ -1,5 +1,5 @@
 // DEBUG: Capture early errors before module loading
-window.onerror = function(msg, url, line, col, err) {
+window.onerror = function(msg, url, line, col) {
   console.error('[EARLY ERROR]', msg, 'at', url, 'line', line, 'col', col);
   return false;
 };

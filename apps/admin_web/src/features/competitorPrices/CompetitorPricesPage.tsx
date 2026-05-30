@@ -55,7 +55,7 @@ export function CompetitorPricesPage() {
   const alertProductIds = new Set(alerts?.map((a: PriceAlert) => a.product_id) || []);
 
   const filteredPrices = showAlertsOnly
-    ? prices?.filter((p: CompetitorPrice) => alertProductIds.has(p.item_id))
+    ? prices?.filter((p: CompetitorPrice) => alertProductIds.has(p.product_id))
     : prices;
 
   const columns: Column<CompetitorPrice>[] = [
@@ -63,9 +63,9 @@ export function CompetitorPricesPage() {
       header: 'Product',
       accessor: (row: CompetitorPrice) => (
         <div className="competitor-product-cell">
-          <span className="font-medium">{row.item_name || 'Unknown'}</span>
-          {row.sku && <span className="text-muted text-xs">{row.sku}</span>}
-          {alertProductIds.has(row.item_id) && (
+          <span className="font-medium">{row.product_name || 'Unknown'}</span>
+          {row.product_sku && <span className="text-muted text-xs">{row.product_sku}</span>}
+          {alertProductIds.has(row.product_id) && (
             <span className="alert-badge">
               <AlertTriangle size={12} />
               Price Alert
@@ -96,9 +96,9 @@ export function CompetitorPricesPage() {
       header: '',
       accessor: (row: CompetitorPrice) => (
         <div className="flex gap-2 justify-end">
-          {row.competitor_url && (
+          {row.competitor_product_url && (
             <a
-              href={row.competitor_url}
+              href={row.competitor_product_url}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-icon"
