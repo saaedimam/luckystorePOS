@@ -7,51 +7,54 @@ import type {
 } from '../types';
 
 export async function fetchCompetitorPrices(
+  storeId: string,
   filters?: CompetitorPriceFilters
 ): Promise<CompetitorPrice[]> {
   let query = supabase
     .from('competitor_prices')
     .select(`
       id,
-      item_id,
-      items!inner(name, sku),
+      store_id,
+      product_id,
+      product_name,
+      product_sku,
       competitor_name,
+      competitor_product_id,
+      competitor_product_url,
       competitor_price,
-      competitor_url,
-      last_updated,
-      created_at
+      competitor_original_price,
+      currency,
+      our_price,
+      price_gap_percent,
+      scraped_at,
+      scrape_batch_id,
+      scrape_status,
+      error_message,
+      raw_data,
+      created_at,
+      updated_at
     `)
-    .order('last_updated', { ascending: false });
+    .eq('store_id', storeId)
+    .order('scraped_at', { ascending: false });
 
   if (filters?.itemId) {
-    query = query.eq('item_id', filters.itemId);
+    query = query.eq('product_id', filters.itemId);
   }
   if (filters?.competitorName) {
     query = query.ilike('competitor_name', `%${filters.competitorName}%`);
   }
   if (filters?.dateFrom) {
-    query = query.gte('last_updated', filters.dateFrom);
+    query = query.gte('scraped_at', filters.dateFrom);
   }
   if (filters?.dateTo) {
-    query = query.lte('last_updated', filters.dateTo);
+    query = query.lte('scraped_at', filters.dateTo);
   }
 
   const { data, error } = await query;
 
   if (error) throw error;
 
-  return (data || []).map((row: any) => ({
-    id: row.id,
-    item_id: row.item_id,
-    item_name: row.items?.name || 'Unknown',
-    sku: row.items?.sku,
-    competitor_name: row.competitor_name,
-    competitor_price: row.competitor_price,
-    competitor_url: row.competitor_url,
-    scraped_at: row.last_updated,
-    created_at: row.created_at,
-    updated_at: row.last_updated,
-  }));
+  return (data || []) as CompetitorPrice[];
 }
 
 export async function fetchPriceAlerts(
@@ -68,14 +71,17 @@ export async function fetchPriceAlerts(
 }
 
 export async function addCompetitorPrice(
+  storeId: string,
   data: CompetitorPriceFormData
 ): Promise<void> {
   const { error } = await supabase.from('competitor_prices').insert({
-    item_id: data.item_id,
+    store_id: storeId,
+    product_id: data.product_id,
+    product_name: data.product_name,
     competitor_name: data.competitor_name,
     competitor_price: data.competitor_price,
-    competitor_url: data.competitor_url || null,
-    last_updated: new Date().toISOString(),
+    competitor_product_url: data.competitor_product_url || null,
+    scraped_at: new Date().toISOString(),
   });
 
   if (error) throw error;
@@ -88,10 +94,9 @@ export async function updateCompetitorPrice(
   const { error } = await supabase
     .from('competitor_prices')
     .update({
-      competitor_name: data.competitor_name,
-      competitor_price: data.competitor_price,
-      competitor_url: data.competitor_url || null,
-      last_updated: new Date().toISOString(),
+      ...data,
+      competitor_product_url: data.competitor_product_url || null,
+      updated_at: new Date().toISOString(),
     })
     .eq('id', id);
 
@@ -107,10 +112,11 @@ export async function deleteCompetitorPrice(id: string): Promise<void> {
   if (error) throw error;
 }
 
-export async function fetchCompetitorNames(): Promise<string[]> {
+export async function fetchCompetitorNames(storeId: string): Promise<string[]> {
   const { data, error } = await supabase
     .from('competitor_prices')
     .select('competitor_name')
+    .eq('store_id', storeId)
     .order('competitor_name');
 
   if (error) throw error;
