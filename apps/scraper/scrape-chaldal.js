@@ -242,9 +242,9 @@ async function scrapeAllCategories() {
     
     browser = await puppeteer.launch({
       headless: process.env.CI ? "new" : false,
-      executablePath: hasChrome ? defaultChromePath : undefined,
+      executablePath: process.env.CHROME_BIN || (hasChrome ? defaultChromePath : undefined),
       args: [
-        '--no-sandbox', 
+        '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-web-security'
       ],
@@ -360,8 +360,8 @@ async function scrapeAllCategories() {
   if (isSupabaseEnabled) {
     const storeId = process.env.STORE_ID;
     if (!storeId) {
-      console.error('Error: STORE_ID required when using --supabase');
-      process.exit(1);
+      console.warn('Warning: STORE_ID missing. Skipping Supabase sync.');
+      return outputPath;
     }
     console.log('\nLoading our products for catalog matching...');
     const ourProductsMap = await loadOurProducts(storeId);
